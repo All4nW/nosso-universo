@@ -1,0 +1,31 @@
+/* variables.css
+   Centraliza cores, fontes e espaçamentos do projeto.
+   Usamos "CSS Custom Properties" (variáveis nativas do CSS). */
+
+:root {
+    /* Cores de fundo */
+    --color-bg-dark: #0a0a1a;
+    --color-bg-darker: #050510;
+
+    /* Cores de destaque */
+    --color-purple: #6b21a8;
+    --color-blue-night: #1e3a5f;
+    --color-gold: #d4af37;
+    --color-pink: #f5c2d1;
+
+    /* Textos */
+    --color-text-light: #f5f5f5;
+    --color-text-muted: #b0b0c0;
+
+    /* Tipografia */
+    --font-primary: 'Segoe UI', sans-serif;
+
+    /* Espaçamentos */
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 4rem;
+
+    /* Transições */
+    --transition-smooth: 0.4s ease;
+}
