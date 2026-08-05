@@ -7,6 +7,7 @@ body {
     color: var(--color-text-light);
     font-family: var(--font-primary);
 }
+
 #app {
     position: relative;
     height: 100vh;
@@ -35,13 +36,27 @@ body {
     transition: opacity 0.6s ease, visibility 0s linear 0s;
 }
 
+/* ===== Tela de boas-vindas ===== */
+
+.view[data-view="welcome"] {
+    position: relative;
+}
+
+.view[data-view="welcome"]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.08), transparent 60%);
+    pointer-events: none;
+}
+
 .welcome-title {
+    position: relative;
     font-family: var(--font-heading);
-    font-size: 3rem;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
     font-weight: 600;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: var(--color-text-light);
-    margin-bottom: var(--spacing-md);
 
     animation: brilho-titulo 4s ease-in-out infinite;
 }
@@ -55,15 +70,36 @@ body {
     }
 }
 
+.welcome-divider {
+    width: 80px;
+    height: 1px;
+    margin: var(--spacing-lg) 0;
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    position: relative;
+}
+
+.welcome-divider::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-gold);
+    background-color: var(--color-bg-dark);
+    padding: 0 var(--spacing-sm);
+    font-size: 0.8rem;
+}
+
 .welcome-message {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
     color: var(--color-text-muted);
     max-width: 500px;
-    margin-bottom: var(--spacing-lg);
     font-style: italic;
+    line-height: 1.6;
 }
 
 .welcome-button {
+    margin-top: var(--spacing-lg);
     padding: var(--spacing-sm) var(--spacing-lg);
     border: 1px solid var(--color-gold);
     color: var(--color-gold);
@@ -76,7 +112,27 @@ body {
 .welcome-button:hover {
     background-color: var(--color-gold);
     color: var(--color-bg-dark);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
 }
+
+/* ===== Animação de entrada escalonada ===== */
+
+.welcome-anim {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: entrada-suave 1s ease forwards;
+    animation-delay: var(--anim-delay, 0s);
+}
+
+@keyframes entrada-suave {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Fundo de estrelas (canvas) ===== */
+
 #stars-bg {
     position: fixed;
     top: 0;
@@ -86,6 +142,8 @@ body {
     z-index: -1;
     background-color: var(--color-bg-dark);
 }
+
+/* ===== Scrollbar customizada ===== */
 
 /* Chrome, Edge, Safari */
 ::-webkit-scrollbar {

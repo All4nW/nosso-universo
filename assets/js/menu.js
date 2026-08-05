@@ -22,29 +22,50 @@ function ativarComportamentoDoSom() {
     const audio = document.getElementById('trilha-fundo');
     if (!botaoSom || !audio) return;
 
-    // Define o volume em 30% (a escala vai de 0 a 1)
     audio.volume = 0.3;
-
-    // Assim que os metadados do áudio carregarem (duração, etc.),
-    // já posiciona o play em 00:12 — antes mesmo do primeiro clique.
-    audio.addEventListener('loadedmetadata', () => {
-        audio.currentTime = 12;
-    }, { once: true }); // "once" garante que isso só rode uma vez
-
     let tocando = false;
 
-    botaoSom.addEventListener('click', () => {
+    audio.addEventListener('loadedmetadata', () => {
+        audio.currentTime = 12;
+    }, { once: true });
+
+    function iniciarAudio() {
+        audio.play().then(() => {
+            tocando = true;
+            botaoSom.textContent = '🔊';
+        }).catch(() => {
+            console.warn('Autoplay bloqueado pelo navegador — aguardando primeira interação.');
+        });
+    }
+
+    // Tenta tocar assim que a página carrega (pode ser bloqueado pelo navegador)
+    iniciarAudio();
+
+    // Se for bloqueado, a primeira vez que a pessoa clicar em QUALQUER lugar
+    // da página, o áudio começa a tocar automaticamente
+    document.addEventListener('click', function primeiraInteracao() {
+        if (!tocando) iniciarAudio();
+        document.removeEventListener('click', primeiraInteracao);
+    }, { once: true });
+
+    // O próprio botão continua funcionando para ligar/desligar manualmente
+    botaoSom.addEventListener('click', (evento) => {
+        evento.stopPropagation(); // evita conflito com o listener de "primeira interação"
+
         if (tocando) {
             audio.pause();
             botaoSom.textContent = '🔇';
+            tocando = false;
         } else {
-            audio.play().catch(() => {
-                console.warn('Áudio indisponível (arquivo ausente ou bloqueado pelo navegador).');
-            });
-            botaoSom.textContent = '🔊';
+            iniciarAudio();
         }
-        tocando = !tocando;
     });
+
+    // Brilho temporário no botão, chamando atenção por 3 segundos
+    botaoSom.classList.add('sound-toggle-glow');
+    setTimeout(() => {
+        botaoSom.classList.remove('sound-toggle-glow');
+    }, 3000);
 }
 
 carregarNavbar();
