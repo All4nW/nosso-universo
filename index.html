@@ -5,19 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosso Universo ❤️</title>
 
-        <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nosso Universo ❤️</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
+
+    <div id="navbar-placeholder"></div>
 
     <main id="app">
 
@@ -26,7 +25,48 @@
             <p class="welcome-message">
                 [Aqui vai sua frase poética — troque depois]
             </p>
-            <a href="#timeline" class="welcome-button">Entrar</a>
+            <a href="#hub" class="welcome-button">Entrar</a>
+        </section>
+
+        <section class="view" data-view="hub">
+            <div class="hub-container">
+
+                <a href="#timeline" class="hub-card" style="--rot: -6deg; top: 8%; left: 6%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Timeline</h3>
+                </a>
+
+                <a href="#galeria" class="hub-card" style="--rot: 5deg; top: 14%; left: 55%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Galeria</h3>
+                </a>
+
+                <a href="#cartas" class="hub-card" style="--rot: -3deg; top: 45%; left: 42%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Cartas</h3>
+                </a>
+
+                <a href="#momentos" class="hub-card" style="--rot: 8deg; top: 38%; left: 4%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Momentos</h3>
+                </a>
+
+                <a href="#musicas" class="hub-card" style="--rot: -9deg; top: 65%; left: 18%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Músicas</h3>
+                </a>
+
+                <a href="#futuro" class="hub-card" style="--rot: 4deg; top: 60%; left: 58%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Nosso futuro</h3>
+                </a>
+
+                <a href="#estrelas" class="hub-card" style="--rot: -5deg; top: 4%; left: 78%;">
+                    <div class="hub-card-thumb"></div>
+                    <h3 class="hub-card-title">Céu Estrelado</h3>
+                </a>
+
+            </div>
         </section>
 
         <section class="view" data-view="timeline">
@@ -34,8 +74,39 @@
             <p>Em construção...</p>
         </section>
 
+        <section class="view" data-view="galeria">
+            <h1>Galeria</h1>
+            <p>Em construção...</p>
+        </section>
+
+        <section class="view" data-view="cartas">
+            <h1>Cartas</h1>
+            <p>Em construção...</p>
+        </section>
+
+        <section class="view" data-view="momentos">
+            <h1>Nossos momentos</h1>
+            <p>Em construção...</p>
+        </section>
+
+        <section class="view" data-view="musicas">
+            <h1>Nossas músicas</h1>
+            <p>Em construção...</p>
+        </section>
+
+        <section class="view" data-view="futuro">
+            <h1>Nosso futuro</h1>
+            <p>Em construção...</p>
+        </section>
+
+        <section class="view" data-view="estrelas">
+            <h1>Céu Estrelado</h1>
+            <p>Em construção...</p>
+        </section>
+
     </main>
 
     <script src="assets/js/router.js"></script>
+    <script src="assets/js/menu.js"></script>
 </body>
 </html>
