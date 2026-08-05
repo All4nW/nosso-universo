@@ -18,7 +18,8 @@
     --color-text-muted: #b0b0c0;
 
     /* Tipografia */
-    --font-primary: 'Segoe UI', sans-serif;
+--font-primary: 'Montserrat', sans-serif;
+--font-heading: 'Playfair Display', serif;
 
     /* Espaçamentos */
     --spacing-sm: 0.5rem;
