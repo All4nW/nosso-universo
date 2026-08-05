@@ -1,12 +1,25 @@
 // particles.js
 // Desenha um céu estrelado no <canvas id="stars-bg">, atrás de todo o conteúdo.
-// Duas camadas de partículas: estrelas fixas (pulsam) e estrelas cadentes (cruzam a tela).
+// Três comportamentos combinados:
+// 1. Estrelas fixas que pulsam (brilho)
+// 2. Estrelas cadentes que cruzam a tela ocasionalmente
+// 3. Parallax sutil: as estrelas reagem ao movimento do mouse
 
 const canvas = document.getElementById('stars-bg');
 const ctx = canvas.getContext('2d');
 
 let estrelas = [];
 let cadentes = [];
+
+let mouseX = 0;
+let mouseY = 0;
+
+// Captura a posição do mouse, normalizada entre -1 e 1
+// (-1 = borda esquerda/topo, 0 = centro, 1 = borda direita/baixo)
+window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
 
 function ajustarTamanho() {
     canvas.width = window.innerWidth;
@@ -23,18 +36,19 @@ function criarEstrelas() {
             y: Math.random() * canvas.height,
             raio: Math.random() * 1.3 + 0.3,
             fase: Math.random() * Math.PI * 2,
-            velocidadeBrilho: Math.random() * 0.02 + 0.005
+            velocidadeBrilho: Math.random() * 0.02 + 0.005,
+
+            // Quanto maior, mais a estrela se move com o mouse
+            // (simula estar "mais perto" da câmera)
+            profundidade: Math.random() * 0.6 + 0.4
         });
     }
 }
 
-// Cria uma única estrela cadente, começando de um ponto aleatório
-// fora ou perto da borda superior, viajando na diagonal.
 function criarEstrelaCadente() {
     const comecoX = Math.random() * canvas.width;
-    const comecoY = Math.random() * (canvas.height * 0.3); // começa no terço superior
+    const comecoY = Math.random() * (canvas.height * 0.3);
 
-    // Ângulo da diagonal (entre 20° e 45°, sempre descendo para a direita)
     const angulo = (Math.random() * 25 + 20) * (Math.PI / 180);
     const velocidade = Math.random() * 6 + 10;
 
@@ -48,10 +62,8 @@ function criarEstrelaCadente() {
     });
 }
 
-// Decide, a cada frame, se uma nova estrela cadente deve nascer.
-// Probabilidade baixa = elas aparecem raramente, de forma imprevisível.
 function talvezCriarCadente() {
-    const chancePorFrame = 0.006; // ~0.6% de chance a cada frame
+    const chancePorFrame = 0.006;
     if (Math.random() < chancePorFrame) {
         criarEstrelaCadente();
     }
@@ -62,8 +74,11 @@ function desenharEstrelasFixas() {
         estrela.fase += estrela.velocidadeBrilho;
         const opacidade = 0.3 + (Math.sin(estrela.fase) + 1) / 2 * 0.7;
 
+        const deslocamentoX = mouseX * estrela.profundidade * 12;
+        const deslocamentoY = mouseY * estrela.profundidade * 12;
+
         ctx.beginPath();
-        ctx.arc(estrela.x, estrela.y, estrela.raio, 0, Math.PI * 2);
+        ctx.arc(estrela.x + deslocamentoX, estrela.y + deslocamentoY, estrela.raio, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(245, 245, 245, ${opacidade})`;
         ctx.fill();
     }
@@ -75,9 +90,8 @@ function desenharCadentes() {
 
         c.x += c.vx;
         c.y += c.vy;
-        c.opacidade -= 0.012; // desaparece gradualmente
+        c.opacidade -= 0.012;
 
-        // Desenha o rastro como uma linha com gradiente (brilhante na cabeça, sumindo na cauda)
         const anguloRastro = Math.atan2(c.vy, c.vx);
         const caudaX = c.x - Math.cos(anguloRastro) * c.comprimento;
         const caudaY = c.y - Math.sin(anguloRastro) * c.comprimento;
@@ -93,7 +107,6 @@ function desenharCadentes() {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Remove a estrela cadente quando ela sai da tela ou termina de desaparecer
         const saiuDaTela = c.x > canvas.width + 100 || c.y > canvas.height + 100;
         if (saiuDaTela || c.opacidade <= 0) {
             cadentes.splice(i, 1);

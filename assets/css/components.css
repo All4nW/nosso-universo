@@ -188,3 +188,29 @@
         transform: rotate(var(--rot, 0deg)) translateY(-10px);
     }
 }
+.hub-card.hub-card-selecionado {
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    transform: scale(1.2);
+    opacity: 0;
+}
+.sound-toggle {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: calc(var(--spacing-lg) + 56px);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-gold);
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+}
+
+.sound-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}

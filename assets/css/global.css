@@ -42,6 +42,17 @@ body {
     letter-spacing: 2px;
     color: var(--color-text-light);
     margin-bottom: var(--spacing-md);
+
+    animation: brilho-titulo 4s ease-in-out infinite;
+}
+
+@keyframes brilho-titulo {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+    }
+    50% {
+        text-shadow: 0 0 35px rgba(212, 175, 55, 0.55);
+    }
 }
 
 .welcome-message {
@@ -74,4 +85,28 @@ body {
     height: 100%;
     z-index: -1;
     background-color: var(--color-bg-dark);
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-gold);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-pink);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gold) var(--color-bg-darker);
 }
