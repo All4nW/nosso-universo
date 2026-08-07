@@ -1,15 +1,17 @@
 // particles.js
 // Desenha um céu estrelado no <canvas id="stars-bg">, atrás de todo o conteúdo.
-// Três comportamentos combinados:
+// Comportamentos combinados:
 // 1. Estrelas fixas que pulsam (brilho)
 // 2. Estrelas cadentes que cruzam a tela ocasionalmente
-// 3. Parallax sutil: as estrelas reagem ao movimento do mouse
+// 3. Corações ambiente subindo suavemente
+// 4. Parallax sutil: as estrelas reagem ao movimento do mouse
 
 const canvas = document.getElementById('stars-bg');
 const ctx = canvas.getContext('2d');
 
 let estrelas = [];
 let cadentes = [];
+let coracoes = [];
 
 let mouseX = 0;
 let mouseY = 0;
@@ -69,6 +71,28 @@ function talvezCriarCadente() {
     }
 }
 
+// Cria um coração ambiente, subindo a partir da base da tela.
+function criarCoracaoAmbiente() {
+    coracoes.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + 20,
+        velocidade: Math.random() * 0.4 + 0.2,
+        amplitude: Math.random() * 20 + 10,
+        faseSway: Math.random() * Math.PI * 2,
+        velocidadeSway: Math.random() * 0.02 + 0.01,
+        tamanho: Math.random() * 8 + 10,
+        opacidadeMax: Math.random() * 0.2 + 0.12
+    });
+}
+
+// Decide se um novo coração deve nascer. Limite de 4 na tela
+// ao mesmo tempo garante que o efeito continue discreto.
+function talvezCriarCoracao() {
+    if (coracoes.length < 4 && Math.random() < 0.003) {
+        criarCoracaoAmbiente();
+    }
+}
+
 function desenharEstrelasFixas() {
     for (const estrela of estrelas) {
         estrela.fase += estrela.velocidadeBrilho;
@@ -114,12 +138,44 @@ function desenharCadentes() {
     }
 }
 
+function desenharCoracoes() {
+    for (let i = coracoes.length - 1; i >= 0; i--) {
+        const c = coracoes[i];
+
+        c.y -= c.velocidade;
+        c.faseSway += c.velocidadeSway;
+        const xAtual = c.x + Math.sin(c.faseSway) * c.amplitude;
+
+        // Aparece suavemente ao nascer, e desaparece suavemente perto do topo
+        const alturaPercorrida = (canvas.height + 20) - c.y;
+        let opacidade = c.opacidadeMax;
+
+        if (alturaPercorrida < 60) {
+            opacidade = c.opacidadeMax * (alturaPercorrida / 60);
+        } else if (c.y < canvas.height * 0.15) {
+            opacidade = c.opacidadeMax * (c.y / (canvas.height * 0.15));
+        }
+
+        ctx.font = `${c.tamanho}px sans-serif`;
+        ctx.fillStyle = `rgba(245, 194, 209, ${Math.max(opacidade, 0)})`;
+        ctx.textAlign = 'center';
+        ctx.fillText('♥', xAtual, c.y);
+
+        if (c.y < -20) {
+            coracoes.splice(i, 1);
+        }
+    }
+}
+
 function desenharFrame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     desenharEstrelasFixas();
     talvezCriarCadente();
     desenharCadentes();
+
+    talvezCriarCoracao();
+    desenharCoracoes();
 
     requestAnimationFrame(desenharFrame);
 }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel — Nosso Universo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/painel.css">
+</head>
+<body>
+
+    <div class="painel-layout">
+
+        <!-- ===== Sidebar ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-topo">
+                <span class="sidebar-logo">✦ Nosso Universo</span>
+                <span class="sidebar-subtitulo">Painel Administrativo</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link sidebar-link-ativo" data-page="dashboard">
+                    <span class="sidebar-icone">🏠</span>
+                    <span class="sidebar-texto">Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="configuracoes">
+                    <span class="sidebar-icone">⚙</span>
+                    <span class="sidebar-texto">Configurações</span>
+                </a>
+
+                <span class="sidebar-secao-label">Conteúdo</span>
+
+                <a href="#" class="sidebar-link" data-page="timeline">
+                    <span class="sidebar-icone">📅</span>
+                    <span class="sidebar-texto">Timeline</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="galeria">
+                    <span class="sidebar-icone">🖼</span>
+                    <span class="sidebar-texto">Galeria</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="cartas">
+                    <span class="sidebar-icone">💌</span>
+                    <span class="sidebar-texto">Cartas</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="musicas">
+                    <span class="sidebar-icone">🎵</span>
+                    <span class="sidebar-texto">Músicas</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="estrelas">
+                    <span class="sidebar-icone">⭐</span>
+                    <span class="sidebar-texto">Céu Estrelado</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-rodape">
+                <div class="sidebar-usuario">
+                    <span class="sidebar-usuario-avatar">A</span>
+                    <div class="sidebar-usuario-info">
+                        <span class="sidebar-usuario-nome">Allan</span>
+                        <span class="sidebar-usuario-cargo">Administrador</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== Área principal ===== -->
+        <div class="painel-principal">
+
+            <!-- ===== Header ===== -->
+            <header class="header">
+                <div class="header-titulo">
+                    <h1 id="header-titulo-pagina">Dashboard</h1>
+                    <span class="header-subtitulo">Visão geral do seu universo</span>
+                </div>
+
+                <div class="header-acoes">
+                    <div class="header-busca">
+                        <span class="header-busca-icone">🔍</span>
+                        <input type="text" class="header-busca-input" placeholder="Buscar...">
+                    </div>
+                    <button class="header-botao-notificacao">🔔</button>
+                    <div class="header-avatar">A</div>
+                </div>
+            </header>
+
+            <!-- ===== Conteúdo dinâmico (o JS vai popular isso depois) ===== -->
+            <main id="page-content" class="page-content">
+
+            </main>
+
+        </div>
+
+    </div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/router.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/views/settings.js"></script>
+<script src="assets/js/app.js"></script>
+
+</body>
+</html>

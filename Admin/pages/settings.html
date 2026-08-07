@@ -1,0 +1,322 @@
+<div class="page-header">
+
+    <h2 class="page-header-titulo">
+        Configurações
+    </h2>
+
+    <p class="page-header-subtitulo">
+        Ajustes gerais do site e da trilha sonora.
+    </p>
+
+</div>
+
+
+<div class="settings-grid">
+
+
+    <!-- ============================= -->
+    <!-- APARÊNCIA -->
+    <!-- ============================= -->
+
+    <section class="settings-card">
+
+        <div class="settings-card-header">
+
+            <span class="settings-card-icone">🎨</span>
+
+            <div>
+
+                <h3 class="settings-card-titulo">
+                    Aparência
+                </h3>
+
+                <p class="settings-card-descricao">
+                    Personalize a identidade visual do Nosso Universo.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="settings-card-corpo">
+
+
+            <!-- Cor principal -->
+
+            <div class="settings-field">
+
+                <label
+                    class="settings-label"
+                    for="campo-cor-destaque">
+
+                    Cor de destaque
+
+                </label>
+
+
+                <div class="settings-color-picker">
+
+                    <input
+                        type="color"
+                        id="campo-cor-destaque"
+                        class="settings-color-input"
+                        value="#c9a7f5"
+                    >
+
+                    <span
+                        id="valor-cor-destaque"
+                        class="settings-color-hex">
+
+                        #C9A7F5
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Cor de fundo -->
+
+            <div class="settings-field">
+
+                <label
+                    class="settings-label"
+                    for="campo-cor-fundo">
+
+                    Cor de fundo
+
+                </label>
+
+
+                <div class="settings-color-picker">
+
+                    <input
+                        type="color"
+                        id="campo-cor-fundo"
+                        class="settings-color-input"
+                        value="#0a0a1a"
+                    >
+
+                    <span
+                        id="valor-cor-fundo"
+                        class="settings-color-hex">
+
+                        #0A0A1A
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Brilho -->
+
+            <div class="settings-field">
+
+                <label
+                    class="settings-label"
+                    for="campo-intensidade-brilho">
+
+                    Intensidade do brilho
+
+                </label>
+
+                <input
+                    type="range"
+                    id="campo-intensidade-brilho"
+                    min="0"
+                    max="100"
+                    value="50"
+                >
+
+            </div>
+
+
+
+            <!-- Estrelas -->
+
+            <div class="settings-field">
+
+                <label
+                    class="settings-label"
+                    for="campo-quantidade-estrelas">
+
+                    Quantidade de estrelas
+
+                </label>
+
+                <input
+                    type="range"
+                    id="campo-quantidade-estrelas"
+                    min="0"
+                    max="200"
+                    value="100"
+                >
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ============================= -->
+    <!-- MÚSICA -->
+    <!-- ============================= -->
+
+    <section class="settings-card">
+
+        <div class="settings-card-header">
+
+            <span class="settings-card-icone">🎵</span>
+
+            <div>
+
+                <h3 class="settings-card-titulo">
+                    Música de fundo
+                </h3>
+
+                <p class="settings-card-descricao">
+                    Gerencie as músicas que tocam durante a experiência.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="settings-card-corpo">
+
+
+            <!-- Upload -->
+
+            <div
+                id="area-upload-musica"
+                class="settings-upload-area">
+
+                <span class="settings-upload-icone">
+                    📤
+                </span>
+
+                <p class="settings-upload-texto">
+
+                    Clique para adicionar uma música
+
+                </p>
+
+                <span class="settings-upload-arquivo-atual">
+
+                    MP3, WAV ou OGG
+
+                </span>
+
+                <input
+                    type="file"
+                    id="input-musica"
+                    accept="audio/*"
+                    hidden
+                >
+
+            </div>
+
+
+
+            <!-- Lista -->
+
+            <div class="musicas-lista">
+
+                <div class="musicas-lista-cabecalho">
+
+                    <span>
+                        Suas músicas
+                    </span>
+
+                    <span id="contador-musicas">
+                        0 músicas
+                    </span>
+
+                </div>
+
+
+                <div id="lista-musicas">
+
+                    <div class="musicas-vazia">
+
+                        🎵
+
+                        <p>
+                            Nenhuma música adicionada ainda.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Configurações -->
+
+            <div class="settings-field">
+
+                <label
+                    class="settings-label"
+                    for="campo-volume">
+
+                    Volume padrão
+
+                </label>
+
+                <input
+                    type="range"
+                    id="campo-volume"
+                    min="0"
+                    max="100"
+                    value="30"
+                >
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+</div>
+
+
+
+<!-- ============================= -->
+<!-- AÇÕES -->
+<!-- ============================= -->
+
+<div class="settings-acoes-rodape">
+
+    <button
+        type="button"
+        id="btn-cancelar-settings"
+        class="settings-botao settings-botao-secundario">
+
+        Cancelar
+
+    </button>
+
+
+    <button
+        type="button"
+        id="btn-salvar-settings"
+        class="settings-botao settings-botao-primario">
+
+        Salvar alterações
+
+    </button>
+
+</div>

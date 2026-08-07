@@ -15,22 +15,44 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
+
 <canvas id="stars-bg"></canvas>
     <div id="navbar-placeholder"></div>
+    <div id="modal-placeholder"></div>
 
     <main id="app">
 
 <section class="view" data-view="welcome">
+
+    <span class="floating-heart" style="--fh-x: 12%; --fh-y: 20%; --fh-delay: 0s; --fh-duration: 7s;">💗</span>
+    <span class="floating-heart" style="--fh-x: 85%; --fh-y: 30%; --fh-delay: 1.2s; --fh-duration: 6s;">💗</span>
+    <span class="floating-heart" style="--fh-x: 20%; --fh-y: 70%; --fh-delay: 2.4s; --fh-duration: 8s;">💗</span>
+    <span class="floating-heart" style="--fh-x: 80%; --fh-y: 65%; --fh-delay: 0.6s; --fh-duration: 6.5s;">💗</span>
+
     <h1 class="welcome-title welcome-anim" style="--anim-delay: 0.2s;">Nosso Universo</h1>
 
     <div class="welcome-divider welcome-anim" style="--anim-delay: 0.5s;"></div>
 
     <p class="welcome-message welcome-anim" style="--anim-delay: 0.7s;">
-        [Aqui vai sua frase poética — troque depois]
+        Um universo criado dos nossos momentos, para lembrarmos juntos, para sempre.
     </p>
 
-    <a href="#hub" class="welcome-button welcome-anim" style="--anim-delay: 1s;">Entrar</a>
+    <a href="#hub" class="welcome-button welcome-anim" style="--anim-delay: 1s;">
+        Entrar <span class="welcome-button-icon">✦</span>
+    </a>
 </section>
+<div id="live-counter" class="live-counter">
+    <span class="live-counter-label">Estamos juntos há</span>
+    <div class="live-counter-numbers">
+<div class="counter-unit"><span id="counter-dias">000</span><small>Dias</small></div>
+        <span class="counter-sep">:</span>
+        <div class="counter-unit"><span id="counter-horas">00</span><small>Horas</small></div>
+        <span class="counter-sep">:</span>
+        <div class="counter-unit"><span id="counter-minutos">00</span><small>Minutos</small></div>
+        <span class="counter-sep">:</span>
+        <div class="counter-unit"><span id="counter-segundos">00</span><small>Segundos</small></div>
+    </div>
+</div>
 
         <section class="view" data-view="hub">
             <div class="hub-container">
@@ -137,8 +159,8 @@
         </section>
 
         <section class="view" data-view="timeline">
-            <h1>Timeline</h1>
-            <p>Em construção...</p>
+            <h1 class="section-title">Timeline</h1>
+            <div class="timeline-container" id="timeline-container"></div>
         </section>
 
         <section class="view" data-view="galeria">
@@ -176,9 +198,15 @@
 
 
 <script src="assets/js/particles.js"></script>
-<script src="assets/js/router.js"></script>
-<script src="assets/js/menu.js"></script>
-<script src="assets/js/hub-interacoes.js"></script>
+    <script src="assets/js/router.js"></script>
+    <script src="assets/js/click-effects.js"></script>
+    <script src="assets/js/menu.js"></script>
+    <script src="assets/js/hub-interacoes.js"></script>
+    <script src="assets/js/modal.js"></script>
+    <script src="assets/js/timeline.js"></script>
+    <script src="assets/js/intro.js"></script>
+    <script src="assets/js/hub-loader.js"></script>
+    <script src="assets/js/settings.js"></script>
 
 </body>
 </html>

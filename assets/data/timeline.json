@@ -1,0 +1,18 @@
+[
+  {
+    "id": "primeiro-dia",
+    "titulo": "O início de tudo",
+    "data": "2025-08-05",
+    "resumo": "O dia em que nossa história começou.",
+    "descricao": "Aqui você escreve o texto completo desse momento, com todos os detalhes que quiser guardar para sempre.",
+    "fotos": ["assets/images/hub/timeline.jpg"]
+  },
+  {
+    "id": "primeira-ligacao",
+    "titulo": "Nossa primeira ligação",
+    "data": "2025-08-10",
+    "resumo": "Horas conversando sem perceber o tempo passar.",
+    "descricao": "Descreva aqui como foi essa primeira conversa mais longa.",
+    "fotos": []
+  }
+]

@@ -46,7 +46,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.08), transparent 60%);
+    background: radial-gradient(circle at center, rgba(201, 167, 245, 0.08), transparent 60%);
     pointer-events: none;
 }
 
@@ -63,10 +63,10 @@ body {
 
 @keyframes brilho-titulo {
     0%, 100% {
-        text-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+        text-shadow: 0 0 20px rgba(201, 167, 245, 0.25);
     }
     50% {
-        text-shadow: 0 0 35px rgba(212, 175, 55, 0.55);
+        text-shadow: 0 0 35px rgba(201, 167, 245, 0.55);
     }
 }
 
@@ -74,7 +74,7 @@ body {
     width: 80px;
     height: 1px;
     margin: var(--spacing-lg) 0;
-    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    background: linear-gradient(90deg, transparent, var(--color-lilac), transparent);
     position: relative;
 }
 
@@ -84,7 +84,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: var(--color-gold);
+    color: var(--color-lilac);
     background-color: var(--color-bg-dark);
     padding: 0 var(--spacing-sm);
     font-size: 0.8rem;
@@ -101,18 +101,32 @@ body {
 .welcome-button {
     margin-top: var(--spacing-lg);
     padding: var(--spacing-sm) var(--spacing-lg);
-    border: 1px solid var(--color-gold);
-    color: var(--color-gold);
+    border: 1px solid var(--color-lilac);
+    color: var(--color-lilac);
     border-radius: 30px;
     font-size: 1rem;
     letter-spacing: 1px;
     transition: var(--transition-smooth);
+
+    animation: pulsar-botao 2.5s ease-in-out infinite;
+}
+
+@keyframes pulsar-botao {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(201, 167, 245, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(201, 167, 245, 0.6);
+        transform: scale(1.04);
+    }
 }
 
 .welcome-button:hover {
-    background-color: var(--color-gold);
+    background-color: var(--color-lilac);
     color: var(--color-bg-dark);
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 25px rgba(201, 167, 245, 0.4);
+    animation-play-state: paused; /* para de pulsar durante o hover, já que o hover já dá destaque */
 }
 
 /* ===== Animação de entrada escalonada ===== */
@@ -155,7 +169,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-gold);
+    background: var(--color-lilac);
     border-radius: 10px;
 }
 
@@ -166,5 +180,183 @@ body {
 /* Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-gold) var(--color-bg-darker);
+    scrollbar-color: var(--color-lilac) var(--color-bg-darker);
+}
+.floating-heart {
+    position: absolute;
+    left: var(--fh-x);
+    top: var(--fh-y);
+    font-size: 1.1rem;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+
+    animation: coracao-flutuar var(--fh-duration, 6s) ease-in-out infinite;
+    animation-delay: var(--fh-delay, 0s);
+}
+
+@keyframes coracao-flutuar {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.35;
+    }
+    50% {
+        transform: translateY(-14px) scale(1.15);
+        opacity: 0.65;
+    }
+}
+/* ===== Overlays cinematográficos (preloader + transição) ===== */
+
+.cinematic-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    background-color: var(--color-bg-dark);
+
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.8s ease;
+}
+
+.cinematic-overlay.oculto {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cinematic-heart {
+    font-size: 2rem;
+    color: var(--color-pink);
+    animation: coracao-pulsar 1s ease-in-out infinite;
+}
+
+@keyframes coracao-pulsar {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+.cinematic-text {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+}
+
+/* ===== Frase poética introdutória ===== */
+
+.welcome-intro {
+    font-family: var(--font-primary);
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: var(--color-text-muted);
+    letter-spacing: 1px;
+}
+
+/* ===== Ícone dentro do botão ===== */
+
+.welcome-button-icon {
+    margin-left: 6px;
+}
+
+/* ===== Contador ao vivo ===== */
+
+/* ===== Contador fixo, parte inferior da tela ===== */
+
+.live-counter {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px dashed rgba(201, 167, 245, 0.4);
+    border-radius: 16px;
+    background: rgba(5, 5, 16, 0.6);
+    backdrop-filter: blur(6px);
+
+    text-align: center;
+    animation: respirar-contador 3s ease-in-out infinite;
+}
+
+@keyframes respirar-contador {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(201, 167, 245, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(201, 167, 245, 0.25);
+    }
+}
+
+.live-counter-label {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+}
+
+.live-counter-numbers {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.counter-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 40px;
+}
+
+.counter-unit span {
+    font-family: var(--font-heading);
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: var(--color-lilac);
+    line-height: 1;
+}
+
+.counter-unit small {
+    font-size: 0.55rem;
+    color: var(--color-text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.counter-sep {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--color-lilac);
+    opacity: 0.5;
+    padding-bottom: 4px;
+}
+.counter-pulse {
+    animation: pulso-segundo 0.5s ease;
+}
+
+@keyframes pulso-segundo {
+    0% {
+        transform: scale(1.25);
+        text-shadow: 0 0 12px rgba(201, 167, 245, 0.9);
+    }
+    100% {
+        transform: scale(1);
+        text-shadow: none;
+    }
+}
+body.modal-aberto {
+    overflow: hidden;
 }

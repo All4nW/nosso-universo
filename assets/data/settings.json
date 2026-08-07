@@ -1,0 +1,80 @@
+async function loadSettings() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:3000/api/settings"
+        );
+
+        if (!response.ok) {
+            throw new Error("Erro ao buscar configurações.");
+        }
+
+        const settings = await response.json();
+
+        // =========================
+        // TÍTULO
+        // =========================
+
+        const titulo = document.querySelector(".welcome-title");
+
+        if (titulo) {
+
+            titulo.textContent =
+                settings.tituloSite || "Nosso Universo";
+
+        }
+
+
+        // =========================
+        // FRASE
+        // =========================
+
+        const frase = document.querySelector(".welcome-message");
+
+        if (frase) {
+
+            frase.textContent =
+                settings.frase ||
+                "Um universo criado dos nossos momentos, para lembrarmos juntos, para sempre.";
+
+        }
+
+
+        // =========================
+        // CORES
+        // =========================
+
+        if (settings.corPrincipal) {
+
+            document.documentElement.style.setProperty(
+                "--color-lilac",
+                settings.corPrincipal
+            );
+
+        }
+
+
+        if (settings.corFundo) {
+
+            document.documentElement.style.setProperty(
+                "--color-bg-dark",
+                settings.corFundo
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            error
+        );
+
+    }
+
+}
+
+loadSettings();
