@@ -163,10 +163,22 @@
             <div class="timeline-container" id="timeline-container"></div>
         </section>
 
-        <section class="view" data-view="galeria">
-            <h1>Galeria</h1>
-            <p>Em construção...</p>
-        </section>
+<section class="view" data-view="galeria">
+
+    <h1 class="section-title">Galeria</h1>
+
+    <div id="galeria-pastas" class="galeria-pastas-container"></div>
+
+    <hr class="galeria-divisor">
+
+    <div id="galeria-fotos" class="galeria-fotos-container oculto">
+        <h2 id="galeria-pasta-titulo" class="galeria-pasta-titulo"></h2>
+        <div id="galeria-fotos-lista" class="galeria-fotos-lista"></div>
+    </div>
+
+    <button id="galeria-topo-btn" class="galeria-topo-btn" aria-label="Voltar ao topo">↑</button>
+
+</section>
 
         <section class="view" data-view="cartas">
             <h1>Cartas</h1>
@@ -207,6 +219,7 @@
     <script src="assets/js/intro.js"></script>
     <script src="assets/js/hub-loader.js"></script>
     <script src="assets/js/settings.js"></script>
+    <script src="assets/js/galeria.js"></script>
 
 </body>
 </html>

@@ -41,3 +41,25 @@ function ativarEfeitoClique(elemento) {
         criarExplosaoCoracoes(x, y);
     });
 }
+// Versão do efeito de corações, espalhada ao longo de uma largura —
+// usada quando uma seção inteira "abre" (não só um clique pontual).
+function criarExplosaoCoracoesArea(xCentro, yTopo, largura) {
+    const quantidade = 8;
+
+    for (let i = 0; i < quantidade; i++) {
+        const coracao = document.createElement('span');
+        coracao.className = 'click-heart';
+        coracao.textContent = '♥';
+
+        const xAleatorio = xCentro + (Math.random() - 0.5) * largura;
+        coracao.style.left = `${xAleatorio}px`;
+        coracao.style.top = `${yTopo}px`;
+
+        coracao.style.setProperty('--tx', `${(Math.random() - 0.5) * 40}px`);
+        coracao.style.setProperty('--ty', `${-(Math.random() * 50 + 40)}px`);
+        coracao.style.setProperty('--delay', `${Math.random() * 0.4}s`);
+
+        document.body.appendChild(coracao);
+        coracao.addEventListener('animationend', () => coracao.remove());
+    }
+}

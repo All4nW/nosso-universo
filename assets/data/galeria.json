@@ -1,0 +1,25 @@
+[
+  {
+    "id": "roblox",
+    "nome": "Roblox",
+    "capa": "assets/images/hub/timeline.jpg",
+    "fotos": [
+      { "data": "2025-08-05", "imagem": "assets/images/hub/timeline.jpg", "descricao": "" },
+      { "data": "2025-08-12", "imagem": "assets/images/hub/galeria.jpg", "descricao": "" }
+    ]
+  },
+  {
+    "id": "minecraft",
+    "nome": "Minecraft",
+    "capa": "assets/images/hub/momentos.jpg",
+    "fotos": [
+      { "data": "2025-09-01", "imagem": "assets/images/hub/momentos.jpg", "descricao": "" }
+    ]
+  },
+  {
+    "id": "outros",
+    "nome": "Outros",
+    "capa": "assets/images/hub/cartas.jpg",
+    "fotos": []
+  }
+]

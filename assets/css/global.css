@@ -360,3 +360,6 @@ body {
 body.modal-aberto {
     overflow: hidden;
 }
+.oculto {
+    display: none;
+}
