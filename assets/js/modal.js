@@ -43,7 +43,7 @@ function abrirModal(item) {
     if (!overlay) return;
 
     document.getElementById('modal-titulo').textContent = item.titulo;
-    document.getElementById('modal-data').textContent = formatarData(item.data);
+  document.getElementById('modal-data').textContent = item.dataExibicao || formatarData(item.data);
     document.getElementById('modal-descricao').textContent = item.descricao;
 
     const fotosContainer = document.getElementById('modal-fotos');

@@ -291,6 +291,7 @@
 
 .view[data-view="timeline"] {
     align-items: stretch;
+    justify-content: flex-start;
     overflow-y: auto;
     padding-top: 100px;
     padding-bottom: 100px;
@@ -679,7 +680,7 @@
 
 /* ===== Botão flutuante: voltar ao topo ===== */
 
-.galeria-topo-btn {
+.scroll-topo-btn {
     position: fixed;
     top: var(--spacing-lg);
     right: var(--spacing-lg);
@@ -693,7 +694,75 @@
     transition: var(--transition-smooth);
 }
 
-.galeria-topo-btn:hover {
+.scroll-topo-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
+}
+/* ===== Eventos futuros na timeline ===== */
+
+.timeline-item-futuro .timeline-card {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.4);
+    background: rgba(245, 194, 209, 0.03);
+}
+
+.timeline-item-futuro .timeline-marker {
+    background: var(--color-pink);
+    box-shadow: 0 0 12px rgba(245, 194, 209, 0.7);
+    animation: pulso-marcador-futuro 2s ease-in-out infinite;
+}
+
+@keyframes pulso-marcador-futuro {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+.timeline-badge-futuro {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.7rem;
+    color: var(--color-pink);
+    background: linear-gradient(135deg, rgba(245, 194, 209, 0.15), rgba(201, 167, 245, 0.1));
+    border: 1px solid rgba(245, 194, 209, 0.35);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: var(--spacing-sm);
+    animation: brilho-badge-futuro 3s ease-in-out infinite;
+}
+
+@keyframes brilho-badge-futuro {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(245, 194, 209, 0);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(245, 194, 209, 0.4);
+    }
+}
+/* ===== Selo de quem sugeriu ===== */
+
+.timeline-badge-sugestao {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-bottom: var(--spacing-sm);
+    margin-right: 6px;
+}
+
+.timeline-badge-sugestao-ela {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+.timeline-badge-sugestao-mim {
+    color: #a8c8f0;
+    background: rgba(168, 200, 240, 0.12);
+    border: 1px solid rgba(168, 200, 240, 0.3);
 }

@@ -1,18 +1,55 @@
 [
   {
-    "id": "primeiro-dia",
-    "titulo": "O início de tudo",
+    "id": "inicio-namoro",
+    "titulo": "O início do nosso namoro",
     "data": "2025-08-05",
-    "resumo": "O dia em que nossa história começou.",
-    "descricao": "Aqui você escreve o texto completo desse momento, com todos os detalhes que quiser guardar para sempre.",
-    "fotos": ["assets/images/hub/timeline.jpg"]
+    "resumo": "O dia em que começamos a nossa história juntos.",
+    "descricao": "Escreva aqui os detalhes desse dia especial.",
+    "fotos": []
   },
   {
     "id": "primeira-ligacao",
     "titulo": "Nossa primeira ligação",
-    "data": "2025-08-10",
-    "resumo": "Horas conversando sem perceber o tempo passar.",
-    "descricao": "Descreva aqui como foi essa primeira conversa mais longa.",
+    "data": "2025-08-05",
+    "resumo": "No mesmo dia, nossa primeira conversa por chamada.",
+    "descricao": "Escreva aqui como foi essa primeira ligação.",
+    "fotos": []
+  },
+ {
+    "id": "primeiro-jogo-tower-of-hell",
+    "titulo": "Nosso primeiro jogo: Tower of Hell",
+    "data": "2025-08-15",
+    "dataExibicao": "xx de agosto de 2025",
+    "resumo": "Sugerido por ela, nosso primeiro jogo juntos no Roblox.",
+    "descricao": "Escreva aqui como foi jogar Tower of Hell juntos pela primeira vez.",
+    "sugeridoPor": "ela",
+    "fotos": ["assets/images/timeline/tower-of-hell.jpg"]
+},
+{
+    "id": "primeiro-jogo-altitorture",
+    "titulo": "Nosso primeiro jogo: Altitorture",
+    "data": "2025-08-16",
+    "dataExibicao": "xx de agosto de 2025",
+    "resumo": "Sugerido por mim, outro jogo especial dessa fase inicial.",
+    "descricao": "Escreva aqui como foi jogar Altitorture juntos.",
+    "sugeridoPor": "mim",
+    "fotos": ["assets/images/timeline/altitorture.jpg"]
+},
+  {
+    "id": "um-ano-namoro",
+    "titulo": "1 ano de namoro",
+    "data": "2026-08-05",
+    "resumo": "Completamos nosso primeiro ano juntos.",
+    "descricao": "Escreva aqui sobre esse marco especial.",
+    "fotos": []
+  },
+  {
+    "id": "primeiro-encontro-presencial",
+    "titulo": "Nosso primeiro encontro",
+    "data": "2026-12-01",
+    "dataExibicao": "Dezembro de 2026",
+    "resumo": "O dia em que finalmente vamos nos encontrar pessoalmente.",
+    "descricao": "Um momento que estamos esperando com muita ansiedade e amor.",
     "fotos": []
   }
 ]
