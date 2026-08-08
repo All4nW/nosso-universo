@@ -401,6 +401,12 @@
     .timeline-container::before {
         left: 20px;
     }
+    @media (max-width: 500px) {
+    .hub-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
 
     .timeline-item {
         width: calc(100% - 50px);

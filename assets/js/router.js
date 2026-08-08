@@ -3,19 +3,17 @@
 // Isso é o "coração" da navegação sem reload de página.
 
 function mostrarView(nomeDaView) {
-    // Pega TODAS as seções marcadas como "view"
     const todasAsViews = document.querySelectorAll('.view');
 
-    // Esconde todas...
     todasAsViews.forEach(view => {
         view.classList.remove('view-ativa');
     });
 
-    // ...e mostra só a que foi pedida
     const viewAlvo = document.querySelector(`[data-view="${nomeDaView}"]`);
 
     if (viewAlvo) {
         viewAlvo.classList.add('view-ativa');
+        viewAlvo.scrollTop = 0; // sempre começa do topo ao entrar na seção
     } else {
         console.warn(`View "${nomeDaView}" não encontrada.`);
     }

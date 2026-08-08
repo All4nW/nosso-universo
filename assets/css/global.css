@@ -363,3 +363,10 @@ body.modal-aberto {
 .oculto {
     display: none;
 }
+css
+@media (max-width: 500px) {
+    .live-counter {
+        transform: translateX(-50%) scale(0.8);
+        bottom: var(--spacing-sm);
+    }
+}
