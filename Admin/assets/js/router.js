@@ -12,57 +12,112 @@ async function loadPage(page) {
 
     try {
 
-        const pageContent = document.getElementById("page-content");
+        const pageContent =
+            document.getElementById("page-content");
 
-        const response = await fetch(routes[page]);
+        const response =
+            await fetch(routes[page]);
 
-        const html = await response.text();
+        const html =
+            await response.text();
 
-        pageContent.innerHTML = html;
+        pageContent.innerHTML =
+            html;
 
-        // Atualiza o menu ativo
-        document.querySelectorAll(".sidebar-link").forEach(link => {
-            link.classList.remove("sidebar-link-ativo");
 
-            if (link.dataset.page === page) {
-                link.classList.add("sidebar-link-ativo");
-            }
-        });
+        // =========================
+        // SALVAR PÁGINA ATUAL
+        // =========================
 
-        // Executa scripts específicos da página
+        sessionStorage.setItem(
+            "adminPaginaAtual",
+            page
+        );
+
+
+        // =========================
+        // MENU ATIVO
+        // =========================
+
+        document
+            .querySelectorAll(".sidebar-link")
+            .forEach(link => {
+
+                link.classList.remove(
+                    "sidebar-link-ativo"
+                );
+
+                if (
+                    link.dataset.page === page
+                ) {
+
+                    link.classList.add(
+                        "sidebar-link-ativo"
+                    );
+
+                }
+
+            });
+
+
+        // =========================
+        // SCRIPTS DAS PÁGINAS
+        // =========================
+
         switch (page) {
 
             case "configuracoes":
-                await initSettings();
+
+                if (window.initSettings) {
+                    await initSettings();
+                }
+
                 break;
+
 
             case "timeline":
-                if (window.initTimeline)
-                    initTimeline();
+
+                if (window.initTimeline) {
+                    await initTimeline();
+                }
+
                 break;
+
 
             case "galeria":
-                if (window.initGallery)
-                    initGallery();
+
+                if (window.initGallery) {
+                    await initGallery();
+                }
+
                 break;
+
 
             case "cartas":
-                if (window.initLetters)
-                    initLetters();
+
+                if (window.initLetters) {
+                    await initLetters();
+                }
+
                 break;
+
 
             case "musicas":
-                if (window.initSongs)
-                    initSongs();
+
+                if (window.initSongs) {
+                    await initSongs();
+                }
+
                 break;
 
+
             case "estrelas":
-                if (window.initStars)
-                    initStars();
+
+                if (window.initStars) {
+                    await initStars();
+                }
+
                 break;
-                case "configuracoes":
-    await initSettings();
-    break;
 
         }
 
@@ -70,13 +125,20 @@ async function loadPage(page) {
 
     catch (erro) {
 
-        console.error(erro);
+        console.error(
+            "Erro ao carregar página:",
+            erro
+        );
 
-        document.getElementById("page-content").innerHTML =
+        document.getElementById(
+            "page-content"
+        ).innerHTML =
             "<h2>Erro ao carregar página.</h2>";
 
     }
 
 }
 
-window.loadPage = loadPage;
+
+window.loadPage =
+    loadPage;

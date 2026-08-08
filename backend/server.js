@@ -1,32 +1,101 @@
 const express = require("express");
-
-const db = require("./database/database");
+const cors = require("cors");
+const path = require("path");
 
 require("./database/initDatabase");
 
-const cors = require("cors");
+const settingsRoutes =
+    require("./routes/settings");
 
-const settingsRoutes = require("./routes/settings");
+const adminRoutes =
+    require("./routes/admin");
 
-const adminRoutes = require("./routes/admin");
+const timelineRoutes =
+    require("./routes/timeline");
 
-const app = express();
 
-app.use(cors());
+const app =
+    express();
+
 
 const PORT = 3000;
 
-app.use(express.json());
 
-app.use("/admin", adminRoutes);
+// =====================================================
+// MIDDLEWARE
+// =====================================================
 
-app.use("/api/settings", settingsRoutes);
+app.use(cors());
 
-app.get("/", (req, res) => {
-    res.send("Backend do Nosso Universo ❤️");
-});
+app.use(
+    express.json()
+);
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
 
+// =====================================================
+// UPLOADS
+// =====================================================
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(
+            __dirname,
+            "uploads"
+        )
+    )
+);
+
+
+// =====================================================
+// ROTAS
+// =====================================================
+
+app.use(
+    "/admin",
+    adminRoutes
+);
+
+
+app.use(
+    "/api/settings",
+    settingsRoutes
+);
+
+
+app.use(
+    "/api/timeline",
+    timelineRoutes
+);
+
+
+// =====================================================
+// TESTE
+// =====================================================
+
+app.get(
+    "/",
+    (req, res) => {
+
+        res.send(
+            "Backend do Nosso Universo ❤️"
+        );
+
+    }
+);
+
+
+// =====================================================
+// SERVIDOR
+// =====================================================
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `❤️ Servidor rodando em http://localhost:${PORT}`
+        );
+
+    }
+);

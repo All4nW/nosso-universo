@@ -1,3 +1,343 @@
-<h2>Timeline</h2>
+<div class="page-header">
 
-<p>Em desenvolvimento...</p>
+    <h2 class="page-header-titulo">
+        Timeline
+    </h2>
+
+    <p class="page-header-subtitulo">
+        Gerencie os momentos da história de vocês.
+    </p>
+
+</div>
+
+
+<div class="timeline-admin-topo">
+
+    <button
+        type="button"
+        id="btn-novo-momento"
+        class="settings-botao settings-botao-primario">
+
+        ＋ Adicionar momento
+
+    </button>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- FORMULÁRIO -->
+<!-- ============================= -->
+
+<section
+    id="timeline-formulario"
+    class="settings-card timeline-admin-formulario"
+    style="display:none;"
+>
+
+    <div class="settings-card-header">
+
+        <span class="settings-card-icone">
+            ❤️
+        </span>
+
+        <div>
+
+            <h3
+                id="timeline-form-titulo"
+                class="settings-card-titulo"
+            >
+                Novo momento
+            </h3>
+
+            <p class="settings-card-descricao">
+                Adicione um novo capítulo da história.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-card-corpo">
+
+
+        <div class="settings-field">
+
+            <label class="settings-label">
+                Título
+            </label>
+
+            <input
+                type="text"
+                id="timeline-titulo"
+                class="settings-input"
+                placeholder="Ex: Nosso primeiro encontro"
+            >
+
+        </div>
+
+
+        <div class="settings-field-linha">
+
+            <div class="settings-field">
+
+                <label class="settings-label">
+                    Data
+                </label>
+
+                <input
+                    type="date"
+                    id="timeline-data"
+                    class="settings-input"
+                >
+
+            </div>
+
+
+            <div class="settings-field">
+
+                <label class="settings-label">
+                    Horário
+                    <span>(opcional)</span>
+                </label>
+
+                <input
+                    type="time"
+                    id="timeline-hora"
+                    class="settings-input"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="settings-field">
+
+            <label class="settings-label">
+                Resumo
+            </label>
+
+            <input
+                type="text"
+                id="timeline-resumo"
+                class="settings-input"
+                placeholder="Uma frase curta sobre esse momento"
+            >
+
+        </div>
+
+
+        <div class="settings-field">
+
+            <label class="settings-label">
+                Descrição
+            </label>
+
+            <textarea
+                id="timeline-descricao"
+                class="settings-textarea"
+                rows="5"
+                placeholder="Conte todos os detalhes desse momento..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="settings-field-linha">
+
+
+            <div class="settings-field">
+
+                <label class="settings-label">
+                    Tipo
+                </label>
+
+                <select
+                    id="timeline-tipo"
+                    class="settings-input"
+                >
+
+                    <option value="">
+                        Sem tipo
+                    </option>
+
+                    <option value="Marco">
+                        Marco
+                    </option>
+
+                    <option value="Momento">
+                        Momento
+                    </option>
+
+                    <option value="Jogo">
+                        Jogo
+                    </option>
+
+                    <option value="Encontro">
+                        Encontro
+                    </option>
+
+                    <option value="Sonho">
+                        Sonho
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="settings-field">
+
+                <label class="settings-label">
+                    Categoria
+                </label>
+
+                <input
+                    type="text"
+                    id="timeline-categoria"
+                    class="settings-input"
+                    placeholder="Ex: Relacionamento, Roblox..."
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="settings-field">
+
+            <label class="settings-label">
+                Sugerido por
+            </label>
+
+            <select
+                id="timeline-sugerido"
+                class="settings-input"
+            >
+
+                <option value="">
+                    Ninguém
+                </option>
+
+                <option value="ela">
+                    💗 Ela
+                </option>
+
+                <option value="mim">
+                    💙 Eu
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- FOTO -->
+
+        <div class="settings-field">
+
+            <label class="settings-label">
+                Foto
+            </label>
+
+            <input
+                type="file"
+                id="timeline-foto"
+                class="settings-input"
+                accept="image/*"
+            >
+
+            <div
+                id="timeline-foto-atual"
+                class="timeline-foto-atual"
+            ></div>
+
+        </div>
+
+
+        <!-- ATIVO -->
+
+        <label class="timeline-switch">
+
+            <input
+                type="checkbox"
+                id="timeline-ativo"
+                checked
+            >
+
+            <span></span>
+
+            <strong>
+                Mostrar na Timeline
+            </strong>
+
+        </label>
+
+
+        <div class="settings-acoes-rodape">
+
+            <button
+                type="button"
+                id="timeline-btn-cancelar"
+                class="settings-botao settings-botao-secundario"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="button"
+                id="timeline-btn-salvar"
+                class="settings-botao settings-botao-primario"
+            >
+                Salvar momento
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- LISTA -->
+<!-- ============================= -->
+
+<section class="settings-card timeline-admin-lista">
+
+    <div class="settings-card-header">
+
+        <span class="settings-card-icone">
+            📅
+        </span>
+
+        <div>
+
+            <h3 class="settings-card-titulo">
+                Seus momentos
+            </h3>
+
+            <p class="settings-card-descricao">
+                Arraste os momentos para alterar a ordem.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="timeline-admin-itens"
+        class="timeline-admin-itens"
+    >
+
+        <div class="timeline-admin-vazio">
+            Carregando momentos...
+        </div>
+
+    </div>
+
+</section>

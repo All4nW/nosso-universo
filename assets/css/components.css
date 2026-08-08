@@ -772,3 +772,24 @@
     background: rgba(168, 200, 240, 0.12);
     border: 1px solid rgba(168, 200, 240, 0.3);
 }
+.admin-link {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: calc(var(--spacing-lg) + 112px);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+}
+
+.admin-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+}

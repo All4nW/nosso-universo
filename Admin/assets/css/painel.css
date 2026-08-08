@@ -628,3 +628,304 @@ body {
     color: var(--painel-texto);
     background: var(--painel-vidro);
 }
+/* =========================================
+   TIMELINE ADMIN
+   ========================================= */
+
+.timeline-admin-topo {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.timeline-admin-formulario {
+    margin-bottom: 20px;
+}
+
+.timeline-admin-lista {
+    margin-top: 20px;
+}
+
+.timeline-admin-itens {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timeline-admin-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid var(--painel-borda);
+
+    border-radius: 12px;
+
+    cursor: grab;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.timeline-admin-item:hover {
+    background: rgba(255, 255, 255, 0.045);
+
+    border-color:
+        rgba(201, 167, 245, 0.35);
+}
+
+.timeline-admin-item:active {
+    cursor: grabbing;
+}
+
+.timeline-admin-dragging {
+    opacity: 0.45;
+
+    transform: scale(0.98);
+}
+
+.timeline-admin-drag-over {
+    border-color:
+        var(--painel-lilac);
+
+    box-shadow:
+        0 0 20px
+        rgba(201, 167, 245, 0.15);
+}
+
+.timeline-admin-arrastar {
+    width: 24px;
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 1.2rem;
+
+    letter-spacing: -4px;
+
+    user-select: none;
+}
+
+.timeline-admin-thumb {
+    width: 72px;
+    height: 58px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    border:
+        1px solid var(--painel-borda);
+}
+
+.timeline-admin-thumb-vazio {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.4rem;
+
+    background:
+        rgba(201, 167, 245, 0.08);
+
+    color:
+        var(--painel-lilac);
+}
+
+.timeline-admin-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.timeline-admin-data {
+    font-size: 0.68rem;
+
+    color:
+        var(--painel-lilac);
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    margin-bottom: 3px;
+}
+
+.timeline-admin-info h3 {
+    margin: 0;
+
+    color:
+        var(--painel-texto);
+
+    font-family:
+        var(--painel-font-heading);
+
+    font-size: 0.95rem;
+}
+
+.timeline-admin-info p {
+    margin: 4px 0 0;
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 0.75rem;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.timeline-admin-tags {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-top: 7px;
+}
+
+.timeline-admin-tags span {
+    padding: 3px 7px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 0.62rem;
+}
+
+.timeline-admin-tags .ativo {
+    color: #a8e6b0;
+}
+
+.timeline-admin-tags .inativo {
+    color: #e8a8a8;
+}
+
+.timeline-admin-acoes {
+    display: flex;
+
+    gap: 6px;
+}
+
+.timeline-admin-btn {
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid var(--painel-borda);
+
+    border-radius: 7px;
+
+    background: transparent;
+
+    color:
+        var(--painel-texto-muted);
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.timeline-admin-btn:hover {
+    background:
+        rgba(255,255,255,0.06);
+
+    color:
+        var(--painel-texto);
+}
+
+.timeline-admin-excluir:hover {
+    color: #ff8f8f;
+
+    border-color:
+        rgba(255,100,100,0.3);
+}
+
+.timeline-admin-vazio {
+    padding: 35px;
+
+    text-align: center;
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 0.85rem;
+}
+
+.timeline-foto-atual {
+    margin-top: 8px;
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 0.72rem;
+}
+
+.timeline-foto-atual img {
+    display: block;
+
+    width: 100px;
+    height: 70px;
+
+    object-fit: cover;
+
+    margin-top: 7px;
+
+    border-radius: 7px;
+
+    border:
+        1px solid var(--painel-borda);
+}
+
+.timeline-switch {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color:
+        var(--painel-texto-muted);
+
+    font-size: 0.8rem;
+
+    cursor: pointer;
+}
+
+.timeline-switch input {
+    accent-color:
+        var(--painel-lilac);
+}
+
+@media (max-width: 600px) {
+
+    .timeline-admin-item {
+        align-items: flex-start;
+    }
+
+    .timeline-admin-thumb {
+        width: 55px;
+        height: 50px;
+    }
+
+    .timeline-admin-acoes {
+        flex-direction: column;
+    }
+
+}

@@ -18,6 +18,35 @@ ativarEfeitoClique(document.querySelector('.home-link'));
         console.error('Erro ao carregar o navbar:', erro);
     }
 }
+async function carregarNavbar() {
+    const placeholder = document.getElementById('navbar-placeholder');
+    if (!placeholder) return;
+
+    try {
+        const resposta = await fetch('components/navbar.html');
+        const html = await resposta.text();
+        placeholder.innerHTML = html;
+
+        ativarComportamentoDoSom();
+        ativarEfeitoClique(document.getElementById('sound-toggle'));
+        ativarEfeitoClique(document.querySelector('.home-link'));
+
+        mostrarLinkAdminSeLocal(); // NOVO
+    } catch (erro) {
+        console.error('Erro ao carregar o navbar:', erro);
+    }
+}
+
+// Mostra o link do painel administrativo apenas quando o site
+// está rodando localmente (seu PC) — nunca na versão pública do GitHub Pages.
+function mostrarLinkAdminSeLocal() {
+    const ehLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const linkAdmin = document.getElementById('admin-link');
+
+    if (ehLocal && linkAdmin) {
+        linkAdmin.classList.remove('oculto');
+    }
+}
 
 function ativarComportamentoDoSom() {
     const botaoSom = document.getElementById('sound-toggle');
