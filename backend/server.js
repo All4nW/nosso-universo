@@ -13,6 +13,9 @@ const adminRoutes =
 const timelineRoutes =
     require("./routes/timeline");
 
+const musicRoutes =
+    require("./routes/music");
+
 
 const app =
     express();
@@ -66,6 +69,12 @@ app.use(
 app.use(
     "/api/timeline",
     timelineRoutes
+);
+
+
+app.use(
+    "/api/music",
+    musicRoutes
 );
 
 

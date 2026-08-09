@@ -1,9 +1,9 @@
 // ========================================
 // TIMELINE — SITE PRINCIPAL
 // ========================================
-// Os dados vêm do SQLite através da API.
-// Endpoint público:
-// http://localhost:3000/api/timeline
+// Tenta buscar os dados ao vivo da API (SQLite via backend).
+// Se a API não responder (backend desligado, ou site publicado
+// no GitHub Pages), usa assets/data/timeline.json como plano B.
 // ========================================
 
 
@@ -18,6 +18,9 @@ async function carregarTimeline() {
     }
 
 
+    let itens;
+
+
     try {
 
         const resposta =
@@ -25,69 +28,81 @@ async function carregarTimeline() {
                 "http://localhost:3000/api/timeline"
             );
 
-
         if (!resposta.ok) {
+            throw new Error("API indisponível.");
+        }
 
-            throw new Error(
-                "Erro ao buscar timeline."
-            );
+        itens = await resposta.json();
+
+    }
+
+    catch (erroApi) {
+
+        console.warn(
+            "API indisponível, usando timeline.json como backup:",
+            erroApi
+        );
+
+        try {
+
+            const respostaBackup =
+                await fetch("assets/data/timeline.json");
+
+            itens = await respostaBackup.json();
 
         }
 
+        catch (erroBackup) {
 
-        const itens =
-            await resposta.json();
-
-
-        container.innerHTML = "";
-
-
-        if (!Array.isArray(itens) || itens.length === 0) {
+            console.error(
+                "Erro ao carregar Timeline (API e backup falharam):",
+                erroBackup
+            );
 
             container.innerHTML = `
                 <div class="timeline-vazio">
-                    Ainda não existem momentos na nossa história. ❤️
+                    Não foi possível carregar nossa Timeline. ❤️
                 </div>
             `;
 
             return;
+
         }
-
-
-        itens.forEach(
-            (item, indice) => {
-
-                const elemento =
-                    criarItemTimeline(
-                        item,
-                        indice
-                    );
-
-
-                container.appendChild(
-                    elemento
-                );
-
-            }
-        );
 
     }
 
-    catch (erro) {
 
-        console.error(
-            "Erro ao carregar Timeline:",
-            erro
-        );
+    container.innerHTML = "";
 
+
+    if (!Array.isArray(itens) || itens.length === 0) {
 
         container.innerHTML = `
             <div class="timeline-vazio">
-                Não foi possível carregar nossa Timeline. ❤️
+                Ainda não existem momentos na nossa história. ❤️
             </div>
         `;
 
+        return;
     }
+
+
+    itens.forEach(
+        (item, indice) => {
+
+            const elemento =
+                criarItemTimeline(
+                    item,
+                    indice
+                );
+
+
+            container.appendChild(
+                elemento
+            );
+
+        }
+    );
 
 }
 
@@ -115,15 +130,16 @@ function criarItemTimeline(
         `timeline-item timeline-item-${lado}`;
 
 
+    // Aceita tanto o formato novo da API (item.foto, singular)
+    // quanto o formato antigo do JSON estático (item.fotos, array)
     const primeiraFoto =
-        item.foto || null;
+        item.foto ||
+        (item.fotos && item.fotos[0]) ||
+        null;
 
 
-    const textoData =
-        formatarDataTimeline(
-            item.data,
-            item.hora
-        );
+const textoData =
+        formatarDataTimeline(item);
 
 
     const ehFuturo =
@@ -295,21 +311,27 @@ function verificarSeEhFuturo(
 // ========================================
 
 function formatarDataTimeline(
-    data,
-    hora
+    item
 ) {
 
-    if (!data) {
+    // Se existir um texto customizado (ex: "Dezembro de 2026"),
+    // usa ele em vez de calcular a data exata.
+    if (item.dataExibicao) {
+        return item.dataExibicao;
+    }
+
+
+    if (!item.data) {
         return "";
     }
 
 
     const partes =
-        data.split("-");
+        item.data.split("-");
 
 
     if (partes.length !== 3) {
-        return data;
+        return item.data;
     }
 
 
@@ -332,10 +354,10 @@ function formatarDataTimeline(
         );
 
 
-    if (hora) {
+    if (item.hora) {
 
         resultado +=
-            ` • ${hora}`;
+            ` • ${item.hora}`;
 
     }
 

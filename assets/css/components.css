@@ -788,6 +788,9 @@
     font-size: 1.1rem;
     transition: var(--transition-smooth);
 }
+.admin-link.oculto {
+    display: none;
+}
 
 .admin-link:hover {
     background: rgba(255, 255, 255, 0.1);
