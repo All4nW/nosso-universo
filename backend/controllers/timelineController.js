@@ -4,6 +4,9 @@ const Timeline =
 const crypto =
     require("crypto");
 
+const fs = require("fs");
+const path = require("path");
+
 
 // =====================================================
 // GET
@@ -328,6 +331,85 @@ exports.reorderTimeline = async (req, res) => {
 
             error:
                 "Erro ao reordenar timeline."
+
+        });
+
+    }
+
+};
+
+
+// =====================================================
+// EXPORTAR PARA O SITE (gera o timeline.json estático)
+// =====================================================
+
+exports.exportarTimeline = async (req, res) => {
+
+    try {
+
+        const itens =
+            await Timeline.getTimeline(false); // só os ativos
+
+
+        const dadosExportados =
+            itens.map((item) => ({
+
+                id: item.id,
+                titulo: item.titulo,
+                data: item.data,
+                hora: item.hora || undefined,
+                resumo: item.resumo,
+                descricao: item.descricao,
+                sugeridoPor: item.sugeridoPor || undefined,
+
+                dataExibicao:
+                    item.temDataExata === 0
+                        ? item.dataTexto
+                        : undefined,
+
+                fotos:
+                    item.foto ? [item.foto] : []
+
+            }));
+
+
+        const caminhoDestino =
+            path.join(
+                __dirname,
+                "../../assets/data/timeline.json"
+            );
+
+
+        fs.writeFileSync(
+            caminhoDestino,
+            JSON.stringify(dadosExportados, null, 2),
+            "utf-8"
+        );
+
+
+        res.json({
+
+            success: true,
+
+            quantidade:
+                dadosExportados.length
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "Erro ao exportar Timeline:",
+            err
+        );
+
+
+        res.status(500).json({
+
+            error:
+                "Erro ao exportar timeline."
 
         });
 

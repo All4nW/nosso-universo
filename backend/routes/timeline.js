@@ -98,11 +98,16 @@ const upload =
 // =====================================================
 // ROTAS
 // =====================================================
+router.get(
+    "/exportar",
+    controller.exportarTimeline
+);
 
 router.get(
     "/",
     controller.getTimeline
 );
+
 
 
 router.post(

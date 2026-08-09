@@ -4,7 +4,7 @@
     "titulo": "O início do nosso namoro",
     "data": "2025-08-05",
     "resumo": "O dia em que começamos a nossa história juntos.",
-    "descricao": "Escreva aqui os detalhes desse dia especial.",
+    "descricao": "O dia que mudou as nossas vidas. O dia que tudo começou.",
     "fotos": []
   },
   {
@@ -12,44 +12,53 @@
     "titulo": "Nossa primeira ligação",
     "data": "2025-08-05",
     "resumo": "No mesmo dia, nossa primeira conversa por chamada.",
-    "descricao": "Escreva aqui como foi essa primeira ligação.",
+    "descricao": "",
     "fotos": []
   },
- {
+  {
     "id": "primeiro-jogo-tower-of-hell",
     "titulo": "Nosso primeiro jogo: Tower of Hell",
-    "data": "2025-08-15",
-    "dataExibicao": "xx de agosto de 2025",
+    "data": "2025-08-03",
     "resumo": "Sugerido por ela, nosso primeiro jogo juntos no Roblox.",
-    "descricao": "Escreva aqui como foi jogar Tower of Hell juntos pela primeira vez.",
+    "descricao": "Eu burrinho tentando subir enquanto ela me dava aulas.",
     "sugeridoPor": "ela",
-    "fotos": ["assets/images/timeline/tower-of-hell.jpg"]
-},
-{
+    "fotos": [
+      "assets/images/timeline/tower-of-hell.jpg"
+    ]
+  },
+  {
     "id": "primeiro-jogo-altitorture",
     "titulo": "Nosso primeiro jogo: Altitorture",
-    "data": "2025-08-16",
-    "dataExibicao": "xx de agosto de 2025",
+    "data": "2025-08-03",
     "resumo": "Sugerido por mim, outro jogo especial dessa fase inicial.",
-    "descricao": "Escreva aqui como foi jogar Altitorture juntos.",
+    "descricao": "Uma loucura eu ter apresentado esse jogo para ela. Um jogo para quem tem paciëncia, para alguem que nao tem.",
     "sugeridoPor": "mim",
-    "fotos": ["assets/images/timeline/altitorture.jpg"]
-},
+    "fotos": [
+      "assets/images/timeline/altitorture.jpg"
+    ]
+  },
   {
     "id": "um-ano-namoro",
     "titulo": "1 ano de namoro",
     "data": "2026-08-05",
     "resumo": "Completamos nosso primeiro ano juntos.",
-    "descricao": "Escreva aqui sobre esse marco especial.",
+    "descricao": "Depois de tantas coisas que passamos, brigas, discussoes, decepçoes e varios momentos onde estávamos decidindo terminar tudo, mas, uma força maior nao deixava isso acontecer indiretamente. Talvez o fato de termos sido destinado um para o outro? 1 ano de muitos que temos pela frente. <3",
     "fotos": []
   },
   {
     "id": "primeiro-encontro-presencial",
     "titulo": "Nosso primeiro encontro",
-    "data": "2026-12-01",
-    "dataExibicao": "Dezembro de 2026",
+    "data": "2026-12-22",
     "resumo": "O dia em que finalmente vamos nos encontrar pessoalmente.",
-    "descricao": "Um momento que estamos esperando com muita ansiedade e amor.",
+    "descricao": "Volto aqui para contar como foi. hihi ",
+    "fotos": []
+  },
+  {
+    "id": "7c872d98-d93f-4f90-a13b-bc665a08818d",
+    "titulo": "teste",
+    "data": "9333-03-12",
+    "resumo": "teste",
+    "descricao": "errrr",
     "fotos": []
   }
 ]

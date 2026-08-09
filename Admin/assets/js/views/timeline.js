@@ -328,7 +328,18 @@ function registrarEventosTimeline() {
         document.getElementById(
             "timeline-btn-salvar"
         );
+    const sincronizar =
+        document.getElementById(
+            "btn-sincronizar-timeline"
+        );
 
+
+    if (sincronizar) {
+
+        sincronizar.onclick =
+            sincronizarTimeline;
+
+    }
 
     // --------------------------------------
     // NOVO
@@ -884,6 +895,10 @@ async function salvarMomento() {
 // EXCLUIR
 // ======================================================
 
+// ======================================================
+// EXCLUIR
+// ======================================================
+
 async function excluirMomento(id) {
 
     const item =
@@ -938,6 +953,56 @@ async function excluirMomento(id) {
 
         alert(
             "Erro ao excluir momento."
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// SINCRONIZAR COM O SITE
+// ======================================================
+
+async function sincronizarTimeline() {
+
+    try {
+
+        const resposta =
+            await fetch(
+                "http://localhost:3000/api/timeline/exportar"
+            );
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                `HTTP ${resposta.status}`
+            );
+
+        }
+
+
+        const resultado =
+            await resposta.json();
+
+
+        alert(
+            `✅ Timeline sincronizada! ${resultado.quantidade} momentos exportados.\n\nAgora é só fazer o commit/push para publicar.`
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "[TIMELINE ADMIN] Erro ao sincronizar:",
+            erro
+        );
+
+
+        alert(
+            "❌ Não foi possível sincronizar com o site."
         );
 
     }
