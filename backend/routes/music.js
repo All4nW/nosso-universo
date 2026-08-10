@@ -100,6 +100,12 @@ const upload =
 // =====================================================
 
 router.get(
+    "/exportar",
+    controller.exportarMusic
+);
+
+
+router.get(
     "/",
     controller.getMusic
 );

@@ -54,7 +54,6 @@
 
                 </label>
 
-
                 <div class="settings-color-picker">
 
                     <input
@@ -167,243 +166,167 @@
 
 
 
-<!-- ============================= -->
-<!-- MÚSICA -->
-<!-- ============================= -->
+    <!-- ============================= -->
+    <!-- MÚSICA -->
+    <!-- ============================= -->
 
-<section class="settings-card">
+    <section class="settings-card">
 
-    <div class="settings-card-header">
+        <div class="settings-card-header">
 
-        <span class="settings-card-icone">🎵</span>
+            <span class="settings-card-icone">🎵</span>
 
-        <div>
+            <div>
 
-            <h3 class="settings-card-titulo">
-                Música de fundo
-            </h3>
+                <h3 class="settings-card-titulo">
+                    Música de fundo
+                </h3>
 
-            <p class="settings-card-descricao">
-                Gerencie as músicas que tocam durante a experiência.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="settings-card-corpo">
-
-
-        <!-- Upload -->
-
-        <div
-            id="area-upload-musica"
-            class="settings-upload-area">
-
-            <span class="settings-upload-icone">
-                📤
-            </span>
-
-            <p class="settings-upload-texto">
-
-                Clique para adicionar uma música
-
-            </p>
-
-            <span class="settings-upload-arquivo-atual">
-
-                MP3, WAV ou OGG
-
-            </span>
-
-            <input
-                type="file"
-                id="input-musica"
-                accept="audio/*"
-                hidden
-            >
-
-        </div>
-
-
-        <!-- Mini formulário (aparece ao escolher arquivo ou editar) -->
-
-        <div
-            id="musica-formulario"
-            class="settings-card"
-            style="display:none; margin-top: 14px;"
-        >
-
-            <div class="settings-field">
-
-                <label class="settings-label">
-                    Nome da música
-                </label>
-
-                <input
-                    type="text"
-                    id="musica-titulo"
-                    class="settings-input"
-                    placeholder="Ex: Perfect"
-                >
+                <p class="settings-card-descricao">
+                    Gerencie as músicas que tocam durante a experiência.
+                </p>
 
             </div>
 
+        </div>
+
+
+        <div class="settings-card-corpo">
+
+
+            <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;">
+                <button type="button" id="btn-sincronizar-musicas" class="settings-botao settings-botao-secundario">
+                    🔄 Sincronizar com o site
+                </button>
+            </div>
+
+
+            <!-- Upload -->
 
             <div
-                id="musica-arquivo-atual"
-                class="timeline-foto-atual"
-            ></div>
+                id="area-upload-musica"
+                class="settings-upload-area">
 
+                <span class="settings-upload-icone">
+                    📤
+                </span>
 
-            <div class="settings-field-linha" style="margin-top: 10px;">
+                <p class="settings-upload-texto">
 
-                <div class="settings-field">
+                    Clique para adicionar uma música
 
-                    <label class="settings-label">
-                        Começar em (segundos)
-                    </label>
+                </p>
 
-                    <input
-                        type="number"
-                        id="musica-inicio"
-                        class="settings-input"
-                        min="0"
-                        value="0"
-                    >
+                <span class="settings-upload-arquivo-atual">
 
-                </div>
+                    MP3, WAV ou OGG
 
-
-                <div class="settings-field">
-
-                    <label class="settings-label">
-                        Volume desta música (%)
-                    </label>
-
-                    <input
-                        type="range"
-                        id="musica-volume"
-                        min="0"
-                        max="100"
-                        value="80"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <label class="timeline-switch" style="margin-top: 12px;">
+                </span>
 
                 <input
-                    type="checkbox"
-                    id="musica-ativa"
-                    checked
+                    type="file"
+                    id="input-musica"
+                    accept="audio/*"
+                    hidden
                 >
-
-                <span></span>
-
-                <strong>
-                    Ativa na playlist
-                </strong>
-
-            </label>
-
-
-            <div class="settings-acoes-rodape">
-
-                <button
-                    type="button"
-                    id="musica-btn-cancelar"
-                    class="settings-botao settings-botao-secundario"
-                >
-                    Cancelar
-                </button>
-
-                <button
-                    type="button"
-                    id="musica-btn-salvar"
-                    class="settings-botao settings-botao-primario"
-                >
-                    Salvar música
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- Lista -->
-
-        <div class="musicas-lista">
-
-            <div class="musicas-lista-cabecalho">
-
-                <span>
-                    Suas músicas
-                </span>
-
-                <span id="contador-musicas">
-                    0 músicas
-                </span>
 
             </div>
 
 
-            <div id="lista-musicas">
+            <!-- Mini formulário (aparece ao escolher arquivo ou editar) -->
 
-                <div class="musicas-vazia">
+            <div
+                id="musica-formulario"
+                class="settings-card"
+                style="display:none; margin-top: 14px;"
+            >
 
-                    🎵
+                <div class="settings-field">
+                    <label class="settings-label">Nome da música</label>
+                    <input type="text" id="musica-titulo" class="settings-input" placeholder="Ex: Perfect">
+                </div>
 
-                    <p>
-                        Nenhuma música adicionada ainda.
-                    </p>
+                <div id="musica-arquivo-atual" class="timeline-foto-atual"></div>
+
+                <div class="settings-field" style="margin-top: 10px;">
+                    <label class="settings-label">Pré-visualizar / cortar</label>
+                    <audio id="musica-audio-preview" controls style="width: 100%;"></audio>
+                </div>
+
+                <div class="settings-field-linha" style="margin-top: 10px;">
+
+                    <div class="settings-field">
+                        <label class="settings-label">Começar em (segundos)</label>
+                        <input type="number" id="musica-inicio" class="settings-input" min="0" value="0">
+                    </div>
+
+                    <div class="settings-field">
+                        <label class="settings-label">Terminar em (segundos)</label>
+                        <input type="number" id="musica-fim" class="settings-input" min="0" value="0" placeholder="0 = até o fim">
+                    </div>
+
+                </div>
+
+                <label class="timeline-switch" style="margin-top: 12px;">
+                    <input type="checkbox" id="musica-ativa" checked>
+                    <span></span>
+                    <strong>Ativa na playlist</strong>
+                </label>
+
+                <div class="settings-acoes-rodape">
+                    <button type="button" id="musica-btn-cancelar" class="settings-botao settings-botao-secundario">Cancelar</button>
+                    <button type="button" id="musica-btn-salvar" class="settings-botao settings-botao-primario">Salvar música</button>
+                </div>
+
+            </div>
+
+
+            <!-- Lista -->
+
+            <div class="musicas-lista">
+
+                <div class="musicas-lista-cabecalho">
+
+                    <span>
+                        Suas músicas
+                    </span>
+
+                    <span id="contador-musicas">
+                        0 músicas
+                    </span>
+
+                </div>
+
+
+                <div id="lista-musicas">
+
+                    <div class="musicas-vazia">
+
+                        🎵
+
+                        <p>
+                            Nenhuma música adicionada ainda.
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
-
-
-
-        <!-- Configurações globais -->
-
-        <div class="settings-field">
-
-            <label
-                class="settings-label"
-                for="campo-volume">
-
-                Volume padrão do site
-
-            </label>
-
-            <input
-                type="range"
-                id="campo-volume"
-                min="0"
-                max="100"
-                value="30"
-            >
 
         </div>
 
+    </section>
 
-    </div>
-
-</section>
 </div>
+
 
 <!-- ============================= -->
 <!-- AÇÕES -->
 <!-- ============================= -->
 
 <div class="settings-acoes-rodape">
-    </div>
 
     <button
         type="button"

@@ -4,6 +4,9 @@ const Music =
 const crypto =
     require("crypto");
 
+const fs = require("fs");
+const path = require("path");
+
 
 // =====================================================
 // GET
@@ -87,6 +90,9 @@ exports.createMusic = async (req, res) => {
 
             inicioSegundos:
                 Number(req.body.inicioSegundos) || 0,
+
+            fimSegundos:
+                Number(req.body.fimSegundos) || 0,
 
             volume:
                 Number(req.body.volume) || 80,
@@ -178,6 +184,9 @@ exports.updateMusic = async (req, res) => {
             inicioSegundos:
                 Number(req.body.inicioSegundos) || 0,
 
+            fimSegundos:
+                Number(req.body.fimSegundos) || 0,
+
             volume:
                 Number(req.body.volume) || 80,
 
@@ -215,6 +224,65 @@ exports.updateMusic = async (req, res) => {
                 err.message ||
                 "Erro ao atualizar música."
 
+        });
+
+    }
+
+};
+
+
+// =====================================================
+// EXPORTAR PARA O SITE (gera o music.json estático)
+// =====================================================
+
+exports.exportarMusic = async (req, res) => {
+
+    try {
+
+        const itens =
+            await Music.getMusic(false); // só as ativas
+
+
+        const dadosExportados =
+            itens.map((item) => ({
+
+                id: item.id,
+                titulo: item.titulo,
+                arquivo: item.arquivo,
+                inicioSegundos: item.inicioSegundos || 0,
+                fimSegundos: item.fimSegundos || 0,
+                volume: item.volume || 80
+
+            }));
+
+
+        const caminhoDestino =
+            path.join(
+                __dirname,
+                "../../assets/data/music.json"
+            );
+
+
+        fs.writeFileSync(
+            caminhoDestino,
+            JSON.stringify(dadosExportados, null, 2),
+            "utf-8"
+        );
+
+
+        res.json({
+            success: true,
+            quantidade: dadosExportados.length
+        });
+
+    }
+
+    catch (err) {
+
+        console.error("Erro ao exportar Music:", err);
+
+        res.status(500).json({
+            error: "Erro ao exportar músicas."
         });
 
     }

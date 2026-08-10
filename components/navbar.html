@@ -1,5 +1,28 @@
 <a href="#hub" class="home-link" aria-label="Voltar ao universo">✦</a>
 
-<button id="sound-toggle" class="sound-toggle" aria-label="Ativar ou desativar música">🔇</button>
+<div class="player-container">
+
+    <button id="sound-toggle" class="sound-toggle" aria-label="Player de música">🎵</button>
+
+    <div id="player-popup" class="player-popup oculto">
+
+        <span id="player-titulo" class="player-titulo">—</span>
+
+        <div class="player-controles">
+            <button id="player-anterior" class="player-botao" aria-label="Anterior">⏮</button>
+            <button id="player-play-pause" class="player-botao player-botao-principal" aria-label="Tocar/Pausar">▶</button>
+            <button id="player-proximo" class="player-botao" aria-label="Próxima">⏭</button>
+        </div>
+
+        <div class="player-volume-linha">
+            <button id="player-mute" class="player-botao-volume" aria-label="Mutar">🔊</button>
+            <button id="player-vol-menos" class="player-botao-volume" aria-label="Diminuir volume">−</button>
+            <span id="player-volume-valor" class="player-volume-texto">25%</span>
+            <button id="player-vol-mais" class="player-botao-volume" aria-label="Aumentar volume">+</button>
+        </div>
+
+    </div>
+
+</div>
 
 <a href="/admin/index.html" id="admin-link" class="admin-link oculto" aria-label="Painel administrativo" target="_blank">⚙</a>

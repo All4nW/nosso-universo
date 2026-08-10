@@ -99,13 +99,14 @@ function createMusicItem(data) {
                     titulo,
                     arquivo,
                     inicioSegundos,
+                    fimSegundos,
                     volume,
                     ordem,
                     ativo
 
                 )
 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `,
 
             [
@@ -113,25 +114,15 @@ function createMusicItem(data) {
                 data.titulo,
                 data.arquivo,
                 data.inicioSegundos || 0,
+                data.fimSegundos || 0,
                 data.volume || 80,
                 data.ordem || 999999,
                 data.ativo ? 1 : 0
             ],
 
             function (err) {
-
-                if (err) {
-
-                    reject(err);
-
-                } else {
-
-                    resolve({
-                        id: data.id
-                    });
-
-                }
-
+                if (err) reject(err);
+                else resolve({ id: data.id });
             }
 
         );
@@ -159,6 +150,7 @@ function updateMusicItem(id, data) {
                     titulo = ?,
                     arquivo = ?,
                     inicioSegundos = ?,
+                    fimSegundos = ?,
                     volume = ?,
                     ativo = ?
 
@@ -169,23 +161,15 @@ function updateMusicItem(id, data) {
                 data.titulo,
                 data.arquivo,
                 data.inicioSegundos || 0,
+                data.fimSegundos || 0,
                 data.volume || 80,
                 data.ativo ? 1 : 0,
                 id
             ],
 
             function (err) {
-
-                if (err) {
-
-                    reject(err);
-
-                } else {
-
-                    resolve();
-
-                }
-
+                if (err) reject(err);
+                else resolve();
             }
 
         );

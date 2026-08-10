@@ -250,6 +250,15 @@ function iniciarGerenciadorMusicas() {
 
         });
 
+
+    const sincronizar =
+        document.getElementById("btn-sincronizar-musicas");
+
+    if (sincronizar) {
+
+        sincronizar.onclick = sincronizarMusicas;
+
+    }
     }
 
 
@@ -402,11 +411,12 @@ function renderizarMusicas() {
                     ${escaparHtmlMusica(item.titulo)}
                 </span>
 
-                <span class="musica-item-duracao">
-                    Início: ${formatarSegundos(item.inicioSegundos)} •
-                    Volume: ${item.volume}% •
-                    ${item.ativo ? "Ativa" : "Oculta"}
-                </span>
+<span class="musica-item-duracao">
+    Início: ${formatarSegundos(item.inicioSegundos)}
+    ${item.fimSegundos ? `• Fim: ${formatarSegundos(item.fimSegundos)}` : ""} •
+    Volume: ${item.volume}% •
+    ${item.ativo ? "Ativa" : "Oculta"}
+</span>
 
             </div>
 
@@ -435,17 +445,23 @@ function renderizarMusicas() {
 
 function abrirFormularioMusica(tituloSugerido) {
 
-    document.getElementById("musica-titulo").value =
-        tituloSugerido || "";
-
+    document.getElementById("musica-titulo").value = tituloSugerido || "";
     document.getElementById("musica-inicio").value = 0;
-    document.getElementById("musica-volume").value = 80;
+    document.getElementById("musica-fim").value = 0;
     document.getElementById("musica-ativa").checked = true;
 
     document.getElementById("musica-arquivo-atual").innerHTML =
         musicaArquivoSelecionado
             ? `Arquivo selecionado: ${musicaArquivoSelecionado.name}`
             : "";
+
+    const preview = document.getElementById("musica-audio-preview");
+
+    if (musicaArquivoSelecionado) {
+        preview.src = URL.createObjectURL(musicaArquivoSelecionado);
+    } else {
+        preview.src = "";
+    }
 
     document.getElementById("musica-formulario").style.display = "block";
 
@@ -465,9 +481,7 @@ function fecharFormularioMusica() {
 
 function editarMusica(id) {
 
-    const item =
-        musicasAdmin.find((m) => m.id === id);
-
+    const item = musicasAdmin.find((m) => m.id === id);
     if (!item) return;
 
     musicaEditandoId = id;
@@ -475,11 +489,14 @@ function editarMusica(id) {
 
     document.getElementById("musica-titulo").value = item.titulo;
     document.getElementById("musica-inicio").value = item.inicioSegundos;
-    document.getElementById("musica-volume").value = item.volume;
+    document.getElementById("musica-fim").value = item.fimSegundos || 0;
     document.getElementById("musica-ativa").checked = Boolean(item.ativo);
 
     document.getElementById("musica-arquivo-atual").innerHTML =
         `Arquivo atual mantido (escolha um novo arquivo acima só se quiser trocar).`;
+
+    const preview = document.getElementById("musica-audio-preview");
+    preview.src = `http://localhost:3000${item.arquivo}`;
 
     document.getElementById("musica-formulario").style.display = "block";
 
@@ -509,9 +526,9 @@ async function salvarMusica() {
     const formulario = new FormData();
 
     formulario.append("titulo", titulo);
-    formulario.append("inicioSegundos", document.getElementById("musica-inicio").value);
-    formulario.append("volume", document.getElementById("musica-volume").value);
     formulario.append("ativo", document.getElementById("musica-ativa").checked);
+    formulario.append("inicioSegundos", document.getElementById("musica-inicio").value);
+    formulario.append("fimSegundos", document.getElementById("musica-fim").value);
 
     if (musicaArquivoSelecionado) {
         formulario.append("arquivo", musicaArquivoSelecionado);
@@ -594,9 +611,7 @@ let audioPreviaAtual = null;
 
 function tocarPreviaMusica(id, botao) {
 
-    const item =
-        musicasAdmin.find((m) => m.id === id);
-
+    const item = musicasAdmin.find((m) => m.id === id);
     if (!item) return;
 
     if (audioPreviaAtual && !audioPreviaAtual.paused) {
@@ -606,14 +621,25 @@ function tocarPreviaMusica(id, botao) {
         return;
     }
 
-    audioPreviaAtual =
-        new Audio(`http://localhost:3000${item.arquivo}`);
-
+    audioPreviaAtual = new Audio(`http://localhost:3000${item.arquivo}`);
     audioPreviaAtual.currentTime = item.inicioSegundos || 0;
     audioPreviaAtual.volume = (item.volume || 80) / 100;
     audioPreviaAtual.play();
 
     botao.textContent = "⏸";
+
+    if (item.fimSegundos > 0) {
+
+        audioPreviaAtual.addEventListener("timeupdate", () => {
+
+            if (audioPreviaAtual.currentTime >= item.fimSegundos) {
+                audioPreviaAtual.pause();
+                botao.textContent = "▶";
+            }
+
+        });
+
+    }
 
     audioPreviaAtual.addEventListener("ended", () => {
         botao.textContent = "▶";
@@ -759,6 +785,34 @@ function escaparHtmlMusica(texto) {
         .replaceAll("'", "&#039;");
 
 }
+// ======================================================
+// SINCRONIZAR COM O SITE
+// ======================================================
 
+async function sincronizarMusicas() {
+
+    try {
+
+        const resposta =
+            await fetch("http://localhost:3000/api/music/exportar");
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+
+        const resultado = await resposta.json();
+
+        alert(
+            `✅ Músicas sincronizadas! ${resultado.quantidade} exportadas.\n\nAgora é só fazer o commit/push para publicar.`
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error("[MUSICAS ADMIN] Erro ao sincronizar:", erro);
+        alert("❌ Não foi possível sincronizar com o site.");
+
+    }
+
+}
 
 window.initSettings = initSettings;

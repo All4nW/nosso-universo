@@ -34,16 +34,74 @@ function mostrarLinkAdminSeLocal() {
 
 function ativarComportamentoDoSom() {
     const botaoSom = document.getElementById('sound-toggle');
+    const popup = document.getElementById('player-popup');
+    const tituloEl = document.getElementById('player-titulo');
+    const btnPlayPause = document.getElementById('player-play-pause');
+    const btnAnterior = document.getElementById('player-anterior');
+    const btnProximo = document.getElementById('player-proximo');
+    const btnMute = document.getElementById('player-mute');
+    const btnVolMenos = document.getElementById('player-vol-menos');
+    const btnVolMais = document.getElementById('player-vol-mais');
+    const volumeTexto = document.getElementById('player-volume-valor');
+
     if (!botaoSom) return;
 
     let playlist = [];
     let indiceAtual = 0;
     let audio = new Audio();
     let tocando = false;
+    let mutado = false;
+
+    // Volume global (0 a 1), padrão 25%. Guardado no navegador para lembrar entre visitas.
+    let volumeAtual =
+        parseFloat(localStorage.getItem('nossoUniversoVolume')) || 0.25;
+
+    function aplicarVolume() {
+        audio.volume = mutado ? 0 : volumeAtual;
+
+        if (volumeTexto) {
+            volumeTexto.textContent = `${Math.round(volumeAtual * 100)}%`;
+        }
+
+        if (btnMute) {
+            btnMute.textContent = mutado ? '🔇' : '🔊';
+        }
+    }
+
+    function ajustarVolume(delta) {
+        volumeAtual = Math.min(1, Math.max(0, volumeAtual + delta));
+        localStorage.setItem('nossoUniversoVolume', volumeAtual);
+        if (mutado && volumeAtual > 0) mutado = false;
+        aplicarVolume();
+    }
+
+    function alternarMute() {
+        mutado = !mutado;
+        aplicarVolume();
+    }
+
+    function atualizarTitulo() {
+        if (tituloEl && playlist.length) {
+            tituloEl.textContent = playlist[indiceAtual].titulo || 'Sem título';
+        }
+    }
+
+    function atualizarBotaoPlayPause() {
+        if (btnPlayPause) {
+            btnPlayPause.textContent = tocando ? '⏸' : '▶';
+        }
+        botaoSom.textContent = tocando ? '🔊' : '🎵';
+    }
+
+    audio.addEventListener('timeupdate', () => {
+        const musica = playlist[indiceAtual];
+        if (musica && musica.fimSegundos > 0 && audio.currentTime >= musica.fimSegundos) {
+            proximaFaixa();
+        }
+    });
 
     audio.addEventListener('ended', () => {
-        indiceAtual = (indiceAtual + 1) % playlist.length;
-        tocarFaixaAtual();
+        proximaFaixa();
     });
 
     function tocarFaixaAtual() {
@@ -55,17 +113,31 @@ function ativarComportamentoDoSom() {
             ? musica.arquivo
             : `http://localhost:3000${musica.arquivo}`;
 
-        audio.volume = (musica.volume || 80) / 100;
+        aplicarVolume();
 
         audio.addEventListener('loadedmetadata', () => {
             audio.currentTime = musica.inicioSegundos || 0;
         }, { once: true });
 
+        atualizarTitulo();
+
         if (tocando) {
             audio.play().catch(() => {
-                console.warn('Não foi possível tocar a próxima faixa.');
+                console.warn('Não foi possível tocar a faixa.');
             });
         }
+    }
+
+    function proximaFaixa() {
+        if (!playlist.length) return;
+        indiceAtual = (indiceAtual + 1) % playlist.length;
+        tocarFaixaAtual();
+    }
+
+    function faixaAnterior() {
+        if (!playlist.length) return;
+        indiceAtual = (indiceAtual - 1 + playlist.length) % playlist.length;
+        tocarFaixaAtual();
     }
 
     async function carregarPlaylist() {
@@ -77,27 +149,26 @@ function ativarComportamentoDoSom() {
             playlist = dados.filter(m => m.ativo);
 
         } catch (erro) {
-            console.warn('API de música indisponível, usando trilha estática como backup:', erro);
+            console.warn('API de música indisponível, tentando music.json:', erro);
 
-            // Plano B: áudio estático, se existir
-            playlist = [{
-                arquivo: 'assets/audio/trilha.mp3',
-                volume: 30,
-                inicioSegundos: 12
-            }];
+            try {
+                const respostaBackup = await fetch('assets/data/music.json');
+                playlist = await respostaBackup.json();
+            } catch {
+                playlist = [];
+            }
         }
 
         if (playlist.length) {
-            tocarFaixaAtual();
+            atualizarTitulo();
         }
     }
 
-    function alternarSom() {
+    function alternarPlayPause() {
         if (!playlist.length) return;
 
         if (tocando) {
             audio.pause();
-            botaoSom.textContent = '🔇';
             tocando = false;
         } else {
             tocando = true;
@@ -106,30 +177,43 @@ function ativarComportamentoDoSom() {
                 tocarFaixaAtual();
             } else {
                 audio.play().catch(() => {
-                    console.warn('Áudio indisponível ou bloqueado pelo navegador.');
+                    console.warn('Áudio bloqueado pelo navegador.');
                 });
             }
-
-            botaoSom.textContent = '🔊';
         }
+
+        atualizarBotaoPlayPause();
     }
 
     carregarPlaylist();
 
+    botaoSom.addEventListener('click', (evento) => {
+        evento.stopPropagation();
+        popup.classList.toggle('oculto');
+    });
+
+    document.addEventListener('click', (evento) => {
+        if (popup && !popup.contains(evento.target) && evento.target !== botaoSom) {
+            popup.classList.add('oculto');
+        }
+    });
+
+    if (btnPlayPause) btnPlayPause.addEventListener('click', (e) => { e.stopPropagation(); alternarPlayPause(); });
+    if (btnProximo) btnProximo.addEventListener('click', (e) => { e.stopPropagation(); proximaFaixa(); });
+    if (btnAnterior) btnAnterior.addEventListener('click', (e) => { e.stopPropagation(); faixaAnterior(); });
+    if (btnMute) btnMute.addEventListener('click', (e) => { e.stopPropagation(); alternarMute(); });
+    if (btnVolMenos) btnVolMenos.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(-0.1); });
+    if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
+
     const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
     function primeiraInteracao() {
-        if (!tocando) alternarSom();
+        if (!tocando && playlist.length) alternarPlayPause();
         eventosDeInteracao.forEach(ev => window.removeEventListener(ev, primeiraInteracao));
     }
 
     eventosDeInteracao.forEach(ev => {
         window.addEventListener(ev, primeiraInteracao, { once: true, passive: true });
-    });
-
-    botaoSom.addEventListener('click', (evento) => {
-        evento.stopPropagation();
-        alternarSom();
     });
 
     botaoSom.classList.add('sound-toggle-glow');
