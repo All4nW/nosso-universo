@@ -1,3 +1,109 @@
-<h2>Timeline</h2>
+<div class="page-header">
+    <h2 class="page-header-titulo">Galeria</h2>
+    <p class="page-header-subtitulo">Gerencie as pastas e fotos da galeria.</p>
+</div>
 
-<p>Em desenvolvimento...</p>
+<div class="timeline-admin-topo">
+    <button type="button" id="btn-sincronizar-galeria" class="settings-botao settings-botao-secundario">🔄 Sincronizar com o site</button>
+    <button type="button" id="btn-nova-pasta" class="settings-botao settings-botao-primario">＋ Nova pasta</button>
+</div>
+
+<!-- Formulário de pasta -->
+<section id="pasta-formulario" class="settings-card timeline-admin-formulario" style="display:none;">
+    <div class="settings-card-header">
+        <span class="settings-card-icone">📁</span>
+        <div>
+            <h3 id="pasta-form-titulo" class="settings-card-titulo">Nova pasta</h3>
+            <p class="settings-card-descricao">Ex: Roblox, Minecraft, Outros...</p>
+        </div>
+    </div>
+
+    <div class="settings-card-corpo">
+        <div class="settings-field">
+            <label class="settings-label">Nome da pasta</label>
+            <input type="text" id="pasta-nome" class="settings-input" placeholder="Ex: Roblox">
+        </div>
+
+        <div class="settings-field">
+            <label class="settings-label">Capa</label>
+            <input type="file" id="pasta-capa" class="settings-input" accept="image/*">
+            <div id="pasta-capa-atual" class="timeline-foto-atual"></div>
+        </div>
+
+        <label class="timeline-switch">
+            <input type="checkbox" id="pasta-ativa" checked>
+            <span></span>
+            <strong>Visível na galeria</strong>
+        </label>
+
+        <div class="settings-acoes-rodape">
+            <button type="button" id="pasta-btn-cancelar" class="settings-botao settings-botao-secundario">Cancelar</button>
+            <button type="button" id="pasta-btn-salvar" class="settings-botao settings-botao-primario">Salvar pasta</button>
+        </div>
+    </div>
+</section>
+
+<!-- Lista de pastas -->
+<section class="settings-card timeline-admin-lista">
+    <div class="settings-card-header">
+        <span class="settings-card-icone">🖼</span>
+        <div>
+            <h3 class="settings-card-titulo">Suas pastas</h3>
+            <p class="settings-card-descricao">Clique numa pasta para gerenciar as fotos dela.</p>
+        </div>
+    </div>
+
+    <div id="pastas-admin-itens" class="timeline-admin-itens">
+        <div class="timeline-admin-vazio">Carregando pastas...</div>
+    </div>
+</section>
+
+<!-- Fotos da pasta selecionada -->
+<section id="fotos-secao" class="settings-card timeline-admin-lista" style="display:none; margin-top: 20px;">
+    <div class="settings-card-header">
+        <span class="settings-card-icone">📸</span>
+        <div>
+            <h3 id="fotos-pasta-nome" class="settings-card-titulo">Fotos</h3>
+            <p class="settings-card-descricao">Fotos desta pasta.</p>
+        </div>
+    </div>
+
+    <div class="timeline-admin-topo">
+        <button type="button" id="btn-voltar-pastas" class="settings-botao settings-botao-secundario">← Voltar às pastas</button>
+        <button type="button" id="btn-nova-foto" class="settings-botao settings-botao-primario">＋ Adicionar foto</button>
+    </div>
+
+    <!-- Formulário de foto -->
+    <div id="foto-formulario" class="settings-card timeline-admin-formulario" style="display:none;">
+        <div class="settings-card-corpo">
+            <div class="settings-field">
+                <label class="settings-label">Imagem</label>
+                <input type="file" id="foto-imagem" class="settings-input" accept="image/*">
+                <div id="foto-imagem-atual" class="timeline-foto-atual"></div>
+            </div>
+
+            <div class="settings-field">
+                <label class="settings-label">Data</label>
+                <input type="date" id="foto-data" class="settings-input">
+            </div>
+
+            <div class="settings-field">
+                <label class="settings-label">Descrição (opcional)</label>
+                <input type="text" id="foto-descricao" class="settings-input" placeholder="Legenda curta">
+            </div>
+
+            <label class="timeline-switch">
+                <input type="checkbox" id="foto-ativa" checked>
+                <span></span>
+                <strong>Visível na galeria</strong>
+            </label>
+
+            <div class="settings-acoes-rodape">
+                <button type="button" id="foto-btn-cancelar" class="settings-botao settings-botao-secundario">Cancelar</button>
+                <button type="button" id="foto-btn-salvar" class="settings-botao settings-botao-primario">Salvar foto</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fotos-admin-itens" class="timeline-admin-itens"></div>
+</section>

@@ -16,6 +16,8 @@ const timelineRoutes =
 const musicRoutes =
     require("./routes/music");
 
+    const galeriaRoutes = require("./routes/galeria");
+
 
 const app =
     express();
@@ -76,6 +78,8 @@ app.use(
     "/api/music",
     musicRoutes
 );
+
+app.use("/api/galeria", galeriaRoutes);
 
 
 // =====================================================
