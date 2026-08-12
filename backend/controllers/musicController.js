@@ -243,12 +243,43 @@ exports.exportarMusic = async (req, res) => {
             await Music.getMusic(false); // só as ativas
 
 
+        const pastaDestinoAudio =
+            path.join(__dirname, "../../assets/audio");
+
+        if (!fs.existsSync(pastaDestinoAudio)) {
+            fs.mkdirSync(pastaDestinoAudio, { recursive: true });
+        }
+
+
+        // Copia um arquivo de backend/uploads/music para assets/audio,
+        // e devolve o novo caminho relativo (ou o original, se já for estático).
+        function copiarECaminhoLocal(caminhoOriginal) {
+
+            if (!caminhoOriginal) return "";
+
+            if (!caminhoOriginal.startsWith("/uploads/music/")) {
+                return caminhoOriginal;
+            }
+
+            const nomeArquivo = path.basename(caminhoOriginal);
+            const origem = path.join(__dirname, "../uploads/music", nomeArquivo);
+            const destino = path.join(pastaDestinoAudio, nomeArquivo);
+
+            if (fs.existsSync(origem)) {
+                fs.copyFileSync(origem, destino);
+            }
+
+            return `assets/audio/${nomeArquivo}`;
+
+        }
+
+
         const dadosExportados =
             itens.map((item) => ({
 
                 id: item.id,
                 titulo: item.titulo,
-                arquivo: item.arquivo,
+                arquivo: copiarECaminhoLocal(item.arquivo),
                 inicioSegundos: item.inicioSegundos || 0,
                 fimSegundos: item.fimSegundos || 0,
                 volume: item.volume || 80
@@ -257,10 +288,7 @@ exports.exportarMusic = async (req, res) => {
 
 
         const caminhoDestino =
-            path.join(
-                __dirname,
-                "../../assets/data/music.json"
-            );
+            path.join(__dirname, "../../assets/data/music.json");
 
 
         fs.writeFileSync(

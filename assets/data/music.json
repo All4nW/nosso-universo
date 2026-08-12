@@ -2,7 +2,7 @@
   {
     "id": "64d14c06-0d4c-4fc1-849f-1b1e5ef32aed",
     "titulo": "Purple Rain",
-    "arquivo": "/uploads/music/1786382129043-756500976.mp3",
+    "arquivo": "assets/audio/1786382129043-756500976.mp3",
     "inicioSegundos": 0,
     "fimSegundos": 227,
     "volume": 80
@@ -10,7 +10,7 @@
   {
     "id": "c8d245a5-4a3f-43fe-81f8-fb27f7e58320",
     "titulo": "I Thought I Saw Your Face Today",
-    "arquivo": "/uploads/music/1786296886744-782869942.mp3",
+    "arquivo": "assets/audio/1786296886744-782869942.mp3",
     "inicioSegundos": 0,
     "fimSegundos": 0,
     "volume": 80
@@ -18,7 +18,7 @@
   {
     "id": "93458cd3-60e1-4441-b09c-d7ddf15e5246",
     "titulo": "Stand By Me - Ben E. King",
-    "arquivo": "/uploads/music/1786244515730-758922345.mp3",
+    "arquivo": "assets/audio/1786244515730-758922345.mp3",
     "inicioSegundos": 0,
     "fimSegundos": 0,
     "volume": 80
@@ -26,7 +26,7 @@
   {
     "id": "dd6c69a8-7a9a-4b61-8b50-9f754d67efee",
     "titulo": "Meddle About - Chase Atlantic",
-    "arquivo": "/uploads/music/1786243506093-347736336.mp3",
+    "arquivo": "assets/audio/1786243506093-347736336.mp3",
     "inicioSegundos": 12,
     "fimSegundos": 0,
     "volume": 80
@@ -34,7 +34,7 @@
   {
     "id": "64f8305b-0ac3-4daa-9089-0b3bbcf6ffd5",
     "titulo": "I love you Babyyyyyy",
-    "arquivo": "/uploads/music/1786244242258-875667711.mp3",
+    "arquivo": "assets/audio/1786244242258-875667711.mp3",
     "inicioSegundos": 80,
     "fimSegundos": 0,
     "volume": 80
@@ -42,7 +42,7 @@
   {
     "id": "6a5afce2-d70a-40b1-be9c-9f68e856dd2d",
     "titulo": "Carry on Wayward Son",
-    "arquivo": "/uploads/music/1786296203300-324992328.mp3",
+    "arquivo": "assets/audio/1786296203300-324992328.mp3",
     "inicioSegundos": 0,
     "fimSegundos": 167,
     "volume": 80

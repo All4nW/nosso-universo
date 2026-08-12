@@ -31,6 +31,12 @@ function mostrarLinkAdminSeLocal() {
         linkAdmin.classList.remove('oculto');
     }
 }
+function resolverCaminhoAudio(caminho) {
+    if (!caminho) return '';
+    if (caminho.startsWith('http://') || caminho.startsWith('https://')) return caminho;
+    if (caminho.startsWith('/uploads/')) return `http://localhost:3000${caminho}`;
+    return caminho;
+}
 
 function ativarComportamentoDoSom() {
     const botaoSom = document.getElementById('sound-toggle');
@@ -104,14 +110,12 @@ function ativarComportamentoDoSom() {
         proximaFaixa();
     });
 
-    function tocarFaixaAtual() {
+function tocarFaixaAtual() {
         if (!playlist.length) return;
 
         const musica = playlist[indiceAtual];
 
-        audio.src = musica.arquivo.startsWith('http')
-            ? musica.arquivo
-            : `http://localhost:3000${musica.arquivo}`;
+        audio.src = resolverCaminhoAudio(musica.arquivo);
 
         aplicarVolume();
 

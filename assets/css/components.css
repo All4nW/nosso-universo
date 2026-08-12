@@ -633,6 +633,12 @@
     margin-bottom: var(--spacing-lg);
     text-align: center;
 }
+@media (max-width: 600px) {
+    .galeria-fotos-lista {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+}
 
 .galeria-fotos-lista {
     display: grid;
