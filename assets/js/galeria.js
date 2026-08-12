@@ -302,6 +302,17 @@ function configurarCarrossel() {
 
 function abrirPasta(pasta) {
 
+    // Sempre reinicia a rolagem no topo da seção,
+    // independente de onde a pessoa estava rolada antes.
+    const viewGaleria =
+        document.querySelector(
+            '.view[data-view="galeria"]'
+        );
+
+    if (viewGaleria) {
+        viewGaleria.scrollTop = 0;
+    }
+
     const pastas =
         document.getElementById(
             "galeria-pastas"
@@ -531,7 +542,7 @@ function garantirVisualizador() {
             >
 
 
-            <div class="foto-visualizador-legenda">
+<div class="foto-visualizador-legenda">
 
                 <span
                     id="foto-viz-pasta"
@@ -544,9 +555,13 @@ function garantirVisualizador() {
                     class="foto-visualizador-data"
                 ></div>
 
-            </div>
 
-        </div>
+                <p
+                    id="foto-viz-descricao"
+                    class="foto-visualizador-descricao"
+                ></p>
+
+            </div>
 
     `;
 
@@ -774,10 +789,38 @@ function atualizarVisualizador() {
     }
 
 
-    if (data) {
+ if (data) {
 
         data.textContent =
             formatarData(foto.data);
+
+    }
+
+
+    const descricao =
+        document.getElementById(
+            "foto-viz-descricao"
+        );
+
+
+    if (descricao) {
+
+        if (foto.descricao) {
+
+            descricao.textContent =
+                foto.descricao;
+
+            descricao.style.display =
+                "block";
+
+        }
+
+        else {
+
+            descricao.style.display =
+                "none";
+
+        }
 
     }
 

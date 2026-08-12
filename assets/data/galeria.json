@@ -1,66 +1,233 @@
 [
   {
     "id": "b3a9d259-4295-46ec-8404-f667efd094b2",
-    "nome": "teste",
-    "capa": "assets/images/galeria/1786421040636-398559452.png",
+    "nome": "Roblox",
+    "capa": "assets/images/galeria/1786487177212-733503748.jpg",
     "fotos": [
       {
-        "data": "2012-12-12",
-        "imagem": "assets/images/galeria/1786420987333-538075751.jpeg",
-        "descricao": "teste"
+        "data": "2026-01-14",
+        "imagem": "assets/images/galeria/1786488407717-294671555.png",
+        "descricao": ""
       },
       {
-        "data": "2222-02-22",
+        "data": "2026-01-14",
+        "imagem": "assets/images/galeria/1786488474581-674088269.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-02-01",
+        "imagem": "assets/images/galeria/1786491973056-256109482.png",
+        "descricao": "Jogando MM2 hihi"
+      },
+      {
+        "data": "2026-02-12",
+        "imagem": "assets/images/galeria/1786494639273-734736657.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-02-16",
+        "imagem": "assets/images/galeria/1786494506313-196274924.png",
+        "descricao": "Ela me dando beijinhos"
+      },
+      {
+        "data": "2026-02-16",
+        "imagem": "assets/images/galeria/1786494593080-253535081.png",
+        "descricao": "A gente jogando Bingo"
+      },
+      {
+        "data": "2026-02-16",
+        "imagem": "assets/images/galeria/1786494617896-216261051.png",
+        "descricao": "Ela toda fofinha"
+      },
+      {
+        "data": "2026-03-02",
+        "imagem": "assets/images/galeria/1786494482008-797713701.png",
+        "descricao": "A skin dela é tao lindinha"
+      },
+      {
+        "data": "2026-05-07",
+        "imagem": "assets/images/galeria/1786488670172-233745596.png",
+        "descricao": "A gente no meu joguinho de cassino 🥰"
+      },
+      {
+        "data": "2026-05-12",
+        "imagem": "assets/images/galeria/1786488620021-30682532.png",
+        "descricao": "A gente titindo TV na nossa casinha do BloxBurg 🥰"
+      },
+      {
+        "data": "2026-05-17",
+        "imagem": "assets/images/galeria/1786488540942-68482156.png",
+        "descricao": "A gente no meu joguinho de cassino"
+      },
+      {
+        "data": "2026-06-18",
+        "imagem": "assets/images/galeria/1786494543921-443217702.png",
+        "descricao": "Ela sempre com as skins fofas dela"
+      },
+      {
+        "data": "2026-06-18",
+        "imagem": "assets/images/galeria/1786494562449-347637309.png",
+        "descricao": "Nós juntinhos escondidos"
+      },
+      {
+        "data": "2026-08-02",
         "imagem": "assets/images/galeria/1786486701814-413857373.jpg",
-        "descricao": "teste"
+        "descricao": "Nossa primeira skinzinha combinando"
       },
       {
-        "data": "2222-04-23",
-        "imagem": "assets/images/galeria/1786486716499-611377278.jpeg",
-        "descricao": "testeste"
+        "data": "2026-08-02",
+        "imagem": "assets/images/galeria/1786488311230-371095627.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-08-02",
+        "imagem": "assets/images/galeria/1786488330388-734302948.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-08-02",
+        "imagem": "assets/images/galeria/1786488344293-848779707.png",
+        "descricao": ""
       }
     ]
   },
   {
     "id": "86473f13-7dd1-4c4e-af4a-d7de95a73344",
-    "nome": "treste",
-    "capa": "assets/images/galeria/1786486626936-392984072.jpg",
-    "fotos": []
-  },
-  {
-    "id": "c51b40af-9dbb-4c0c-b7c2-20b01d992bf1",
-    "nome": "testes",
-    "capa": "assets/images/galeria/1786486633227-66659917.jpeg",
-    "fotos": []
+    "nome": "Minecraft",
+    "capa": "assets/images/galeria/1786487776622-569370456.png",
+    "fotos": [
+      {
+        "data": "2025-12-08",
+        "imagem": "assets/images/galeria/1786490983718-199320043.png",
+        "descricao": "Nossa primeira casinha no Minecraft 😊"
+      },
+      {
+        "data": "2025-12-09",
+        "imagem": "assets/images/galeria/1786491032000-320855886.png",
+        "descricao": "O lugar que construiríamos várias coisinhas futuramente."
+      },
+      {
+        "data": "2025-12-12",
+        "imagem": "assets/images/galeria/1786491070847-310698054.png",
+        "descricao": "Meu amorzinho derrubando montanhas pela gente <3 KAKAKAAK"
+      },
+      {
+        "data": "2025-12-16",
+        "imagem": "assets/images/galeria/1786491107607-732173163.png",
+        "descricao": "Nosso futuro mundinho tomando forma"
+      },
+      {
+        "data": "2025-12-19",
+        "imagem": "assets/images/galeria/1786492128159-852024844.png",
+        "descricao": "Eu sendo fofo com ela"
+      },
+      {
+        "data": "2025-12-20",
+        "imagem": "assets/images/galeria/1786492177839-775980158.png",
+        "descricao": "Eu apanhando dela"
+      },
+      {
+        "data": "2025-12-31",
+        "imagem": "assets/images/galeria/1786492224112-909773464.png",
+        "descricao": ""
+      },
+      {
+        "data": "2025-12-31",
+        "imagem": "assets/images/galeria/1786492269505-737329313.png",
+        "descricao": "Nosso mundinho bem já avançado"
+      },
+      {
+        "data": "2025-12-31",
+        "imagem": "assets/images/galeria/1786492900042-624002075.png",
+        "descricao": "NOSSA PRIMEIRA VIRADA DE ANO JUNTINHOS E NO MINE"
+      },
+      {
+        "data": "2026-01-01",
+        "imagem": "assets/images/galeria/1786492948065-376770647.png",
+        "descricao": "O primeiro print juntinhos de 2026. 🥰"
+      },
+      {
+        "data": "2026-01-01",
+        "imagem": "assets/images/galeria/1786493041078-88172636.png",
+        "descricao": "A MihSumiu"
+      },
+      {
+        "data": "2026-01-09",
+        "imagem": "assets/images/galeria/1786492984216-802678013.png",
+        "descricao": "Nós matando o EnderDragon pela primeira vez no nosso mundinho."
+      },
+      {
+        "data": "2026-01-09",
+        "imagem": "assets/images/galeria/1786493389017-810641251.png",
+        "descricao": "A gente depois de ter matado o Dragon."
+      },
+      {
+        "data": "2026-01-10",
+        "imagem": "assets/images/galeria/1786493433168-600541979.png",
+        "descricao": "Nosso mundinho bem avançado"
+      },
+      {
+        "data": "2026-01-15",
+        "imagem": "assets/images/galeria/1786489064317-655686928.png",
+        "descricao": "Eu amo tanto a MihSumiu"
+      },
+      {
+        "data": "2026-01-15",
+        "imagem": "assets/images/galeria/1786489092044-125978677.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-01-16",
+        "imagem": "assets/images/galeria/1786493613855-713096300.png",
+        "descricao": "A Megzinha"
+      },
+      {
+        "data": "2026-02-21",
+        "imagem": "assets/images/galeria/1786494373649-274987419.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-03-01",
+        "imagem": "assets/images/galeria/1786494443497-609053141.png",
+        "descricao": "Ela construindo a nossa nova casinha"
+      },
+      {
+        "data": "2026-04-01",
+        "imagem": "assets/images/galeria/1786493007799-462165100.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-05-09",
+        "imagem": "assets/images/galeria/1786487813935-444273991.png",
+        "descricao": "Nossa fontinha juntos na nossa nova casinha."
+      },
+      {
+        "data": "2026-05-09",
+        "imagem": "assets/images/galeria/1786494411336-812994019.png",
+        "descricao": ""
+      }
+    ]
   },
   {
     "id": "dcfc926d-4466-417a-8585-a33f0d734707",
-    "nome": "test",
-    "capa": "assets/images/galeria/1786486638802-766422831.jpg",
-    "fotos": []
-  },
-  {
-    "id": "4950aa7d-111f-4392-853d-5870c6b783fa",
-    "nome": "tedt",
-    "capa": "assets/images/galeria/1786486645573-756780992.jpg",
-    "fotos": []
-  },
-  {
-    "id": "93000292-6c53-4456-bae6-31d22bd4cb41",
-    "nome": "testes",
-    "capa": "assets/images/galeria/1786486651467-33960468.jpg",
-    "fotos": []
-  },
-  {
-    "id": "708543bd-d7db-40b5-a76c-258e46108959",
-    "nome": "teste",
-    "capa": "assets/images/galeria/1786486656339-543486388.jpg",
-    "fotos": []
-  },
-  {
-    "id": "0d78b657-bc6e-49db-9184-794371e533fd",
-    "nome": "testes",
-    "capa": "assets/images/galeria/1786486668275-652338761.jpg",
-    "fotos": []
+    "nome": "Genshin",
+    "capa": "assets/images/galeria/1786495249718-538616059.png",
+    "fotos": [
+      {
+        "data": "2026-05-20",
+        "imagem": "assets/images/galeria/1786495302436-159222252.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-06-28",
+        "imagem": "assets/images/galeria/1786495270498-595115647.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-07-25",
+        "imagem": "assets/images/galeria/1786495226699-805926594.png",
+        "descricao": ""
+      }
+    ]
   }
 ]

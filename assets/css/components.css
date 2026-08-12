@@ -1030,6 +1030,14 @@
     margin-top: 2px;
 }
 
+.foto-visualizador-descricao {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+    max-width: 500px;
+}
+
 .foto-visualizador-fechar {
     position: absolute;
     top: var(--spacing-lg);
