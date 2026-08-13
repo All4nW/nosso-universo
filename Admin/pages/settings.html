@@ -18,151 +18,96 @@
     <!-- APARÊNCIA -->
     <!-- ============================= -->
 
-    <section class="settings-card">
+ <!-- ============================= -->
+<!-- CARDS DO HUB -->
+<!-- ============================= -->
 
-        <div class="settings-card-header">
+<section class="settings-card">
 
-            <span class="settings-card-icone">🎨</span>
+    <div class="settings-card-header">
+        <span class="settings-card-icone">🌌</span>
+        <div>
+            <h3 class="settings-card-titulo">Cards do Hub</h3>
+            <p class="settings-card-descricao">Gerencie os cards da tela principal do universo.</p>
+        </div>
+    </div>
 
-            <div>
+    <div class="settings-card-corpo">
 
-                <h3 class="settings-card-titulo">
-                    Aparência
-                </h3>
-
-                <p class="settings-card-descricao">
-                    Personalize a identidade visual do Nosso Universo.
-                </p>
-
-            </div>
-
+        <div style="display:flex; justify-content:flex-end; gap: 8px; margin-bottom: 10px;">
+            <button type="button" id="btn-sincronizar-hub" class="settings-botao settings-botao-secundario">🔄 Sincronizar com o site</button>
+            <button type="button" id="btn-novo-hubcard" class="settings-botao settings-botao-primario">＋ Novo card</button>
         </div>
 
-
-        <div class="settings-card-corpo">
-
-
-            <!-- Cor principal -->
+        <!-- Formulário -->
+        <div id="hubcard-formulario" class="settings-card timeline-admin-formulario" style="display:none;">
 
             <div class="settings-field">
+                <label class="settings-label">Título</label>
+                <input type="text" id="hubcard-titulo" class="settings-input" placeholder="Ex: Timeline">
+            </div>
 
-                <label
-                    class="settings-label"
-                    for="campo-cor-destaque">
+            <div class="settings-field">
+                <label class="settings-label">Descrição (aparece no hover)</label>
+                <input type="text" id="hubcard-descricao" class="settings-input" placeholder="Ex: Nossa história, momento a momento.">
+            </div>
 
-                    Cor de destaque
+<div class="settings-field">
+    <label class="settings-label">Leva para (endereço da seção, sem #)</label>
+    <input type="text" id="hubcard-link" class="settings-input" list="hubcard-links-sugeridos" placeholder="Ex: transmissoes">
+    <datalist id="hubcard-links-sugeridos">
+        <option value="timeline">
+        <option value="galeria">
+        <option value="cartas">
+        <option value="momentos">
+        <option value="futuro">
+        <option value="estrelas">
+    </datalist>
+</div>
 
-                </label>
+            <div class="settings-field-linha" style="margin-top: 10px; flex-wrap: wrap;">
 
-                <div class="settings-color-picker">
+                <div class="settings-field">
+                    <label class="settings-label">Foto principal</label>
+                    <input type="file" id="hubcard-imagem1" class="settings-input" accept="image/*">
+                    <div id="hubcard-imagem1-atual" class="timeline-foto-atual"></div>
+                </div>
 
-                    <input
-                        type="color"
-                        id="campo-cor-destaque"
-                        class="settings-color-input"
-                        value="#c9a7f5"
-                    >
+                <div class="settings-field">
+                    <label class="settings-label">Foto de trás 2</label>
+                    <input type="file" id="hubcard-imagem2" class="settings-input" accept="image/*">
+                    <div id="hubcard-imagem2-atual" class="timeline-foto-atual"></div>
+                </div>
 
-                    <span
-                        id="valor-cor-destaque"
-                        class="settings-color-hex">
-
-                        #C9A7F5
-
-                    </span>
-
+                <div class="settings-field">
+                    <label class="settings-label">Foto de trás 3</label>
+                    <input type="file" id="hubcard-imagem3" class="settings-input" accept="image/*">
+                    <div id="hubcard-imagem3-atual" class="timeline-foto-atual"></div>
                 </div>
 
             </div>
 
+            <label class="timeline-switch" style="margin-top: 12px;">
+                <input type="checkbox" id="hubcard-ativo" checked>
+                <span></span>
+                <strong>Visível no hub</strong>
+            </label>
 
-
-            <!-- Cor de fundo -->
-
-            <div class="settings-field">
-
-                <label
-                    class="settings-label"
-                    for="campo-cor-fundo">
-
-                    Cor de fundo
-
-                </label>
-
-
-                <div class="settings-color-picker">
-
-                    <input
-                        type="color"
-                        id="campo-cor-fundo"
-                        class="settings-color-input"
-                        value="#0a0a1a"
-                    >
-
-                    <span
-                        id="valor-cor-fundo"
-                        class="settings-color-hex">
-
-                        #0A0A1A
-
-                    </span>
-
-                </div>
-
+            <div class="settings-acoes-rodape">
+                <button type="button" id="hubcard-btn-cancelar" class="settings-botao settings-botao-secundario">Cancelar</button>
+                <button type="button" id="hubcard-btn-salvar" class="settings-botao settings-botao-primario">Salvar card</button>
             </div>
-
-
-
-            <!-- Brilho -->
-
-            <div class="settings-field">
-
-                <label
-                    class="settings-label"
-                    for="campo-intensidade-brilho">
-
-                    Intensidade do brilho
-
-                </label>
-
-                <input
-                    type="range"
-                    id="campo-intensidade-brilho"
-                    min="0"
-                    max="100"
-                    value="50"
-                >
-
-            </div>
-
-
-
-            <!-- Estrelas -->
-
-            <div class="settings-field">
-
-                <label
-                    class="settings-label"
-                    for="campo-quantidade-estrelas">
-
-                    Quantidade de estrelas
-
-                </label>
-
-                <input
-                    type="range"
-                    id="campo-quantidade-estrelas"
-                    min="0"
-                    max="200"
-                    value="100"
-                >
-
-            </div>
-
 
         </div>
 
-    </section>
+        <!-- Lista -->
+        <div id="hubcards-admin-itens" class="timeline-admin-itens">
+            <div class="timeline-admin-vazio">Carregando cards...</div>
+        </div>
+
+    </div>
+
+</section>
 
 
 

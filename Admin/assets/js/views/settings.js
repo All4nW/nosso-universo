@@ -5,73 +5,13 @@ async function initSettings() {
 
     try {
 
-        const settings = await API.getSettings();
-
-        configuracoesOriginais = {
-            corPrincipal: settings.corPrincipal || "#c9a7f5",
-            corFundo: settings.corFundo || "#0a0a1a"
-        };
-
-
-        // =========================
-        // CORES
-        // =========================
-
-        const corDestaque =
-            document.getElementById("campo-cor-destaque");
-
-        const corFundo =
-            document.getElementById("campo-cor-fundo");
-
-
-        corDestaque.value =
-            configuracoesOriginais.corPrincipal;
-
-        corFundo.value =
-            configuracoesOriginais.corFundo;
-
-
-        atualizarHex(
-            corDestaque,
-            document.getElementById("valor-cor-destaque")
-        );
-
-
-        atualizarHex(
-            corFundo,
-            document.getElementById("valor-cor-fundo")
-        );
-
-
-        // =========================
-        // EVENTOS
-        // =========================
-
-        corDestaque.addEventListener("input", () => {
-
-            atualizarHex(
-                corDestaque,
-                document.getElementById("valor-cor-destaque")
-            );
-
-        });
-
-
-        corFundo.addEventListener("input", () => {
-
-            atualizarHex(
-                corFundo,
-                document.getElementById("valor-cor-fundo")
-            );
-
-        });
-
-
         registrarBotoes();
-
 
         // Música
         iniciarGerenciadorMusicas();
+
+        // Cards do Hub
+        iniciarGerenciadorHub();
 
     }
 
