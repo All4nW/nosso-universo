@@ -1,0 +1,526 @@
+/* =========================================================
+   ASSISTIDOS — PAINEL ADMINISTRATIVO
+========================================================= */
+
+.assistidos-admin {
+    width: 100%;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.assistidos-admin .pagina-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.assistidos-admin .pagina-cabecalho h2 {
+    margin: 0 0 7px;
+    font-family: "Playfair Display", serif;
+    font-size: 1.8rem;
+}
+
+.assistidos-admin .pagina-cabecalho p {
+    margin: 0;
+    color: #aaa7bd;
+    font-size: 0.85rem;
+}
+
+.assistidos-acoes-topo {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.assistidos-admin button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.botao-principal,
+.botao-secundario,
+.botao-sincronizar {
+    border-radius: 9px;
+    padding: 10px 15px;
+    font-size: 0.8rem;
+    transition: 0.25s ease;
+}
+
+.botao-principal {
+    border: 0;
+    background: #c9a7f5;
+    color: #171426;
+}
+
+.botao-principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 167, 245, 0.25);
+}
+
+.botao-secundario,
+.botao-sincronizar {
+    border: 1px solid rgba(201, 167, 245, 0.2);
+    background: #171624;
+    color: #d9d4e8;
+}
+
+.botao-secundario:hover,
+.botao-sincronizar:hover {
+    border-color: rgba(201, 167, 245, 0.45);
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.assistidos-status {
+    min-height: 20px;
+    margin-bottom: 18px;
+    font-size: 0.75rem;
+    color: #aaa7bd;
+}
+
+.assistidos-status.sucesso {
+    color: #9be7b1;
+}
+
+.assistidos-status.erro {
+    color: #ff9494;
+}
+
+.assistidos-status.info {
+    color: #c9a7f5;
+}
+
+
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
+.assistidos-admin-categoria {
+    margin-bottom: 32px;
+}
+
+.assistidos-admin-categoria-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    border-bottom: 1px solid rgba(201, 167, 245, 0.1);
+}
+
+.assistidos-admin-categoria-titulo h3 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: 1.1rem;
+    color: #eeeaf8;
+}
+
+.assistidos-admin-categoria-titulo span {
+    color: #77738a;
+    font-size: 0.7rem;
+}
+
+
+/* =========================================================
+   ITEM
+========================================================= */
+
+.assistidos-admin-item {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    align-items: center;
+    gap: 16px;
+
+    padding: 12px;
+
+    margin-bottom: 8px;
+
+    border: 1px solid rgba(201, 167, 245, 0.09);
+    border-radius: 12px;
+
+    background: rgba(22, 21, 36, 0.75);
+
+    transition: 0.25s ease;
+}
+
+.assistidos-admin-item:hover {
+    border-color: rgba(201, 167, 245, 0.22);
+    background: rgba(30, 28, 48, 0.85);
+}
+
+
+/* =========================================================
+   IMAGEM
+========================================================= */
+
+.assistidos-admin-imagem {
+    width: 70px;
+    height: 90px;
+
+    border-radius: 7px;
+    overflow: hidden;
+
+    background: linear-gradient(
+        145deg,
+        #603ba0,
+        #1e3e73
+    );
+}
+
+.assistidos-admin-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.assistidos-sem-capa {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.4rem;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.assistidos-admin-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.assistidos-admin-info strong {
+    color: #eeeaf8;
+    font-family: "Playfair Display", serif;
+    font-size: 0.95rem;
+}
+
+.assistidos-admin-info > span {
+    color: #858195;
+    font-size: 0.7rem;
+}
+
+.assistidos-admin-notas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    color: #c9a7f5;
+    font-size: 0.7rem;
+}
+
+.assistidos-admin-notas small {
+    color: #858195;
+}
+
+.assistidos-admin-lista-futura {
+    color: #d6bdff !important;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.assistidos-admin-acoes {
+    display: flex;
+    gap: 7px;
+}
+
+.assistidos-admin-acoes button {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 8px;
+
+    border: 1px solid rgba(201, 167, 245, 0.12);
+
+    background: #171624;
+    color: #aaa7bd;
+
+    transition: 0.2s ease;
+}
+
+.assistidos-admin-acoes button:hover {
+    color: #fff;
+    border-color: rgba(201, 167, 245, 0.4);
+}
+
+
+/* =========================================================
+   VAZIO
+========================================================= */
+
+.assistidos-admin-vazio {
+    text-align: center;
+    padding: 70px 20px;
+
+    border: 1px dashed rgba(201, 167, 245, 0.15);
+    border-radius: 15px;
+}
+
+.assistidos-admin-vazio span {
+    font-size: 2rem;
+}
+
+.assistidos-admin-vazio h3 {
+    margin: 15px 0 5px;
+    font-family: "Playfair Display", serif;
+}
+
+.assistidos-admin-vazio p {
+    margin: 0;
+    color: #858195;
+    font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.assistidos-admin-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background: rgba(5, 5, 14, 0.78);
+
+    backdrop-filter: blur(7px);
+}
+
+.assistidos-admin-modal.oculto {
+    display: none;
+}
+
+.assistidos-modal-caixa {
+    width: min(620px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 28px;
+
+    border-radius: 17px;
+
+    border: 1px solid rgba(201, 167, 245, 0.16);
+
+    background: #151421;
+
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.55);
+}
+
+.assistidos-modal-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+.assistidos-modal-cabecalho h3 {
+    margin: 0 0 5px;
+    font-family: "Playfair Display", serif;
+}
+
+.assistidos-modal-cabecalho p {
+    margin: 0;
+    color: #858195;
+    font-size: 0.75rem;
+}
+
+.assistidos-modal-fechar {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 8px;
+
+    border: 1px solid rgba(201, 167, 245, 0.12);
+
+    background: transparent;
+    color: #aaa7bd;
+
+    font-size: 1.3rem;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.assistidos-form-capa {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    margin-bottom: 22px;
+}
+
+.assistidos-preview {
+    width: 85px;
+    height: 120px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 9px;
+
+    background: linear-gradient(
+        145deg,
+        #603ba0,
+        #1e3e73
+    );
+
+    color: #fff;
+}
+
+.assistidos-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.assistidos-form-capa label {
+    display: block;
+    margin-bottom: 8px;
+    color: #eeeaf8;
+    font-size: 0.75rem;
+}
+
+.assistidos-form-capa small {
+    display: block;
+    margin-top: 6px;
+    color: #77738a;
+    font-size: 0.65rem;
+}
+
+.campo {
+    margin-bottom: 17px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #bdb8ce;
+
+    font-size: 0.72rem;
+}
+
+.campo input,
+.campo select,
+.campo textarea,
+.assistidos-form-capa input[type="file"] {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 12px;
+
+    border: 1px solid rgba(201, 167, 245, 0.12);
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #0f0e19;
+    color: #eeeaf8;
+
+    font-family: inherit;
+    font-size: 0.78rem;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    border-color: rgba(201, 167, 245, 0.5);
+}
+
+.assistidos-notas-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.assistidos-form-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .assistidos-admin .pagina-cabecalho {
+        flex-direction: column;
+    }
+
+    .assistidos-acoes-topo {
+        justify-content: flex-start;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .assistidos-admin-item {
+        grid-template-columns: 55px 1fr;
+    }
+
+    .assistidos-admin-imagem {
+        width: 55px;
+        height: 75px;
+    }
+
+    .assistidos-admin-acoes {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+
+    .assistidos-notas-area {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+}

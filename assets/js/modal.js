@@ -60,7 +60,12 @@ function abrirModal(item) {
 
     document.getElementById('modal-titulo').textContent = item.titulo;
     document.getElementById('modal-data').textContent = item.dataExibicao || formatarData(item.data);
-    document.getElementById('modal-descricao').textContent = item.descricao;
+
+    // A descrição agora pode conter HTML (ex.: chips coloridos de nota),
+    // então usamos innerHTML em vez de textContent. Cada chamador é
+    // responsável por escapar qualquer texto livre (ex.: memórias)
+    // antes de montar o HTML da descrição.
+    document.getElementById('modal-descricao').innerHTML = item.descricao;
 
     const fotosContainer = document.getElementById('modal-fotos');
     fotosContainer.innerHTML = '';

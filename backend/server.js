@@ -20,6 +20,9 @@ const galeriaRoutes = require("./routes/galeria");
 
 const hubRoutes = require("./routes/hub");
 
+const assistidosRoutes =
+require("./routes/assistidos");
+
 
 const app =
     express();
@@ -53,6 +56,20 @@ app.use(
     )
 );
 
+// =====================================================
+// ASSETS
+// =====================================================
+
+app.use(
+    "/assets",
+    express.static(
+        path.join(
+            __dirname,
+            "..",
+            "assets"
+        )
+    )
+);
 
 // =====================================================
 // ROTAS
@@ -84,6 +101,9 @@ app.use(
 app.use("/api/galeria", galeriaRoutes);
 
 app.use("/api/hub", hubRoutes);
+
+app.use("/api/assistidos", assistidosRoutes);
+
 
 
 // =====================================================

@@ -18,20 +18,29 @@
     "imagem3": "assets/images/hub/1786650374835-204716865.png"
   },
   {
+    "id": "710b381c-0965-42c5-a08e-c4f51ddf6387",
+    "titulo": "Coisas que já assistimos",
+    "descricao": "Pequenas histórias que marcaram a gente.",
+    "link": "assistidos",
+    "imagem1": "assets/images/hub/1786912350820-940048603.png",
+    "imagem2": "assets/images/hub/1786912350822-288490634.jpg",
+    "imagem3": "assets/images/hub/1786912350822-698799019.png"
+  },
+  {
+    "id": "34f8e8b6-775b-49fc-a46f-0f1a99bd161d",
+    "titulo": "Céu Estrelado",
+    "descricao": "Cada estrela, uma memória nossa.",
+    "link": "estrelas",
+    "imagem1": "assets/images/hub/1786859490305-903454999.jpg",
+    "imagem2": "assets/images/hub/1786859490305-301312447.avif",
+    "imagem3": "assets/images/hub/1786859490306-453413471.jpg"
+  },
+  {
     "id": "27e27150-4f6b-4636-8d9b-51daab28b4de",
     "titulo": "Cartas",
     "descricao": "Uma biblioteca de envelopes e palavras.",
     "link": "cartas",
     "imagem1": "assets/images/hub/1786857100935-64773863.png",
-    "imagem2": "",
-    "imagem3": ""
-  },
-  {
-    "id": "710b381c-0965-42c5-a08e-c4f51ddf6387",
-    "titulo": "Momentos",
-    "descricao": "Pequenas histórias que marcaram a gente.",
-    "link": "momentos",
-    "imagem1": "assets/images/hub/1786857117487-824611295.png",
     "imagem2": "",
     "imagem3": ""
   },
@@ -43,14 +52,5 @@
     "imagem1": "assets/images/hub/1786857121942-949671887.png",
     "imagem2": "",
     "imagem3": ""
-  },
-  {
-    "id": "34f8e8b6-775b-49fc-a46f-0f1a99bd161d",
-    "titulo": "Céu Estrelado",
-    "descricao": "Cada estrela, uma memória nossa.",
-    "link": "estrelas",
-    "imagem1": "assets/images/hub/1786859490305-903454999.jpg",
-    "imagem2": "assets/images/hub/1786859490305-301312447.avif",
-    "imagem3": "assets/images/hub/1786859490306-453413471.jpg"
   }
 ]

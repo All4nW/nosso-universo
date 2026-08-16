@@ -5,8 +5,14 @@ const routes = {
     galeria: "pages/gallery.html",
     cartas: "pages/letters.html",
     musicas: "pages/songs.html",
-    estrelas: "pages/stars.html"
+    estrelas: "pages/stars.html",
+    assistidos: "pages/assistidos.html"
 };
+
+
+// =====================================================
+// CARREGAR PÁGINA
+// =====================================================
 
 async function loadPage(page) {
 
@@ -15,19 +21,30 @@ async function loadPage(page) {
         const pageContent =
             document.getElementById("page-content");
 
+        if (!routes[page]) {
+            throw new Error(
+                `Página "${page}" não existe no router.`
+            );
+        }
+
         const response =
             await fetch(routes[page]);
+
+        if (!response.ok) {
+            throw new Error(
+                `Não foi possível carregar ${routes[page]}`
+            );
+        }
 
         const html =
             await response.text();
 
-        pageContent.innerHTML =
-            html;
+        pageContent.innerHTML = html;
 
 
-        // =========================
+        // =================================================
         // SALVAR PÁGINA ATUAL
-        // =========================
+        // =================================================
 
         sessionStorage.setItem(
             "adminPaginaAtual",
@@ -35,9 +52,9 @@ async function loadPage(page) {
         );
 
 
-        // =========================
+        // =================================================
         // MENU ATIVO
-        // =========================
+        // =================================================
 
         document
             .querySelectorAll(".sidebar-link")
@@ -60,16 +77,16 @@ async function loadPage(page) {
             });
 
 
-        // =========================
+        // =================================================
         // SCRIPTS DAS PÁGINAS
-        // =========================
+        // =================================================
 
         switch (page) {
 
             case "configuracoes":
 
                 if (window.initSettings) {
-                    await initSettings();
+                    await window.initSettings();
                 }
 
                 break;
@@ -78,7 +95,7 @@ async function loadPage(page) {
             case "timeline":
 
                 if (window.initTimeline) {
-                    await initTimeline();
+                    await window.initTimeline();
                 }
 
                 break;
@@ -87,7 +104,7 @@ async function loadPage(page) {
             case "galeria":
 
                 if (window.initGallery) {
-                    await initGallery();
+                    await window.initGallery();
                 }
 
                 break;
@@ -96,7 +113,7 @@ async function loadPage(page) {
             case "cartas":
 
                 if (window.initLetters) {
-                    await initLetters();
+                    await window.initLetters();
                 }
 
                 break;
@@ -105,7 +122,7 @@ async function loadPage(page) {
             case "musicas":
 
                 if (window.initSongs) {
-                    await initSongs();
+                    await window.initSongs();
                 }
 
                 break;
@@ -114,9 +131,22 @@ async function loadPage(page) {
             case "estrelas":
 
                 if (window.initStars) {
-                    await initStars();
+                    await window.initStars();
                 }
 
+                break;
+
+
+            case "assistidos":
+
+                if (window.initAssistidos) {
+                    await window.initAssistidos();
+                }
+
+                break;
+
+
+            case "dashboard":
                 break;
 
         }
@@ -132,13 +162,19 @@ async function loadPage(page) {
 
         document.getElementById(
             "page-content"
-        ).innerHTML =
-            "<h2>Erro ao carregar página.</h2>";
+        ).innerHTML = `
+            <div style="
+                padding: 40px;
+                color: #ff8f8f;
+            ">
+                <h2>Erro ao carregar página.</h2>
+                <p>${erro.message}</p>
+            </div>
+        `;
 
     }
 
 }
 
 
-window.loadPage =
-    loadPage;
+window.loadPage = loadPage;

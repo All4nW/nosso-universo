@@ -1,0 +1,282 @@
+[
+    {
+        "id": "interestelar",
+        "categoria": "filmes",
+        "titulo": "Como Perder Um Homem Em 10 Dias",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786908488590.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "stranger-things",
+        "categoria": "series",
+        "titulo": "Stranger Things",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912075843.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "filme-futuro",
+        "categoria": "queremos",
+        "titulo": "Arcane",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786909282135.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "teste",
+        "categoria": "filmes",
+        "titulo": "10 Coisas Que Eu Odeio Em Você",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786908552477.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "a-casa-de-cera",
+        "categoria": "filmes",
+        "titulo": "A Casa De Cera",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910287157.jpg",
+        "notaEu": 7,
+        "notaEla": 9,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter",
+        "categoria": "queremos",
+        "titulo": "Harry Potter",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910514468.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "diario-de-uma-paixao",
+        "categoria": "filmes",
+        "titulo": "Diário De Uma Paixão",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910587348.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "como-eu-era-antes-de-voce",
+        "categoria": "filmes",
+        "titulo": "Como Eu Era Antes De Você",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910661404.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "antes-do-amanhecer",
+        "categoria": "filmes",
+        "titulo": "Antes Do Amanhecer",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910679581.jpg",
+        "notaEu": 8,
+        "notaEla": 9,
+        "memoria": ""
+    },
+    {
+        "id": "annabelle-1",
+        "categoria": "filmes",
+        "titulo": "Annabelle 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910911355.jpg",
+        "notaEu": 10,
+        "notaEla": 8,
+        "memoria": ""
+    },
+    {
+        "id": "annabelle-2",
+        "categoria": "filmes",
+        "titulo": "Annabelle 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910928467.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "annabelle-3",
+        "categoria": "filmes",
+        "titulo": "Annabelle 3",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910946139.jpg",
+        "notaEu": 7,
+        "notaEla": 8,
+        "memoria": ""
+    },
+    {
+        "id": "a-freira-1",
+        "categoria": "filmes",
+        "titulo": "A Freira 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911076244.jpg",
+        "notaEu": 10,
+        "notaEla": 9,
+        "memoria": ""
+    },
+    {
+        "id": "a-freira-2",
+        "categoria": "filmes",
+        "titulo": "A Freira 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911099291.jpg",
+        "notaEu": 8,
+        "notaEla": 7,
+        "memoria": ""
+    },
+    {
+        "id": "invocacao-do-mal-1",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911303427.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "invocacao-do-mal-2",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911320691.jpg",
+        "notaEu": 8,
+        "notaEla": 8,
+        "memoria": ""
+    },
+    {
+        "id": "invocacao-do-mal-3",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 3",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911336115.webp",
+        "notaEu": 8,
+        "notaEla": 6,
+        "memoria": ""
+    },
+    {
+        "id": "invocacao-do-mal-4",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 4",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911355787.jpg",
+        "notaEu": 9,
+        "notaEla": 5,
+        "memoria": ""
+    },
+    {
+        "id": "solo-leveling",
+        "categoria": "animes",
+        "titulo": "Solo Leveling",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911767051.webp",
+        "notaEu": 10,
+        "notaEla": 8,
+        "memoria": ""
+    },
+    {
+        "id": "frieren",
+        "categoria": "animes",
+        "titulo": "Frieren",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911826258.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "attack-on-titan",
+        "categoria": "animes",
+        "titulo": "Attack On Titan",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911865578.webp",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "365-days-to-the-wedding",
+        "categoria": "animes",
+        "titulo": "365 Days To The Wedding",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911888643.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "o-incrivel-mundo-de-gumball",
+        "categoria": "series",
+        "titulo": "O Incrível Mundo De Gumball",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912062499.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "supernatural",
+        "categoria": "series",
+        "titulo": "Supernatural",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912235058.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "minha-historia-de-amor-com-yamada-kun-nivel-999",
+        "categoria": "queremos",
+        "titulo": "Minha História de Amor com Yamada-kun Nível 999",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912457594.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "the-walking-dead",
+        "categoria": "queremos",
+        "titulo": "The Walking Dead",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912497130.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "sing",
+        "categoria": "filmes",
+        "titulo": "Sing",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912670345.jpg",
+        "notaEu": 10,
+        "notaEla": 7,
+        "memoria": ""
+    },
+    {
+        "id": "tokyo-ghoul",
+        "categoria": "queremos",
+        "titulo": "Tokyo Ghoul",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912738537.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    }
+]

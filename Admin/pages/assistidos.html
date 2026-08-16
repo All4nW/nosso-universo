@@ -1,0 +1,291 @@
+<section class="assistidos-admin">
+
+    <div class="pagina-cabecalho">
+
+        <div>
+            <h2>Coisas que já assistimos</h2>
+
+            <p>
+                Gerencie filmes, séries, animes e nossa lista
+                de coisas que ainda queremos assistir.
+            </p>
+        </div>
+
+        <div class="assistidos-acoes-topo">
+
+            <button
+                type="button"
+                class="botao-principal"
+                id="assistidos-novo"
+            >
+                + Adicionar
+            </button>
+
+            <button
+                type="button"
+                class="botao-sincronizar"
+                id="assistidos-sincronizar"
+            >
+                🔄 Sincronizar com o site
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STATUS -->
+    <!-- ================================================= -->
+
+    <div
+        id="assistidos-status"
+        class="assistidos-status"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- LISTA -->
+    <!-- ================================================= -->
+
+    <div
+        id="assistidos-lista"
+        class="assistidos-admin-lista"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- MODAL -->
+    <!-- ================================================= -->
+
+    <div
+        id="assistidos-modal"
+        class="assistidos-admin-modal oculto"
+    >
+
+        <div class="assistidos-modal-caixa">
+
+            <div class="assistidos-modal-cabecalho">
+
+                <div>
+                    <h3 id="assistidos-modal-titulo">
+                        Adicionar
+                    </h3>
+
+                    <p>
+                        Preencha as informações abaixo.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="assistidos-modal-fechar"
+                    class="assistidos-modal-fechar"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="assistidos-form">
+
+                <input
+                    type="hidden"
+                    id="assistidos-id"
+                >
+
+
+                <!-- CAPA -->
+
+                <div class="assistidos-form-capa">
+
+                    <div
+                        id="assistidos-preview"
+                        class="assistidos-preview"
+                    >
+                        🎬
+                    </div>
+
+                    <div>
+
+                        <label>
+                            Capa
+                        </label>
+
+                        <input
+                            type="file"
+                            id="assistidos-imagem"
+                            accept="image/*"
+                        >
+
+                        <small>
+                            JPG, PNG ou WEBP.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TÍTULO -->
+
+                <div class="campo">
+
+                    <label for="assistidos-titulo">
+                        Título
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assistidos-titulo"
+                        placeholder="Ex.: Interestelar"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CATEGORIA -->
+
+                <div class="campo">
+
+                    <label for="assistidos-categoria">
+                        Categoria
+                    </label>
+
+                    <select
+                        id="assistidos-categoria"
+                        required
+                    >
+
+                        <option value="filmes">
+                            🎬 Filme
+                        </option>
+
+                        <option value="series">
+                            📺 Série
+                        </option>
+
+                        <option value="animes">
+                            🍿 Anime
+                        </option>
+
+                        <option value="queremos">
+                            ⏳ Ainda queremos assistir
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ANO -->
+
+                <div class="campo">
+
+                    <label for="assistidos-ano">
+                        Ano
+                    </label>
+
+                    <input
+                        type="number"
+                        id="assistidos-ano"
+                        placeholder="2026"
+                        min="1800"
+                        max="2100"
+                    >
+
+                </div>
+
+
+                <!-- NOTAS -->
+
+                <div
+                    id="assistidos-notas-area"
+                    class="assistidos-notas-area"
+                >
+
+                    <div class="campo">
+
+                        <label for="assistidos-nota-eu">
+                            Minha avaliação
+                        </label>
+
+                        <input
+                            type="number"
+                            id="assistidos-nota-eu"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            placeholder="0 a 10"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="assistidos-nota-ela">
+                            Avaliação dela
+                        </label>
+
+                        <input
+                            type="number"
+                            id="assistidos-nota-ela"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            placeholder="0 a 10"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- MEMÓRIA -->
+
+                <div class="campo">
+
+                    <label for="assistidos-memoria">
+                        Nossa memória
+                    </label>
+
+                    <textarea
+                        id="assistidos-memoria"
+                        rows="4"
+                        placeholder="Alguma coisa que você queira guardar sobre esse filme..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="assistidos-form-acoes">
+
+                    <button
+                        type="button"
+                        id="assistidos-cancelar"
+                        class="botao-secundario"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="botao-principal"
+                    >
+                        Salvar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>

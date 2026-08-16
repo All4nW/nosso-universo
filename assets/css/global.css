@@ -370,3 +370,22 @@ css
         bottom: var(--spacing-sm);
     }
 }
+
+/* =========================================================
+   NOSSO CINEMA — VIEW COM SCROLL PRÓPRIO
+   ========================================================= */
+
+#app .view[data-view="assistidos"] {
+    height: 100vh;
+    min-height: 100vh;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    justify-content: flex-start;
+
+    padding-top: 100px;
+    padding-bottom: 220px;
+}
