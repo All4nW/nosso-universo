@@ -1,4 +1,4 @@
-    const db = require("./database");
+const db = require("./database");
 
     db.serialize(() => {
 
@@ -93,12 +93,73 @@
 
                 sugeridoPor TEXT DEFAULT '',
 
+                sugeridoTexto TEXT DEFAULT '',
+
                 ordem INTEGER DEFAULT 0,
 
                 ativo INTEGER DEFAULT 1
 
             )
         `);
+
+
+        // =====================================================
+        // MIGRAÇÃO: adiciona a coluna sugeridoTexto se o banco
+        // já existia de antes (CREATE TABLE IF NOT EXISTS não
+        // adiciona coluna em tabela já criada anteriormente).
+        // =====================================================
+
+        db.all(
+            "PRAGMA table_info(timeline)",
+            (err, colunas) => {
+
+                if (err) {
+
+                    console.error(
+                        "Erro ao checar colunas da timeline:",
+                        err
+                    );
+
+                    return;
+
+                }
+
+
+                const jaTemColuna =
+                    colunas.some(
+                        (coluna) =>
+                            coluna.name === "sugeridoTexto"
+                    );
+
+
+                if (!jaTemColuna) {
+
+                    db.run(
+                        "ALTER TABLE timeline ADD COLUMN sugeridoTexto TEXT DEFAULT ''",
+                        (erroAlter) => {
+
+                            if (erroAlter) {
+
+                                console.error(
+                                    "Erro ao adicionar coluna sugeridoTexto:",
+                                    erroAlter
+                                );
+
+                            } else {
+
+                                console.log(
+                                    "✅ Coluna sugeridoTexto adicionada à tabela timeline."
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+        );
 
 
         // =====================================================

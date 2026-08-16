@@ -111,6 +111,9 @@ exports.createTimeline = async (req, res) => {
             sugeridoPor:
                 req.body.sugeridoPor || "",
 
+            sugeridoTexto:
+                req.body.sugeridoTexto || "",
+
             ordem:
                 999999,
 
@@ -215,6 +218,9 @@ exports.updateTimeline = async (req, res) => {
 
             sugeridoPor:
                 req.body.sugeridoPor || "",
+
+            sugeridoTexto:
+                req.body.sugeridoTexto || "",
 
             ativo:
                 req.body.ativo !== "false"
@@ -361,6 +367,7 @@ exports.exportarTimeline = async (req, res) => {
                 resumo: item.resumo,
                 descricao: item.descricao,
                 sugeridoPor: item.sugeridoPor || undefined,
+                sugeridoTexto: item.sugeridoTexto || undefined,
 
                 dataExibicao:
                     item.temDataExata === 0

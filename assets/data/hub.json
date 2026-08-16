@@ -4,9 +4,9 @@
     "titulo": "Timeline",
     "descricao": "Nossa história, momento a momento.",
     "link": "timeline",
-    "imagem1": "assets/images/hub/timeline.jpg",
-    "imagem2": "",
-    "imagem3": ""
+    "imagem1": "assets/images/hub/1786857016336-747234158.jpeg",
+    "imagem2": "assets/images/hub/1786857016336-143384095.jpg",
+    "imagem3": "assets/images/hub/1786859934855-260740639.jpeg"
   },
   {
     "id": "264f515d-2baa-461c-ace2-246f825362b8",
@@ -22,7 +22,7 @@
     "titulo": "Cartas",
     "descricao": "Uma biblioteca de envelopes e palavras.",
     "link": "cartas",
-    "imagem1": "assets/images/hub/cartas.jpg",
+    "imagem1": "assets/images/hub/1786857100935-64773863.png",
     "imagem2": "",
     "imagem3": ""
   },
@@ -31,7 +31,7 @@
     "titulo": "Momentos",
     "descricao": "Pequenas histórias que marcaram a gente.",
     "link": "momentos",
-    "imagem1": "assets/images/hub/momentos.jpg",
+    "imagem1": "assets/images/hub/1786857117487-824611295.png",
     "imagem2": "",
     "imagem3": ""
   },
@@ -40,7 +40,7 @@
     "titulo": "Nosso futuro",
     "descricao": "Sonhos que ainda vamos viver juntos.",
     "link": "futuro",
-    "imagem1": "assets/images/hub/futuro.jpg",
+    "imagem1": "assets/images/hub/1786857121942-949671887.png",
     "imagem2": "",
     "imagem3": ""
   },
@@ -49,8 +49,8 @@
     "titulo": "Céu Estrelado",
     "descricao": "Cada estrela, uma memória nossa.",
     "link": "estrelas",
-    "imagem1": "assets/images/hub/estrelas.jpg",
-    "imagem2": "",
-    "imagem3": ""
+    "imagem1": "assets/images/hub/1786859490305-903454999.jpg",
+    "imagem2": "assets/images/hub/1786859490305-301312447.avif",
+    "imagem3": "assets/images/hub/1786859490306-453413471.jpg"
   }
 ]

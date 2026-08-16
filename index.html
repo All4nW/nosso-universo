@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/estrelas.css">
 </head>
 <body>
 
@@ -102,10 +103,82 @@
             <p>Em construção...</p>
         </section>
 
-        <section class="view" data-view="estrelas">
-            <h1>Céu Estrelado</h1>
-            <p>Em construção...</p>
-        </section>
+ <section class="view estrelas-view" data-view="estrelas">
+<!-- Estrelas de fundo extras (decorativas, só nesta seção) -->
+<div class="estrelas-fundo-extra" aria-hidden="true">
+    <span class="estrelas-fundo-extra-camada-3"></span>
+    <span class="cometa cometa-1"></span>
+    <span class="cometa cometa-grande cometa-2"></span>
+    <span class="cometa cometa-3"></span>
+    <span class="cometa cometa-grande cometa-4"></span>
+    <span class="cometa cometa-pequeno cometa-5"></span>
+    <span class="cometa cometa-6"></span>
+</div>
+
+<!-- Céu -->
+<div class="estrelas-campo" id="estrelas-campo"></div>
+    <!-- Céu -->
+    <div class="estrelas-campo" id="estrelas-campo"></div>
+
+    <!-- Título central -->
+    <div class="estrelas-intro" id="estrelas-intro">
+        <span class="estrelas-intro-simbolo">✦</span>
+
+        <h1>Nosso céu</h1>
+
+        <p>
+            Algumas estrelas guardam momentos.<br>
+            Outras guardam aquilo que aprendemos.
+        </p>
+
+        <span class="estrelas-intro-linha"></span>
+    </div>
+
+    <!-- Memória selecionada -->
+ <div class="estrela-memoria oculto" id="estrela-memoria">
+
+    <div class="estrela-memoria-cabecalho">
+
+        <span class="estrela-memoria-tipo" id="estrela-memoria-tipo">
+            MOMENTO
+        </span>
+
+        <button
+            class="estrela-memoria-fechar"
+            id="estrela-memoria-fechar"
+            aria-label="Fechar memória"
+        >
+            ×
+        </button>
+
+    </div>
+
+    <h3 class="estrela-memoria-titulo" id="estrela-memoria-titulo"></h3>
+
+    <p class="estrela-memoria-texto" id="estrela-memoria-texto"></p>
+
+    <span class="estrela-memoria-data" id="estrela-memoria-data"></span>
+
+</div>
+
+    </div>
+
+    <!-- Indicador discreto -->
+    <div class="estrelas-legenda">
+
+        <span>
+            <i class="legenda-ponto legenda-ponto-clara"></i>
+            momentos
+        </span>
+
+        <span>
+            <i class="legenda-ponto legenda-ponto-vermelha"></i>
+            aprendizados
+        </span>
+
+    </div>
+
+</section>
 
     </main>
 
@@ -123,6 +196,8 @@
     <script src="assets/js/hub-loader.js"></script>
     <script src="assets/js/settings.js"></script>
     <script src="assets/js/galeria.js"></script>
+    <script src="assets/js/estrelas.js"></script>
+    
 
 </body>
 </html>

@@ -5,6 +5,11 @@
     "capa": "assets/images/galeria/1786487177212-733503748.jpg",
     "fotos": [
       {
+        "data": "2025-08-06",
+        "imagem": "assets/images/galeria/1786860422970-383374187.jpeg",
+        "descricao": "A gente jogando juntinhos depois de iniciar nosso namoro."
+      },
+      {
         "data": "2026-01-14",
         "imagem": "assets/images/galeria/1786488407717-294671555.png",
         "descricao": ""
@@ -18,6 +23,11 @@
         "data": "2026-02-01",
         "imagem": "assets/images/galeria/1786491973056-256109482.png",
         "descricao": "Jogando MM2 hihi"
+      },
+      {
+        "data": "2026-02-08",
+        "imagem": "assets/images/galeria/1786860108483-68501349.jpeg",
+        "descricao": "Tao fofooo"
       },
       {
         "data": "2026-02-12",
@@ -162,6 +172,11 @@
         "descricao": "A gente depois de ter matado o Dragon."
       },
       {
+        "data": "2026-01-09",
+        "imagem": "assets/images/galeria/1786860310338-935479364.jpeg",
+        "descricao": ""
+      },
+      {
         "data": "2026-01-10",
         "imagem": "assets/images/galeria/1786493433168-600541979.png",
         "descricao": "Nosso mundinho bem avançado"
@@ -192,6 +207,11 @@
         "descricao": "Ela construindo a nossa nova casinha"
       },
       {
+        "data": "2026-03-18",
+        "imagem": "assets/images/galeria/1786860075452-582618671.jpeg",
+        "descricao": "Ela me dando um lacinho kakakakak"
+      },
+      {
         "data": "2026-04-01",
         "imagem": "assets/images/galeria/1786493007799-462165100.png",
         "descricao": ""
@@ -209,10 +229,47 @@
     ]
   },
   {
+    "id": "c51b40af-9dbb-4c0c-b7c2-20b01d992bf1",
+    "nome": "Transmitidos",
+    "capa": "assets/images/galeria/1786493526561-743823160.png",
+    "fotos": [
+      {
+        "data": "2025-12-15",
+        "imagem": "assets/images/galeria/1786491413494-967299105.png",
+        "descricao": "Eu transmitindo o jogo do Harry Potter"
+      },
+      {
+        "data": "2026-01-08",
+        "imagem": "assets/images/galeria/1786860365250-281380711.jpeg",
+        "descricao": "A gente assistindo Diário de uma Paixão"
+      },
+      {
+        "data": "2026-01-11",
+        "imagem": "assets/images/galeria/1786860201526-858699122.jpeg",
+        "descricao": "Eu jogando Minezinho enquanto ela estava com preguiça de entrar no jogo"
+      },
+      {
+        "data": "2026-01-18",
+        "imagem": "assets/images/galeria/1786860144531-594896568.jpeg",
+        "descricao": "Eu jogando Red Dead pra ela"
+      },
+      {
+        "data": "2026-01-20",
+        "imagem": "assets/images/galeria/1786493557098-352862536.png",
+        "descricao": "A gente assistindo Frieren"
+      }
+    ]
+  },
+  {
     "id": "dcfc926d-4466-417a-8585-a33f0d734707",
     "nome": "Genshin",
     "capa": "assets/images/galeria/1786495249718-538616059.png",
     "fotos": [
+      {
+        "data": "2026-04-11",
+        "imagem": "assets/images/galeria/1786860032571-445761444.jpeg",
+        "descricao": "Pegando nosso bauzinho do amor"
+      },
       {
         "data": "2026-05-20",
         "imagem": "assets/images/galeria/1786495302436-159222252.png",
@@ -227,6 +284,23 @@
         "data": "2026-07-25",
         "imagem": "assets/images/galeria/1786495226699-805926594.png",
         "descricao": ""
+      }
+    ]
+  },
+  {
+    "id": "70940668-18f7-4507-9cec-4b38f76e8d01",
+    "nome": "Aleatórios",
+    "capa": "assets/images/galeria/1786860483427-191799057.jpeg",
+    "fotos": [
+      {
+        "data": "2025-08-05",
+        "imagem": "assets/images/galeria/1786860518780-530465106.jpeg",
+        "descricao": "Ela desenhando nossas iniciais no mapinha. TAO FOFA"
+      },
+      {
+        "data": "2025-08-25",
+        "imagem": "assets/images/galeria/1786860552395-350096576.jpeg",
+        "descricao": "1 dia inteiro em callzinha"
       }
     ]
   }

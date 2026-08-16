@@ -476,15 +476,20 @@
 
 .modal-fotos {
     display: flex;
+    flex-direction: column;
     gap: var(--spacing-sm);
-    overflow-x: auto;
     margin-bottom: var(--spacing-md);
 }
 
 .modal-fotos img {
-    height: 220px;
+    width: 100%;
+    max-height: 55vh;
     border-radius: 10px;
-    object-fit: cover;
+    /* contain em vez de cover: mostra a imagem inteira, sem cortar */
+    object-fit: contain;
+    /* preenche o espaço "sobrando" (letterbox) com um fundo escuro,
+       pra não ficar branco quando a imagem não preenche o quadro */
+    background: rgba(0, 0, 0, 0.25);
 }
 
 .modal-data {

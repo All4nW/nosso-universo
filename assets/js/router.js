@@ -13,7 +13,28 @@ function mostrarView(nomeDaView) {
 
     if (viewAlvo) {
         viewAlvo.classList.add('view-ativa');
+
+        // FIX: força o navegador a recalcular o layout imediatamente
+        void viewAlvo.offsetHeight;
+
         viewAlvo.scrollTop = 0; // sempre começa do topo ao entrar na seção
+
+        // =========================================================
+        // EFEITO ESPECIAL: mergulho no universo, só ao entrar em #estrelas
+        // =========================================================
+        if (nomeDaView === 'estrelas') {
+
+            viewAlvo.classList.remove('estrelas-entrando');
+            void viewAlvo.offsetWidth;
+            viewAlvo.classList.add('estrelas-entrando');
+
+            // Reproduz a entrada escalonada de cada estrela, se já existirem
+            if (typeof window.reproduzirEntradaEstrelas === 'function') {
+                window.reproduzirEntradaEstrelas();
+            }
+
+        }
+
     } else {
         console.warn(`View "${nomeDaView}" não encontrada.`);
     }

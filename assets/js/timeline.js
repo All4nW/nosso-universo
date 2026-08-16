@@ -161,6 +161,10 @@ const textoData =
     // ====================================
     // SELO DE SUGESTÃO
     // ====================================
+    // A cor e o emoji continuam fixos por quem sugeriu
+    // (ela = rosa/💗, mim = azul/💙), mas o TEXTO dentro
+    // do selo agora é livre (item.sugeridoTexto). Se não
+    // tiver texto customizado, cai no texto padrão.
 
     let seloSugestao = "";
 
@@ -169,9 +173,14 @@ const textoData =
         item.sugeridoPor === "ela"
     ) {
 
+        const textoSelo =
+            (item.sugeridoTexto && item.sugeridoTexto.trim())
+                ? item.sugeridoTexto
+                : "Sugestão dela";
+
         seloSugestao = `
             <span class="timeline-badge-sugestao timeline-badge-sugestao-ela">
-                💗 Sugestão dela
+                💗 ${escaparHtmlTimeline(textoSelo)}
             </span>
         `;
 
@@ -181,9 +190,14 @@ const textoData =
         item.sugeridoPor === "mim"
     ) {
 
+        const textoSelo =
+            (item.sugeridoTexto && item.sugeridoTexto.trim())
+                ? item.sugeridoTexto
+                : "Sugestão minha";
+
         seloSugestao = `
             <span class="timeline-badge-sugestao timeline-badge-sugestao-mim">
-                💙 Sugestão minha
+                💙 ${escaparHtmlTimeline(textoSelo)}
             </span>
         `;
 

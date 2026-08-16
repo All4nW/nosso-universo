@@ -1,6 +1,6 @@
 // modal.js
 // Componente reutilizável: qualquer seção pode chamar abrirModal(item)
-// passando um objeto { titulo, data, descricao, fotos }.
+// passando um objeto { titulo, data, descricao, fotos } ou { ..., foto }.
 
 async function carregarModal() {
     const placeholder = document.getElementById('modal-placeholder');
@@ -38,21 +38,43 @@ function formatarData(dataString) {
     return data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+// Resolve o caminho da imagem tanto pra fotos enviadas pelo Admin
+// (/uploads/... precisa do host do backend) quanto pra fotos estáticas.
+function resolverImagemModal(caminho) {
+    if (!caminho) return '';
+
+    if (caminho.startsWith('http://') || caminho.startsWith('https://')) {
+        return caminho;
+    }
+
+    if (caminho.startsWith('/uploads/')) {
+        return `http://localhost:3000${caminho}`;
+    }
+
+    return caminho;
+}
+
 function abrirModal(item) {
     const overlay = document.getElementById('modal-overlay');
     if (!overlay) return;
 
     document.getElementById('modal-titulo').textContent = item.titulo;
-  document.getElementById('modal-data').textContent = item.dataExibicao || formatarData(item.data);
+    document.getElementById('modal-data').textContent = item.dataExibicao || formatarData(item.data);
     document.getElementById('modal-descricao').textContent = item.descricao;
 
     const fotosContainer = document.getElementById('modal-fotos');
     fotosContainer.innerHTML = '';
 
-    const fotos = item.fotos || [];
+    // Aceita os dois formatos: item.fotos (array, JSON estático)
+    // ou item.foto (string única, vinda da API/backend).
+    const fotos =
+        item.fotos && item.fotos.length
+            ? item.fotos
+            : (item.foto ? [item.foto] : []);
+
     fotos.forEach((src) => {
         const img = document.createElement('img');
-        img.src = src;
+        img.src = resolverImagemModal(src);
         img.alt = item.titulo;
         img.onerror = () => img.remove();
         fotosContainer.appendChild(img);

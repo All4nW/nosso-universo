@@ -105,12 +105,13 @@ function createTimelineItem(data) {
                     tipo,
                     categoria,
                     sugeridoPor,
+                    sugeridoTexto,
                     ordem,
                     ativo
 
                 )
 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `,
 
             [
@@ -124,6 +125,7 @@ function createTimelineItem(data) {
                 data.tipo || "",
                 data.categoria || "",
                 data.sugeridoPor || "",
+                data.sugeridoTexto || "",
                 data.ordem || 999999,
                 data.ativo ? 1 : 0
             ],
@@ -175,6 +177,7 @@ function updateTimelineItem(id, data) {
                     tipo = ?,
                     categoria = ?,
                     sugeridoPor = ?,
+                    sugeridoTexto = ?,
                     ativo = ?
 
                 WHERE id = ?
@@ -190,6 +193,7 @@ function updateTimelineItem(id, data) {
                 data.tipo || "",
                 data.categoria || "",
                 data.sugeridoPor || "",
+                data.sugeridoTexto || "",
                 data.ativo ? 1 : 0,
                 id
             ],

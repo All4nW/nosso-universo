@@ -16,6 +16,14 @@
     "volume": 80
   },
   {
+    "id": "37cc2acc-7f0d-48e0-8fce-66a21666e1c5",
+    "titulo": "Can't Help Falling In Love",
+    "arquivo": "assets/audio/1786650935618-446569618.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 106,
+    "volume": 80
+  },
+  {
     "id": "93458cd3-60e1-4441-b09c-d7ddf15e5246",
     "titulo": "Stand By Me - Ben E. King",
     "arquivo": "assets/audio/1786244515730-758922345.mp3",

@@ -244,6 +244,28 @@ function renderizarTimelineAdmin() {
 
 
                         ${
+                            item.sugeridoPor === "ela"
+                                ? `
+                                    <span>
+                                        💗 ${escaparHtml(item.sugeridoTexto || "Sugestão dela")}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+
+                        ${
+                            item.sugeridoPor === "mim"
+                                ? `
+                                    <span>
+                                        💙 ${escaparHtml(item.sugeridoTexto || "Sugestão minha")}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+
+                        ${
                             item.ativo
                                 ? `
                                     <span class="ativo">
@@ -602,6 +624,14 @@ function editarMomento(id) {
     );
 
 
+    // Texto livre que aparece dentro do selo (opcional).
+    // Se estiver vazio, o site usa o texto padrão.
+    definirValor(
+        "timeline-sugerido-texto",
+        item.sugeridoTexto
+    );
+
+
     const ativo =
         document.getElementById(
             "timeline-ativo"
@@ -772,6 +802,13 @@ async function salvarMomento() {
     );
 
 
+    // Texto livre que aparece dentro do selo colorido.
+    formulario.append(
+        "sugeridoTexto",
+        obterValor("timeline-sugerido-texto")
+    );
+
+
     const ativo =
         document.getElementById(
             "timeline-ativo"
@@ -890,10 +927,6 @@ async function salvarMomento() {
 
 }
 
-
-// ======================================================
-// EXCLUIR
-// ======================================================
 
 // ======================================================
 // EXCLUIR
@@ -1309,6 +1342,12 @@ function limparFormulario() {
 
     definirValor(
         "timeline-sugerido",
+        ""
+    );
+
+
+    definirValor(
+        "timeline-sugerido-texto",
         ""
     );
 
