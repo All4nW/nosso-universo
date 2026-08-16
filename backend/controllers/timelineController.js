@@ -348,6 +348,17 @@ exports.reorderTimeline = async (req, res) => {
 // =====================================================
 // EXPORTAR PARA O SITE (gera o timeline.json estático)
 // =====================================================
+// IMPORTANTE: fotos enviadas pelo Admin ficam salvas em
+// backend/uploads/timeline/, uma pasta que só existe no seu
+// computador (servida pelo backend rodando localmente).
+// O GitHub Pages não roda o backend, então essa imagem nunca
+// chegaria lá — por isso, ao sincronizar, copiamos o arquivo
+// físico pra dentro do próprio repositório do site
+// (assets/images/timeline-uploads/) e reescrevemos o caminho
+// no timeline.json pra um caminho relativo comum, que funciona
+// tanto localmente quanto no GitHub Pages, sem depender do
+// backend estar ligado.
+// =====================================================
 
 exports.exportarTimeline = async (req, res) => {
 
@@ -357,27 +368,117 @@ exports.exportarTimeline = async (req, res) => {
             await Timeline.getTimeline(false); // só os ativos
 
 
+        const pastaDestinoImagens =
+            path.join(
+                __dirname,
+                "../../assets/images/timeline-uploads"
+            );
+
+
+        if (!fs.existsSync(pastaDestinoImagens)) {
+
+            fs.mkdirSync(
+                pastaDestinoImagens,
+                { recursive: true }
+            );
+
+        }
+
+
         const dadosExportados =
-            itens.map((item) => ({
+            itens.map((item) => {
 
-                id: item.id,
-                titulo: item.titulo,
-                data: item.data,
-                hora: item.hora || undefined,
-                resumo: item.resumo,
-                descricao: item.descricao,
-                sugeridoPor: item.sugeridoPor || undefined,
-                sugeridoTexto: item.sugeridoTexto || undefined,
+                let fotoExportada =
+                    item.foto || "";
 
-                dataExibicao:
-                    item.temDataExata === 0
-                        ? item.dataTexto
-                        : undefined,
 
-                fotos:
-                    item.foto ? [item.foto] : []
+                // Só precisa copiar se for uma foto enviada pelo
+                // Admin (upload). Fotos que já eram caminhos fixos
+                // dentro de assets/ (do JSON antigo) não precisam.
+                if (
+                    fotoExportada.startsWith(
+                        "/uploads/timeline/"
+                    )
+                ) {
 
-            }));
+                    const nomeArquivo =
+                        path.basename(fotoExportada);
+
+
+                    const origem =
+                        path.join(
+                            __dirname,
+                            "../uploads/timeline",
+                            nomeArquivo
+                        );
+
+
+                    const destino =
+                        path.join(
+                            pastaDestinoImagens,
+                            nomeArquivo
+                        );
+
+
+                    try {
+
+                        if (fs.existsSync(origem)) {
+
+                            fs.copyFileSync(
+                                origem,
+                                destino
+                            );
+
+
+                            fotoExportada =
+                                `assets/images/timeline-uploads/${nomeArquivo}`;
+
+                        }
+
+                        else {
+
+                            console.warn(
+                                `⚠️ Imagem não encontrada pra copiar: ${origem}`
+                            );
+
+                        }
+
+                    }
+
+                    catch (erroCopia) {
+
+                        console.error(
+                            "Erro ao copiar imagem da timeline:",
+                            erroCopia
+                        );
+
+                    }
+
+                }
+
+
+                return {
+
+                    id: item.id,
+                    titulo: item.titulo,
+                    data: item.data,
+                    hora: item.hora || undefined,
+                    resumo: item.resumo,
+                    descricao: item.descricao,
+                    sugeridoPor: item.sugeridoPor || undefined,
+                    sugeridoTexto: item.sugeridoTexto || undefined,
+
+                    dataExibicao:
+                        item.temDataExata === 0
+                            ? item.dataTexto
+                            : undefined,
+
+                    fotos:
+                        fotoExportada ? [fotoExportada] : []
+
+                };
+
+            });
 
 
         const caminhoDestino =
