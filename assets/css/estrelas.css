@@ -9,8 +9,57 @@
 
     overflow: hidden;
 
-    /* Fundo preto só nesta seção, sem alterar o resto do site */
-    background: #000000;
+    /* Fundo preto + nebulosa sutil (mais "vida" de galáxia) */
+    background:
+        radial-gradient(
+            ellipse 55% 40% at 15% 20%,
+            rgba(90, 60, 170, 0.16),
+            transparent 60%
+        ),
+        radial-gradient(
+            ellipse 50% 45% at 85% 28%,
+            rgba(60, 90, 190, 0.12),
+            transparent 65%
+        ),
+        radial-gradient(
+            ellipse 60% 50% at 72% 88%,
+            rgba(170, 40, 90, 0.10),
+            transparent 65%
+        ),
+        radial-gradient(
+            ellipse 45% 35% at 30% 82%,
+            rgba(100, 70, 180, 0.09),
+            transparent 60%
+        ),
+        #000000;
+
+}
+
+
+/* Faixa difusa tipo "via láctea" cruzando o fundo */
+.estrelas-view::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 38%,
+            rgba(150, 130, 210, 0.05) 47%,
+            rgba(170, 150, 220, 0.09) 50%,
+            rgba(150, 130, 210, 0.05) 53%,
+            transparent 62%
+        );
+
+    filter: blur(30px);
+
+    pointer-events: none;
+
+    z-index: 0;
 
 }
 
@@ -34,7 +83,7 @@
 
 .estrelas-fundo-extra::before,
 .estrelas-fundo-extra::after,
-.estrelas-fundo-extra span {
+.estrelas-fundo-extra-camada-3 {
 
     content: "";
 
@@ -211,6 +260,71 @@
     50% {
 
         opacity: 1;
+
+    }
+
+}
+
+
+/* =====================================================
+   ESTRELAS BRILHANTES EXTRAS (com glow de verdade,
+   diferente dos pontinhos planos das camadas acima)
+   ===================================================== */
+
+.estrela-brilhante-fundo {
+
+    position: absolute;
+
+    left: var(--ebf-x);
+
+    top: var(--ebf-y);
+
+    width: var(--ebf-tam, 2px);
+
+    height: var(--ebf-tam, 2px);
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow:
+        0 0 6px 1px rgba(255, 255, 255, 0.9),
+        0 0 12px 2px rgba(190, 210, 255, 0.35);
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    opacity: 0.3;
+
+    animation:
+        estrela-brilhante-piscar
+        var(--ebf-duracao, 4s)
+        ease-in-out
+        infinite;
+
+    animation-delay:
+        var(--ebf-delay, 0s);
+
+}
+
+
+@keyframes estrela-brilhante-piscar {
+
+    0%,
+    100% {
+
+        opacity: 0.25;
+
+        transform: scale(0.75);
+
+    }
+
+    50% {
+
+        opacity: 1;
+
+        transform: scale(1.4);
 
     }
 
@@ -505,6 +619,15 @@
 
     overflow: hidden;
 
+    /* Garante que o campo (e as estrelas clicáveis dentro dele)
+       fique sempre acima das camadas decorativas de fundo */
+    z-index: 5;
+
+    /* Força o clique a funcionar, sobrescrevendo qualquer regra
+       de outro arquivo CSS que esteja desativando o pointer-events
+       aqui sem querer */
+    pointer-events: auto !important;
+
     transition:
         background 1.2s ease,
         filter 1.2s ease;
@@ -714,6 +837,9 @@
     background: transparent;
 
     cursor: pointer;
+
+    /* Mesma garantia de clique funcionando, na própria estrela */
+    pointer-events: auto !important;
 
     /* FIX: translateZ(0) força uma camada de composição própria,
        evitando o bug de under-invalidation do Chrome */
@@ -1546,78 +1672,88 @@
 
 @media (max-width: 600px) {
 
-    .estrelas-intro {
+    /* ============================================
+       SCROLL HORIZONTAL — em vez de espremer tudo
+       pra caber na tela, o campo fica mais largo
+       que a viewport e dá pra arrastar de lado.
+       ============================================ */
 
-        width:
-            calc(100% - 40px);
+    .estrelas-view {
+
+        overflow-x: auto;
+
+        overflow-y: hidden;
+
+        -webkit-overflow-scrolling: touch;
 
     }
 
 
-    .estrelas-intro h1 {
+    .estrelas-campo,
+    .estrelas-fundo-extra {
 
-        font-size:
-            38px;
+        position: absolute;
+
+        top: 0;
+        bottom: 0;
+
+        left: 0;
+
+        right: auto;
+
+        width: 780px;
+
+        min-width: 780px;
+
+        height: 100%;
 
     }
 
 
-    .estrelas-intro p {
+    /* A legenda e o card de memória ficam fixos na tela
+       (não rolam junto com o campo de estrelas) */
 
-        font-size:
-            13px;
+    .estrelas-legenda {
+
+        position: fixed;
+
+        bottom: 25px;
+
+        gap: 14px;
+
+        font-size: 9px;
 
     }
 
 
     .estrela-memoria {
 
-        width:
-            calc(100% - 32px);
+        position: fixed;
+
+        left: 0 !important;
+
+        right: 0;
+
+        bottom: 0;
+
+        top: auto !important;
+
+        width: 100%;
+
+        max-width: 100%;
+
+        border-radius: 20px 20px 0 0;
+
+        transform:
+            translateY(100%) !important;
 
     }
 
 
-    .estrela-memoria-conteudo {
+    .estrela-memoria:not(.oculto) {
 
-        padding:
-            20px 12px;
-
-    }
-
-
-    .estrela-memoria-texto {
-
-        font-size:
-            21px;
-
-        line-height:
-            1.55;
-
-    }
-
-
-    .estrela-memoria-fechar {
-
-        right:
-            -4px;
-
-        top:
-            -8px;
-
-    }
-
-
-    .estrelas-legenda {
-
-        bottom:
-            25px;
-
-        gap:
-            14px;
-
-        font-size:
-            9px;
+        transform:
+            translateY(0) !important;
 
     }
 
@@ -1635,26 +1771,6 @@
                 26px,
                 var(--estrela-tamanho)
             );
-
-    }
-
-
-    .estrela-nucleo {
-
-        width:
-            var(--estrela-tamanho);
-
-        height:
-            var(--estrela-tamanho);
-
-        left:
-            50%;
-
-        top:
-            50%;
-
-        transform:
-            translate(-50%, -50%);
 
     }
 

@@ -234,6 +234,33 @@
     ]
   },
   {
+    "id": "dcfc926d-4466-417a-8585-a33f0d734707",
+    "nome": "Genshin",
+    "capa": "assets/images/galeria/1786495249718-538616059.png",
+    "fotos": [
+      {
+        "data": "2026-04-11",
+        "imagem": "assets/images/galeria/1786860032571-445761444.jpeg",
+        "descricao": "Pegando nosso bauzinho do amor"
+      },
+      {
+        "data": "2026-05-20",
+        "imagem": "assets/images/galeria/1786495302436-159222252.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-06-28",
+        "imagem": "assets/images/galeria/1786495270498-595115647.png",
+        "descricao": ""
+      },
+      {
+        "data": "2026-07-25",
+        "imagem": "assets/images/galeria/1786495226699-805926594.png",
+        "descricao": ""
+      }
+    ]
+  },
+  {
     "id": "c51b40af-9dbb-4c0c-b7c2-20b01d992bf1",
     "nome": "Transmitidos",
     "capa": "assets/images/galeria/1786493526561-743823160.png",
@@ -262,33 +289,6 @@
         "data": "2026-01-20",
         "imagem": "assets/images/galeria/1786493557098-352862536.png",
         "descricao": "A gente assistindo Frieren"
-      }
-    ]
-  },
-  {
-    "id": "dcfc926d-4466-417a-8585-a33f0d734707",
-    "nome": "Genshin",
-    "capa": "assets/images/galeria/1786495249718-538616059.png",
-    "fotos": [
-      {
-        "data": "2026-04-11",
-        "imagem": "assets/images/galeria/1786860032571-445761444.jpeg",
-        "descricao": "Pegando nosso bauzinho do amor"
-      },
-      {
-        "data": "2026-05-20",
-        "imagem": "assets/images/galeria/1786495302436-159222252.png",
-        "descricao": ""
-      },
-      {
-        "data": "2026-06-28",
-        "imagem": "assets/images/galeria/1786495270498-595115647.png",
-        "descricao": ""
-      },
-      {
-        "data": "2026-07-25",
-        "imagem": "assets/images/galeria/1786495226699-805926594.png",
-        "descricao": ""
       }
     ]
   },

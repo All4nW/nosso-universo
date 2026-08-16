@@ -104,19 +104,36 @@
         </section>
 
  <section class="view estrelas-view" data-view="estrelas">
-<!-- Estrelas de fundo extras (decorativas, só nesta seção) -->
-<div class="estrelas-fundo-extra" aria-hidden="true">
-    <span class="estrelas-fundo-extra-camada-3"></span>
-    <span class="cometa cometa-1"></span>
-    <span class="cometa cometa-grande cometa-2"></span>
-    <span class="cometa cometa-3"></span>
-    <span class="cometa cometa-grande cometa-4"></span>
-    <span class="cometa cometa-pequeno cometa-5"></span>
-    <span class="cometa cometa-6"></span>
-</div>
 
-<!-- Céu -->
-<div class="estrelas-campo" id="estrelas-campo"></div>
+    <!-- Estrelas de fundo extras (decorativas, só nesta seção) -->
+    <div class="estrelas-fundo-extra" aria-hidden="true">
+        <span class="estrelas-fundo-extra-camada-3"></span>
+
+        <span class="cometa cometa-1"></span>
+        <span class="cometa cometa-grande cometa-2"></span>
+        <span class="cometa cometa-3"></span>
+        <span class="cometa cometa-grande cometa-4"></span>
+        <span class="cometa cometa-pequeno cometa-5"></span>
+        <span class="cometa cometa-6"></span>
+
+        <span class="estrela-brilhante-fundo" style="--ebf-x:33.4%; --ebf-y:17.2%; --ebf-tam:2.6px; --ebf-delay:0.33s; --ebf-duracao:4.3s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:37.4%; --ebf-y:8.5%; --ebf-tam:2.4px; --ebf-delay:0.17s; --ebf-duracao:4.1s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:9.6%; --ebf-y:11.5%; --ebf-tam:2.2px; --ebf-delay:3.72s; --ebf-duracao:3.3s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:24.0%; --ebf-y:62.0%; --ebf-tam:3.1px; --ebf-delay:2.6s; --ebf-duracao:4.0s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:94.8%; --ebf-y:7.4%; --ebf-tam:3.0px; --ebf-delay:1.3s; --ebf-duracao:3.4s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:14.1%; --ebf-y:32.0%; --ebf-tam:2.9px; --ebf-delay:0.81s; --ebf-duracao:4.5s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:63.1%; --ebf-y:38.0%; --ebf-tam:2.4px; --ebf-delay:0.28s; --ebf-duracao:3.1s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:22.4%; --ebf-y:67.0%; --ebf-tam:2.2px; --ebf-delay:1.41s; --ebf-duracao:4.5s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:45.6%; --ebf-y:31.2%; --ebf-tam:2.9px; --ebf-delay:3.15s; --ebf-duracao:3.6s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:57.0%; --ebf-y:52.4%; --ebf-tam:3.0px; --ebf-delay:3.28s; --ebf-duracao:3.7s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:95.1%; --ebf-y:14.1%; --ebf-tam:2.2px; --ebf-delay:3.41s; --ebf-duracao:3.4s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:49.0%; --ebf-y:6.7%; --ebf-tam:2.6px; --ebf-delay:3.44s; --ebf-duracao:4.4s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:85.3%; --ebf-y:32.5%; --ebf-tam:2.7px; --ebf-delay:2.67s; --ebf-duracao:4.4s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:45.9%; --ebf-y:82.0%; --ebf-tam:3.1px; --ebf-delay:2.13s; --ebf-duracao:4.7s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:8.7%; --ebf-y:68.9%; --ebf-tam:2.6px; --ebf-delay:4.47s; --ebf-duracao:5.1s;"></span>
+        <span class="estrela-brilhante-fundo" style="--ebf-x:29.8%; --ebf-y:39.3%; --ebf-tam:2.6px; --ebf-delay:0.1s; --ebf-duracao:4.2s;"></span>
+    </div>
+
     <!-- Céu -->
     <div class="estrelas-campo" id="estrelas-campo"></div>
 
@@ -135,31 +152,29 @@
     </div>
 
     <!-- Memória selecionada -->
- <div class="estrela-memoria oculto" id="estrela-memoria">
+    <div class="estrela-memoria oculto" id="estrela-memoria">
 
-    <div class="estrela-memoria-cabecalho">
+        <div class="estrela-memoria-cabecalho">
 
-        <span class="estrela-memoria-tipo" id="estrela-memoria-tipo">
-            MOMENTO
-        </span>
+            <span class="estrela-memoria-tipo" id="estrela-memoria-tipo">
+                MOMENTO
+            </span>
 
-        <button
-            class="estrela-memoria-fechar"
-            id="estrela-memoria-fechar"
-            aria-label="Fechar memória"
-        >
-            ×
-        </button>
+            <button
+                class="estrela-memoria-fechar"
+                id="estrela-memoria-fechar"
+                aria-label="Fechar memória"
+            >
+                ×
+            </button>
 
-    </div>
+        </div>
 
-    <h3 class="estrela-memoria-titulo" id="estrela-memoria-titulo"></h3>
+        <h3 class="estrela-memoria-titulo" id="estrela-memoria-titulo"></h3>
 
-    <p class="estrela-memoria-texto" id="estrela-memoria-texto"></p>
+        <p class="estrela-memoria-texto" id="estrela-memoria-texto"></p>
 
-    <span class="estrela-memoria-data" id="estrela-memoria-data"></span>
-
-</div>
+        <span class="estrela-memoria-data" id="estrela-memoria-data"></span>
 
     </div>
 
