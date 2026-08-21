@@ -1084,3 +1084,65 @@
 .foto-visualizador-seta-direita {
     right: var(--spacing-lg);
 }
+.player-lista {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(201, 167, 245, 0.15);
+
+    max-height: 220px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.player-lista.oculto {
+    display: none;
+}
+
+.player-lista-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+}
+
+.player-lista-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.player-lista-item.player-lista-item-ativa {
+    background: rgba(201, 167, 245, 0.12);
+}
+
+.player-lista-play {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-lilac);
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-lista-play:hover {
+    background: rgba(201, 167, 245, 0.2);
+}
+
+.player-lista-nome {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-lista-item-ativa .player-lista-nome {
+    color: var(--color-lilac);
+}

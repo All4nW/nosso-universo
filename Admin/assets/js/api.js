@@ -111,7 +111,7 @@ const API = {
 
 
     // =====================================================
-    // UPLOAD DE CAPA
+    // UPLOAD DE CAPA (ASSISTIDOS)
     // =====================================================
 
     async uploadImagem(file) {
@@ -127,6 +127,106 @@ const API = {
         const response =
             await fetch(
                 `${this.baseUrl}/assistidos/upload`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao enviar imagem."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    // =====================================================
+    // CARTAS
+    // =====================================================
+
+    async getCartas() {
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/letters`
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao buscar cartas."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    async saveCartas(data) {
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/letters`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+                }
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao salvar cartas."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    // =====================================================
+    // UPLOAD DE IMAGEM (CARTAS)
+    // =====================================================
+
+    async uploadImagemCarta(file) {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "imagem",
+            file
+        );
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/letters/upload`,
                 {
                     method: "POST",
                     body: formData

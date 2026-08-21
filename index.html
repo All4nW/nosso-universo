@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/estrelas.css">
     <link rel="stylesheet" href="assets/css/assistidos.css">
+    <link rel="stylesheet" href="assets/css/cartas.css">
 </head>
 <body>
 
@@ -89,10 +90,96 @@
 
 </section>
 
-        <section class="view" data-view="cartas">
-            <h1>Cartas</h1>
-            <p>Em construção...</p>
-        </section>
+<section class="view" data-view="cartas">
+
+    <div class="cartas-intro">
+        <span class="cartas-intro-simbolo">✉</span>
+
+        <h1 class="cartas-intro-titulo">Textinhos</h1>
+
+       <p class="cartas-intro-frase">
+</p>
+
+        <span class="cartas-intro-contagem" id="cartas-contagem"></span>
+    </div>
+
+    <div class="cartas-busca-wrapper">
+        <input
+            type="text"
+            id="cartas-busca"
+            class="cartas-busca"
+            placeholder="Procurar uma palavra, uma memória..."
+        >
+    </div>
+
+<div class="cartas-filtros" id="cartas-filtros">
+    <button type="button" class="cartas-filtro-btn ativo" data-filtro="todas">Todas</button>
+    <span class="cartas-filtro-separador">·</span>
+    <button type="button" class="cartas-filtro-btn" data-filtro="eu">Minhas cartas</button>
+    <span class="cartas-filtro-separador">·</span>
+    <button type="button" class="cartas-filtro-btn" data-filtro="ela">Cartas dela</button>
+</div>
+
+    <div id="cartas-arquivo" class="cartas-arquivo"></div>
+
+    <button id="cartas-topo-btn" class="scroll-topo-btn" aria-label="Voltar ao topo">↑</button>
+
+</section>
+
+<div class="carta-aberta-overlay oculto" id="carta-aberta-overlay">
+
+   <div class="carta-aberta-folha" id="carta-aberta-folha">
+
+    <button class="carta-aberta-fechar" id="carta-aberta-fechar" aria-label="Fechar carta">×</button>
+
+    <span class="carta-aberta-coracao" style="--ch-x: 6%; --ch-y: 12%; --ch-tam: 0.7rem; --ch-duracao: 6.5s; --ch-delay: 0.3s;">♡</span>
+    <span class="carta-aberta-coracao" style="--ch-x: 92%; --ch-y: 20%; --ch-tam: 0.6rem; --ch-duracao: 7.5s; --ch-delay: 1.2s;">♡</span>
+    <span class="carta-aberta-coracao" style="--ch-x: 88%; --ch-y: 82%; --ch-tam: 0.75rem; --ch-duracao: 8s; --ch-delay: 0.6s;">♡</span>
+
+    <span class="carta-aberta-laco">🎀</span>
+
+    <span class="carta-aberta-data" id="carta-aberta-data"></span>
+
+    <h2 class="carta-aberta-titulo" id="carta-aberta-titulo"></h2>
+
+    <p class="carta-aberta-saudacao">Amor,</p>
+
+    <p class="carta-aberta-texto" id="carta-aberta-texto"></p>
+
+    <div class="carta-aberta-rodape">
+        <span class="carta-aberta-despedida">Com amor,</span>
+        <span class="carta-aberta-assinatura" id="carta-aberta-assinatura"></span>
+    </div>
+
+</div>
+
+</div>
+
+<!-- Carta aberta — fica fora do fluxo normal, cobre a tela quando ativa -->
+<div class="carta-aberta-overlay oculto" id="carta-aberta-overlay">
+
+<div class="carta-aberta-folha" id="carta-aberta-folha">
+
+    <button class="carta-aberta-fechar" id="carta-aberta-fechar" aria-label="Fechar carta">×</button>
+
+    <span class="carta-aberta-data" id="carta-aberta-data"></span>
+
+    <div id="carta-aberta-foto-container"></div>
+
+    <h2 class="carta-aberta-titulo" id="carta-aberta-titulo"></h2>
+
+    <p class="carta-aberta-saudacao">Amor,</p>
+
+    <p class="carta-aberta-texto" id="carta-aberta-texto"></p>
+
+    <div class="carta-aberta-rodape">
+        <span class="carta-aberta-despedida">Com amor,</span>
+        <span class="carta-aberta-assinatura" id="carta-aberta-assinatura"></span>
+    </div>
+
+</div>
+
+</div>
 
 <section class="view" data-view="assistidos">
     <h1 class="section-title">Tudo Que Já Assistimos <3 </h1>
@@ -158,7 +245,16 @@
 
     <!-- Memória selecionada -->
     <div class="estrela-memoria oculto" id="estrela-memoria">
+<div class="estrela-memoria oculto" id="estrela-memoria">
 
+    <div class="memoria-particulas" aria-hidden="true">
+        <span style="--p-x:8%; --p-delay:0s;"></span>
+        <span style="--p-x:25%; --p-delay:0.6s;"></span>
+        <span style="--p-x:45%; --p-delay:1.1s;"></span>
+        <span style="--p-x:62%; --p-delay:0.3s;"></span>
+        <span style="--p-x:80%; --p-delay:1.6s;"></span>
+        <span style="--p-x:92%; --p-delay:2.1s;"></span>
+    </div>
         <div class="estrela-memoria-cabecalho">
 
             <span class="estrela-memoria-tipo" id="estrela-memoria-tipo">
@@ -218,6 +314,7 @@
     <script src="assets/js/galeria.js"></script>
     <script src="assets/js/estrelas.js"></script>
     <script src="assets/js/assistidos.js"></script>
+    <script src="assets/js/cartas.js"></script>
     
 
 </body>

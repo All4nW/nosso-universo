@@ -1,0 +1,49 @@
+[
+    {
+        "id": "para-voce-saudade",
+        "titulo": "Para você, quando estiver com saudade",
+        "autor": "eu",
+        "data": "2026-08-05",
+        "categoria": "Saudade",
+        "mensagem": "Amor, eu tava pensando em você hoje e percebi o quanto sua presença faz diferença nos meus dias. Mesmo quando a gente não tá junto, eu sinto você por perto.",
+        "especial": true
+    },
+    {
+        "id": "conversa-madrugada",
+        "titulo": "Sabe aquele dia que a gente ficou conversando até tarde",
+        "autor": "ela",
+        "data": "2026-06-12",
+        "categoria": "Bobeira nossa",
+        "mensagem": "Eu tava pensando em você e naquela conversa boba que a gente teve até quatro da manhã. Não sei como conseguimos rir tanto de nada.",
+        "especial": false
+    },
+    {
+        "id": "primeira-mensagem",
+        "titulo": "A primeira vez que te chamei pra sair",
+        "autor": "eu",
+        "data": "2025-11-02",
+        "categoria": "Começo",
+        "mensagem": "Eu reescrevi essa mensagem umas cinco vezes antes de mandar. Fiquei nervoso o dia inteiro esperando sua resposta.",
+        "especial": true
+    },
+    {
+        "id": "depois-da-primeira-briga",
+        "titulo": "Depois da nossa primeira briga boba",
+        "autor": "ela",
+        "data": "2025-12-20",
+        "categoria": "Aprendizado",
+        "mensagem": "Eu queria só dizer que mesmo brigando eu não deixo de gostar de você. A gente vai aprender a se entender melhor.",
+        "especial": false
+    },
+    {
+        "id": "teste",
+        "titulo": "teste",
+        "autor": "eu",
+        "data": "2222-02-22",
+        "categoria": "teste",
+        "mensagem": "test teste",
+        "especial": false,
+        "destaque": false,
+        "foto": "assets/images/letters/carta-1787348822974.jpeg"
+    }
+]

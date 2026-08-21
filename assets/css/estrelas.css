@@ -1131,6 +1131,104 @@
 
 
 /* =====================================================
+   FLASH AO CLICAR (efeito de "explosão de luz" no momento
+   do clique, antes do card abrir)
+   ===================================================== */
+
+.estrela.estrela-flash::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -220%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(210, 230, 255, 0.65),
+            rgba(150, 190, 255, 0.2) 45%,
+            transparent 72%
+        );
+
+    pointer-events: none;
+
+    animation:
+        estrela-flash-clara
+        0.75s
+        ease-out
+        forwards;
+
+}
+
+
+.estrela-vermelha.estrela-flash::before {
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 110, 130, 0.6),
+            rgba(255, 60, 85, 0.2) 45%,
+            transparent 72%
+        );
+
+    animation-name:
+        estrela-flash-vermelha;
+
+}
+
+
+@keyframes estrela-flash-clara {
+
+    0% {
+
+        opacity: 0.9;
+
+        transform: scale(0.25);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform: scale(2.3);
+
+    }
+
+}
+
+
+@keyframes estrela-flash-vermelha {
+
+    0% {
+
+        opacity: 0.85;
+
+        transform: scale(0.25);
+
+    }
+
+    55% {
+
+        opacity: 0.55;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform: scale(2.7);
+
+    }
+
+}
+
+
+/* =====================================================
    CAMPO VERMELHO
    ===================================================== */
 
@@ -1143,6 +1241,49 @@
             rgba(70, 5, 20, 0.12) 35%,
             transparent 70%
         );
+
+}
+
+
+/* Vinheta escurecendo as bordas da tela — deixa o momento
+   mais pesado/íntimo quando é uma memória difícil */
+.estrelas-view.ceu-vermelho::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 4;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 40%,
+            rgba(20, 0, 5, 0.35) 100%
+        );
+
+    opacity: 0;
+
+    animation:
+        vinheta-aparecer
+        1.2s
+        ease
+        forwards;
+
+}
+
+
+@keyframes vinheta-aparecer {
+
+    to {
+
+        opacity: 1;
+
+    }
 
 }
 
@@ -1299,19 +1440,25 @@
 
     text-align: left;
 
+    /* Vidro bem transparente — as estrelas de fundo continuam
+       visíveis através do card, borradas pelo blur */
     background:
-        rgba(10, 12, 24, 0.82);
+        rgba(10, 12, 22, 0.4);
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(160, 195, 255, 0.22);
 
     border-radius: 18px;
 
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(18px);
 
-    -webkit-backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(18px);
 
+    /* A cor entra só como brilho nas bordas (inset), não
+       como preenchimento — por isso não parece "pintado" */
     box-shadow:
-        0 24px 55px rgba(0, 0, 0, 0.5);
+        0 24px 55px rgba(0, 0, 0, 0.5),
+        inset 0 0 50px rgba(120, 165, 255, 0.1),
+        inset 0 1px 0 rgba(200, 220, 255, 0.12);
 
     padding: 20px 22px;
 
@@ -1319,9 +1466,261 @@
 
     pointer-events: none;
 
+    overflow: visible;
+
     transition:
         opacity 0.35s ease,
         transform 0.35s ease;
+
+}
+
+
+/* Tonalidade avermelhada — memórias difíceis.
+   Mesmo vidro transparente, só troca a cor do brilho
+   das bordas e da borda em si. */
+.estrela-memoria.memoria-vermelha {
+
+    background:
+        rgba(20, 8, 10, 0.42);
+
+    border-color: rgba(255, 130, 150, 0.26);
+
+    box-shadow:
+        0 24px 55px rgba(0, 0, 0, 0.5),
+        inset 0 0 50px rgba(255, 70, 90, 0.12),
+        inset 0 1px 0 rgba(255, 190, 200, 0.12);
+
+}
+
+
+/* Brilho suave "respirando" — momentos felizes */
+.estrela-memoria:not(.oculto) {
+
+    animation:
+        memoria-brilho-clara
+        3.4s
+        ease-in-out
+        infinite;
+
+}
+
+
+@keyframes memoria-brilho-clara {
+
+    0%,
+    100% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.5),
+            inset 0 0 50px rgba(120, 165, 255, 0.1),
+            inset 0 1px 0 rgba(200, 220, 255, 0.12),
+            0 0 0 rgba(150, 190, 255, 0);
+
+    }
+
+    50% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.5),
+            inset 0 0 50px rgba(120, 165, 255, 0.1),
+            inset 0 1px 0 rgba(200, 220, 255, 0.12),
+            0 0 28px rgba(150, 190, 255, 0.35);
+
+    }
+
+}
+
+
+/* Brilho tipo "batimento cardíaco" duplo — mais pesado,
+   mais lento, pra memórias difíceis */
+.estrela-memoria.memoria-vermelha:not(.oculto) {
+
+    animation-name:
+        memoria-brilho-vermelha;
+
+    animation-duration:
+        2.8s;
+
+}
+
+
+@keyframes memoria-brilho-vermelha {
+
+    0%,
+    100% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.55),
+            inset 0 0 50px rgba(255, 70, 90, 0.12),
+            inset 0 1px 0 rgba(255, 190, 200, 0.12),
+            0 0 0 rgba(255, 60, 80, 0);
+
+    }
+
+    28% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.55),
+            inset 0 0 50px rgba(255, 70, 90, 0.12),
+            inset 0 1px 0 rgba(255, 190, 200, 0.12),
+            0 0 30px rgba(255, 60, 80, 0.4);
+
+    }
+
+    42% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.55),
+            inset 0 0 50px rgba(255, 70, 90, 0.12),
+            inset 0 1px 0 rgba(255, 190, 200, 0.12),
+            0 0 12px rgba(255, 60, 80, 0.15);
+
+    }
+
+    58% {
+
+        box-shadow:
+            0 24px 55px rgba(0, 0, 0, 0.55),
+            inset 0 0 50px rgba(255, 70, 90, 0.12),
+            inset 0 1px 0 rgba(255, 190, 200, 0.12),
+            0 0 32px rgba(255, 60, 80, 0.42);
+
+    }
+
+}
+
+
+/* =====================================================
+   PARTÍCULAS FLUTUANDO AO REDOR DO CARD
+   ===================================================== */
+
+.memoria-particulas {
+
+    position: absolute;
+
+    inset: -25% -12%;
+
+    pointer-events: none;
+
+    overflow: visible;
+
+    z-index: -1;
+
+}
+
+
+.memoria-particulas span {
+
+    position: absolute;
+
+    left: var(--p-x, 50%);
+
+    bottom: 0;
+
+    width: 3px;
+
+    height: 3px;
+
+    border-radius: 50%;
+
+    background: #d7e6ff;
+
+    box-shadow:
+        0 0 6px 1px rgba(190, 215, 255, 0.85);
+
+    opacity: 0;
+
+    animation:
+        memoria-particula-subir
+        3.2s
+        ease-in
+        infinite;
+
+    animation-delay:
+        var(--p-delay, 0s);
+
+}
+
+
+@keyframes memoria-particula-subir {
+
+    0% {
+
+        opacity: 0;
+
+        transform: translateY(0) scale(0.6);
+
+    }
+
+    15% {
+
+        opacity: 1;
+
+    }
+
+    85% {
+
+        opacity: 0.55;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform: translateY(-130px) scale(1);
+
+    }
+
+}
+
+
+/* Vermelha: brasas caindo devagar, em vez de brilho subindo */
+.estrela-memoria.memoria-vermelha .memoria-particulas span {
+
+    background: #ff8b93;
+
+    box-shadow:
+        0 0 6px 1px rgba(255, 90, 110, 0.8);
+
+    animation-name:
+        memoria-particula-cair;
+
+    animation-duration:
+        4s;
+
+}
+
+
+@keyframes memoria-particula-cair {
+
+    0% {
+
+        opacity: 0;
+
+        transform: translateY(-25px) scale(0.6);
+
+    }
+
+    15% {
+
+        opacity: 1;
+
+    }
+
+    85% {
+
+        opacity: 0.5;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform: translateY(85px) scale(0.9);
+
+    }
 
 }
 

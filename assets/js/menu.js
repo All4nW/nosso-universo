@@ -49,6 +49,8 @@ function ativarComportamentoDoSom() {
     const btnVolMenos = document.getElementById('player-vol-menos');
     const btnVolMais = document.getElementById('player-vol-mais');
     const volumeTexto = document.getElementById('player-volume-valor');
+        const btnListaToggle = document.getElementById('player-lista-toggle');
+    const listaContainer = document.getElementById('player-lista');
 
     if (!botaoSom) return;
 
@@ -110,7 +112,7 @@ function ativarComportamentoDoSom() {
         proximaFaixa();
     });
 
-function tocarFaixaAtual() {
+    function tocarFaixaAtual() {
         if (!playlist.length) return;
 
         const musica = playlist[indiceAtual];
@@ -124,6 +126,7 @@ function tocarFaixaAtual() {
         }, { once: true });
 
         atualizarTitulo();
+        renderizarListaMusicas(); // NOVO
 
         if (tocando) {
             audio.play().catch(() => {
@@ -165,6 +168,7 @@ function tocarFaixaAtual() {
 
         if (playlist.length) {
             atualizarTitulo();
+            renderizarListaMusicas(); // NOVO
         }
     }
 
@@ -187,6 +191,7 @@ function tocarFaixaAtual() {
         }
 
         atualizarBotaoPlayPause();
+        renderizarListaMusicas();
     }
 
     carregarPlaylist();
@@ -208,6 +213,12 @@ function tocarFaixaAtual() {
     if (btnMute) btnMute.addEventListener('click', (e) => { e.stopPropagation(); alternarMute(); });
     if (btnVolMenos) btnVolMenos.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(-0.1); });
     if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
+        if (btnListaToggle) {
+        btnListaToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            listaContainer.classList.toggle('oculto');
+        });
+    }
 
     const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
@@ -224,6 +235,42 @@ function tocarFaixaAtual() {
     setTimeout(() => {
         botaoSom.classList.remove('sound-toggle-glow');
     }, 3000);
+
+        function renderizarListaMusicas() {
+        if (!listaContainer) return;
+
+        listaContainer.innerHTML = '';
+
+        playlist.forEach((musica, indice) => {
+            const item = document.createElement('div');
+            item.className = 'player-lista-item';
+            if (indice === indiceAtual) {
+                item.classList.add('player-lista-item-ativa');
+            }
+
+            item.innerHTML = `
+                <span class="player-lista-play">${indice === indiceAtual && tocando ? '⏸' : '▶'}</span>
+                <span class="player-lista-nome">${musica.titulo || 'Sem título'}</span>
+            `;
+
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                if (indice === indiceAtual) {
+                    alternarPlayPause();
+                } else {
+                    indiceAtual = indice;
+                    tocando = true;
+                    tocarFaixaAtual();
+                    atualizarBotaoPlayPause();
+                }
+
+                renderizarListaMusicas();
+            });
+
+            listaContainer.appendChild(item);
+        });
+    }
 }
 
 carregarNavbar();

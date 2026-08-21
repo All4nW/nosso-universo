@@ -23,6 +23,8 @@ const hubRoutes = require("./routes/hub");
 const assistidosRoutes =
 require("./routes/assistidos");
 
+const lettersRoutes = require("./routes/letters");
+
 
 const app =
     express();
@@ -103,6 +105,8 @@ app.use("/api/galeria", galeriaRoutes);
 app.use("/api/hub", hubRoutes);
 
 app.use("/api/assistidos", assistidosRoutes);
+
+app.use("/api/letters", lettersRoutes);
 
 
 

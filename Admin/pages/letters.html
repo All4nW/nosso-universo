@@ -1,3 +1,278 @@
-<h2>letters</h2>
+<section class="assistidos-admin">
 
-<p>Em desenvolvimento...</p>
+    <div class="pagina-cabecalho">
+
+        <div>
+            <h2>Cartas Para Nós</h2>
+
+            <p>
+                Gerencie as cartas e mensagens que vocês já
+                trocaram, e que aparecem na coleção do site.
+            </p>
+        </div>
+
+        <div class="assistidos-acoes-topo">
+
+            <button
+                type="button"
+                class="botao-principal"
+                id="cartas-novo"
+            >
+                + Adicionar
+            </button>
+
+            <button
+                type="button"
+                class="botao-sincronizar"
+                id="cartas-sincronizar"
+            >
+                🔄 Sincronizar com o site
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STATUS -->
+    <!-- ================================================= -->
+
+    <div
+        id="cartas-status"
+        class="assistidos-status"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- LISTA -->
+    <!-- ================================================= -->
+
+    <div
+        id="cartas-lista"
+        class="assistidos-admin-lista"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- MODAL -->
+    <!-- ================================================= -->
+
+    <div
+        id="cartas-modal"
+        class="assistidos-admin-modal oculto"
+    >
+
+        <div class="assistidos-modal-caixa">
+
+            <div class="assistidos-modal-cabecalho">
+
+                <div>
+                    <h3 id="cartas-modal-titulo">
+                        Adicionar carta
+                    </h3>
+
+                    <p>
+                        Preencha as informações abaixo.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="cartas-modal-fechar"
+                    class="assistidos-modal-fechar"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="cartas-form">
+
+                <input
+                    type="hidden"
+                    id="cartas-id"
+                >
+
+
+                <!-- FOTO (opcional) -->
+
+                <div class="assistidos-form-capa">
+
+                    <div
+                        id="cartas-preview"
+                        class="assistidos-preview"
+                    >
+                        ✉
+                    </div>
+
+                    <div>
+
+                        <label>
+                            Foto anexada (opcional)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="cartas-imagem"
+                            accept="image/*"
+                        >
+
+                        <small>
+                            JPG, PNG ou WEBP. Aparece
+                            espiando atrás do envelope e
+                            dentro da carta quando aberta.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TÍTULO -->
+
+                <div class="campo">
+
+                    <label for="cartas-titulo">
+                        Título
+                    </label>
+
+                    <input
+                        type="text"
+                        id="cartas-titulo"
+                        placeholder="Ex.: Para você, quando estiver com saudade"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- AUTOR -->
+
+                <div class="campo">
+
+                    <label for="cartas-autor">
+                        Quem escreveu
+                    </label>
+
+                    <select
+                        id="cartas-autor"
+                        required
+                    >
+
+                        <option value="eu">
+                            Allan
+                        </option>
+
+                        <option value="ela">
+                            Jhennyfer
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DATA -->
+
+                <div class="campo">
+
+                    <label for="cartas-data">
+                        Data
+                    </label>
+
+                    <input
+                        type="date"
+                        id="cartas-data"
+                    >
+
+                </div>
+
+
+                <!-- CATEGORIA -->
+
+                <div class="campo">
+
+                    <label for="cartas-categoria">
+                        Categoria
+                    </label>
+
+                    <select
+                        id="cartas-categoria"
+                        required
+                    >
+
+                        <option value="aniversario">
+                            ✦ Aniversário
+                        </option>
+
+                        <option value="destaque">
+                            ★ Destaque
+                        </option>
+
+                        <option value="relacionamento">
+                            ❤ Relacionamento
+                        </option>
+
+                        <option value="outros">
+                            ✉ Outros
+                        </option>
+
+                    </select>
+
+                    <small class="cartas-form-aviso">
+                        "Destaque" aparece maior, no topo da
+                        página. Recomendamos no máximo 3 cartas
+                        nessa categoria.
+                    </small>
+
+                </div>
+
+
+                <!-- MENSAGEM -->
+
+                <div class="campo">
+
+                    <label for="cartas-mensagem">
+                        Mensagem
+                    </label>
+
+                    <textarea
+                        id="cartas-mensagem"
+                        rows="8"
+                        placeholder="Cole aqui o texto original da carta ou mensagem..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="assistidos-form-acoes">
+
+                    <button
+                        type="button"
+                        id="cartas-cancelar"
+                        class="botao-secundario"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="botao-principal"
+                    >
+                        Salvar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>

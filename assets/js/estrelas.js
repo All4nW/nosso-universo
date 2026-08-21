@@ -385,9 +385,22 @@ function abrirMemoria(memoria, elemento) {
     );
 
 
+    // Flash de luz no momento do clique
+    elemento.classList.remove("estrela-flash");
+    void elemento.offsetWidth;
+    elemento.classList.add("estrela-flash");
+
+    setTimeout(() => {
+        elemento.classList.remove("estrela-flash");
+    }, 800);
+
+
     // =================================================
     // ESTRELA VERMELHA
     // =================================================
+
+    const view =
+        document.querySelector(".estrelas-view");
 
     if (memoria.tipo === "vermelha") {
 
@@ -395,8 +408,12 @@ function abrirMemoria(memoria, elemento) {
             "campo-vermelho"
         );
 
-        document.body.classList.add(
+        view?.classList.add(
             "ceu-vermelho"
+        );
+
+        memoriaBox.classList.add(
+            "memoria-vermelha"
         );
 
     } else {
@@ -405,8 +422,12 @@ function abrirMemoria(memoria, elemento) {
             "campo-vermelho"
         );
 
-        document.body.classList.remove(
+        view?.classList.remove(
             "ceu-vermelho"
+        );
+
+        memoriaBox.classList.remove(
+            "memoria-vermelha"
         );
 
     }
@@ -536,9 +557,11 @@ function fecharMemoria() {
     );
 
 
-    document.body.classList.remove(
-        "ceu-vermelho"
-    );
+    document
+        .querySelector(".estrelas-view")
+        ?.classList.remove(
+            "ceu-vermelho"
+        );
 
 
     document
