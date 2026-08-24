@@ -60,6 +60,13 @@ function ativarComportamentoDoSom() {
     let tocando = false;
     let mutado = false;
 
+    // Marca se o usuário já interagiu com a página (toque/clique/
+    // scroll/tecla), mesmo que a playlist ainda não tenha carregado.
+    // Assim, qualquer um dos dois "terminar por último" já dispara
+    // a música — resolve a corrida entre carregar a playlist e o
+    // primeiro toque no mobile, onde a rede é mais lenta.
+    let usuarioJaInteragiu = false;
+
     // Volume global (0 a 1), padrão 25%. Guardado no navegador para lembrar entre visitas.
     let volumeAtual =
         parseFloat(localStorage.getItem('nossoUniversoVolume')) || 0.25;
@@ -170,6 +177,14 @@ function ativarComportamentoDoSom() {
             atualizarTitulo();
             renderizarListaMusicas(); // NOVO
         }
+
+        // Se o usuário já tinha interagido ANTES da playlist terminar
+        // de carregar (comum no mobile, onde a tentativa de
+        // localhost:3000 demora mais pra falhar), toca agora que
+        // os dados finalmente chegaram.
+        if (usuarioJaInteragiu && !tocando && playlist.length) {
+            alternarPlayPause();
+        }
     }
 
     function alternarPlayPause() {
@@ -223,7 +238,17 @@ function ativarComportamentoDoSom() {
     const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
     function primeiraInteracao() {
+
+        usuarioJaInteragiu = true;
+
+        // "Desbloqueia" o elemento de áudio ainda dentro do gesto
+        // do usuário — em navegadores mobile (Safari/iOS em especial),
+        // isso conta como permissão pro elemento tocar mais tarde,
+        // mesmo que a playlist só chegue depois desse toque.
+        audio.play().catch(() => {});
+
         if (!tocando && playlist.length) alternarPlayPause();
+
         eventosDeInteracao.forEach(ev => window.removeEventListener(ev, primeiraInteracao));
     }
 
