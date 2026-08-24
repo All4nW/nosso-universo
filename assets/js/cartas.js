@@ -12,11 +12,17 @@ let cartasBuscaAtual = "";
 // CATEGORIAS
 // =====================================================
 
-const CATEGORIAS_ORDEM = [
+const CARTAS_CATEGORIAS_ORDEM = [
     { chave: "aniversario", titulo: "Aniversário" },
     { chave: "relacionamento", titulo: "Relacionamento" },
     { chave: "outros", titulo: "Outros" }
 ];
+
+const SUBTITULOS_CATEGORIA = {
+    aniversario: "",
+    relacionamento: "",
+    outros: ""
+};
 
 const SIMBOLOS_CATEGORIA = {
     aniversario: "✦",
@@ -83,6 +89,27 @@ function escaparHTMLCarta(texto) {
         texto || "";
 
     return div.innerHTML;
+
+}
+
+
+// =====================================================
+// FORMATAR MENSAGEM — escapa tudo e depois converte
+// **negrito** em <strong>. A ordem importa: escapa
+// primeiro (pra texto digitado nunca virar HTML de
+// verdade), só depois cria as tags de negrito que a
+// gente mesmo controla.
+// =====================================================
+
+function formatarMensagemCarta(texto) {
+
+    const escapado =
+        escaparHTMLCarta(texto);
+
+    return escapado.replace(
+        /\*\*(.+?)\*\*/g,
+        "<strong>$1</strong>"
+    );
 
 }
 
@@ -156,6 +183,7 @@ async function carregarCartas() {
 }
 
 
+
 // =====================================================
 // CONTAGEM
 // =====================================================
@@ -205,7 +233,8 @@ function obterCartasFiltradas() {
 
         itens =
             itens.filter(
-                item => item.categoria === "destaque"
+                item =>
+                    normalizarCategoriaCarta(item.categoria) === "destaque"
             );
 
     }
@@ -243,6 +272,25 @@ function obterCartasFiltradas() {
 
 
 // =====================================================
+// NORMALIZAR CATEGORIA
+// =====================================================
+// Cartas criadas antes da categorização fixa (ou com um
+// valor que não bate com nenhuma categoria válida) caem
+// em "Outros" em vez de simplesmente sumirem da coleção.
+
+function normalizarCategoriaCarta(categoria) {
+
+    const validas =
+        ["aniversario", "destaque", "relacionamento", "outros"];
+
+    return validas.includes(categoria)
+        ? categoria
+        : "outros";
+
+}
+
+
+// =====================================================
 // MONTAR POR CATEGORIA
 // =====================================================
 // "destaque" vira um bloco especial no topo (até 3 cartas).
@@ -265,16 +313,22 @@ function montarPorCategoria(itens) {
 
     const destaque =
         ordenados
-            .filter(item => item.categoria === "destaque")
+            .filter(
+                item =>
+                    normalizarCategoriaCarta(item.categoria) === "destaque"
+            )
             .slice(-3);
 
 
     const secoes =
-        CATEGORIAS_ORDEM
+        CARTAS_CATEGORIAS_ORDEM
             .map(categoria => ({
                 titulo: categoria.titulo,
+                chave: categoria.chave,
                 itens: ordenados.filter(
-                    item => item.categoria === categoria.chave
+                    item =>
+                        normalizarCategoriaCarta(item.categoria) ===
+                        categoria.chave
                 )
             }))
             .filter(secao => secao.itens.length);
@@ -391,25 +445,37 @@ function criarSecaoCategoria(secao) {
         "cartas-secao";
 
 
-    const titulo =
-        document.createElement("h2");
+    const cabecalho =
+        document.createElement("div");
 
-    titulo.className =
-        "cartas-secao-titulo";
+    cabecalho.className =
+        "cartas-secao-cabecalho";
 
-    titulo.textContent =
-        secao.titulo;
+    cabecalho.innerHTML = `
 
-    wrapper.appendChild(titulo);
+        <h2 class="cartas-secao-titulo">
+            ${escaparHTMLCarta(secao.titulo)}
+        </h2>
 
+        ${
+            SUBTITULOS_CATEGORIA[secao.chave]
+                ? `
+                    <p class="cartas-secao-subtitulo">
+                        ${SUBTITULOS_CATEGORIA[secao.chave]}
+                    </p>
+                `
+                : ""
+        }
 
-    const linha =
-        document.createElement("span");
+        <div class="cartas-secao-divisor">
+            <span class="cartas-secao-divisor-linha"></span>
+            <span class="cartas-secao-divisor-coracao">♡</span>
+            <span class="cartas-secao-divisor-linha"></span>
+        </div>
 
-    linha.className =
-        "cartas-secao-linha";
+    `;
 
-    wrapper.appendChild(linha);
+    wrapper.appendChild(cabecalho);
 
 
     const colecao =
@@ -444,15 +510,25 @@ function criarEnvelope(item, ehDestaque) {
 
     botao.type = "button";
 
-    botao.className =
-        "carta-envelope" +
-        (item.especial ? " carta-especial" : "");
-
 
     const h1 = hashCarta(item.id + "-rot");
     const h2 = hashCarta(item.id + "-float");
+    const h3 = hashCarta(item.id + "-forma");
+    const h4 = hashCarta(item.id + "-hover");
+
+    const classeForma =
+        `envelope-forma-${Math.floor(h3 * 3) + 1}`;
+
+    const classeAutor =
+        item.autor === "ela"
+            ? "carta-envelope-selo-jhennyfer"
+            : "carta-envelope-selo-allan";
+
+    botao.className =
+        `carta-envelope ${classeForma}`;
 
     botao.style.setProperty("--rot", `${(h1 - 0.5) * 10}deg`);
+    botao.style.setProperty("--rot-hover", `${(h4 - 0.5) * 4}deg`);
     botao.style.setProperty("--flutuar-duracao", `${6 + h2 * 4}s`);
     botao.style.setProperty("--flutuar-delay", `${h1 * 3}s`);
 
@@ -468,17 +544,13 @@ function criarEnvelope(item, ehDestaque) {
 
     botao.innerHTML = `
 
-        <div class="carta-envelope-corpo">
+        <div class="carta-envelope-corpo"></div>
 
-            <span class="carta-envelope-para">
-                ${remetente}
-            </span>
-
-        </div>
+        <div class="carta-envelope-fita-decorativa"></div>
 
         <div class="carta-envelope-aba"></div>
 
-        <div class="carta-envelope-selo">
+        <div class="carta-envelope-selo ${classeAutor}">
             ${simboloSelo}
         </div>
 
@@ -493,6 +565,9 @@ function criarEnvelope(item, ehDestaque) {
                 `
                 : ""
         }
+
+        <span class="carta-envelope-coracao-canto canto-esquerdo">♡</span>
+        <span class="carta-envelope-coracao-canto canto-direito">♡</span>
 
         <div class="carta-envelope-frente">
             <span class="carta-envelope-para">
@@ -578,8 +653,8 @@ function mostrarLeitura(item, envelopeElemento) {
 
     document.getElementById(
         "carta-aberta-texto"
-    ).textContent =
-        item.mensagem || "";
+    ).innerHTML =
+        formatarMensagemCarta(item.mensagem || "");
 
     document.getElementById(
         "carta-aberta-assinatura"
@@ -587,19 +662,7 @@ function mostrarLeitura(item, envelopeElemento) {
         `— ${nomeAutor} ❤`;
 
 
-    const fotoContainer =
-        document.getElementById(
-            "carta-aberta-foto-container"
-        );
-
-    if (fotoContainer) {
-
-        fotoContainer.innerHTML =
-            item.foto
-                ? `<img src="${item.foto}" alt="" class="carta-aberta-foto">`
-                : "";
-
-    }
+    inserirFotoNaCarta(item.foto);
 
 
     overlay.classList.remove("oculto");
@@ -619,6 +682,77 @@ function mostrarLeitura(item, envelopeElemento) {
 
 
     envelopeElemento.classList.remove("abrindo");
+
+}
+
+
+// =====================================================
+// FOTO DENTRO DA CARTA — CRIADA DINAMICAMENTE
+// =====================================================
+// Não depende de nenhum elemento pré-existente no HTML.
+// Se a carta tiver foto, cria (ou reaproveita) a imagem
+// logo antes do título. Clicar nela alterna um tamanho
+// maior, sem precisar de outro overlay.
+
+function inserirFotoNaCarta(foto) {
+
+    const folha =
+        document.getElementById(
+            "carta-aberta-folha"
+        );
+
+    if (!folha) return;
+
+    let img =
+        document.getElementById(
+            "carta-aberta-foto"
+        );
+
+
+    if (!foto) {
+
+        img?.remove();
+
+        return;
+
+    }
+
+
+    if (!img) {
+
+        img =
+            document.createElement("img");
+
+        img.id =
+            "carta-aberta-foto";
+
+        img.className =
+            "carta-aberta-foto";
+
+        img.alt = "";
+
+        img.addEventListener("click", evento => {
+
+            evento.stopPropagation();
+
+            img.classList.toggle("expandida");
+
+        });
+
+
+        const titulo =
+            document.getElementById(
+                "carta-aberta-titulo"
+            );
+
+        folha.insertBefore(img, titulo);
+
+    }
+
+
+    img.classList.remove("expandida");
+
+    img.src = foto;
 
 }
 

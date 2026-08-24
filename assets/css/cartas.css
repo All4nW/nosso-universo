@@ -21,6 +21,180 @@
 
     padding-top: 90px;
     padding-bottom: 120px;
+
+    /* Um único degradê radial: centro mais claro e quente,
+       bordas bem escuras — simples e com contraste real. */
+
+    background:
+        radial-gradient(
+            ellipse 75% 65% at 50% 38%,
+            #3d1329 0%,
+            #260e1d 45%,
+            #170a13 72%,
+            #0a0508 100%
+        );
+}
+
+
+/* Halo central suave — atrás do conteúdo, "respirando" */
+
+.view[data-view="cartas"]::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 55% 42% at 50% 24%,
+            rgba(214, 140, 170, 0.08),
+            transparent 68%
+        );
+
+    animation:
+        cartas-halo-respirar 15s ease-in-out infinite;
+}
+
+
+/* Textura de papel — quase imperceptível */
+
+.view[data-view="cartas"]::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    opacity: 0.5;
+
+    mix-blend-mode: overlay;
+
+    background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+
+    background-size: 160px 160px;
+}
+
+
+@keyframes cartas-halo-respirar {
+
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
+
+}
+
+
+.view[data-view="cartas"] > * {
+    position: relative;
+    z-index: 1;
+}
+
+.view[data-view="cartas"] > .cartas-atmosfera-fixa {
+    position: fixed;
+    z-index: 0;
+}
+
+.view[data-view="cartas"] > .scroll-topo-btn {
+    position: fixed;
+    z-index: 60;
+}
+
+
+/* =========================================================
+   ATMOSFERA FIXA — direto no HTML, não depende de JS
+   Garantida de aparecer, igual às estrelas de Estrelas.
+   ========================================================= */
+
+.cartas-atmosfera-fixa {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+
+
+
+/* Estrelinhas sutis — pontinhos de luz discretos */
+
+.cartas-estrela-sutil {
+    position: absolute;
+
+    left: var(--es-x);
+    top: var(--es-y);
+
+    width: var(--es-tam, 2px);
+    height: var(--es-tam, 2px);
+
+    border-radius: 50%;
+
+    background: #f8ecf2;
+
+    box-shadow: 0 0 6px 1px rgba(247, 214, 227, 0.85);
+
+    animation:
+        cartas-estrela-piscar
+        var(--es-duracao, 5s)
+        ease-in-out
+        infinite;
+
+    animation-delay: var(--es-delay, 0s);
+}
+
+@keyframes cartas-estrela-piscar {
+
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.95; }
+
+}
+
+
+/* Corações — espalhados com carinho, visíveis mas suaves */
+
+.cartas-coracao-sutil {
+    position: absolute;
+
+    left: var(--co-x);
+    top: var(--co-y);
+
+    font-size: var(--co-tam, 0.6rem);
+
+    color: #e89ab8;
+
+    text-shadow: 0 0 6px rgba(232, 154, 184, 0.5);
+
+    opacity: var(--co-opacidade, 0.16);
+
+    animation:
+        cartas-coracao-flutuar
+        var(--co-duracao, 24s)
+        ease-in-out
+        infinite;
+
+    animation-delay: var(--co-delay, 0s);
+}
+
+@keyframes cartas-coracao-flutuar {
+
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(calc(var(--co-dy, 16px) * -1));
+    }
+
 }
 
 
@@ -69,6 +243,24 @@
     line-height: 1.75;
 
     color: var(--color-text-muted);
+}
+
+.cartas-intro-linha-curta {
+    display: block;
+
+    margin: -8px 0 18px;
+
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-style: italic;
+
+    color: rgba(232, 190, 205, 0.8);
+}
+
+.cartas-intro-linha-curta::after {
+    content: " ♡";
+
+    opacity: 0.75;
 }
 
 .cartas-intro-contagem {
@@ -220,33 +412,66 @@
     align-items: center;
 }
 
+.cartas-secao-cabecalho {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 34px;
+
+    text-align: center;
+}
+
 .cartas-secao-titulo {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
 
     font-family: var(--font-heading);
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-style: italic;
 
     color: var(--color-text-light);
 
-    opacity: 0.9;
+    opacity: 0.92;
 }
 
-.cartas-secao-linha {
-    width: 40px;
-    height: 1px;
+.cartas-secao-subtitulo {
+    margin: 0 0 16px;
 
-    margin-bottom: 34px;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-style: italic;
+
+    color: rgba(232, 190, 205, 0.6);
+}
+
+.cartas-secao-divisor {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.cartas-secao-divisor-linha {
+    width: 32px;
+    height: 1px;
 
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(201, 167, 245, 0.5),
+        rgba(232, 190, 205, 0.45),
         transparent
     );
 }
 
-.cartas-secao.secao-fechamento .cartas-secao-linha {
+.cartas-secao-divisor-coracao {
+    font-size: 0.62rem;
+
+    color: rgba(232, 190, 205, 0.55);
+
+    transform: translateY(-1px);
+}
+
+.cartas-secao.secao-fechamento .cartas-secao-cabecalho {
     display: none;
 }
 
@@ -299,7 +524,10 @@
 
 .carta-envelope:hover,
 .carta-envelope:focus-visible {
-    transform: rotate(0deg) translateY(-5px) scale(1.05);
+    transform:
+        rotate(var(--rot-hover, 0deg))
+        translateY(-6px)
+        scale(1.06);
 
     filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.4));
 
@@ -340,6 +568,43 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 
     overflow: hidden;
+}
+
+/* Textura de papel — bem sutil, dá vida ao "material" */
+
+.carta-envelope-corpo::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.5;
+
+    mix-blend-mode: multiply;
+
+    background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/></svg>");
+
+    background-size: 100px 100px;
+}
+
+
+/* Formas levemente irregulares — cantos "artesanais",
+   diferentes por carta (determinístico, via hash do id) */
+
+.envelope-forma-1 .carta-envelope-corpo,
+.envelope-forma-1 .carta-envelope-aba {
+    border-radius: 5px 7px 6px 8px;
+}
+
+.envelope-forma-2 .carta-envelope-corpo,
+.envelope-forma-2 .carta-envelope-aba {
+    border-radius: 8px 5px 7px 5px;
+}
+
+.envelope-forma-3 .carta-envelope-corpo,
+.envelope-forma-3 .carta-envelope-aba {
+    border-radius: 6px 8px 5px 7px;
 }
 
 
@@ -393,18 +658,12 @@
 
     border-radius: 50%;
 
-    background: radial-gradient(
-        circle at 35% 30%,
-        #d98fae,
-        #a84f74 70%
-    );
-
     box-shadow:
         0 3px 8px rgba(0, 0, 0, 0.35),
         inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
 
     transition: transform 0.35s ease, opacity 0.35s ease;
 }
@@ -419,18 +678,25 @@
 }
 
 
-/* Selo diferenciado — carta especial */
+/* Selo azul — cartas do Allan */
 
-.carta-envelope.carta-especial .carta-envelope-selo {
+.carta-envelope-selo-allan {
     background: radial-gradient(
         circle at 35% 30%,
-        #f3d9ff,
-        #b98ee0 70%
+        #9ec3e8,
+        #4d7fae 70%
     );
+}
 
-    box-shadow:
-        0 4px 12px rgba(185, 142, 224, 0.45),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+
+/* Selo rosa — cartas da Jhennyfer */
+
+.carta-envelope-selo-jhennyfer {
+    background: radial-gradient(
+        circle at 35% 30%,
+        #f0a8c4,
+        #b8567f 70%
+    );
 }
 
 
@@ -504,6 +770,59 @@
     object-fit: cover;
 
     border-radius: 1px;
+}
+
+
+/* Fita decorativa (washi tape) — em todo envelope, como se
+   estivesse colado numa página de álbum */
+
+.carta-envelope-fita-decorativa {
+    position: absolute;
+
+    top: -9px;
+    left: 50%;
+
+    z-index: 2;
+
+    width: 46px;
+    height: 18px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(230, 190, 205, 0.55),
+        rgba(210, 165, 185, 0.4)
+    );
+
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+
+    transform: translateX(-50%) rotate(-3deg);
+
+    opacity: 0.85;
+}
+
+
+/* Coraçõezinhos discretos nos cantos do envelope */
+
+.carta-envelope-coracao-canto {
+    position: absolute;
+
+    bottom: 7px;
+
+    z-index: 2;
+
+    font-size: 0.6rem;
+
+    color: rgba(122, 56, 78, 0.4);
+
+    pointer-events: none;
+}
+
+.carta-envelope-coracao-canto.canto-esquerdo {
+    left: 9px;
+}
+
+.carta-envelope-coracao-canto.canto-direito {
+    right: 9px;
 }
 
 
@@ -588,31 +907,7 @@
 }
 
 
-/* =========================================================
-   FOTO DENTRO DA CARTA ABERTA
-   ========================================================= */
 
-.carta-aberta-foto-container:empty {
-    display: none;
-}
-
-.carta-aberta-foto {
-    display: block;
-
-    max-width: 220px;
-
-    margin: 0 0 26px;
-
-    border-radius: 3px;
-
-    padding: 8px 8px 22px;
-
-    background: #fff;
-
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
-
-    transform: rotate(-2deg);
-}
 
 
 /* =========================================================
@@ -782,30 +1077,13 @@
         transform 0.6s ease 0.28s;
 }
 
-.carta-aberta-saudacao {
-    margin: 0 0 16px;
-
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 1rem;
-
-    color: #4a3f36;
-
-    opacity: 0;
-    transform: translateY(6px);
-
-    transition:
-        opacity 0.6s ease 0.36s,
-        transform 0.6s ease 0.36s;
-}
-
 .carta-aberta-texto {
     margin: 0 0 30px;
 
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 1rem;
-    line-height: 2;
+    font-family: "Patrick Hand", var(--font-heading), cursive;
+    font-style: normal;
+    font-size: 1.15rem;
+    line-height: 1.85;
 
     color: #362f27;
 
@@ -817,6 +1095,11 @@
     transition:
         opacity 0.6s ease 0.46s,
         transform 0.6s ease 0.46s;
+}
+
+.carta-aberta-texto strong {
+    font-weight: 700;
+    color: #241f19;
 }
 
 .carta-aberta-rodape {
@@ -848,7 +1131,6 @@
 
 .carta-aberta-overlay.aberta .carta-aberta-data,
 .carta-aberta-overlay.aberta .carta-aberta-titulo,
-.carta-aberta-overlay.aberta .carta-aberta-saudacao,
 .carta-aberta-overlay.aberta .carta-aberta-texto,
 .carta-aberta-overlay.aberta .carta-aberta-rodape {
     opacity: 1;
@@ -863,15 +1145,15 @@
 .carta-aberta-foto {
     display: block;
 
-    width: 150px;
+    width: 92px;
 
-    height: 180px;
+    height: 110px;
 
     object-fit: cover;
 
-    margin: 0 auto 26px;
+    margin: 0 auto 24px;
 
-    padding: 10px 10px 26px;
+    padding: 7px 7px 18px;
 
     background: #fff;
 
@@ -882,6 +1164,24 @@
     transform: rotate(-2.5deg);
 
     box-sizing: content-box;
+
+    cursor: pointer;
+
+    transition:
+        width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.4s ease;
+}
+
+.carta-aberta-foto:hover {
+    transform: rotate(0deg) scale(1.03);
+}
+
+.carta-aberta-foto.expandida {
+    width: 220px;
+    height: 264px;
+
+    transform: rotate(0deg);
 }
 
 
@@ -1042,13 +1342,18 @@
         font-size: 1.15rem;
     }
 
-    .carta-aberta-texto,
-    .carta-aberta-saudacao {
-        font-size: 0.88rem;
+    .carta-aberta-texto {
+        font-size: 1.02rem;
     }
 
     .carta-aberta-foto {
-        max-width: 160px;
+        width: 78px;
+        height: 94px;
+    }
+
+    .carta-aberta-foto.expandida {
+        width: 180px;
+        height: 216px;
     }
 
     .carta-envelope-foto {

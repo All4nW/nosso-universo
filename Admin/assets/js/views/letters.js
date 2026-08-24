@@ -4,6 +4,13 @@
 
 let cartasItensAdmin = [];
 
+const LABELS_CATEGORIA = {
+    aniversario: "✦ Aniversário",
+    destaque: "★ Destaque",
+    relacionamento: "❤ Relacionamento",
+    outros: "✉ Outros"
+};
+
 
 // =====================================================
 // INICIALIZAÇÃO
@@ -141,11 +148,15 @@ function criarItemCartaAdmin(item) {
 
     const nomeAutor =
         item.autor === "ela"
-            ? "Ela"
-            : "Você";
+            ? "Jhennyfer"
+            : "Allan";
 
     const dataFormatada =
         formatarDataCartaAdmin(item.data);
+
+    const rotuloCategoria =
+        LABELS_CATEGORIA[item.categoria] ||
+        "Sem categoria";
 
 
     elemento.innerHTML = `
@@ -168,17 +179,7 @@ function criarItemCartaAdmin(item) {
 
             <div class="assistidos-admin-notas">
 
-                ${
-                    item.especial
-                        ? `<small>✦ Especial</small>`
-                        : ""
-                }
-
-                ${
-                    item.destaque
-                        ? `<small>★ Em destaque</small>`
-                        : ""
-                }
+                <small>${rotuloCategoria}</small>
 
             </div>
 
@@ -261,10 +262,20 @@ function configurarEventosCartasAdmin() {
             "cartas-imagem"
         );
 
+    const negrito =
+        document.getElementById(
+            "cartas-negrito"
+        );
+
 
     novo?.addEventListener(
         "click",
         () => abrirModalCarta()
+    );
+
+    negrito?.addEventListener(
+        "click",
+        aplicarNegritoCarta
     );
 
 
@@ -385,25 +396,13 @@ function abrirModalCarta(item = null) {
     document.getElementById(
         "cartas-categoria"
     ).value =
-        item?.categoria || "";
+        item?.categoria || "aniversario";
 
 
     document.getElementById(
         "cartas-mensagem"
     ).value =
         item?.mensagem || "";
-
-
-    document.getElementById(
-        "cartas-especial"
-    ).checked =
-        Boolean(item?.especial);
-
-
-    document.getElementById(
-        "cartas-destaque"
-    ).checked =
-        Boolean(item?.destaque);
 
 
     const preview =
@@ -474,6 +473,66 @@ function previewImagemCarta(evento) {
     preview.innerHTML = `
         <img src="${url}" alt="">
     `;
+
+}
+
+
+// =====================================================
+// NEGRITO NA MENSAGEM
+// =====================================================
+// Envolve o trecho selecionado na textarea com **, que o
+// site depois converte em <strong>. Se nada estiver
+// selecionado, só insere ** ** com o cursor no meio.
+
+function aplicarNegritoCarta() {
+
+    const campo =
+        document.getElementById(
+            "cartas-mensagem"
+        );
+
+    if (!campo) return;
+
+    const inicio =
+        campo.selectionStart;
+
+    const fim =
+        campo.selectionEnd;
+
+    const textoSelecionado =
+        campo.value.slice(inicio, fim);
+
+    const antes =
+        campo.value.slice(0, inicio);
+
+    const depois =
+        campo.value.slice(fim);
+
+    const novoTexto =
+        `${antes}**${textoSelecionado}**${depois}`;
+
+    campo.value = novoTexto;
+
+    campo.focus();
+
+
+    if (textoSelecionado) {
+
+        // Mantém o trecho selecionado (agora com ** em volta)
+        campo.setSelectionRange(
+            inicio,
+            fim + 4
+        );
+
+    } else {
+
+        // Cursor entre os asteriscos, pronto pra digitar
+        campo.setSelectionRange(
+            inicio + 2,
+            inicio + 2
+        );
+
+    }
 
 }
 
@@ -566,6 +625,40 @@ async function salvarCarta(evento) {
     }
 
 
+    const categoriaSelecionada =
+        document.getElementById(
+            "cartas-categoria"
+        ).value;
+
+
+    // =================================================
+    // LIMITE DE 3 CARTAS EM DESTAQUE
+    // =================================================
+
+    if (categoriaSelecionada === "destaque") {
+
+        const outrasEmDestaque =
+            cartasItensAdmin.filter(
+                item =>
+                    item.categoria === "destaque" &&
+                    item.id !== id
+            );
+
+        if (outrasEmDestaque.length >= 3) {
+
+            alert(
+                "Já existem 3 cartas marcadas como " +
+                "\"Destaque\". Troque a categoria de " +
+                "alguma delas antes de adicionar outra."
+            );
+
+            return;
+
+        }
+
+    }
+
+
     const novoItem = {
 
         id:
@@ -585,21 +678,9 @@ async function salvarCarta(evento) {
             ).value || null,
 
         categoria:
-            document.getElementById(
-                "cartas-categoria"
-            ).value.trim(),
+            categoriaSelecionada,
 
         mensagem,
-
-        especial:
-            document.getElementById(
-                "cartas-especial"
-            ).checked,
-
-        destaque:
-            document.getElementById(
-                "cartas-destaque"
-            ).checked,
 
         foto
 
