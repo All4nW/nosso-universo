@@ -6,6 +6,21 @@
 // no GitHub Pages), usa assets/data/timeline.json como plano B.
 // ========================================
 
+// ========================================
+// MAPA DE TIPO
+// ========================================
+// Usado só pra aplicar a classe de cor no card (borda/marcador).
+// O selo de texto (ícone + nome) e o mapa de categorias agora
+// vivem no modal.js, já que só aparecem lá dentro.
+
+const TIPOS_TIMELINE = {
+    "Marco":    { classe: "marco" },
+    "Momento":  { classe: "momento" },
+    "Jogo":     { classe: "jogo" },
+    "Encontro": { classe: "encontro" },
+    "Sonho":    { classe: "sonho" }
+};
+
 
 async function carregarTimeline() {
 
@@ -138,7 +153,7 @@ function criarItemTimeline(
         null;
 
 
-const textoData =
+    const textoData =
         formatarDataTimeline(item);
 
 
@@ -200,6 +215,20 @@ const textoData =
                 💙 ${escaparHtmlTimeline(textoSelo)}
             </span>
         `;
+
+    }
+
+
+    // ====================================
+    // TIPO — só aplica a classe pra colorir borda/marcador do card.
+    // O selo de texto (ícone + nome) aparece só dentro do modal.
+    // ====================================
+
+    if (item.tipo && TIPOS_TIMELINE[item.tipo]) {
+
+        elemento.classList.add(
+            `timeline-item-tipo-${TIPOS_TIMELINE[item.tipo].classe}`
+        );
 
     }
 

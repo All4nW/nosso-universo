@@ -222,19 +222,25 @@ function ativarComportamentoDoSom() {
         }
     });
 
-    if (btnPlayPause) btnPlayPause.addEventListener('click', (e) => { e.stopPropagation(); alternarPlayPause(); });
-    if (btnProximo) btnProximo.addEventListener('click', (e) => { e.stopPropagation(); proximaFaixa(); });
-    if (btnAnterior) btnAnterior.addEventListener('click', (e) => { e.stopPropagation(); faixaAnterior(); });
-    if (btnMute) btnMute.addEventListener('click', (e) => { e.stopPropagation(); alternarMute(); });
+    if (btnPlayPause) btnPlayPause.addEventListener('click', (e) => { e.stopPropagation(); alternarPlayPause(); dispararCoracaoNoBotao(btnPlayPause); });
+    if (btnProximo) btnProximo.addEventListener('click', (e) => { e.stopPropagation(); proximaFaixa(); dispararCoracaoNoBotao(btnProximo); });
+    if (btnAnterior) btnAnterior.addEventListener('click', (e) => { e.stopPropagation(); faixaAnterior(); dispararCoracaoNoBotao(btnAnterior); });
+    if (btnMute) btnMute.addEventListener('click', (e) => { e.stopPropagation(); alternarMute(); dispararCoracaoNoBotao(btnMute); });
     if (btnVolMenos) btnVolMenos.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(-0.1); });
-    if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
-        if (btnListaToggle) {
+      if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
+    if (btnListaToggle) {
         btnListaToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             listaContainer.classList.toggle('oculto');
+            btnListaToggle.classList.toggle('player-lista-aberta');
         });
     }
+function dispararCoracaoNoBotao(botao) {
+    if (typeof criarExplosaoCoracoes !== 'function' || !botao) return;
 
+    const rect = botao.getBoundingClientRect();
+    criarExplosaoCoracoes(rect.left + rect.width / 2, rect.top + rect.height / 2);
+}
     const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
     function primeiraInteracao() {

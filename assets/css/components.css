@@ -397,28 +397,78 @@
     line-height: 1.4;
 }
 
-@media (max-width: 640px) {
-    .timeline-container::before {
-        left: 20px;
-    }
-    @media (max-width: 500px) {
+@media (max-width: 500px) {
     .hub-container {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
     }
 }
 
-    .timeline-item {
-        width: calc(100% - 50px);
-        margin-left: 50px !important;
-        margin-right: 0 !important;
+@media (max-width: 640px) {
+
+    .timeline-container {
+        padding: 0 10px;
     }
 
-    .timeline-item-esquerda .timeline-marker,
-    .timeline-item-direita .timeline-marker {
-        left: -34px;
-        right: auto;
+    /* linha central continua no meio, só o espaçamento encolhe */
+    .timeline-item {
+        width: calc(50% - 22px);
     }
+
+    .timeline-item-esquerda .timeline-marker {
+        right: -18px;
+    }
+
+    .timeline-item-direita .timeline-marker {
+        left: -18px;
+    }
+
+    .timeline-marker {
+        width: 10px;
+        height: 10px;
+        top: 5px;
+    }
+
+    .timeline-card {
+        padding: var(--spacing-sm);
+    }
+
+    .timeline-card-titulo {
+        font-size: 0.95rem;
+    }
+
+    .timeline-card-resumo {
+        font-size: 0.78rem;
+    }
+
+    .timeline-badge-futuro,
+    .timeline-badge-sugestao,
+    .timeline-badge-tipo,
+    .timeline-badge-categoria {
+        font-size: 0.6rem;
+        padding: 2px 8px;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .timeline-container {
+        padding: 0 6px;
+    }
+
+    .timeline-item {
+        width: calc(50% - 16px);
+    }
+
+    .timeline-item-esquerda .timeline-marker {
+        right: -13px;
+    }
+
+    .timeline-item-direita .timeline-marker {
+        left: -13px;
+    }
+
 }
 
 /* ===== Modal reutilizável ===== */
@@ -783,6 +833,177 @@
     background: rgba(168, 200, 240, 0.12);
     border: 1px solid rgba(168, 200, 240, 0.3);
 }
+/* =========================================================
+   SELO CIRCULAR DE TIPO/CATEGORIA
+   Ícone num círculo com gradiente e brilho — sobreposto na
+   foto (canto) ou como avatar do card quando não há foto.
+   ========================================================= */
+
+.timeline-selo-circulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+    line-height: 1;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Posição quando sobreposto numa foto */
+
+.timeline-selo-circulo-sobreposto {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    z-index: 2;
+}
+
+/* Posição quando é o "avatar" do card (sem foto) */
+
+.timeline-selo-circulo-avatar {
+    display: inline-block;
+    margin-bottom: var(--spacing-sm);
+}
+
+.timeline-card-thumb {
+    position: relative; /* pro selo sobreposto se ancorar */
+}
+
+/* ---- Gradientes por tipo ---- */
+
+.timeline-selo-tipo-marco {
+    background: linear-gradient(135deg, #f9e6a8, #d4a017);
+    box-shadow: 0 4px 16px rgba(212, 160, 23, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-momento {
+    background: linear-gradient(135deg, #dcc6fb, #8a6fc9);
+    box-shadow: 0 4px 16px rgba(138, 111, 201, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-jogo {
+    background: linear-gradient(135deg, #b6f2dd, #4fb894);
+    box-shadow: 0 4px 16px rgba(79, 184, 148, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-encontro {
+    background: linear-gradient(135deg, #fbd9e3, #e0698a);
+    box-shadow: 0 4px 16px rgba(224, 105, 138, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-sonho {
+    background: linear-gradient(135deg, #fbd9e3, #c9a7f5);
+    box-shadow: 0 4px 18px rgba(201, 167, 245, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    animation: pulso-selo-sonho 2.4s ease-in-out infinite;
+}
+
+@keyframes pulso-selo-sonho {
+    0%, 100% { box-shadow: 0 4px 18px rgba(201, 167, 245, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) inset; }
+    50%      { box-shadow: 0 4px 26px rgba(201, 167, 245, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; }
+}
+
+/* Categoria: gradiente dinâmico via variáveis definidas inline no JS */
+
+.timeline-selo-categoria {
+    background: linear-gradient(135deg, var(--cor-categoria-1, #c9a7f5), var(--cor-categoria-2, #8a6fc9));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+
+/* =========================================================
+   BORDA E MARCADOR DO CARD POR TIPO/CATEGORIA
+   ========================================================= */
+
+.timeline-item-tipo-marco .timeline-card {
+    border-color: rgba(245, 217, 122, 0.5);
+    box-shadow: 0 0 20px rgba(245, 217, 122, 0.1);
+}
+.timeline-item-tipo-marco .timeline-marker {
+    background: linear-gradient(135deg, #f9e6a8, #d4a017);
+    box-shadow: 0 0 12px rgba(212, 160, 23, 0.7);
+}
+
+.timeline-item-tipo-jogo .timeline-card {
+    border-color: rgba(143, 227, 199, 0.4);
+}
+.timeline-item-tipo-jogo .timeline-marker {
+    background: linear-gradient(135deg, #b6f2dd, #4fb894);
+    box-shadow: 0 0 12px rgba(79, 184, 148, 0.65);
+}
+
+.timeline-item-tipo-encontro .timeline-card {
+    border-color: rgba(245, 194, 209, 0.4);
+}
+.timeline-item-tipo-encontro .timeline-marker {
+    background: linear-gradient(135deg, #fbd9e3, #e0698a);
+    box-shadow: 0 0 12px rgba(224, 105, 138, 0.65);
+}
+
+.timeline-item-tipo-sonho .timeline-card {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.35);
+}
+
+/* Categoria: usa as mesmas variáveis CSS que o JS já injeta no elemento pai */
+
+.timeline-item-tipo-categoria .timeline-card {
+    border-color: var(--cor-categoria-2, rgba(201, 167, 245, 0.35));
+}
+.timeline-item-tipo-categoria .timeline-marker {
+    background: linear-gradient(135deg, var(--cor-categoria-1, #c9a7f5), var(--cor-categoria-2, #8a6fc9));
+    box-shadow: 0 0 12px rgba(201, 167, 245, 0.6);
+}
+/* ===== Selo de Tipo ===== */
+
+.timeline-badge-tipo {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-bottom: var(--spacing-sm);
+    margin-right: 6px;
+}
+
+/* ===== Selo de Categoria (cor por hash) ===== */
+
+/* ===== Identidade visual por Tipo (card + marcador) ===== */
+
+.timeline-item-tipo-marco .timeline-card {
+    border-color: rgba(245, 217, 122, 0.45);
+    box-shadow: 0 0 18px rgba(245, 217, 122, 0.12);
+}
+
+.timeline-item-tipo-marco .timeline-marker {
+    background: #f5d97a;
+    box-shadow: 0 0 12px rgba(245, 217, 122, 0.7);
+}
+
+.timeline-item-tipo-jogo .timeline-card {
+    border-color: rgba(143, 227, 199, 0.35);
+}
+
+.timeline-item-tipo-jogo .timeline-marker {
+    background: #8fe3c7;
+    box-shadow: 0 0 10px rgba(143, 227, 199, 0.6);
+}
+
+.timeline-item-tipo-encontro .timeline-card {
+    border-color: rgba(245, 194, 209, 0.35);
+}
+
+.timeline-item-tipo-encontro .timeline-marker {
+    background: var(--color-pink);
+    box-shadow: 0 0 10px rgba(245, 194, 209, 0.6);
+}
+
+.timeline-item-tipo-sonho .timeline-card {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.3);
+}
 .admin-link {
     position: fixed;
     top: var(--spacing-lg);
@@ -807,8 +1028,194 @@
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(45deg);
 }
+/* ===== Topo do modal: data + badges ===== */
 
-/* ===== Mini player ===== */
+.modal-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: 4px;
+}
+
+.modal-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.modal-badge-tipo,
+.modal-badge-categoria,
+.modal-badge-sugestao {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    letter-spacing: 0.4px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.modal-badge-categoria {
+    color: var(--cor-categoria, var(--color-lilac));
+    background: var(--cor-categoria-fraca, rgba(201, 167, 245, 0.12));
+    border: 1px solid var(--cor-categoria-borda, rgba(201, 167, 245, 0.3));
+}
+
+.modal-badge-sugestao-ela {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+.modal-badge-sugestao-mim {
+    color: #a8c8f0;
+    background: rgba(168, 200, 240, 0.12);
+    border: 1px solid rgba(168, 200, 240, 0.3);
+}
+
+/* Tipo — cor base de cada selo */
+
+.modal-badge-tipo-marco {
+    color: #f5d97a;
+    background: rgba(245, 217, 122, 0.12);
+    border: 1px solid rgba(245, 217, 122, 0.35);
+}
+
+.modal-badge-tipo-momento {
+    color: var(--color-lilac);
+    background: rgba(201, 167, 245, 0.12);
+    border: 1px solid rgba(201, 167, 245, 0.3);
+}
+
+.modal-badge-tipo-jogo {
+    color: #8fe3c7;
+    background: rgba(143, 227, 199, 0.12);
+    border: 1px solid rgba(143, 227, 199, 0.3);
+}
+
+.modal-badge-tipo-encontro,
+.modal-badge-tipo-sonho {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+
+/* =========================================================
+   LAYOUT DO MODAL POR TIPO
+   Cada tipo muda a moldura, o brilho de fundo e ganha um
+   ícone grande "d'água" no canto — sem mexer no conteúdo.
+   ========================================================= */
+
+.modal-content {
+    position: relative;
+    overflow: hidden; /* pro ícone de fundo não vazar */
+}
+
+.modal-content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* ---- Marco: o mais "cerimonioso" ---- */
+
+.modal-content-tipo-marco {
+    border-color: rgba(245, 217, 122, 0.5);
+    box-shadow: 0 0 40px rgba(245, 217, 122, 0.12), 0 20px 60px rgba(0, 0, 0, 0.4);
+    background:
+        linear-gradient(180deg, rgba(245, 217, 122, 0.06), transparent 40%),
+        var(--color-bg-darker);
+}
+
+.modal-content-tipo-marco::before {
+    content: '🏆';
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    font-size: 6rem;
+    opacity: 0.06;
+    transform: rotate(12deg);
+    pointer-events: none;
+}
+
+.modal-content-tipo-marco .modal-titulo {
+    background: linear-gradient(90deg, #f5d97a, var(--color-text-light) 60%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ---- Jogo: lúdico ---- */
+
+.modal-content-tipo-jogo {
+    border-color: rgba(143, 227, 199, 0.4);
+    box-shadow: 0 0 30px rgba(143, 227, 199, 0.1), 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.modal-content-tipo-jogo::before {
+    content: '🎮';
+    position: absolute;
+    bottom: -20px;
+    left: -14px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    transform: rotate(-10deg);
+    pointer-events: none;
+}
+
+/* ---- Encontro: caloroso, presencial ---- */
+
+.modal-content-tipo-encontro {
+    border-color: rgba(245, 194, 209, 0.45);
+    box-shadow: 0 0 30px rgba(245, 194, 209, 0.12), 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.modal-content-tipo-encontro::before {
+    content: '📍';
+    position: absolute;
+    top: -14px;
+    left: -10px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    transform: rotate(-8deg);
+    pointer-events: none;
+}
+
+/* ---- Sonho: etéreo, tracejado ---- */
+
+.modal-content-tipo-sonho {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.4);
+    background: linear-gradient(180deg, rgba(245, 194, 209, 0.05), transparent 50%), var(--color-bg-darker);
+}
+
+.modal-content-tipo-sonho::before {
+    content: '💗';
+    position: absolute;
+    bottom: -20px;
+    right: -10px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    pointer-events: none;
+}
+
+.modal-content-tipo-sonho .modal-titulo {
+    font-style: italic;
+}
+
+/* ---- Momento: sem override — é o layout padrão do modal ---- */
+
+/* =========================================================
+   MINI PLAYER — discreto, com um único ponto de destaque
+   ========================================================= */
 
 .player-container {
     position: relative;
@@ -816,14 +1223,22 @@
 
 .player-popup {
     position: absolute;
-    top: 80px;
+    top: 66px;
     left: 0;
-    min-width: 220px;
-    padding: 14px;
-    border-radius: 14px;
-    background: var(--color-bg-darker);
-    border: 1px solid rgba(201, 167, 245, 0.25);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+
+    min-width: 230px;
+
+    padding: 18px 18px 12px;
+
+    border-radius: 4px 18px 18px 18px;
+
+    background: rgba(12, 11, 20, 0.82);
+    border: 1px solid rgba(232, 190, 205, 0.14);
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+
+    backdrop-filter: blur(14px);
+
     z-index: 200;
 
     opacity: 1;
@@ -833,155 +1248,426 @@
 .player-popup.oculto {
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-6px);
+    transform: translateY(-6px) scale(0.97);
+}
+
+
+/* Título — texto simples, sem caixinha em volta */
+
+.player-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-bottom: 14px;
 }
 
 .player-titulo {
-    display: block;
     font-family: var(--font-heading);
-    font-size: 0.85rem;
+    font-style: italic;
+    font-size: 0.88rem;
+
     color: var(--color-text-light);
+
     text-align: center;
-    margin-bottom: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 170px;
 }
+
+.player-coracao-pulso {
+    font-size: 0.62rem;
+
+    color: var(--color-pink);
+    opacity: 0.6;
+
+    animation: player-coracao-bater 2.6s ease-in-out infinite;
+}
+
+@keyframes player-coracao-bater {
+
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.85;
+    }
+
+}
+
+
+/* Controles — transparentes em repouso, só o play se destaca */
 
 .player-controles {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+
+    gap: 22px;
+
+    margin-bottom: 12px;
 }
 
 .player-botao {
-    color: var(--color-lilac);
-    font-size: 1rem;
-    transition: var(--transition-smooth);
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--color-text-muted);
+
+    font-size: 0.95rem;
+
+    transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .player-botao:hover {
+    color: var(--color-pink);
     transform: scale(1.15);
 }
 
-.player-botao-principal {
-    font-size: 1.4rem;
+.player-botao:active {
+    transform: scale(0.86);
 }
+
+.player-botao-principal {
+    width: 44px;
+    height: 44px;
+
+    font-size: 1.05rem;
+
+    color: var(--color-bg-dark);
+
+    background: linear-gradient(135deg, var(--color-lilac), var(--color-pink));
+
+    box-shadow: 0 0 0 rgba(201, 167, 245, 0);
+
+    animation: player-play-respirar 3.5s ease-in-out infinite;
+}
+
+.player-botao-principal:hover {
+    transform: scale(1.08);
+}
+
+.player-botao-principal:active {
+    transform: scale(0.92);
+}
+
+@keyframes player-play-respirar {
+
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(201, 167, 245, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 16px rgba(201, 167, 245, 0.35);
+    }
+
+}
+
+
+/* Volume — linha fina, sem pílula */
+
 .player-volume-linha {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
+
+    gap: 10px;
+
     padding-top: 10px;
-    border-top: 1px solid rgba(201, 167, 245, 0.15);
+    padding-bottom: 10px;
+
+    border-top: 1px solid rgba(232, 190, 205, 0.1);
 }
 
 .player-botao-volume {
-    color: var(--color-lilac);
-    font-size: 0.9rem;
-    width: 24px;
-    height: 24px;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+
+    width: 22px;
+    height: 22px;
+
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    transition: var(--transition-smooth);
+
+    background: transparent;
+
+    transition: color 0.25s ease;
 }
 
 .player-botao-volume:hover {
-    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-lilac);
 }
 
 .player-volume-texto {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: var(--color-text-muted);
-    min-width: 34px;
+
+    min-width: 32px;
     text-align: center;
 }
-/* ===== Carrossel de pastas ===== */
 
-.galeria-pastas-wrapper {
-    position: relative;
-    max-width: 1000px;
-    margin: 0 auto var(--spacing-lg);
-}
 
-.galeria-pastas-container {
+/* Abrir a lista — só um linkzinho fino, separado por um traço */
+
+.player-lista-botao {
+    width: 100%;
+
     display: flex;
-    gap: var(--spacing-lg);
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 4px 2px;
-    scrollbar-width: none;
-}
-
-.galeria-pastas-container::-webkit-scrollbar {
-    display: none;
-}
-
-.galeria-pastas-container .galeria-pasta-card {
-    flex: 0 0 auto;
-}
-
-.galeria-fade {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 60px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 5;
-}
-
-.galeria-fade-esquerda {
-    left: 0;
-    background: linear-gradient(90deg, var(--color-bg-dark), transparent);
-}
-
-.galeria-fade-direita {
-    right: 0;
-    background: linear-gradient(270deg, var(--color-bg-dark), transparent);
-}
-
-.galeria-fade.visivel {
-    opacity: 1;
-}
-
-.galeria-seta {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(5, 5, 16, 0.75);
-    border: 1px solid rgba(201, 167, 245, 0.3);
-    color: var(--color-lilac);
-    font-size: 1rem;
-    display: none;
     align-items: center;
     justify-content: center;
+
+    gap: 6px;
+
+    margin-top: 4px;
+    padding-top: 10px;
+
+    border: none;
+    border-top: 1px solid rgba(232, 190, 205, 0.1);
+    border-radius: 0;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.72rem;
+
+    transition: color 0.25s ease;
+}
+
+.player-lista-botao:hover {
+    color: var(--color-lilac);
+}
+
+#player-lista-seta {
+    font-size: 0.7rem;
+
+    transition: transform 0.3s ease;
+}
+
+.player-lista-botao.player-lista-aberta #player-lista-seta {
+    transform: rotate(180deg);
+}
+
+
+/* Lista de músicas */
+
+.player-lista {
+    margin-top: 10px;
+
+    max-height: 200px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-lista.oculto {
+    display: none;
+}
+
+.player-lista-item {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 7px 6px;
+
+    border-radius: 8px;
+
+    transition: background 0.2s ease;
+}
+
+.player-lista-item:hover {
+    background: rgba(232, 190, 205, 0.06);
+}
+
+.player-lista-item.player-lista-item-ativa {
+    background: rgba(232, 190, 205, 0.09);
+}
+
+.player-lista-play {
+    flex-shrink: 0;
+
+    width: 16px;
+
+    color: var(--color-text-muted);
+    font-size: 0.6rem;
+
+    text-align: center;
+}
+
+.player-lista-item-ativa .player-lista-play {
+    color: var(--color-pink);
+}
+
+.player-lista-nome {
+    font-size: 0.74rem;
+    color: var(--color-text-light);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-lista-item-ativa .player-lista-nome {
+    color: var(--color-pink);
+}
+
+.player-lista::-webkit-scrollbar {
+    width: 4px;
+}
+
+.player-lista::-webkit-scrollbar-thumb {
+    background: rgba(232, 190, 205, 0.25);
+    border-radius: 10px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 500px) {
+
+    .player-popup {
+        min-width: 210px;
+        max-width: calc(100vw - 32px);
+
+        left: -20px;
+    }
+
+    .player-titulo {
+        max-width: 140px;
+    }
+
+}
+
+/* ===== Botão que abre a lista ===== */
+
+.player-lista-botao {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(245, 194, 209, 0.06);
+    border: 1px solid rgba(245, 194, 209, 0.15);
+    color: var(--color-text-light);
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
     transition: var(--transition-smooth);
 }
 
-.galeria-seta:hover {
-    background: rgba(201, 167, 245, 0.15);
+.player-lista-botao:hover {
+    background: rgba(245, 194, 209, 0.14);
 }
 
-.galeria-seta.visivel {
+#player-lista-seta {
+    color: var(--color-pink);
+    transition: transform 0.3s ease;
+}
+
+.player-lista-botao.player-lista-aberta #player-lista-seta {
+    transform: rotate(180deg);
+}
+
+/* ===== Lista de músicas ===== */
+
+.player-lista {
+    margin-top: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+
     display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.galeria-seta-esquerda {
-    left: -8px;
+.player-lista.oculto {
+    display: none;
 }
 
-.galeria-seta-direita {
-    right: -8px;
+.player-lista-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: var(--transition-smooth);
 }
 
+.player-lista-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.player-lista-item.player-lista-item-ativa {
+    background: linear-gradient(90deg, rgba(245, 194, 209, 0.15), rgba(201, 167, 245, 0.1));
+}
+
+.player-lista-play {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-lilac);
+    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-lista-item:hover .player-lista-play {
+    background: rgba(245, 194, 209, 0.2);
+}
+
+.player-lista-nome {
+    font-size: 0.76rem;
+    color: var(--color-text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-lista-item-ativa .player-lista-nome {
+    color: var(--color-pink);
+}
+
+/* Scrollbar discreta dentro da lista */
+.player-lista::-webkit-scrollbar {
+    width: 5px;
+}
+
+.player-lista::-webkit-scrollbar-thumb {
+    background: rgba(245, 194, 209, 0.3);
+    border-radius: 10px;
+}
+
+/* ===== Mobile: player vira um cartão maior, mais fácil de tocar ===== */
+
+@media (max-width: 500px) {
+    .player-popup {
+        min-width: 220px;
+        max-width: calc(100vw - 32px);
+        left: -20px;
+    }
+
+    .player-titulo {
+        max-width: 130px;
+    }
+}
 /* ===== Visualizador de foto (fullscreen com setas) ===== */
 
 .foto-visualizador {

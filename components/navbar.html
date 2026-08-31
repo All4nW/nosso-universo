@@ -6,7 +6,10 @@
 
     <div id="player-popup" class="player-popup oculto">
 
-        <span id="player-titulo" class="player-titulo">—</span>
+        <div class="player-header">
+            <span id="player-titulo" class="player-titulo">—</span>
+            <span class="player-coracao-pulso">♡</span>
+        </div>
 
         <div class="player-controles">
             <button id="player-anterior" class="player-botao" aria-label="Anterior">⏮</button>
@@ -19,8 +22,12 @@
             <button id="player-vol-menos" class="player-botao-volume" aria-label="Diminuir volume">−</button>
             <span id="player-volume-valor" class="player-volume-texto">25%</span>
             <button id="player-vol-mais" class="player-botao-volume" aria-label="Aumentar volume">+</button>
-            <button id="player-lista-toggle" class="player-botao" aria-label="Ver lista de músicas">📋</button>
         </div>
+
+        <button id="player-lista-toggle" class="player-lista-botao">
+            <span>♡ nossas músicas</span>
+            <span id="player-lista-seta">⌄</span>
+        </button>
 
         <div id="player-lista" class="player-lista oculto"></div>
 
