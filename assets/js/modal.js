@@ -1,50 +1,19 @@
 // modal.js
 // Componente reutilizável: qualquer seção pode chamar abrirModal(item)
 // passando um objeto { titulo, data, descricao, fotos } ou { ..., foto }.
+
 // ========================================
-// MAPAS DE TIPO E CATEGORIA (usados quando o item vem da Timeline)
+// MAPA DE TIPO (usado quando o item vem da Timeline)
 // ========================================
 
 const TIPOS_MODAL = {
-    "Marco":    { icone: "🏆", label: "Marco",    classe: "marco" },
-    "Momento":  { icone: "🌙", label: "Momento",  classe: "momento" },
+    "Especial": { icone: "⭐", label: "Especial", classe: "marco" },
+    "Marco":    { icone: "⭐", label: "Especial", classe: "marco" }, // compatibilidade com itens salvos antes da renomeação
+    "Momento":  { icone: "🎀", label: "Momento",  classe: "momento" },
     "Jogo":     { icone: "🎮", label: "Jogo",      classe: "jogo" },
-    "Encontro": { icone: "📍", label: "Encontro", classe: "encontro" },
-    "Sonho":    { icone: "💗", label: "Sonho",     classe: "sonho" }
+    "Encontro": { icone: "💞", label: "Encontro", classe: "encontro" },
+    "Sonho":    { icone: "🪄", label: "Sonho",     classe: "sonho" }
 };
-
-const CATEGORIAS_CONHECIDAS_MODAL = {
-    "roblox": "🎮", "jogo": "🎮", "jogos": "🎮",
-    "relacionamento": "💞",
-    "viagem": "✈️", "viagens": "✈️",
-    "família": "👨‍👩‍👧‍👦", "familia": "👨‍👩‍👧‍👦",
-    "amizade": "🤍",
-    "trabalho": "💼",
-    "presente": "🎁", "surpresa": "🎁",
-    "comida": "🍽️",
-    "filme": "🎬", "filmes": "🎬",
-    "música": "🎵", "musica": "🎵"
-};
-
-function gerarMatizCategoriaModal(texto) {
-
-    let hash = 0;
-
-    for (let i = 0; i < texto.length; i++) {
-        hash = texto.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    return Math.abs(hash) % 360;
-
-}
-
-function obterIconeCategoriaModal(categoria) {
-
-    const chave = categoria.trim().toLowerCase();
-
-    return CATEGORIAS_CONHECIDAS_MODAL[chave] || "🏷️";
-
-}
 
 function escaparHtmlModal(texto) {
 
@@ -121,9 +90,10 @@ function abrirModal(item) {
     document.getElementById('modal-descricao').innerHTML = item.descricao;
 
     // ====================================
-    // BADGES — Tipo / Categoria / Sugestão
+    // BADGES — Tipo / Sugestão
     // (só existem em itens vindos da Timeline; em outras seções
-    // o item simplesmente não tem esses campos e nada é mostrado)
+    // o item simplesmente não tem esses campos e nada é mostrado.
+    // Categoria não gera badge — é só anotação livre no Admin.)
     // ====================================
 
     const badgesContainer = document.getElementById('modal-badges');
@@ -139,24 +109,6 @@ function abrirModal(item) {
             badgesHtml += `
                 <span class="modal-badge-tipo modal-badge-tipo-${infoTipo.classe}">
                     ${infoTipo.icone} ${escaparHtmlModal(infoTipo.label)}
-                </span>
-            `;
-
-        }
-
-        if (item.categoria && item.categoria.trim()) {
-
-            const matiz = gerarMatizCategoriaModal(item.categoria.trim().toLowerCase());
-            const icone = obterIconeCategoriaModal(item.categoria);
-
-            const estilo =
-                `--cor-categoria: hsl(${matiz}, 65%, 75%); ` +
-                `--cor-categoria-fraca: hsla(${matiz}, 65%, 60%, 0.15); ` +
-                `--cor-categoria-borda: hsla(${matiz}, 65%, 60%, 0.35);`;
-
-            badgesHtml += `
-                <span class="modal-badge-categoria" style="${estilo}">
-                    ${icone} ${escaparHtmlModal(item.categoria)}
                 </span>
             `;
 

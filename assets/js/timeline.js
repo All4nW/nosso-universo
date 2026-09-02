@@ -9,16 +9,16 @@
 // ========================================
 // MAPA DE TIPO
 // ========================================
-// Usado só pra aplicar a classe de cor no card (borda/marcador).
-// O selo de texto (ícone + nome) e o mapa de categorias agora
-// vivem no modal.js, já que só aparecem lá dentro.
+// Cada tipo tem uma classe (usada pra colorir borda/marcador do
+// card e pro selo circular sobreposto na foto) e um ícone.
 
 const TIPOS_TIMELINE = {
-    "Marco":    { classe: "marco" },
-    "Momento":  { classe: "momento" },
-    "Jogo":     { classe: "jogo" },
-    "Encontro": { classe: "encontro" },
-    "Sonho":    { classe: "sonho" }
+    "Especial": { icone: "⭐", classe: "marco" },
+    "Marco":    { icone: "⭐", classe: "marco" }, // compatibilidade com itens salvos antes da renomeação
+    "Momento":  { icone: "🎀", classe: "momento" },
+    "Jogo":     { icone: "🎮", classe: "jogo" },
+    "Encontro": { icone: "💞", classe: "encontro" },
+    "Sonho":    { icone: "🪄", classe: "sonho" }
 };
 
 
@@ -220,22 +220,50 @@ function criarItemTimeline(
 
 
     // ====================================
-    // TIPO — só aplica a classe pra colorir borda/marcador do card.
-    // O selo de texto (ícone + nome) aparece só dentro do modal.
+    // TIPO — selo circular com ícone
     // ====================================
+    // Categoria não gera mais selo/cor — é só uma anotação livre
+    // sua no Admin, sem representação visual no site.
+
+    let iconeCirculo = "";
+    let classeCorCirculo = "";
+    let estiloCirculo = "";
 
     if (item.tipo && TIPOS_TIMELINE[item.tipo]) {
 
+        const infoTipo =
+            TIPOS_TIMELINE[item.tipo];
+
+        iconeCirculo = infoTipo.icone;
+        classeCorCirculo = `timeline-selo-tipo-${infoTipo.classe}`;
+
         elemento.classList.add(
-            `timeline-item-tipo-${TIPOS_TIMELINE[item.tipo].classe}`
+            `timeline-item-tipo-${infoTipo.classe}`
         );
 
     }
 
 
+    const seloCirculoHtml =
+        iconeCirculo
+            ? `
+                <span
+                    class="timeline-selo-circulo ${classeCorCirculo}"
+                    style="${estiloCirculo}"
+                    title="${escaparHtmlTimeline(item.tipo || item.categoria || '')}"
+                >
+                    ${iconeCirculo}
+                </span>
+            `
+            : "";
+
+
     // ====================================
     // FOTO
     // ====================================
+    // Quando existe foto, ela já se basta — sem selo sobreposto.
+    // O selo circular só aparece quando NÃO há foto, como um
+    // "avatar" inline, logo antes da data.
 
     const fotoHtml =
         primeiraFoto
@@ -253,6 +281,12 @@ function criarItemTimeline(
             : "";
 
 
+    const avatarHtml =
+        (!primeiraFoto && seloCirculoHtml)
+            ? `<span class="timeline-selo-circulo-avatar">${seloCirculoHtml}</span>`
+            : "";
+
+
     // ====================================
     // CARD
     // ====================================
@@ -262,6 +296,8 @@ function criarItemTimeline(
         <div class="timeline-marker"></div>
 
         <div class="timeline-card">
+
+            ${avatarHtml}
 
             ${
                 ehFuturo
@@ -278,9 +314,15 @@ function criarItemTimeline(
             ${fotoHtml}
 
 
-            <span class="timeline-card-data">
-                ${textoData}
-            </span>
+            ${
+                textoData
+                    ? `
+                        <span class="timeline-card-data">
+                            ${textoData}
+                        </span>
+                    `
+                    : ""
+            }
 
 
             <h3 class="timeline-card-titulo">

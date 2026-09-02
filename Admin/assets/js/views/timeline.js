@@ -107,6 +107,56 @@ async function carregarTimelineAdmin() {
 
 
 // ======================================================
+// SINCRONIZAÇÃO AUTOMÁTICA COM O SITE
+// ======================================================
+// Chamada sozinha (sem alert, sem precisar clicar em nada)
+// toda vez que um momento é salvo, excluído ou reordenado.
+// Garante que assets/data/timeline.json — usado pelo site
+// quando o backend não está rodando (ex: GitHub Pages) —
+// nunca fique desatualizado em relação ao banco.
+
+async function sincronizarTimelineSilenciosamente() {
+
+    try {
+
+        const resposta =
+            await fetch(
+                "http://localhost:3000/api/timeline/exportar"
+            );
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                `HTTP ${resposta.status}`
+            );
+
+        }
+
+
+        console.log(
+            "[TIMELINE ADMIN] Sincronizado automaticamente com timeline.json."
+        );
+
+
+    }
+
+    catch (erro) {
+
+        // Não interrompe o fluxo do usuário com alert — só avisa
+        // no console. Se isso falhar, o botão manual de
+        // "Sincronizar com o site" continua disponível como backup.
+        console.warn(
+            "[TIMELINE ADMIN] Falha na sincronização automática:",
+            erro
+        );
+
+    }
+
+}
+
+
+// ======================================================
 // RENDER
 // ======================================================
 
@@ -233,17 +283,6 @@ function renderizarTimelineAdmin() {
 
 
                         ${
-                            item.categoria
-                                ? `
-                                    <span>
-                                        ${escaparHtml(item.categoria)}
-                                    </span>
-                                `
-                                : ""
-                        }
-
-
-                        ${
                             item.sugeridoPor === "ela"
                                 ? `
                                     <span>
@@ -332,6 +371,44 @@ function registrarEventosTimeline() {
     console.log(
         "[TIMELINE ADMIN] Registrando eventos..."
     );
+
+
+    // --------------------------------------
+    // CAIXINHA "SEM DATA" — liga/desliga o
+    // campo de data em tempo real, toda vez
+    // que a caixinha é marcada/desmarcada.
+    // --------------------------------------
+
+    const semDataCheckboxEvento =
+        document.getElementById(
+            "timeline-sem-data"
+        );
+
+    const campoDataEvento =
+        document.getElementById(
+            "timeline-data"
+        );
+
+    if (semDataCheckboxEvento && campoDataEvento) {
+
+        semDataCheckboxEvento.addEventListener(
+            "change",
+            () => {
+
+                campoDataEvento.disabled =
+                    semDataCheckboxEvento.checked;
+
+                if (semDataCheckboxEvento.checked) {
+
+                    campoDataEvento.value =
+                        "";
+
+                }
+
+            }
+        );
+
+    }
 
 
     const novo =
@@ -612,10 +689,34 @@ function editarMomento(id) {
     );
 
 
-    definirValor(
-        "timeline-categoria",
-        item.categoria
-    );
+    // Data opcional: se o item não tem data, marca a caixinha
+    // e deixa o campo de data vazio/desabilitado.
+    const semDataCheckbox =
+        document.getElementById(
+            "timeline-sem-data"
+        );
+
+    const campoData =
+        document.getElementById(
+            "timeline-data"
+        );
+
+    const temData =
+        Boolean(item.data && item.data.trim());
+
+    if (semDataCheckbox) {
+
+        semDataCheckbox.checked =
+            !temData;
+
+    }
+
+    if (campoData) {
+
+        campoData.disabled =
+            !temData;
+
+    }
 
 
     definirValor(
@@ -733,16 +834,24 @@ async function salvarMomento() {
         ).trim();
 
 
-    const data =
-        obterValor(
-            "timeline-data"
+    const semData =
+        Boolean(
+            document.getElementById("timeline-sem-data")
+                && document.getElementById("timeline-sem-data").checked
         );
 
 
-    if (!titulo || !data) {
+    const data =
+        semData
+            ? ""
+            : obterValor("timeline-data");
+
+
+    if (!titulo || (!semData && !data)) {
 
         alert(
-            "Preencha pelo menos o título e a data."
+            "Preencha pelo menos o título" +
+            (semData ? "." : " e a data (ou marque \"sem data\").")
         );
 
         return;
@@ -787,12 +896,6 @@ async function salvarMomento() {
     formulario.append(
         "tipo",
         obterValor("timeline-tipo")
-    );
-
-
-    formulario.append(
-        "categoria",
-        obterValor("timeline-categoria")
     );
 
 
@@ -899,6 +1002,11 @@ async function salvarMomento() {
         }
 
 
+        // Sincroniza o timeline.json automaticamente,
+        // sem precisar clicar em nada.
+        await sincronizarTimelineSilenciosamente();
+
+
         alert(
             "❤️ Momento salvo com sucesso!"
         );
@@ -972,6 +1080,11 @@ async function excluirMomento(id) {
         }
 
 
+        // Sincroniza o timeline.json automaticamente
+        // depois da exclusão também.
+        await sincronizarTimelineSilenciosamente();
+
+
         await carregarTimelineAdmin();
 
     }
@@ -994,7 +1107,8 @@ async function excluirMomento(id) {
 
 
 // ======================================================
-// SINCRONIZAR COM O SITE
+// SINCRONIZAR COM O SITE (botão manual — continua existindo
+// como backup, caso a automática falhe por algum motivo)
 // ======================================================
 
 async function sincronizarTimeline() {
@@ -1270,6 +1384,11 @@ async function salvarNovaOrdem() {
                     )
             );
 
+
+        // Sincroniza o timeline.json automaticamente
+        // depois de reordenar também.
+        await sincronizarTimelineSilenciosamente();
+
     }
 
     catch (erro) {
@@ -1334,10 +1453,29 @@ function limparFormulario() {
     );
 
 
-    definirValor(
-        "timeline-categoria",
-        ""
-    );
+    const semDataCheckboxLimpar =
+        document.getElementById(
+            "timeline-sem-data"
+        );
+
+    if (semDataCheckboxLimpar) {
+
+        semDataCheckboxLimpar.checked =
+            false;
+
+    }
+
+    const campoDataLimpar =
+        document.getElementById(
+            "timeline-data"
+        );
+
+    if (campoDataLimpar) {
+
+        campoDataLimpar.disabled =
+            false;
+
+    }
 
 
     definirValor(

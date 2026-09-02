@@ -56,19 +56,16 @@ exports.createTimeline = async (req, res) => {
 
     try {
 
-        if (
-            !req.body.titulo ||
-            !req.body.data
-        ) {
+if (!req.body.titulo) {
 
-            return res.status(400).json({
+    return res.status(400).json({
 
-                error:
-                    "Título e data são obrigatórios."
+        error:
+            "Título é obrigatório."
 
-            });
+    });
 
-        }
+}
 
 
         const id =
@@ -457,26 +454,28 @@ exports.exportarTimeline = async (req, res) => {
                 }
 
 
-                return {
+return {
 
-                    id: item.id,
-                    titulo: item.titulo,
-                    data: item.data,
-                    hora: item.hora || undefined,
-                    resumo: item.resumo,
-                    descricao: item.descricao,
-                    sugeridoPor: item.sugeridoPor || undefined,
-                    sugeridoTexto: item.sugeridoTexto || undefined,
+    id: item.id,
+    titulo: item.titulo,
+    data: item.data,
+    hora: item.hora || undefined,
+    resumo: item.resumo,
+    descricao: item.descricao,
+    tipo: item.tipo || undefined,
+    categoria: item.categoria || undefined,
+    sugeridoPor: item.sugeridoPor || undefined,
+    sugeridoTexto: item.sugeridoTexto || undefined,
 
-                    dataExibicao:
-                        item.temDataExata === 0
-                            ? item.dataTexto
-                            : undefined,
+    dataExibicao:
+        item.temDataExata === 0
+            ? item.dataTexto
+            : undefined,
 
-                    fotos:
-                        fotoExportada ? [fotoExportada] : []
+    fotos:
+        fotoExportada ? [fotoExportada] : []
 
-                };
+};
 
             });
 

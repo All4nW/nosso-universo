@@ -6,6 +6,7 @@
     "hora": "22:41",
     "resumo": "Dois desconhecidos, que foram juntados do nada por pura coincidência (ou por destino).",
     "descricao": "Penso todos os dias, que 1 escolha diferente, nunca teríamos nos conhecidos. Eu agradeço muito por isso ter acontecido, pois conhecer você foi a melhor coisa da minha vida.",
+    "tipo": "Encontro",
     "fotos": [
       "assets/images/timeline-uploads/1786860825390-952231548.jpeg"
     ]
@@ -16,6 +17,8 @@
     "data": "2025-08-05",
     "resumo": "O dia em que começamos a nossa história juntos.",
     "descricao": "O dia que mudou as nossas vidas. O dia que tudo começou.",
+    "tipo": "Marco",
+    "categoria": "Relacionamento",
     "fotos": []
   },
   {
@@ -24,6 +27,8 @@
     "data": "2025-08-05",
     "resumo": "No mesmo dia, nossa primeira conversa por chamada.",
     "descricao": "",
+    "tipo": "Momento",
+    "categoria": "Relacionamento",
     "fotos": []
   },
   {
@@ -32,6 +37,8 @@
     "data": "2025-08-03",
     "resumo": "Sugerido por ela, nosso primeiro jogo juntos no Roblox.",
     "descricao": "Eu burrinho tentando subir enquanto ela me dava aulas.",
+    "tipo": "Jogo",
+    "categoria": "Roblox",
     "sugeridoPor": "ela",
     "fotos": [
       "assets/images/timeline/tower-of-hell.jpg"
@@ -43,6 +50,8 @@
     "data": "2025-08-03",
     "resumo": "Sugerido por mim, nosso primeiro jogo juntos no Roblox.",
     "descricao": "Uma loucura eu ter apresentado esse jogo para ela. Um jogo para quem tem paciëncia, para alguem que nao tem.",
+    "tipo": "Jogo",
+    "categoria": "Roblox",
     "sugeridoPor": "mim",
     "fotos": [
       "assets/images/timeline/altitorture.jpg"
@@ -54,6 +63,7 @@
     "data": "2025-08-25",
     "resumo": "O primeiro textinho de niver que enviei para ela.",
     "descricao": "O primeiro de muitos. Quero estar sempre presente nesse dia muito especial e importante.",
+    "tipo": "Momento",
     "sugeridoPor": "ela",
     "sugeridoTexto": "Aniversário dela",
     "fotos": [
@@ -66,6 +76,7 @@
     "data": "2025-09-22",
     "resumo": "O primeiro textinho de niver que ela me enviou <3",
     "descricao": "Se meu aniversário é um dia especial para mim, imagina com ela participando desse dia.",
+    "tipo": "Momento",
     "sugeridoPor": "mim",
     "sugeridoTexto": "Meu aniversário",
     "fotos": [
@@ -78,6 +89,8 @@
     "data": "2026-08-05",
     "resumo": "Completamos nosso primeiro ano juntos.",
     "descricao": "Depois de tantas coisas que passamos, brigas, discussoes, decepçoes e varios momentos onde estávamos decidindo terminar tudo, mas, uma força maior nao deixava isso acontecer indiretamente. Talvez o fato de termos sido destinado um para o outro? 1 ano de muitos que temos pela frente. <3",
+    "tipo": "Marco",
+    "categoria": "Relacionamento",
     "fotos": []
   },
   {
@@ -86,6 +99,8 @@
     "data": "2025-10-29",
     "resumo": "Nosso primeiro apelido ❤️",
     "descricao": "O primeiro apelido que usamos um com o outro no nosso relacionamento.",
+    "tipo": "Momento",
+    "categoria": "Apelidos",
     "fotos": []
   },
   {
@@ -94,6 +109,8 @@
     "data": "2026-12-22",
     "resumo": "O dia em que finalmente vamos nos encontrar pessoalmente.",
     "descricao": "Volto aqui para contar como foi. hihi ",
+    "tipo": "Sonho",
+    "categoria": "Futuro",
     "fotos": []
   }
 ]

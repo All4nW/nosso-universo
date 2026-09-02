@@ -157,6 +157,39 @@ body {
     background-color: var(--color-bg-dark);
 }
 
+/* ===== Fundo especial só na view da Timeline ===== */
+/* :has() detecta quando a view timeline está com a classe
+   "view-ativa" e troca o fundo do canvas — os efeitos de
+   estrelas/cometas continuam desenhando por cima normalmente,
+   já que o canvas em si continua transparente. */
+
+/* ===== Fundo especial só na view da Timeline ===== */
+/* :has() detecta quando a view timeline está com a classe
+   "view-ativa" e troca o fundo do canvas — os efeitos de
+   estrelas/cometas continuam desenhando por cima normalmente,
+   já que o canvas em si continua transparente. */
+
+/* ===== Fundo especial da Timeline (div separado do canvas) ===== */
+
+#timeline-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: -2; /* atrás do #stars-bg, que é -1 */
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+body.fundo-timeline #timeline-fundo {
+    opacity: 1;
+    background-image:
+        linear-gradient(rgba(5, 5, 16, 0.02), rgba(5, 5, 16, 0.05)),
+        url('../images/timeline/timeline-fundo.jpg');
+}
+
 /* ===== Scrollbar customizada ===== */
 
 /* Chrome, Edge, Safari */
@@ -360,10 +393,7 @@ body {
 body.modal-aberto {
     overflow: hidden;
 }
-.oculto {
-    display: none;
-}
-css
+
 @media (max-width: 500px) {
     .live-counter {
         transform: translateX(-50%) scale(0.8);

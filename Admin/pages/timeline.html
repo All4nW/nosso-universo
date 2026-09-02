@@ -102,6 +102,19 @@
                     class="settings-input"
                 >
 
+                <label class="timeline-checkbox-linha">
+
+                    <input
+                        type="checkbox"
+                        id="timeline-sem-data"
+                    >
+
+                    <span>
+                        Não sei a data exata / sem data
+                    </span>
+
+                </label>
+
             </div>
 
 
@@ -155,63 +168,42 @@
         </div>
 
 
-        <div class="settings-field-linha">
+        <div class="settings-field">
 
+            <label class="settings-label">
+                Tipo
+            </label>
 
-            <div class="settings-field">
+            <select
+                id="timeline-tipo"
+                class="settings-input"
+            >
 
-                <label class="settings-label">
-                    Tipo
-                </label>
+                <option value="">
+                    Sem tipo
+                </option>
 
-                <select
-                    id="timeline-tipo"
-                    class="settings-input"
-                >
+                <option value="Especial">
+                    Especial
+                </option>
 
-                    <option value="">
-                        Sem tipo
-                    </option>
+                <option value="Momento">
+                    Momento
+                </option>
 
-                    <option value="Marco">
-                        Marco
-                    </option>
+                <option value="Jogo">
+                    Jogo
+                </option>
 
-                    <option value="Momento">
-                        Momento
-                    </option>
+                <option value="Encontro">
+                    Encontro
+                </option>
 
-                    <option value="Jogo">
-                        Jogo
-                    </option>
+                <option value="Sonho">
+                    Sonho
+                </option>
 
-                    <option value="Encontro">
-                        Encontro
-                    </option>
-
-                    <option value="Sonho">
-                        Sonho
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="settings-field">
-
-                <label class="settings-label">
-                    Categoria
-                </label>
-
-                <input
-                    type="text"
-                    id="timeline-categoria"
-                    class="settings-input"
-                    placeholder="Ex: Relacionamento, Roblox..."
-                >
-
-            </div>
+            </select>
 
         </div>
 
@@ -372,3 +364,32 @@
     </div>
 
 </section>
+
+
+<style>
+    /* ==========================================================
+       CORREÇÃO: dropdown nativo (<select>) aparecendo com texto
+       claro sobre fundo branco, ilegível. Alguns navegadores
+       usam a cor de texto do tema (clara) mas o fundo padrão do
+       sistema (branco) pro popup de opções — forçando cor escura
+       aqui garante contraste em qualquer navegador.
+       ========================================================== */
+    .settings-input option {
+        color: #1a1a2e;
+        background-color: #ffffff;
+    }
+
+    .timeline-checkbox-linha {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        font-size: 0.8rem;
+        color: var(--color-text-muted, #b0b0c0);
+        cursor: pointer;
+    }
+
+    .timeline-checkbox-linha input {
+        width: auto;
+    }
+</style>

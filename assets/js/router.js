@@ -20,6 +20,29 @@ function mostrarView(nomeDaView) {
         viewAlvo.scrollTop = 0; // sempre começa do topo ao entrar na seção
 
         // =========================================================
+        // FUNDO ESPECIAL DA TIMELINE
+        // =========================================================
+        // Liga/desliga a classe no body, que o CSS usa pra mostrar
+        // a imagem de fundo (#timeline-fundo). Feito aqui, direto
+        // no momento da troca de view, em vez de depender de um
+        // seletor CSS reagindo sozinho (:has, etc).
+        document.body.classList.toggle(
+            'fundo-timeline',
+            nomeDaView === 'timeline'
+        );
+
+        // Reforço: força o navegador a repintar o #timeline-fundo
+        // agora mesmo, lendo uma propriedade de layout dele. Isso
+        // evita qualquer chance do elemento "esperar" um evento de
+        // mouse/scroll pra atualizar visualmente.
+        const fundoTimeline =
+            document.getElementById('timeline-fundo');
+
+        if (fundoTimeline) {
+            void fundoTimeline.offsetHeight;
+        }
+
+        // =========================================================
         // EFEITO ESPECIAL: mergulho no universo, só ao entrar em #estrelas
         // =========================================================
         if (nomeDaView === 'estrelas') {
