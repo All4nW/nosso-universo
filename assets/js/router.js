@@ -43,6 +43,17 @@ function mostrarView(nomeDaView) {
         }
 
         // =========================================================
+        // EFEITO ESPECIAL: Timeline — replay da animação de entrada
+        // =========================================================
+        if (nomeDaView === 'timeline') {
+
+            if (typeof window.reproduzirEntradaTimeline === 'function') {
+                window.reproduzirEntradaTimeline();
+            }
+
+        }
+
+        // =========================================================
         // EFEITO ESPECIAL: mergulho no universo, só ao entrar em #estrelas
         // =========================================================
         if (nomeDaView === 'estrelas') {

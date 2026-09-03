@@ -142,7 +142,15 @@ function criarItemTimeline(
 
 
     elemento.className =
-        `timeline-item timeline-item-${lado}`;
+        `timeline-item timeline-item-${lado} timeline-item-entrando`;
+
+
+    // Escalona a entrada: cada card cai um pouquinho depois do
+    // anterior, criando o efeito de "cascata" ao carregar a Timeline.
+    elemento.style.setProperty(
+        "--delay",
+        `${indice * 0.09}s`
+    );
 
 
     // Aceita tanto o formato novo da API (item.foto, singular)
@@ -294,6 +302,8 @@ function criarItemTimeline(
     elemento.innerHTML = `
 
         <div class="timeline-marker"></div>
+
+        <span class="timeline-entrada-estrela">✨</span>
 
         <div class="timeline-card">
 
@@ -526,6 +536,48 @@ function escaparHtmlTimeline(
         );
 
 }
+
+
+// ========================================
+// REPRODUZIR ENTRADA (replay da animação)
+// ========================================
+// Toda vez que o usuário sai e volta pra Timeline, os cards já
+// existem no DOM (não são recriados), então a animação de queda
+// não tocaria de novo sozinha. Essa função reinicia ela na marra:
+// tira a classe, força o navegador a recalcular (reflow), e põe
+// a classe de volta — reiniciando o @keyframes do zero.
+
+function reproduzirEntradaTimeline() {
+
+    const itens =
+        document.querySelectorAll(
+            "#timeline-container .timeline-item"
+        );
+
+
+    itens.forEach(
+        (item) => {
+
+            item.classList.remove(
+                "timeline-item-entrando"
+            );
+
+
+            void item.offsetWidth;
+
+
+            item.classList.add(
+                "timeline-item-entrando"
+            );
+
+        }
+    );
+
+}
+
+
+window.reproduzirEntradaTimeline =
+    reproduzirEntradaTimeline;
 
 
 // ========================================
