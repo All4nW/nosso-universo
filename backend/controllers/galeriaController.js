@@ -107,6 +107,7 @@ exports.createFoto = async (req, res) => {
             imagem,
             data: req.body.data || "",
             descricao: req.body.descricao || "",
+            plataforma: req.body.plataforma || "",
             ordem: 999999,
             ativo: req.body.ativo !== "false"
         });
@@ -130,6 +131,7 @@ exports.updateFoto = async (req, res) => {
             imagem,
             data: req.body.data || "",
             descricao: req.body.descricao || "",
+            plataforma: req.body.plataforma || "",
             ativo: req.body.ativo !== "false"
         });
 
@@ -205,7 +207,8 @@ exports.exportarGaleria = async (req, res) => {
                 fotos: fotos.map(f => ({
                     data: f.data,
                     imagem: copiarECaminhoLocal(f.imagem),
-                    descricao: f.descricao || ""
+                    descricao: f.descricao || "",
+                    plataforma: f.plataforma || ""
                 }))
             });
         }

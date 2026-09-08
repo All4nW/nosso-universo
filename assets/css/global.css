@@ -418,3 +418,37 @@ body.modal-aberto {
     padding-top: 100px;
     padding-bottom: 220px;
 }
+/* ===== Introdução: coração formado por partículas ===== */
+
+.heart-intro-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    background: #000;
+    transition: opacity 1.4s ease;
+}
+
+.heart-intro-canvas.heart-intro-oculto {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Pausa a entrada normal do texto até o coração terminar */
+.welcome-anim {
+    animation-play-state: paused;
+}
+
+.welcome-revelado .welcome-anim {
+    animation-play-state: running;
+}
+
+#live-counter {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+#live-counter.live-counter-visivel {
+    opacity: 1;
+}

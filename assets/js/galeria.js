@@ -25,6 +25,191 @@ function urlImagemGaleria(caminho) {
     // Imagens antigas/estáticas do site continuam normais
     return caminho;
 }
+
+
+// =====================================================
+// PERFIS — pasta especial com moldura temática por plataforma
+// =====================================================
+
+// Info de exibição de cada plataforma conhecida. Uma foto com
+// plataforma vazia ou não mapeada cai no grupo genérico "outro".
+// "categoria" é usada pelos filtros (Todos / Redes Sociais / Jogos / Outros).
+const PLATAFORMAS_PERFIL = {
+    discord: { label: "Discord", emoji: "💬", frase: "Nosso cantinho", categoria: "redes" },
+    tiktok: { label: "TikTok", emoji: "🎵", frase: "Onde a gente perde horas", categoria: "redes" },
+    roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
+    genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" }
+};
+
+function ehPastaDePerfis(pasta) {
+    return Boolean(
+        pasta &&
+        pasta.nome &&
+        pasta.nome.trim().toLowerCase().includes("perfil")
+    );
+}
+
+function renderizarPerfis(fotos, lista) {
+
+    lista.classList.add("galeria-perfis-vista");
+    lista.innerHTML = "";
+
+    // Agrupa as fotos por plataforma
+    const grupos = {};
+
+    fotos.forEach((foto) => {
+        const chave =
+            (foto.plataforma || "outro").toLowerCase();
+
+        if (!grupos[chave]) grupos[chave] = [];
+
+        grupos[chave].push(foto);
+    });
+
+    // Plataformas conhecidas primeiro (na ordem definida acima),
+    // qualquer outra plataforma não mapeada vem depois.
+    const ordemChaves = [
+        ...Object.keys(PLATAFORMAS_PERFIL).filter((c) => grupos[c]),
+        ...Object.keys(grupos).filter((c) => !PLATAFORMAS_PERFIL[c])
+    ];
+
+
+    // ====================================
+    // TÍTULO SEPARADO (estilo Cartas) + FAIXA DE MÍDIA
+    // compacta com 1 ou 2 fotos lado a lado (a sua + a dela),
+    // separadas por uma linha fina no meio.
+    // ====================================
+
+    ordemChaves.forEach((chave, indiceSecao) => {
+
+        const info =
+            PLATAFORMAS_PERFIL[chave] || {
+                label: chave === "outro" ? "Outros" : chave,
+                emoji: "📌",
+                categoria: "outros"
+            };
+
+        const fotosDoGrupo =
+            grupos[chave];
+
+        const secao =
+            document.createElement("div");
+
+        secao.className =
+            "perfil-secao";
+
+        secao.style.setProperty(
+            "--delay",
+            `${indiceSecao * 0.15}s`
+        );
+
+        // Mostra até 2 fotos lado a lado (a sua + a dela). Se um
+        // dia tiver mais que 2 pra mesma plataforma, ainda dá pra
+        // ver todas clicando — o clique abre o carrossel completo.
+        const fotosVisiveis =
+            fotosDoGrupo.slice(0, 2);
+
+        const midiaHtml =
+            fotosVisiveis
+                .map((foto, indiceFoto) => {
+
+                    return `
+                        <div class="perfil-secao-foto" data-indice="${indiceFoto}">
+                            <img
+                                src="${urlImagemGaleria(foto.imagem)}"
+                                alt=""
+                                onerror="this.closest('.perfil-secao-foto').remove()"
+                            >
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+        // O coraçãozinho-prendedor só aparece quando tem 2 fotos —
+        // flutua centralizado entre as duas, como se as "prendesse".
+        const clipeCoracaoHtml =
+            fotosVisiveis.length === 2
+                ? `
+                    <img
+                        class="perfil-decoracao-clipe-coracao"
+                        src="assets/images/perfil-decoracoes/clipe-coracao.png"
+                        alt=""
+                    >
+                `
+                : "";
+
+        // Alterna os enfeites de canto pra não ficar tudo igual —
+        // clipe rosa/roxo no topo, flor/coração fino embaixo.
+        const clipeCanto =
+            indiceSecao % 2 === 0
+                ? "clipe-rosa.png"
+                : "clipe-roxo.png";
+
+        const enfeiteCanto =
+            indiceSecao % 2 === 0
+                ? "flor-galho.png"
+                : "coracao-fino.png";
+
+        secao.innerHTML = `
+
+            <div class="perfil-secao-cabecalho">
+                <span class="perfil-secao-emoji">${info.emoji}</span>
+                <h3 class="perfil-secao-titulo">${info.label}</h3>
+            </div>
+
+            <div class="perfil-secao-midia-wrapper">
+
+                <img
+                    class="perfil-decoracao-clipe"
+                    src="assets/images/perfil-decoracoes/${clipeCanto}"
+                    alt=""
+                >
+
+                <img
+                    class="perfil-decoracao-canto"
+                    src="assets/images/perfil-decoracoes/${enfeiteCanto}"
+                    alt=""
+                >
+
+                <div class="perfil-secao-midia perfil-secao-midia-${chave}">
+                    ${midiaHtml}
+                    ${clipeCoracaoHtml}
+                </div>
+
+            </div>
+
+        `;
+
+        // Clique em qualquer foto abre o carrossel completo daquela
+        // plataforma (mesmo que existam mais de 2 fotos no total).
+        secao
+            .querySelectorAll(".perfil-secao-foto")
+            .forEach((elemento) => {
+
+                elemento.addEventListener(
+                    "click",
+                    () => {
+
+                        fotosDaPastaAberta =
+                            fotosDoGrupo;
+
+                        abrirVisualizador(
+                            Number(elemento.dataset.indice)
+                        );
+
+                    }
+                );
+
+            });
+
+        lista.appendChild(secao);
+
+    });
+
+}
+
+
 // =====================================================
 // CARREGAR GALERIA
 // =====================================================
@@ -344,11 +529,66 @@ function abrirPasta(pasta) {
     );
 
 
-    titulo.textContent =
-        pasta.nome || "";
+    // Remove decoração de fundo de uma abertura anterior, se existir
+    containerFotos
+        .querySelector(".perfil-fundo-decoracoes")
+        ?.remove();
+
+
+    if (ehPastaDePerfis(pasta)) {
+
+        titulo.innerHTML = `
+            <img
+                src="assets/images/perfil-decoracoes/envelope-coracao.png"
+                alt=""
+                class="perfil-titulo-icone"
+            >
+            Nossos Perfis
+            <span class="perfil-subtitulo"></span>
+        `;
+
+        // Decoração de fundo espalhada: coraçõezinhos e brilhos
+        // flutuando bem sutilmente atrás de tudo, cobrindo a área
+        // inteira da seção de Perfis (título + cards).
+        const decoracoesFundo =
+            document.createElement("div");
+
+        decoracoesFundo.className =
+            "perfil-fundo-decoracoes";
+
+        decoracoesFundo.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        decoracoesFundo.innerHTML = `
+            <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 8%; --py: 10%; --pdelay: 0s; --pduracao: 9s;">
+            <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 88%; --py: 6%; --pdelay: 1.4s; --pduracao: 11s;">
+            <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 92%; --py: 55%; --pdelay: 2.8s; --pduracao: 10s;">
+            <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 4%; --py: 60%; --pdelay: 0.6s; --pduracao: 8.5s;">
+            <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 50%; --py: 92%; --pdelay: 2s; --pduracao: 9.5s;">
+        `;
+
+        containerFotos.insertBefore(
+            decoracoesFundo,
+            containerFotos.firstChild
+        );
+
+    }
+
+    else {
+
+        titulo.textContent =
+            pasta.nome || "";
+
+    }
 
 
     lista.innerHTML = "";
+
+    lista.classList.remove(
+        "galeria-perfis-vista"
+    );
 
 
     const fotos =
@@ -377,6 +617,13 @@ function abrirPasta(pasta) {
                     Nenhuma foto nesta pasta ainda.
                 </p>
             `;
+
+    }
+
+    else if (ehPastaDePerfis(pasta)) {
+
+        // Layout especial: agrupado por plataforma, com moldura temática.
+        renderizarPerfis(fotos, lista);
 
     }
 
@@ -430,6 +677,12 @@ function abrirPasta(pasta) {
         );
 
     }
+
+
+    containerFotos.classList.toggle(
+        "galeria-fotos-perfil-fundo",
+        ehPastaDePerfis(pasta)
+    );
 
 
     containerFotos.classList.remove(
@@ -560,6 +813,12 @@ function garantirVisualizador() {
                     id="foto-viz-descricao"
                     class="foto-visualizador-descricao"
                 ></p>
+
+
+                <span
+                    id="foto-viz-contagem"
+                    class="foto-visualizador-contagem"
+                ></span>
 
             </div>
 
@@ -793,6 +1052,22 @@ function atualizarVisualizador() {
 
         data.textContent =
             formatarData(foto.data);
+
+    }
+
+
+    const contagem =
+        document.getElementById(
+            "foto-viz-contagem"
+        );
+
+
+    if (contagem) {
+
+        contagem.textContent =
+            fotosDaPastaAberta.length > 1
+                ? `${indiceFotoAberta + 1} / ${fotosDaPastaAberta.length}`
+                : "";
 
     }
 

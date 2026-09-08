@@ -278,5 +278,75 @@
         "notaEu": null,
         "notaEla": null,
         "memoria": ""
+    },
+    {
+        "id": "edward-maos-de-tesoura",
+        "categoria": "queremos",
+        "titulo": "Edward Mãos de Tesoura",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752121179.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "saga-crepusculo",
+        "categoria": "queremos",
+        "titulo": "Saga Crepúsculo",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752189894.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "caroline",
+        "categoria": "filmes",
+        "titulo": "Coraline",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752199045.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "priscilla",
+        "categoria": "queremos",
+        "titulo": "Priscilla",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752233732.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "para-todos-os-garotos-que-ja-amei",
+        "categoria": "queremos",
+        "titulo": "Para Todos Os Garotos Que Já Amei",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752314214.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "detona-ralph",
+        "categoria": "queremos",
+        "titulo": "Detona Ralph",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788835546409.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "wifi-ralph-quebrando-a-internet",
+        "categoria": "queremos",
+        "titulo": "WiFi Ralph: Quebrando a Internet",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788835590179.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     }
 ]

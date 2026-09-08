@@ -28,23 +28,7 @@
     <main id="app">
 
 <section class="view" data-view="welcome">
-
-    <span class="floating-heart" style="--fh-x: 12%; --fh-y: 20%; --fh-delay: 0s; --fh-duration: 7s;">💗</span>
-    <span class="floating-heart" style="--fh-x: 85%; --fh-y: 30%; --fh-delay: 1.2s; --fh-duration: 6s;">💗</span>
-    <span class="floating-heart" style="--fh-x: 20%; --fh-y: 70%; --fh-delay: 2.4s; --fh-duration: 8s;">💗</span>
-    <span class="floating-heart" style="--fh-x: 80%; --fh-y: 65%; --fh-delay: 0.6s; --fh-duration: 6.5s;">💗</span>
-
-    <h1 class="welcome-title welcome-anim" style="--anim-delay: 0.2s;">Nosso Universo</h1>
-
-    <div class="welcome-divider welcome-anim" style="--anim-delay: 0.5s;"></div>
-
-    <p class="welcome-message welcome-anim" style="--anim-delay: 0.7s;">
-        Um universo criado dos nossos momentos, para lembrarmos juntos, para sempre.
-    </p>
-
-    <a href="#hub" class="welcome-button welcome-anim" style="--anim-delay: 1s;">
-        Entrar <span class="welcome-button-icon">✦</span>
-    </a>
+<canvas id="heart-intro-canvas" class="heart-intro-canvas"></canvas>
 </section>
 <div id="live-counter" class="live-counter">
     <span class="live-counter-label">Estamos juntos há</span>
@@ -374,6 +358,7 @@
     <script src="assets/js/estrelas.js"></script>
     <script src="assets/js/assistidos.js"></script>
     <script src="assets/js/cartas.js"></script>
+    <script src="assets/js/heart-intro.js"></script>
     
 
 </body>

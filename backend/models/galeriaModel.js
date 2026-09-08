@@ -1,6 +1,31 @@
 const db = require("../database/database");
 
 
+// ===== MIGRAÇÃO: coluna "plataforma" em galeria_fotos =====
+// Roda toda vez que o servidor sobe. Se a coluna já existe,
+// o SQLite retorna erro "duplicate column name" — ignoramos
+// esse erro específico, é só sinal de que já foi aplicada antes.
+
+db.run(
+    `ALTER TABLE galeria_fotos ADD COLUMN plataforma TEXT DEFAULT ''`,
+    (err) => {
+
+        if (
+            err &&
+            !String(err.message).includes("duplicate column")
+        ) {
+
+            console.error(
+                "Erro ao adicionar coluna 'plataforma':",
+                err
+            );
+
+        }
+
+    }
+);
+
+
 // ===== PASTAS =====
 
 function getPastas(admin = false) {
@@ -83,8 +108,17 @@ function getFoto(id) {
 function createFoto(data) {
     return new Promise((resolve, reject) => {
         db.run(
-            `INSERT INTO galeria_fotos (id, pastaId, imagem, data, descricao, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [data.id, data.pastaId, data.imagem, data.data || "", data.descricao || "", data.ordem || 999999, data.ativo ? 1 : 0],
+            `INSERT INTO galeria_fotos (id, pastaId, imagem, data, descricao, plataforma, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                data.id,
+                data.pastaId,
+                data.imagem,
+                data.data || "",
+                data.descricao || "",
+                data.plataforma || "",
+                data.ordem || 999999,
+                data.ativo ? 1 : 0
+            ],
             (err) => err ? reject(err) : resolve({ id: data.id })
         );
     });
@@ -93,8 +127,16 @@ function createFoto(data) {
 function updateFoto(id, data) {
     return new Promise((resolve, reject) => {
         db.run(
-            `UPDATE galeria_fotos SET pastaId = ?, imagem = ?, data = ?, descricao = ?, ativo = ? WHERE id = ?`,
-            [data.pastaId, data.imagem, data.data, data.descricao, data.ativo ? 1 : 0, id],
+            `UPDATE galeria_fotos SET pastaId = ?, imagem = ?, data = ?, descricao = ?, plataforma = ?, ativo = ? WHERE id = ?`,
+            [
+                data.pastaId,
+                data.imagem,
+                data.data,
+                data.descricao,
+                data.plataforma || "",
+                data.ativo ? 1 : 0,
+                id
+            ],
             (err) => err ? reject(err) : resolve()
         );
     });

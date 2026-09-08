@@ -92,6 +92,18 @@
                 <input type="text" id="foto-descricao" class="settings-input" placeholder="Legenda curta">
             </div>
 
+            <!-- Só aparece dentro da pasta "Perfil" — controlado via JS -->
+            <div class="settings-field" id="foto-plataforma-campo" style="display:none;">
+                <label class="settings-label">Plataforma</label>
+                <select id="foto-plataforma" class="settings-input">
+                    <option value="">Sem plataforma específica</option>
+                    <option value="discord">💬 Discord</option>
+                    <option value="roblox">🎮 Roblox</option>
+                    <option value="tiktok">🎵 TikTok</option>
+                    <option value="genshin">✨ Genshin Impact</option>
+                </select>
+            </div>
+
             <label class="timeline-switch">
                 <input type="checkbox" id="foto-ativa" checked>
                 <span></span>
@@ -107,3 +119,11 @@
 
     <div id="fotos-admin-itens" class="timeline-admin-itens"></div>
 </section>
+
+<style>
+    /* Mesma correção que fizemos na Timeline — texto legível no dropdown nativo */
+    .settings-input option {
+        color: #1a1a2e;
+        background-color: #ffffff;
+    }
+</style>
