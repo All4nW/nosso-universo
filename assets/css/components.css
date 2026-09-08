@@ -933,7 +933,38 @@
    ficarem espremidos — só essa plataforma fica maior. */
 
 .perfil-secao-midia-tiktok {
-    min-height: 320px;
+    min-height: 360px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    max-width: 260px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto img {
+    max-height: 430px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto:nth-child(2) {
+    margin-left: -105px;
+}
+
+/* Reposiciona as decorações especificamente pro tamanho maior
+   do TikTok — os valores padrão (calibrados pro tamanho normal)
+   ficavam fora do lugar nesse layout maior. */
+
+.perfil-secao-midia-tiktok .perfil-decoracao-clipe-coracao {
+    top: 58%;
+    left: 46%;
+}
+
+.perfil-secao-midia-wrapper:has(.perfil-secao-midia-tiktok) .perfil-decoracao-clipe {
+    left: 50%;
+    transform: translateX(-50%) rotate(-12deg);
+}
+
+.perfil-secao-midia-wrapper:has(.perfil-secao-midia-tiktok) .perfil-decoracao-canto {
+    right: 4%;
+    bottom: -6px;
 }
 
 /* Sombra de contato no "chão", embaixo da pilha de fotos —

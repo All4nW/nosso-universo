@@ -3,6 +3,25 @@
 // Mesma fórmula matemática do coração, mesmas contagens de partículas,
 // mesma técnica de "glow" (camadas de texto ampliadas e semi-transparentes
 // atrás do texto normal), mesmo timing de frames.
+//
+// AJUSTES PRA MOBILE (sem perder o visual):
+//
+// 1. Sizing correto com devicePixelRatio — antes o código usava
+//    window.innerWidth/innerHeight direto tanto pro tamanho em CSS
+//    quanto pro tamanho real do canvas. Em telas de alta densidade
+//    (a maioria dos celulares) e principalmente dentro de navegadores
+//    embutidos de outros apps, isso causa uma distorção de escala —
+//    o coração acaba desenhado "errado", e o que aparece na tela é só
+//    um pedaço ampliado do meio do desenho. Agora o canvas é dimensionado
+//    em pixels de CSS (o que a pessoa realmente vê) e a resolução
+//    interna é multiplicada pelo devicePixelRatio à parte, do jeito
+//    correto — ctx.scale() cuida da conversão.
+//
+// 2. Menos partículas e menos camadas de brilho em telas pequenas/
+//    touch (celular) — o desenho original faz até 3 camadas de texto
+//    por partícula (~1260 fillText por frame) mais sombra em 70
+//    partículas de poeira, o que é pesado demais pro processador de
+//    um celular. Reduzido pra continuar bonito, só mais leve.
 
 (function () {
 
@@ -10,6 +29,16 @@
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+
+
+    // ===== Detecta se é um dispositivo "leve" (celular/touch) =====
+    // Usado só pra ajustar quantidade de partículas e camadas de
+    // brilho — a lógica e o visual continuam os mesmos.
+
+    const DISPOSITIVO_LEVE =
+        window.matchMedia('(pointer: coarse)').matches ||
+        window.innerWidth <= 768;
+
 
     // ===== Constantes (equivalentes às do Python) =====
 
@@ -25,14 +54,16 @@
         '#4169e1'  // (65, 105, 225)
     ];
 
-    const N_OUTLINE = 220;
-    const N_FILL = 200;
-    const FRAMES_PER_STEP = 1.6;
+    // Em celular, menos partículas — o coração continua reconhecível
+    // e bonito, só com uma densidade um pouco menor.
+    const N_OUTLINE = DISPOSITIVO_LEVE ? 150 : 220;
+    const N_FILL = DISPOSITIVO_LEVE ? 130 : 200;
+    const FRAMES_PER_STEP = 0.9;
 
 
     // ===== Poeira ambiente (flutua sempre, dá profundidade/volume) =====
 
-    const FLOAT_COUNT = 70;
+    const FLOAT_COUNT = DISPOSITIVO_LEVE ? 26 : 70;
     let particulasAmbiente = [];
 
     function criarParticulasAmbiente() {
@@ -74,8 +105,14 @@
             ctx.save();
             ctx.globalAlpha = brilho;
             ctx.fillStyle = p.cor;
-            ctx.shadowColor = p.cor;
-            ctx.shadowBlur = 6;
+
+            // shadowBlur é uma das operações mais caras em Canvas 2D —
+            // em celular, pula (mantém a poeira, só sem o glow extra).
+            if (!DISPOSITIVO_LEVE) {
+                ctx.shadowColor = p.cor;
+                ctx.shadowBlur = 6;
+            }
+
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.raio, 0, Math.PI * 2);
             ctx.fill();
@@ -134,8 +171,12 @@
             ctx.save();
             ctx.globalAlpha = Math.max(0, p.vida);
             ctx.fillStyle = p.cor;
-            ctx.shadowColor = p.cor;
-            ctx.shadowBlur = 10;
+
+            if (!DISPOSITIVO_LEVE) {
+                ctx.shadowColor = p.cor;
+                ctx.shadowBlur = 10;
+            }
+
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.raio, 0, Math.PI * 2);
             ctx.fill();
@@ -145,17 +186,39 @@
 
     }
 
-    // No Python a tela é fixa (2000x1200) com SCALE=20. Aqui a tela
-    // varia de tamanho, então a escala é calculada pra o coração
-    // ocupar sempre a mesma proporção da tela, virando responsivo.
+    // ===== Dimensionamento correto do canvas =====
+    //
+    // "largura"/"altura" são sempre em PIXELS DE CSS — é o que a
+    // fórmula do coração e todo o resto do código usa pra posicionar
+    // as coisas, exatamente como antes. A diferença é que agora o
+    // canvas tem uma resolução INTERNA multiplicada pelo
+    // devicePixelRatio (nítido em qualquer tela), e ctx.scale() faz
+    // a conversão — então o resto do código nem percebe a mudança.
+
     let largura = 0;
     let altura = 0;
     let escala = 20;
     let fatorGap = 1; // ajusta o "min_gap" proporcionalmente à escala
 
     function ajustarTamanho() {
-        largura = canvas.width = window.innerWidth;
-        altura = canvas.height = window.innerHeight;
+
+        // window.visualViewport é mais confiável que innerWidth/innerHeight
+        // em navegadores mobile (principalmente os embutidos de outros
+        // apps), porque reflete o que está REALMENTE visível na tela.
+        const viewport = window.visualViewport;
+
+        largura = viewport ? viewport.width : window.innerWidth;
+        altura = viewport ? viewport.height : window.innerHeight;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = largura * dpr;
+        canvas.height = altura * dpr;
+
+        canvas.style.width = largura + 'px';
+        canvas.style.height = altura + 'px';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         // Coração ocupa ~92% da menor dimensão da tela (largura ou altura)
         const menorLado = Math.min(largura, altura);
@@ -170,6 +233,12 @@
 
     ajustarTamanho();
     window.addEventListener('resize', ajustarTamanho);
+    window.addEventListener('orientationchange', ajustarTamanho);
+
+    // Navegadores mobile às vezes ainda ajustam a barra de endereço
+    // (mostrando/escondendo) um instante depois do carregamento —
+    // essa segunda medição pega esse ajuste tardio.
+    window.setTimeout(ajustarTamanho, 300);
 
 
     // ===== Fórmula matemática do coração (idêntica ao Python) =====
@@ -272,6 +341,10 @@
     // Desenha uma camada ampliada e bem transparente atrás (efeito
     // de brilho "vazando"), outra um pouco menos ampliada e um
     // pouco mais opaca, e por cima o texto no tamanho normal.
+    //
+    // Em celular, pula a camada mais externa (a mais cara, fonte até
+    // 2.9x maior) — mantém a camada média + o texto normal, então
+    // ainda existe glow, só um pouco mais discreto.
 
     function drawGlowText(word, color, x, y, alpha, sizeMult, tamanhoFonteBase) {
 
@@ -285,12 +358,16 @@
 
         if (alpha > 10) {
 
-            // Camada grande (2.9x), mais forte que antes (alpha // 4.5)
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, alpha / 4.5) / 255;
-            ctx.font = `bold ${tamanhoFonte * 2.9}px Arial`;
-            ctx.fillText(word, x, y);
-            ctx.restore();
+            if (!DISPOSITIVO_LEVE) {
+
+                // Camada grande (2.9x) — só no desktop
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, alpha / 4.5) / 255;
+                ctx.font = `bold ${tamanhoFonte * 2.9}px Arial`;
+                ctx.fillText(word, x, y);
+                ctx.restore();
+
+            }
 
             // Camada média (1.9x), bem mais forte (alpha // 2)
             ctx.save();
@@ -400,8 +477,8 @@
 
     let frame = 0;
     let estado = 'formando'; // 'formando' -> 'formado' -> 'saindo'
-    const centerStart = fillStartFrame + 200;
-    const frameFormado = centerStart + 220; // quando o coração+texto já estão 100% visíveis
+    const centerStart = fillStartFrame + 90;
+    const frameFormado = centerStart + 90; // quando o coração+texto já estão 100% visíveis
 
     function desenharParticulas() {
 
