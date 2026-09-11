@@ -348,5 +348,15 @@
         "notaEu": null,
         "notaEla": null,
         "memoria": ""
+    },
+    {
+        "id": "como-se-fosse-a-primeira-vez",
+        "categoria": "queremos",
+        "titulo": "Como Se Fosse a Primeira Vez",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789085458989.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     }
 ]

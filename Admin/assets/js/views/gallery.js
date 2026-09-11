@@ -3,6 +3,7 @@ let pastaEditandoId = null;
 let pastaCapaSelecionada = null;
 
 let pastaAbertaId = null;
+let pastaAbertaEhPerfil = false;
 let fotosAdmin = [];
 let fotoEditandoId = null;
 let fotoImagemSelecionada = null;
@@ -13,6 +14,17 @@ let galeriaDragId = null;
 async function initGaleria() {
     await carregarPastasAdmin();
     registrarEventosGaleria();
+}
+
+
+// Detecta se uma pasta é a pasta especial "Perfil" (case-insensitive,
+// e aceita variações tipo "Perfis" também).
+function ehPastaDePerfis(pasta) {
+    return Boolean(
+        pasta &&
+        pasta.nome &&
+        pasta.nome.trim().toLowerCase().includes('perfil')
+    );
 }
 
 
@@ -165,16 +177,24 @@ async function abrirGerenciadorFotos(pastaId) {
     if (!pasta) return;
 
     pastaAbertaId = pastaId;
+    pastaAbertaEhPerfil = ehPastaDePerfis(pasta);
 
     document.getElementById('fotos-pasta-nome').textContent = `Fotos — ${pasta.nome}`;
     document.getElementById('fotos-secao').style.display = 'block';
     document.getElementById('fotos-secao').scrollIntoView({ behavior: 'smooth' });
+
+    // Mostra o campo "Plataforma" só quando a pasta aberta é a de Perfil.
+    const campoPlataforma = document.getElementById('foto-plataforma-campo');
+    if (campoPlataforma) {
+        campoPlataforma.style.display = pastaAbertaEhPerfil ? 'block' : 'none';
+    }
 
     await carregarFotosAdmin();
 }
 
 function fecharGerenciadorFotos() {
     pastaAbertaId = null;
+    pastaAbertaEhPerfil = false;
     document.getElementById('fotos-secao').style.display = 'none';
 }
 
@@ -193,6 +213,15 @@ async function carregarFotosAdmin() {
     }
 }
 
+// Rótulos amigáveis pra exibir a plataforma na listagem do admin
+const LABELS_PLATAFORMA_ADMIN = {
+    discord: '💬 Discord',
+    roblox: '🎮 Roblox',
+    tiktok: '🎵 TikTok',
+    instagram: '📸 Instagram',
+    genshin: '✨ Genshin Impact'
+};
+
 function renderizarFotosAdmin() {
     const container = document.getElementById('fotos-admin-itens');
     if (!container) return;
@@ -209,6 +238,11 @@ function renderizarFotosAdmin() {
         el.className = 'timeline-admin-item';
         el.dataset.id = foto.id;
 
+        const rotuloPlataforma =
+            foto.plataforma && LABELS_PLATAFORMA_ADMIN[foto.plataforma]
+                ? LABELS_PLATAFORMA_ADMIN[foto.plataforma]
+                : '';
+
         el.innerHTML = `
             <div class="timeline-admin-arrastar">⋮⋮</div>
             <img class="timeline-admin-thumb" src="${resolverImagemGaleria(foto.imagem)}" alt="" onerror="this.style.display='none'">
@@ -216,6 +250,7 @@ function renderizarFotosAdmin() {
                 <div class="timeline-admin-data">${formatarDataGaleria(foto.data)}</div>
                 <h3>${escaparHtmlGaleria(foto.descricao || 'Sem descrição')}</h3>
                 <div class="timeline-admin-tags">
+                    ${rotuloPlataforma ? `<span>${rotuloPlataforma}</span>` : ''}
                     ${foto.ativo ? '<span class="ativo">● Visível</span>' : '<span class="inativo">● Oculta</span>'}
                 </div>
             </div>
@@ -236,6 +271,10 @@ function abrirFormularioNovaFoto() {
 
     document.getElementById('foto-data').value = '';
     document.getElementById('foto-descricao').value = '';
+
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+    if (campoPlataformaSelect) campoPlataformaSelect.value = '';
+
     document.getElementById('foto-ativa').checked = true;
     document.getElementById('foto-imagem-atual').innerHTML = '';
     document.getElementById('foto-formulario').style.display = 'block';
@@ -250,6 +289,10 @@ function editarFoto(id) {
 
     document.getElementById('foto-data').value = foto.data;
     document.getElementById('foto-descricao').value = foto.descricao || '';
+
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+    if (campoPlataformaSelect) campoPlataformaSelect.value = foto.plataforma || '';
+
     document.getElementById('foto-ativa').checked = Boolean(foto.ativo);
     document.getElementById('foto-imagem-atual').innerHTML =
         `<img src="${resolverImagemGaleria(foto.imagem)}" alt="">`;
@@ -274,10 +317,13 @@ async function salvarFoto() {
         return;
     }
 
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+
     const formulario = new FormData();
     formulario.append('pastaId', pastaAbertaId);
     formulario.append('data', data);
     formulario.append('descricao', document.getElementById('foto-descricao').value);
+    formulario.append('plataforma', campoPlataformaSelect ? campoPlataformaSelect.value : '');
     formulario.append('ativo', document.getElementById('foto-ativa').checked);
 
     if (imagemInput.files[0]) formulario.append('imagem', imagemInput.files[0]);
@@ -470,6 +516,13 @@ function escaparHtmlGaleria(texto) {
 // ===== EXPOR / AUTO-INIT =====
 
 window.initGaleria = initGaleria;
+
+// O arquivo se chama "gallery.js" (inglês), mas a função é
+// "initGaleria" (português). Se o painel monta o nome da função
+// a partir do nome do arquivo, ele pode estar procurando por
+// "initGallery" e nunca achando — por isso expomos os dois nomes,
+// cobrindo qualquer uma das duas convenções.
+window.initGallery = initGaleria;
 
 function iniciarGaleriaAutomaticamente() {
     if (document.getElementById('pastas-admin-itens')) initGaleria();

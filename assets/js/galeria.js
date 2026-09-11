@@ -37,6 +37,7 @@ function urlImagemGaleria(caminho) {
 const PLATAFORMAS_PERFIL = {
     discord: { label: "Discord", emoji: "💬", frase: "Nosso cantinho", categoria: "redes" },
     tiktok: { label: "TikTok", emoji: "🎵", frase: "Onde a gente perde horas", categoria: "redes" },
+    instagram: { label: "Instagram", emoji: "📸", frase: "Onde a gente compartilha", categoria: "redes" },
     roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
     genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" }
 };
@@ -160,21 +161,23 @@ function renderizarPerfis(fotos, lista) {
 
             <div class="perfil-secao-midia-wrapper">
 
-                <img
-                    class="perfil-decoracao-clipe"
-                    src="assets/images/perfil-decoracoes/${clipeCanto}"
-                    alt=""
-                >
-
-                <img
-                    class="perfil-decoracao-canto"
-                    src="assets/images/perfil-decoracoes/${enfeiteCanto}"
-                    alt=""
-                >
-
                 <div class="perfil-secao-midia perfil-secao-midia-${chave}">
+
+                    <img
+                        class="perfil-decoracao-clipe"
+                        src="assets/images/perfil-decoracoes/${clipeCanto}"
+                        alt=""
+                    >
+
                     ${midiaHtml}
                     ${clipeCoracaoHtml}
+
+                    <img
+                        class="perfil-decoracao-canto"
+                        src="assets/images/perfil-decoracoes/${enfeiteCanto}"
+                        alt=""
+                    >
+
                 </div>
 
             </div>
@@ -544,7 +547,7 @@ function abrirPasta(pasta) {
                 class="perfil-titulo-icone"
             >
             Nossos Perfis
-            <span class="perfil-subtitulo"></span>
+            <span class="perfil-subtitulo">Diferentes lugares, o mesmo nós.</span>
         `;
 
         // Decoração de fundo espalhada: coraçõezinhos e brilhos
