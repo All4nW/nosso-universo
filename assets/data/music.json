@@ -32,6 +32,14 @@
     "volume": 80
   },
   {
+    "id": "d40a816d-04d4-47a6-b1c9-2ff31748cbcf",
+    "titulo": "Forever - The Little Dippers",
+    "arquivo": "assets/audio/1789091751422-630971634.mp3",
+    "inicioSegundos": 20,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
     "id": "c8d245a5-4a3f-43fe-81f8-fb27f7e58320",
     "titulo": "I Thought I Saw Your Face Today",
     "arquivo": "assets/audio/1786296886744-782869942.mp3",

@@ -515,6 +515,28 @@
         const tamanhoFonte = 30 * pulso;
         const corTexto = '#9b8cf0'; // roxo-azulado
 
+        // Halo suave atrás do texto, pra ele se destacar mais
+        if (alpha > 5) {
+
+            const raio = 95 * pulso;
+
+            const gradiente = ctx.createRadialGradient(
+                largura / 2, altura / 2, 0,
+                largura / 2, altura / 2, raio
+            );
+
+            gradiente.addColorStop(0, `rgba(155, 140, 240, ${(alpha / 255) * 0.32})`);
+            gradiente.addColorStop(1, 'rgba(155, 140, 240, 0)');
+
+            ctx.save();
+            ctx.fillStyle = gradiente;
+            ctx.beginPath();
+            ctx.arc(largura / 2, altura / 2, raio, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+        }
+
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = corTexto;
@@ -537,6 +559,89 @@
 
     }
 
+
+    // ===== Contorno brilhante — traça o formato do coração de
+    // verdade, além das partículas de texto. Vai "acendendo"
+    // conforme o contorno de partículas termina de se formar, e
+    // depois fica com um respiro suave de brilho contínuo.
+
+    const CONTORNO_PONTOS = 180;
+
+    function desenharContornoBrilhante() {
+
+        const progresso = Math.min(1, frame / fillStartFrame);
+
+        if (progresso <= 0) return;
+
+        const respiro = 0.75 + 0.25 * Math.sin(frame * 0.03);
+
+        ctx.save();
+        ctx.beginPath();
+
+        for (let i = 0; i <= CONTORNO_PONTOS; i++) {
+
+            const t = (i / CONTORNO_PONTOS) * Math.PI * 2;
+            const base = heartXY(t);
+            const { sx, sy } = toScreen(base.x, base.y);
+
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+
+        }
+
+        ctx.closePath();
+
+        ctx.globalAlpha = progresso * respiro * 0.5;
+        ctx.strokeStyle = '#8ecbff';
+        ctx.lineWidth = 2.2;
+        ctx.shadowColor = '#8ecbff';
+        ctx.shadowBlur = DISPOSITIVO_LEVE ? 8 : 16;
+        ctx.stroke();
+        ctx.restore();
+
+    }
+
+
+    // ===== Fagulha viajante — um pontinho de luz correndo pela
+    // borda do coração continuamente, tipo um cometa orbitando,
+    // com um rastrinho de brilho atrás dele.
+
+    let faiscaT = 0;
+
+    function desenharFaiscaViajante() {
+
+        if (frame < fillStartFrame) return;
+
+        faiscaT += 0.02;
+
+        if (faiscaT > Math.PI * 2) faiscaT -= Math.PI * 2;
+
+        for (let i = 5; i >= 0; i--) {
+
+            const t = faiscaT - i * 0.045;
+            const base = heartXY(t);
+            const { sx, sy } = toScreen(base.x, base.y);
+
+            const cabeca = i === 0;
+
+            ctx.save();
+            ctx.globalAlpha = cabeca ? 0.95 : 0.9 * (1 - i / 6) * 0.55;
+            ctx.fillStyle = cabeca ? '#ffffff' : '#bfe4ff';
+
+            if (cabeca) {
+                ctx.shadowColor = '#bfe4ff';
+                ctx.shadowBlur = DISPOSITIVO_LEVE ? 10 : 18;
+            }
+
+            ctx.beginPath();
+            ctx.arc(sx, sy, cabeca ? 3.2 : 2.4 - i * 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+        }
+
+    }
+
     function loop() {
 
         if (estado === 'saindo') return;
@@ -546,7 +651,25 @@
 
         desenharParticulasAmbiente();
         desenharCometas();
+
+        // Batimento cardíaco: só depois que o coração já formou,
+        // uma pulsação bem sutil de escala — como se estivesse
+        // batendo de verdade. Afeta só o contorno + partículas do
+        // coração, não a poeira de fundo nem o texto "Click".
+        const batendo = estado !== 'formando';
+        const pulso = batendo ? 1 + 0.035 * Math.sin(frame * 0.07) : 1;
+
+        ctx.save();
+        ctx.translate(largura / 2, altura / 2);
+        ctx.scale(pulso, pulso);
+        ctx.translate(-largura / 2, -altura / 2);
+
+        desenharContornoBrilhante();
         desenharParticulas();
+        desenharFaiscaViajante();
+
+        ctx.restore();
+
         desenharTextoCentral();
         desenharParticulasExplosao();
 
