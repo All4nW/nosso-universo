@@ -549,20 +549,18 @@ body.modal-aberto {
 }
 .ultimo-ajuste {
     position: fixed;
-    bottom: 10px;
+    bottom: 12px;
     right: 14px;
     z-index: 40;
 
-    padding: 4px 9px;
-    border-radius: 999px;
-
     font-size: 0.58rem;
-    letter-spacing: 0.6px;
-    color: rgba(236, 205, 240, 0.42);
+    letter-spacing: 0.5px;
+    color: rgba(220, 185, 230, 0.42);
 
-    background: rgba(180, 130, 190, 0.035);
-    border: 1px solid rgba(220, 180, 225, 0.08);
-    backdrop-filter: blur(4px);
+    background: none;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
 
-    transition: all 0.3s ease;
+    pointer-events: none;
 }
