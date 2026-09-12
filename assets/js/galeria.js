@@ -35,11 +35,13 @@ function urlImagemGaleria(caminho) {
 // plataforma vazia ou não mapeada cai no grupo genérico "outro".
 // "categoria" é usada pelos filtros (Todos / Redes Sociais / Jogos / Outros).
 const PLATAFORMAS_PERFIL = {
+    genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" },
+    roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
     discord: { label: "Discord", emoji: "💬", frase: "Nosso cantinho", categoria: "redes" },
     tiktok: { label: "TikTok", emoji: "🎵", frase: "Onde a gente perde horas", categoria: "redes" },
     instagram: { label: "Instagram", emoji: "📸", frase: "Onde a gente compartilha", categoria: "redes" },
-    roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
-    genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" }
+    widgetable: { label: "Widgetable", emoji: "🧩", frase: "Nosso cantinho personalizado", categoria: "redes" },
+    rave: { label: "Rave", emoji: "🎬", frase: "Onde a gente assiste junto", categoria: "redes" }
 };
 
 function ehPastaDePerfis(pasta) {
@@ -114,6 +116,21 @@ function renderizarPerfis(fotos, lista) {
             fotosVisiveis
                 .map((foto, indiceFoto) => {
 
+                    // O coraçãozinho-prendedor só aparece na SEGUNDA foto
+                    // (quando existem 2), grudado na borda esquerda dela —
+                    // assim ele sempre cai exatamente na costura com a
+                    // primeira foto, não importa o tamanho do card.
+const clipeCoracaoHtml =
+    indiceFoto === 1 && chave !== "rave"
+        ? `
+            <img
+                class="perfil-decoracao-clipe-coracao"
+                src="assets/images/perfil-decoracoes/clipe-coracao.png"
+                alt=""
+            >
+        `
+        : "";
+
                     return `
                         <div class="perfil-secao-foto" data-indice="${indiceFoto}">
                             <img
@@ -121,24 +138,12 @@ function renderizarPerfis(fotos, lista) {
                                 alt=""
                                 onerror="this.closest('.perfil-secao-foto').remove()"
                             >
+                            ${clipeCoracaoHtml}
                         </div>
                     `;
 
                 })
                 .join("");
-
-        // O coraçãozinho-prendedor só aparece quando tem 2 fotos —
-        // flutua centralizado entre as duas, como se as "prendesse".
-        const clipeCoracaoHtml =
-            fotosVisiveis.length === 2
-                ? `
-                    <img
-                        class="perfil-decoracao-clipe-coracao"
-                        src="assets/images/perfil-decoracoes/clipe-coracao.png"
-                        alt=""
-                    >
-                `
-                : "";
 
         // Alterna os enfeites de canto pra não ficar tudo igual —
         // clipe rosa/roxo no topo, flor/coração fino embaixo.
@@ -170,7 +175,6 @@ function renderizarPerfis(fotos, lista) {
                     >
 
                     ${midiaHtml}
-                    ${clipeCoracaoHtml}
 
                     <img
                         class="perfil-decoracao-canto"
@@ -547,7 +551,7 @@ function abrirPasta(pasta) {
                 class="perfil-titulo-icone"
             >
             Nossos Perfis
-            <span class="perfil-subtitulo">Diferentes lugares, o mesmo nós.</span>
+            <span class="perfil-subtitulo">Perfis combinando</span>
         `;
 
         // Decoração de fundo espalhada: coraçõezinhos e brilhos

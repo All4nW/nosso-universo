@@ -219,6 +219,8 @@ const LABELS_PLATAFORMA_ADMIN = {
     roblox: '🎮 Roblox',
     tiktok: '🎵 TikTok',
     instagram: '📸 Instagram',
+    widgetable: '🧩 Widgetable',
+    rave: '🎬 Rave',
     genshin: '✨ Genshin Impact'
 };
 

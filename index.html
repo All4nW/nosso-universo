@@ -24,27 +24,34 @@
     <div id="navbar-placeholder"></div>
     <div id="modal-placeholder"></div>
    
-
+<div id="ultimo-ajuste" class="ultimo-ajuste"></div>
     <main id="app">
 
 <section class="view" data-view="welcome">
 <canvas id="heart-intro-canvas" class="heart-intro-canvas"></canvas>
 </section>
-<div id="live-counter" class="live-counter">
-    <span class="live-counter-label">Estamos juntos há</span>
-    <div class="live-counter-numbers">
-<div class="counter-unit"><span id="counter-dias">000</span><small>Dias</small></div>
-        <span class="counter-sep">:</span>
-        <div class="counter-unit"><span id="counter-horas">00</span><small>Horas</small></div>
-        <span class="counter-sep">:</span>
-        <div class="counter-unit"><span id="counter-minutos">00</span><small>Minutos</small></div>
-        <span class="counter-sep">:</span>
-        <div class="counter-unit"><span id="counter-segundos">00</span><small>Segundos</small></div>
-    </div>
-</div>
 
 <section class="view" data-view="hub">
     <div class="hub-container" id="hub-container"></div>
+
+    <div id="live-counter" class="live-counter">
+        <span class="live-counter-linha"></span>
+
+        <span class="live-counter-label">Estamos juntos há</span>
+
+        <div class="live-counter-dias">
+            <span id="counter-dias">000</span>
+            <small>dias</small>
+        </div>
+
+        <div class="live-counter-numbers">
+            <div class="counter-unit"><span id="counter-horas">00</span><small>Horas</small></div>
+            <span class="counter-sep">·</span>
+            <div class="counter-unit"><span id="counter-minutos">00</span><small>Minutos</small></div>
+            <span class="counter-sep">·</span>
+            <div class="counter-unit"><span id="counter-segundos">00</span><small>Segundos</small></div>
+        </div>
+    </div>
 </section>
 
         <section class="view" data-view="timeline">
@@ -143,8 +150,6 @@
 
     <span class="cartas-intro-contagem" id="cartas-contagem"></span>
 </div>
-        <span class="cartas-intro-contagem" id="cartas-contagem"></span>
-    </div>
 
     <div class="cartas-busca-wrapper">
         <input
@@ -170,33 +175,6 @@
     <button id="cartas-topo-btn" class="scroll-topo-btn" aria-label="Voltar ao topo">↑</button>
 
 </section>
-
-<div class="carta-aberta-overlay oculto" id="carta-aberta-overlay">
-
-   <div class="carta-aberta-folha" id="carta-aberta-folha">
-
-    <button class="carta-aberta-fechar" id="carta-aberta-fechar" aria-label="Fechar carta">×</button>
-
-    <span class="carta-aberta-coracao" style="--ch-x: 6%; --ch-y: 12%; --ch-tam: 0.7rem; --ch-duracao: 6.5s; --ch-delay: 0.3s;">♡</span>
-    <span class="carta-aberta-coracao" style="--ch-x: 92%; --ch-y: 20%; --ch-tam: 0.6rem; --ch-duracao: 7.5s; --ch-delay: 1.2s;">♡</span>
-    <span class="carta-aberta-coracao" style="--ch-x: 88%; --ch-y: 82%; --ch-tam: 0.75rem; --ch-duracao: 8s; --ch-delay: 0.6s;">♡</span>
-
-    <span class="carta-aberta-laco">🎀</span>
-
-    <span class="carta-aberta-data" id="carta-aberta-data"></span>
-
-    <h2 class="carta-aberta-titulo" id="carta-aberta-titulo"></h2>
-
-    <p class="carta-aberta-texto" id="carta-aberta-texto"></p>
-
-    <div class="carta-aberta-rodape">
-        <span class="carta-aberta-despedida"></span>
-        <span class="carta-aberta-assinatura" id="carta-aberta-assinatura"></span>
-    </div>
-
-</div>
-
-</div>
 
 <!-- Carta aberta — fica fora do fluxo normal, cobre a tela quando ativa -->
 <div class="carta-aberta-overlay oculto" id="carta-aberta-overlay">
@@ -288,16 +266,16 @@
 
     <!-- Memória selecionada -->
     <div class="estrela-memoria oculto" id="estrela-memoria">
-<div class="estrela-memoria oculto" id="estrela-memoria">
 
-    <div class="memoria-particulas" aria-hidden="true">
-        <span style="--p-x:8%; --p-delay:0s;"></span>
-        <span style="--p-x:25%; --p-delay:0.6s;"></span>
-        <span style="--p-x:45%; --p-delay:1.1s;"></span>
-        <span style="--p-x:62%; --p-delay:0.3s;"></span>
-        <span style="--p-x:80%; --p-delay:1.6s;"></span>
-        <span style="--p-x:92%; --p-delay:2.1s;"></span>
-    </div>
+        <div class="memoria-particulas" aria-hidden="true">
+            <span style="--p-x:8%; --p-delay:0s;"></span>
+            <span style="--p-x:25%; --p-delay:0.6s;"></span>
+            <span style="--p-x:45%; --p-delay:1.1s;"></span>
+            <span style="--p-x:62%; --p-delay:0.3s;"></span>
+            <span style="--p-x:80%; --p-delay:1.6s;"></span>
+            <span style="--p-x:92%; --p-delay:2.1s;"></span>
+        </div>
+
         <div class="estrela-memoria-cabecalho">
 
             <span class="estrela-memoria-tipo" id="estrela-memoria-tipo">
@@ -351,7 +329,6 @@
     <script src="assets/js/modal.js"></script>
     <script src="assets/js/timeline.js"></script>
     <script src="assets/js/intro.js"></script>
-    <!-- <script src="assets/js/hub-loader.js"></script> -->
     <script src="assets/js/hub-loader.js"></script>
     <script src="assets/js/settings.js"></script>
     <script src="assets/js/galeria.js"></script>
@@ -359,6 +336,7 @@
     <script src="assets/js/assistidos.js"></script>
     <script src="assets/js/cartas.js"></script>
     <script src="assets/js/heart-intro.js"></script>
+    <script src="assets/js/ultimo-ajuste.js"></script>
     
 
 </body>

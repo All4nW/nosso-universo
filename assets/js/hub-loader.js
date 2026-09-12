@@ -1,9 +1,28 @@
+
+
+function adicionarDecoracoesFundoHub(container) {
+    if (container.querySelector('.hub-fundo-decoracoes')) return;
+
+    const decoracoes = document.createElement('div');
+    decoracoes.className = 'hub-fundo-decoracoes';
+    decoracoes.setAttribute('aria-hidden', 'true');
+    decoracoes.innerHTML = `
+        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 6%; --py: 12%; --pdelay: 0s; --pduracao: 9s;">
+        <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 90%; --py: 8%; --pdelay: 1.2s; --pduracao: 11s;">
+        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 94%; --py: 60%; --pdelay: 2.4s; --pduracao: 10s;">
+        <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 4%; --py: 65%; --pdelay: 0.6s; --pduracao: 8.5s;">
+        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 50%; --py: 90%; --pdelay: 1.8s; --pduracao: 9.5s;">
+    `;
+
+    container.prepend(decoracoes);
+}
 async function carregarHubCards() {
     const container = document.getElementById('hub-container');
     if (!container) return;
 
-    let cards = [];
+    adicionarDecoracoesFundoHub(container);
 
+    let cards = [];
     try {
         const resposta = await fetch('assets/data/hub.json', { cache: 'no-cache' });
         if (!resposta.ok) throw new Error('Não foi possível carregar hub.json.');
@@ -43,6 +62,7 @@ function criarHubCard(card, indice) {
                 <div class="stack-layer stack-layer-1">
                     <img src="${card.imagem1 || ''}" alt="${card.titulo}" onerror="this.remove()">
                 </div>
+                
                 ${card.descricao ? `<div class="hub-card-desc">${card.descricao}</div>` : ''}
             </div>
             <h3 class="hub-card-title">${card.titulo}</h3>

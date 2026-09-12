@@ -31,6 +31,8 @@
 }
 
 .hub-container {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: clamp(2rem, 5vw, 4rem);
@@ -133,9 +135,21 @@
 
 .hub-card-title {
     font-family: var(--font-heading);
+    font-style: italic;
     font-size: 0.95rem;
     color: var(--color-text-light);
     margin-top: var(--spacing-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hub-card-title::before,
+.hub-card-title::after {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 167, 245, 0.5), transparent);
 }
 
 /* ===== Descrição (overlay sobre a foto, só no hover) ===== */
@@ -933,7 +947,8 @@
    ficarem espremidos — só essa plataforma fica maior. */
 
 .perfil-secao-midia-tiktok {
-    min-height: 360px;
+    min-height: 0;
+    padding: 24px 0 34px;
 }
 
 .perfil-secao-midia-tiktok .perfil-secao-foto {
@@ -1003,7 +1018,7 @@
     background: linear-gradient(155deg, #f2edff, #e0d3fb);
 }
 
-.perfil-secao-foto img {
+.perfil-secao-foto > img:not(.perfil-decoracao-clipe-coracao) {
     display: block;
     width: 100%;
     height: auto;
@@ -1063,9 +1078,9 @@
 .perfil-decoracao-clipe-coracao {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-6deg);
-    width: 38px;
+    left: -8px;
+    transform: translateY(-50%) rotate(-6deg);
+    width: 34px;
     height: auto;
     z-index: 6;
     pointer-events: none;
@@ -1083,6 +1098,40 @@
     z-index: 3;
     transform: translateX(-50%) rotate(-12deg);
     filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+
+/* Posição do clipe, individual por categoria — a maioria repete
+   o padrão (que já ficou bom), só ajusta quem precisar. */
+
+.perfil-secao-midia-discord .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-instagram .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-roblox .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-genshin .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-widgetable .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-rave .perfil-decoracao-clipe {
+    top: 18px;
+}
+
+/* TikTok: fotos bem mais altas, o clipe precisa descer mais
+   pra continuar colado na borda de cima do card. */
+
+.perfil-secao-midia-tiktok .perfil-decoracao-clipe {
+    top: -10px;
 }
 
 /* Florzinha ou coração fino no canto inferior, alternando por seção */
@@ -2248,4 +2297,48 @@
 
 .player-lista-item-ativa .player-lista-nome {
     color: var(--color-lilac);
+}
+
+/* Sem mouse (celular/tablet) não existe hover, então o leque e a
+   descrição ficam sempre no estado "aberto" */
+@media (hover: none) {
+    .stack-layer-3 {
+        transform: rotate(-16deg) translate(-16px, 8px);
+    }
+    .stack-layer-2 {
+        transform: rotate(12deg) translate(16px, 8px);
+    }
+    .stack-layer-1 {
+        transform: rotate(0deg) translateY(-6px) scale(1.03);
+    }
+    .hub-card-desc {
+        opacity: 1;
+    }
+}
+
+.hub-fundo-decoracoes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hub-fundo-decoracoes img {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    width: 30px;
+    height: auto;
+    opacity: 0.22;
+    animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+@keyframes flutuar-decoracao-perfil {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-16px) rotate(6deg);
+    }
 }

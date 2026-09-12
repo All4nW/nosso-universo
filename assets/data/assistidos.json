@@ -311,12 +311,12 @@
     },
     {
         "id": "priscilla",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Priscilla",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1788752233732.jpg",
-        "notaEu": null,
-        "notaEla": null,
+        "notaEu": 10,
+        "notaEla": 9,
         "memoria": ""
     },
     {
