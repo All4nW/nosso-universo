@@ -1,5 +1,13 @@
 [
   {
+    "id": "e1eaf7ce-4085-4303-a836-108fd9577d98",
+    "titulo": "No. 1 Party Anthem - Arctic Monkeys",
+    "arquivo": "assets/audio/1789240301134-601224514.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
     "id": "3a72709e-5e25-4801-8210-0e8de0b3b61a",
     "titulo": "Everybody Here Wants You - Jeff Buckley",
     "arquivo": "assets/audio/1787347756126-61697788.mp3",
@@ -85,6 +93,142 @@
     "arquivo": "assets/audio/1786296203300-324992328.mp3",
     "inicioSegundos": 0,
     "fimSegundos": 167,
+    "volume": 80
+  },
+  {
+    "id": "238fe8ad-7676-4af3-a320-1c76cc624283",
+    "titulo": "True (2003 Remaster) - Spandau Ballet",
+    "arquivo": "assets/audio/1789240281402-857459950.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "2e12ab8d-6ce9-407d-a4f2-4ff028ccc5f6",
+    "titulo": "See You Again - Tyler, The Creator",
+    "arquivo": "assets/audio/1789240291446-527775090.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "057731e5-3a9a-40d1-9515-ee535e5f9dde",
+    "titulo": "My Love Mine All Mine - Mitski",
+    "arquivo": "assets/audio/1789240308790-223200817.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "3b2c7f1c-1f14-4ba5-b115-8b3a9f7013da",
+    "titulo": "Love You Right - Montell Fish",
+    "arquivo": "assets/audio/1789240327694-416268085.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "f761919c-afbd-4bea-8d7d-df86fb2892a7",
+    "titulo": "Love Me - Elvis Presley",
+    "arquivo": "assets/audio/1789240337902-899129237.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "e054556e-4e7a-49ea-b9a3-1a77487f0d81",
+    "titulo": "Good Looking - Suki Waterhouse",
+    "arquivo": "assets/audio/1789240344501-169469912.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "7c5d6ac9-0d4b-41ef-9780-8f0b607c3e42",
+    "titulo": "Video Games - Lana Del Rey",
+    "arquivo": "assets/audio/1789240601076-941970973.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "d971bc6c-0184-4819-a534-069f9db42ac2",
+    "titulo": "Something About You - Eyedress",
+    "arquivo": "assets/audio/1789240613773-429985846.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "42744bfa-7843-40f6-ae3b-fe4127c3a477",
+    "titulo": "My Moon My Man",
+    "arquivo": "assets/audio/1789240619316-790104310.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "b99bcc4f-ea85-4e01-a4e1-f58b4d44c67f",
+    "titulo": "Let The Light In - Lana Del Rey",
+    "arquivo": "assets/audio/1789240625997-986204308.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "fca314bb-2142-4eb5-a780-38be64d94dcd",
+    "titulo": "Kiss Me - Sixpence None The Richer",
+    "arquivo": "assets/audio/1789240633876-653830596.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "39acacfc-f5fc-431d-abc3-5d31f8e34e7f",
+    "titulo": "Every Breath You Take - The Police",
+    "arquivo": "assets/audio/1789240642164-904322235.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "059f2a0a-b298-4eef-b366-4a6a10c0898c",
+    "titulo": "Congratulations (feat. Bilal) - Mac Miller",
+    "arquivo": "assets/audio/1789240653077-215893801.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "b854001e-f9bf-4f6e-8c32-9fcceaca2469",
+    "titulo": "Apocalypse - Cigarettes After Sex",
+    "arquivo": "assets/audio/1789240660244-872334130.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "f814b3a2-cd45-412f-a1f6-78f90be8c0dd",
+    "titulo": "Fall in Love with You. - Montell Fish",
+    "arquivo": "assets/audio/1789240894308-41389928.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "54e0901a-f3d1-4024-905d-8218f2f161eb",
+    "titulo": "Cherry - Lana Del Rey",
+    "arquivo": "assets/audio/1789240902021-782829895.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "93aede0f-3c87-41de-85ed-21fa6dd4ef36",
+    "titulo": "He's My Man - Luvcat",
+    "arquivo": "assets/audio/1789241064267-258685410.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
     "volume": 80
   }
 ]

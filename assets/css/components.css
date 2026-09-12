@@ -2299,23 +2299,6 @@
     color: var(--color-lilac);
 }
 
-/* Sem mouse (celular/tablet) não existe hover, então o leque e a
-   descrição ficam sempre no estado "aberto" */
-@media (hover: none) {
-    .stack-layer-3 {
-        transform: rotate(-16deg) translate(-16px, 8px);
-    }
-    .stack-layer-2 {
-        transform: rotate(12deg) translate(16px, 8px);
-    }
-    .stack-layer-1 {
-        transform: rotate(0deg) translateY(-6px) scale(1.03);
-    }
-    .hub-card-desc {
-        opacity: 1;
-    }
-}
-
 .hub-fundo-decoracoes {
     position: absolute;
     inset: 0;
@@ -2341,4 +2324,16 @@
     50% {
         transform: translateY(-16px) rotate(6deg);
     }
+}
+.hub-card.hub-card-tocado .stack-layer-3 {
+    transform: rotate(-16deg) translate(-16px, 8px);
+}
+.hub-card.hub-card-tocado .stack-layer-2 {
+    transform: rotate(12deg) translate(16px, 8px);
+}
+.hub-card.hub-card-tocado .stack-layer-1 {
+    transform: rotate(0deg) translateY(-6px) scale(1.03);
+}
+.hub-card.hub-card-tocado .hub-card-desc {
+    opacity: 1;
 }

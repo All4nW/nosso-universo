@@ -492,6 +492,7 @@ body.modal-aberto {
 @media (max-width: 500px) {
     .live-counter {
         bottom: 0.8rem;
+        transform: translateX(-50%) scale(0.82);
     }
 }
 

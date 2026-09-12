@@ -16,4 +16,15 @@ document.addEventListener('click', (evento) => {
         window.location.hash = destino;
         card.classList.remove('hub-card-selecionado');
     }, 350);
+// No touch, mostra o leque no instante do toque (puramente visual,
+// já que o toque também navega pra outra seção em seguida)
+if (window.matchMedia('(hover: none)').matches) {
+    document.addEventListener('click', (evento) => {
+        const cardTocado = evento.target.closest('.hub-card');
+        if (cardTocado) {
+            cardTocado.classList.add('hub-card-tocado');
+        }
+    });
+}
 });
+
