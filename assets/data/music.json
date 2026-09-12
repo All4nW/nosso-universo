@@ -24,6 +24,14 @@
     "volume": 80
   },
   {
+    "id": "37acaf75-6416-4990-8c3f-59e57297c442",
+    "titulo": "Aliança - Tribalistas",
+    "arquivo": "assets/audio/1789241206131-148867210.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
     "id": "64d14c06-0d4c-4fc1-849f-1b1e5ef32aed",
     "titulo": "Purple Rain",
     "arquivo": "assets/audio/1786382129043-756500976.mp3",
