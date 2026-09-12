@@ -26,5 +26,14 @@ if (window.matchMedia('(hover: none)').matches) {
         }
     });
 }
+// Sempre que a pessoa volta pro Hub (troca de hash), limpa qualquer
+// leque que tenha ficado aberto de uma visita anterior
+window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#hub' || window.location.hash === '') {
+        document.querySelectorAll('.hub-card-tocado').forEach((card) => {
+            card.classList.remove('hub-card-tocado');
+        });
+    }
+});
 });
 

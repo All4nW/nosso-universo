@@ -679,6 +679,9 @@
     padding-top: 90px;
     padding-bottom: 100px;
 }
+.galeria-pastas-wrapper {
+    position: relative;
+}
 
 .galeria-pastas-container {
     display: flex;
@@ -690,30 +693,54 @@
 }
 
 .galeria-pasta-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 200px;
-    padding: var(--spacing-lg) var(--spacing-md);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(201, 167, 245, 0.15);
+    width: 190px;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.4s ease;
+
+    background: linear-gradient(155deg, #fcfcfc, #ede4d3);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 40px 70px rgba(0, 0, 0, 0.3);
+
+    transform: rotate(var(--rot, 0deg));
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Camada extra atrás, simulando outra "folha" dentro da pasta —
+   dá profundidade real ao card, em vez de ficar liso */
+.galeria-pasta-card::before {
+    content: '';
+    position: absolute;
+    inset: 6px 6px -6px 6px;
+    z-index: -1;
+    border-radius: 8px;
+    background: rgba(232, 227, 218, 0.9);
+    transform: rotate(3deg);
 }
 
 .galeria-pasta-card:hover {
-    border-color: rgba(201, 167, 245, 0.5);
-    transform: translateY(-4px);
+    transform: rotate(0deg) scale(1.06);
+    box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.4),
+        0 24px 50px rgba(0, 0, 0, 0.6),
+        0 50px 80px rgba(0, 0, 0, 0.35);
+    z-index: 2;
 }
 
 .galeria-pasta-capa {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 12px;
+    border-radius: 3px;
     overflow: hidden;
     margin-bottom: var(--spacing-sm);
-    background: linear-gradient(135deg, var(--color-purple), var(--color-blue-night));
+    background: #000;
 }
 
 .galeria-pasta-capa img {
@@ -724,14 +751,15 @@
 
 .galeria-pasta-nome {
     font-family: var(--font-heading);
-    font-size: 1rem;
-    color: var(--color-text-light);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #111111;
     transition: font-size 0.4s ease;
 }
 
 .galeria-pasta-quantidade {
-    font-size: 0.7rem;
-    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    color: #423a2e;
     margin-top: 2px;
     transition: opacity 0.3s ease;
 }
@@ -740,6 +768,9 @@
 .galeria-pastas-recolhida .galeria-pasta-card {
     width: 110px;
     padding: var(--spacing-sm);
+}
+.galeria-pastas-recolhida .galeria-pasta-card {
+    transform: rotate(0deg);
 }
 
 .galeria-pastas-recolhida .galeria-pasta-nome {
@@ -2336,4 +2367,23 @@
 }
 .hub-card.hub-card-tocado .hub-card-desc {
     opacity: 1;
+}
+.galeria-pasta-emoji {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 2;
+
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.85rem;
+
+    background: rgba(5, 5, 16, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
 }

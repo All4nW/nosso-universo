@@ -1,6 +1,31 @@
 // =====================================================
 // GALERIA — SITE PRINCIPAL
 // =====================================================
+const EMOJIS_PASTA = {
+    roblox: "🎮",
+    minecraft: "⛏️",
+    genshin: "✨",
+    transmitidos: "🎬",
+    aleatórios: "🎲",
+    aleatorios: "🎲",
+    perfil: "💌"
+};
+
+function adicionarDecoracoesFundoGaleria() {
+    const wrapper = document.querySelector(".galeria-pastas-wrapper");
+    if (!wrapper || wrapper.querySelector(".hub-fundo-decoracoes")) return;
+
+    const decoracoes = document.createElement("div");
+    decoracoes.className = "hub-fundo-decoracoes";
+    decoracoes.setAttribute("aria-hidden", "true");
+    decoracoes.innerHTML = `
+        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 4%; --py: 10%; --pdelay: 0s; --pduracao: 9s;">
+        <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 92%; --py: 8%; --pdelay: 1.2s; --pduracao: 11s;">
+        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 90%; --py: 70%; --pdelay: 2.4s; --pduracao: 10s;">
+    `;
+
+    wrapper.prepend(decoracoes);
+}
 
 let pastasCarregadas = [];
 let fotosDaPastaAberta = [];
@@ -228,6 +253,8 @@ async function carregarGaleria() {
 
     if (!containerPastas) return;
 
+    adicionarDecoracoesFundoGaleria();
+
     try {
 
         // =================================================
@@ -277,10 +304,10 @@ async function carregarGaleria() {
 
 
     pastasCarregadas.forEach(
-        (pasta) => {
+        (pasta, indice) => {
 
             containerPastas.appendChild(
-                criarCardPasta(pasta)
+                criarCardPasta(pasta, indice)
             );
 
         }
@@ -296,13 +323,16 @@ async function carregarGaleria() {
 // CRIAR CARD DA PASTA
 // =====================================================
 
-function criarCardPasta(pasta) {
+function criarCardPasta(pasta, indice) {
 
     const card =
         document.createElement("div");
 
     card.className =
         "galeria-pasta-card";
+
+    const rotacoes = [-4, 3, -2, 5, -3, 2, -5];
+    card.style.setProperty("--rot", `${rotacoes[indice % rotacoes.length]}deg`);
 
 
     const quantidade =
@@ -311,9 +341,14 @@ function criarCardPasta(pasta) {
             : 0;
 
 
+    const chaveEmoji = (pasta.nome || "").trim().toLowerCase();
+    const emoji = EMOJIS_PASTA[chaveEmoji] || "🗂️";
+
     card.innerHTML = `
 
         <div class="galeria-pasta-capa">
+
+            <span class="galeria-pasta-emoji">${emoji}</span>
 
             <img
                 src="${urlImagemGaleria(pasta.capa)}"
@@ -324,7 +359,7 @@ function criarCardPasta(pasta) {
         </div>
 
         <span class="galeria-pasta-nome">
-            📁 ${pasta.nome || ""}
+            ${pasta.nome || ""}
         </span>
 
         <span class="galeria-pasta-quantidade">
@@ -1174,7 +1209,20 @@ function ativarBotaoTopo() {
     );
 
 }
+function resetarGaleria() {
+    const pastas = document.getElementById("galeria-pastas");
+    const containerFotos = document.getElementById("galeria-fotos");
 
+    pastas?.classList.remove("galeria-pastas-recolhida");
+    containerFotos?.classList.add("oculto");
+    containerFotos?.classList.remove("galeria-fotos-entrando");
+}
+
+window.addEventListener("hashchange", () => {
+    if (window.location.hash !== "#galeria") {
+        resetarGaleria();
+    }
+});
 
 // =====================================================
 // INICIALIZAÇÃO

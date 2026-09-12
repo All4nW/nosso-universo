@@ -238,5 +238,29 @@
     "inicioSegundos": 0,
     "fimSegundos": 0,
     "volume": 80
+  },
+  {
+    "id": "36315e09-62c3-4c3e-ae95-075e80a9edf4",
+    "titulo": "Jhennyfer",
+    "arquivo": "assets/audio/1789241960996-892211020.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "c60b6ae1-36d6-4c43-99e7-e17bd114a1c6",
+    "titulo": "Anjos",
+    "arquivo": "assets/audio/1789241968746-918538828.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "c558ea8f-ff6a-4a81-98a2-fddae44942a2",
+    "titulo": "Recomeçar - Tim Bernardes",
+    "arquivo": "assets/audio/1789241976251-735375011.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
   }
 ]

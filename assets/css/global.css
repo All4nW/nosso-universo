@@ -540,14 +540,6 @@ body.modal-aberto {
     animation-play-state: running;
 }
 
-#live-counter {
-    opacity: 0;
-    transition: opacity 1.2s ease;
-}
-
-#live-counter.live-counter-visivel {
-    opacity: 1;
-}
 .ultimo-ajuste {
     position: fixed;
     bottom: 12px;
