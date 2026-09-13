@@ -994,10 +994,6 @@
     margin-left: -105px;
 }
 
-/* Reposiciona as decorações especificamente pro tamanho maior
-   do TikTok — os valores padrão (calibrados pro tamanho normal)
-   ficavam fora do lugar nesse layout maior. */
-
 /* Sombra de contato no "chão", embaixo da pilha de fotos —
    um borrão escuro elíptico que dá a sensação de profundidade,
    como se as fotos estivessem apoiadas numa mesa. */
@@ -1720,23 +1716,23 @@
 
 .player-popup {
     position: absolute;
-    top: 66px;
+    top: 52px;
     left: 0;
 
-    min-width: 230px;
+    width: 225px;
 
-    padding: 18px 18px 12px;
+    border-radius: 20px;
 
-    border-radius: 4px 18px 18px 18px;
+    background: rgba(20, 18, 32, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
-    background: rgba(12, 11, 20, 0.82);
-    border: 1px solid rgba(232, 190, 205, 0.14);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
-
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 
     z-index: 200;
+    overflow: hidden;
 
     opacity: 1;
     transition: opacity 0.25s ease, transform 0.25s ease;
@@ -1748,35 +1744,64 @@
     transform: translateY(-6px) scale(0.97);
 }
 
+/* ===== Linha principal — sempre visível: capa, título, controles ===== */
 
-/* Título — texto simples, sem caixinha em volta */
-
-.player-header {
+.player-linha-principal {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 10px;
+}
+
+.player-capa {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    color: var(--color-bg-dark);
+    background: linear-gradient(135deg, var(--color-lilac), var(--color-pink));
+}
 
-    gap: 7px;
-
-    margin-bottom: 14px;
+.player-titulo-wrapper {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
 }
 
 .player-titulo {
+    display: inline-block;
     font-family: var(--font-heading);
     font-style: italic;
-    font-size: 0.88rem;
+    font-size: 0.76rem;
 
     color: var(--color-text-light);
 
-    text-align: center;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 170px;
+}
+
+.player-titulo.titulo-rolando {
+    animation: titulo-rolar var(--scroll-duration, 6s) ease-in-out infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes titulo-rolar {
+    0%, 12% {
+        transform: translateX(0);
+    }
+    88%, 100% {
+        transform: translateX(var(--scroll-distance, 0));
+    }
 }
 
 .player-coracao-pulso {
-    font-size: 0.62rem;
+    font-size: 0.55rem;
+    flex-shrink: 0;
 
     color: var(--color-pink);
     opacity: 0.6;
@@ -1798,29 +1823,36 @@
 
 }
 
+/* Volume — sobe pra linha do título, compacto e colado à direita */
 
-/* Controles — transparentes em repouso, só o play se destaca */
+.player-volume-mini {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 2px;
+    margin-left: 4px;
+}
 
-.player-controles {
+/* ===== Controles de tocar — ganham linha própria, centralizados ===== */
+
+.player-controles-linha {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    gap: 22px;
-
-    margin-bottom: 12px;
+    gap: 16px;
+    padding: 6px 10px 8px;
 }
 
 .player-botao {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
 
     border-radius: 50%;
 
     background: transparent;
     color: var(--color-text-muted);
 
-    font-size: 0.95rem;
+    font-size: 0.8rem;
 
     transition: color 0.25s ease, transform 0.25s ease;
 }
@@ -1835,18 +1867,15 @@
 }
 
 .player-botao-principal {
-    width: 44px;
-    height: 44px;
+    position: relative;
+    width: 30px;
+    height: 30px;
 
-    font-size: 1.05rem;
+    font-size: 0.85rem;
 
     color: var(--color-bg-dark);
 
     background: linear-gradient(135deg, var(--color-lilac), var(--color-pink));
-
-    box-shadow: 0 0 0 rgba(201, 167, 245, 0);
-
-    animation: player-play-respirar 3.5s ease-in-out infinite;
 }
 
 .player-botao-principal:hover {
@@ -1857,40 +1886,21 @@
     transform: scale(0.92);
 }
 
-@keyframes player-play-respirar {
+/* ===== Lista de músicas — botão "nossas músicas" + lista ===== */
 
-    0%, 100% {
-        box-shadow: 0 0 0 rgba(201, 167, 245, 0);
-    }
-
-    50% {
-        box-shadow: 0 0 16px rgba(201, 167, 245, 0.35);
-    }
-
+.player-extra {
+    padding: 6px 10px 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-
-/* Volume — linha fina, sem pílula */
-
-.player-volume-linha {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 10px;
-
-    padding-top: 10px;
-    padding-bottom: 10px;
-
-    border-top: 1px solid rgba(232, 190, 205, 0.1);
-}
+/* Botões de volume — agora vivem na linha do título */
 
 .player-botao-volume {
     color: var(--color-text-muted);
-    font-size: 0.78rem;
+    font-size: 0.72rem;
 
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
 
     border-radius: 50%;
 
@@ -1903,182 +1913,87 @@
     color: var(--color-lilac);
 }
 
-.player-volume-texto {
-    font-size: 0.68rem;
-    color: var(--color-text-muted);
-
-    min-width: 32px;
-    text-align: center;
+#player-mute {
+    font-size: 0.75rem;
 }
 
+.player-volume-coracao {
+    position: relative;
+    width: 20px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 1px;
+}
 
-/* Abrir a lista — só um linkzinho fino, separado por um traço */
-
-.player-lista-botao {
-    width: 100%;
-
+.player-volume-coracao-fundo {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    gap: 6px;
-
-    margin-top: 4px;
-    padding-top: 10px;
-
-    border: none;
-    border-top: 1px solid rgba(232, 190, 205, 0.1);
-    border-radius: 0;
-
-    background: transparent;
-
-    color: var(--color-text-muted);
-
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 0.72rem;
-
-    transition: color 0.25s ease;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.15);
 }
 
-.player-lista-botao:hover {
-    color: var(--color-lilac);
-}
-
-#player-lista-seta {
-    font-size: 0.7rem;
-
-    transition: transform 0.3s ease;
-}
-
-.player-lista-botao.player-lista-aberta #player-lista-seta {
-    transform: rotate(180deg);
-}
-
-
-/* Lista de músicas */
-
-.player-lista {
-    margin-top: 10px;
-
-    max-height: 200px;
-    overflow-y: auto;
-
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.player-lista.oculto {
-    display: none;
-}
-
-.player-lista-item {
+.player-volume-coracao-cheio {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
-
-    gap: 10px;
-
-    padding: 7px 6px;
-
-    border-radius: 8px;
-
-    transition: background 0.2s ease;
+    justify-content: flex-start;
+    font-size: 0.85rem;
+    color: var(--color-pink);
+    overflow: hidden;
+    width: 25%;
+    transition: width 0.25s ease;
 }
 
-.player-lista-item:hover {
-    background: rgba(232, 190, 205, 0.06);
-}
-
-.player-lista-item.player-lista-item-ativa {
-    background: rgba(232, 190, 205, 0.09);
-}
-
-.player-lista-play {
-    flex-shrink: 0;
-
-    width: 16px;
-
+.player-volume-texto {
+    font-size: 0.62rem;
     color: var(--color-text-muted);
-    font-size: 0.6rem;
 
+    min-width: 28px;
     text-align: center;
 }
 
-.player-lista-item-ativa .player-lista-play {
-    color: var(--color-pink);
-}
 
-.player-lista-nome {
-    font-size: 0.74rem;
-    color: var(--color-text-light);
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.player-lista-item-ativa .player-lista-nome {
-    color: var(--color-pink);
-}
-
-.player-lista::-webkit-scrollbar {
-    width: 4px;
-}
-
-.player-lista::-webkit-scrollbar-thumb {
-    background: rgba(232, 190, 205, 0.25);
-    border-radius: 10px;
-}
-
-
-/* Mobile */
-
-@media (max-width: 500px) {
-
-    .player-popup {
-        min-width: 210px;
-        max-width: calc(100vw - 32px);
-
-        left: -20px;
-    }
-
-    .player-titulo {
-        max-width: 140px;
-    }
-
-}
-
-/* ===== Botão que abre a lista ===== */
+/* ===== Botão que abre a lista de músicas — discreto, sem pílula ===== */
 
 .player-lista-botao {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 12px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    background: rgba(245, 194, 209, 0.06);
-    border: 1px solid rgba(245, 194, 209, 0.15);
-    color: var(--color-text-light);
+    margin-top: 6px;
+    padding: 6px 4px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
     font-family: var(--font-heading);
-    font-size: 0.78rem;
+    font-style: italic;
+    font-size: 0.7rem;
     transition: var(--transition-smooth);
 }
 
 .player-lista-botao:hover {
-    background: rgba(245, 194, 209, 0.14);
+    color: var(--color-lilac);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 #player-lista-seta {
     color: var(--color-pink);
+    font-size: 0.7rem;
     transition: transform 0.3s ease;
 }
 
 .player-lista-botao.player-lista-aberta #player-lista-seta {
     transform: rotate(180deg);
 }
+
 
 /* ===== Lista de músicas ===== */
 
@@ -2110,7 +2025,19 @@
 }
 
 .player-lista-item.player-lista-item-ativa {
+    position: relative;
     background: linear-gradient(90deg, rgba(245, 194, 209, 0.15), rgba(201, 167, 245, 0.1));
+}
+
+.player-lista-item.player-lista-item-ativa::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 15%;
+    bottom: 15%;
+    width: 3px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--color-lilac), var(--color-pink));
 }
 
 .player-lista-play {
@@ -2156,15 +2083,15 @@
 
 @media (max-width: 500px) {
     .player-popup {
-        min-width: 220px;
         max-width: calc(100vw - 32px);
         left: -20px;
     }
 
-    .player-titulo {
-        max-width: 130px;
+    .player-titulo-wrapper {
+        max-width: 90px;
     }
 }
+
 /* ===== Visualizador de foto (fullscreen com setas) ===== */
 
 .foto-visualizador {
@@ -2267,68 +2194,6 @@
 .foto-visualizador-seta-direita {
     right: var(--spacing-lg);
 }
-.player-lista {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(201, 167, 245, 0.15);
-
-    max-height: 220px;
-    overflow-y: auto;
-
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.player-lista.oculto {
-    display: none;
-}
-
-.player-lista-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 8px;
-    transition: var(--transition-smooth);
-}
-
-.player-lista-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.player-lista-item.player-lista-item-ativa {
-    background: rgba(201, 167, 245, 0.12);
-}
-
-.player-lista-play {
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--color-lilac);
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.player-lista-play:hover {
-    background: rgba(201, 167, 245, 0.2);
-}
-
-.player-lista-nome {
-    font-size: 0.75rem;
-    color: var(--color-text-light);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.player-lista-item-ativa .player-lista-nome {
-    color: var(--color-lilac);
-}
 
 .hub-fundo-decoracoes {
     position: absolute;
@@ -2348,14 +2213,7 @@
     animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
     animation-delay: var(--pdelay, 0s);
 }
-@keyframes flutuar-decoracao-perfil {
-    0%, 100% {
-        transform: translateY(0) rotate(0deg);
-    }
-    50% {
-        transform: translateY(-16px) rotate(6deg);
-    }
-}
+
 .hub-card.hub-card-tocado .stack-layer-3 {
     transform: rotate(-16deg) translate(-16px, 8px);
 }
@@ -2368,6 +2226,7 @@
 .hub-card.hub-card-tocado .hub-card-desc {
     opacity: 1;
 }
+
 .galeria-pasta-emoji {
     position: absolute;
     top: 4px;

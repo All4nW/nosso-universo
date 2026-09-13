@@ -290,16 +290,6 @@
         "memoria": ""
     },
     {
-        "id": "saga-crepusculo",
-        "categoria": "queremos",
-        "titulo": "Saga Crepúsculo",
-        "ano": null,
-        "capa": "assets/images/assistidos/assistido-1788752189894.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "caroline",
         "categoria": "filmes",
         "titulo": "Coraline",
@@ -355,6 +345,66 @@
         "titulo": "Como Se Fosse a Primeira Vez",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1789085458989.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "crepusculo",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263495959.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "crepusculo-lua-nova",
+        "categoria": "queremos",
+        "titulo": "Crepúsculo - Lua Nova",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263631290.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "crepusculo-eclipse",
+        "categoria": "queremos",
+        "titulo": "Crepúsculo - Eclipse",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263647394.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "crepusculo-amanhecer-pt-1",
+        "categoria": "queremos",
+        "titulo": "Crepúsculo - Amanhecer Pt. 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263712075.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "crepusculo-amanhecer-pt-2",
+        "categoria": "queremos",
+        "titulo": "Crepúsculo - Amanhecer Pt. 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263724484.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "o-mentalista",
+        "categoria": "queremos",
+        "titulo": "O Mentalista",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789318597602.jpg",
         "notaEu": null,
         "notaEla": null,
         "memoria": ""

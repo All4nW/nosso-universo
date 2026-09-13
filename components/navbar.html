@@ -6,30 +6,47 @@
 
     <div id="player-popup" class="player-popup oculto">
 
-        <div class="player-header">
-            <span id="player-titulo" class="player-titulo">—</span>
+        <div class="player-linha-principal">
+
+            <span class="player-capa">♪</span>
+
+            <div class="player-titulo-wrapper">
+                <span id="player-titulo" class="player-titulo">—</span>
+            </div>
             <span class="player-coracao-pulso">♡</span>
+
+            <div class="player-volume-mini">
+                <button id="player-mute" class="player-botao-volume" aria-label="Mutar">🔊</button>
+                <button id="player-vol-menos" class="player-botao-volume" aria-label="Diminuir volume">−</button>
+
+                <span class="player-volume-coracao" aria-hidden="true">
+                    <span class="player-volume-coracao-fundo">♡</span>
+                    <span id="player-volume-coracao-cheio" class="player-volume-coracao-cheio">♥</span>
+                </span>
+
+                <span id="player-volume-valor" class="player-volume-texto">25%</span>
+
+                <button id="player-vol-mais" class="player-botao-volume" aria-label="Aumentar volume">+</button>
+            </div>
+
         </div>
 
-        <div class="player-controles">
+        <div class="player-controles-linha">
             <button id="player-anterior" class="player-botao" aria-label="Anterior">⏮</button>
             <button id="player-play-pause" class="player-botao player-botao-principal" aria-label="Tocar/Pausar">▶</button>
             <button id="player-proximo" class="player-botao" aria-label="Próxima">⏭</button>
         </div>
 
-        <div class="player-volume-linha">
-            <button id="player-mute" class="player-botao-volume" aria-label="Mutar">🔊</button>
-            <button id="player-vol-menos" class="player-botao-volume" aria-label="Diminuir volume">−</button>
-            <span id="player-volume-valor" class="player-volume-texto">25%</span>
-            <button id="player-vol-mais" class="player-botao-volume" aria-label="Aumentar volume">+</button>
+        <div id="player-extra" class="player-extra">
+
+            <button id="player-lista-toggle" class="player-lista-botao">
+                <span>♡ nossas músicas</span>
+                <span id="player-lista-seta">⌄</span>
+            </button>
+
+            <div id="player-lista" class="player-lista oculto"></div>
+
         </div>
-
-        <button id="player-lista-toggle" class="player-lista-botao">
-            <span>♡ nossas músicas</span>
-            <span id="player-lista-seta">⌄</span>
-        </button>
-
-        <div id="player-lista" class="player-lista oculto"></div>
 
     </div>
 

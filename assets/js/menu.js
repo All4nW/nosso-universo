@@ -49,7 +49,7 @@ function ativarComportamentoDoSom() {
     const btnVolMenos = document.getElementById('player-vol-menos');
     const btnVolMais = document.getElementById('player-vol-mais');
     const volumeTexto = document.getElementById('player-volume-valor');
-        const btnListaToggle = document.getElementById('player-lista-toggle');
+    const btnListaToggle = document.getElementById('player-lista-toggle');
     const listaContainer = document.getElementById('player-lista');
 
     if (!botaoSom) return;
@@ -78,6 +78,11 @@ function ativarComportamentoDoSom() {
             volumeTexto.textContent = `${Math.round(volumeAtual * 100)}%`;
         }
 
+        const volCheio = document.getElementById('player-volume-coracao-cheio');
+        if (volCheio) {
+            volCheio.style.width = mutado ? '0%' : `${volumeAtual * 100}%`;
+        }
+
         if (btnMute) {
             btnMute.textContent = mutado ? '🔇' : '🔊';
         }
@@ -98,7 +103,38 @@ function ativarComportamentoDoSom() {
     function atualizarTitulo() {
         if (tituloEl && playlist.length) {
             tituloEl.textContent = playlist[indiceAtual].titulo || 'Sem título';
+            ajustarRolagemTitulo();
         }
+    }
+
+    // Mede se o nome da música cabe no espaço disponível; se não couber,
+    // ativa uma animação de "letreiro" (vai e volta) mostrando o nome
+    // completo aos poucos, como em players de celular.
+    function ajustarRolagemTitulo() {
+        if (!tituloEl) return;
+
+        const wrapper = tituloEl.parentElement;
+        if (!wrapper) return;
+
+        tituloEl.classList.remove('titulo-rolando');
+        tituloEl.style.removeProperty('--scroll-distance');
+        tituloEl.style.removeProperty('--scroll-duration');
+
+        // Espera o layout assentar antes de medir, senão a largura
+        // pode vir errada (0px) logo após trocar o texto.
+        requestAnimationFrame(() => {
+            const larguraWrapper = wrapper.clientWidth;
+            const larguraTexto = tituloEl.scrollWidth;
+
+            if (larguraTexto > larguraWrapper + 2) {
+                const distancia = larguraTexto - larguraWrapper + 6;
+                const duracao = Math.max(4, distancia / 22);
+
+                tituloEl.style.setProperty('--scroll-distance', `-${distancia}px`);
+                tituloEl.style.setProperty('--scroll-duration', `${duracao}s`);
+                tituloEl.classList.add('titulo-rolando');
+            }
+        });
     }
 
     function atualizarBotaoPlayPause() {
@@ -227,7 +263,7 @@ function ativarComportamentoDoSom() {
     if (btnAnterior) btnAnterior.addEventListener('click', (e) => { e.stopPropagation(); faixaAnterior(); dispararCoracaoNoBotao(btnAnterior); });
     if (btnMute) btnMute.addEventListener('click', (e) => { e.stopPropagation(); alternarMute(); dispararCoracaoNoBotao(btnMute); });
     if (btnVolMenos) btnVolMenos.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(-0.1); });
-      if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
+    if (btnVolMais) btnVolMais.addEventListener('click', (e) => { e.stopPropagation(); ajustarVolume(0.1); });
     if (btnListaToggle) {
         btnListaToggle.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -235,6 +271,7 @@ function ativarComportamentoDoSom() {
             btnListaToggle.classList.toggle('player-lista-aberta');
         });
     }
+
 function dispararCoracaoNoBotao(botao) {
     if (typeof criarExplosaoCoracoes !== 'function' || !botao) return;
 
