@@ -2083,8 +2083,9 @@
 
 @media (max-width: 500px) {
     .player-popup {
-        max-width: calc(100vw - 32px);
-        left: -20px;
+        width: calc(100vw - 40px);
+        max-width: 225px;
+        left: 4px;
     }
 
     .player-titulo-wrapper {

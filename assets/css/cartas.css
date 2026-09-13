@@ -881,7 +881,20 @@
     width: 210px;
     height: 148px;
 }
+/* Envelope de destaque tem seu próprio material — dourado suave,
+   diferenciando das cartas comuns (que são cor de papel neutro) */
+.cartas-destaque-bloco .carta-envelope-corpo {
+    background: linear-gradient(165deg, #f7ecd3, #e8d3a8);
 
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.4),
+        0 0 26px rgba(245, 217, 122, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.cartas-destaque-bloco .carta-envelope-aba {
+    background: linear-gradient(165deg, #efe0bd, #ddc48c);
+}
 .cartas-destaque-bloco .carta-envelope-aba {
     height: 82px;
 }
@@ -1326,12 +1339,31 @@
     }
 
     .cartas-destaque-bloco .carta-envelope {
-        width: 170px;
-        height: 120px;
+        width: 140px;
+        height: 98px;
     }
 
     .cartas-destaque-bloco .carta-envelope-aba {
-        height: 66px;
+        height: 54px;
+    }
+
+    .cartas-destaque-bloco .carta-envelope-selo {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+
+    .cartas-destaque-bloco .carta-envelope-para {
+        font-size: 0.7rem;
+    }
+
+    .cartas-destaque-bloco .carta-envelope-data {
+        font-size: 0.54rem;
+    }
+
+    .cartas-colecao-destaque {
+        column-gap: 18px;
+        row-gap: 24px;
     }
 
     .carta-aberta-folha {
@@ -1362,6 +1394,28 @@
 
         top: -11px;
         left: -8px;
+    }
+
+}
+@media (max-width: 380px) {
+
+    .cartas-destaque-bloco .carta-envelope {
+        width: 122px;
+        height: 86px;
+    }
+
+    .cartas-destaque-bloco .carta-envelope-aba {
+        height: 47px;
+    }
+
+    .cartas-destaque-bloco .carta-envelope-selo {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+    }
+
+    .cartas-colecao-destaque {
+        column-gap: 12px;
     }
 
 }
