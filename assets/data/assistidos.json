@@ -340,16 +340,6 @@
         "memoria": ""
     },
     {
-        "id": "como-se-fosse-a-primeira-vez",
-        "categoria": "queremos",
-        "titulo": "Como Se Fosse a Primeira Vez",
-        "ano": null,
-        "capa": "assets/images/assistidos/assistido-1789085458989.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "crepusculo",
         "categoria": "filmes",
         "titulo": "Crepúsculo",
@@ -407,6 +397,26 @@
         "capa": "assets/images/assistidos/assistido-1789318597602.jpg",
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "como-se-fosse-a-primeira-vez",
+        "categoria": "filmes",
+        "titulo": "Como Se Fosse a Primeira Vez",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789359596027.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "hotel-transilvania",
+        "categoria": "filmes",
+        "titulo": "Hotel Transilvânia",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789359689719.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
