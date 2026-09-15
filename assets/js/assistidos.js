@@ -197,8 +197,15 @@ function criarEstante(tituloCategoria, itens) {
     titulo.className =
         "assistidos-estante-titulo";
 
-    titulo.textContent =
-        tituloCategoria;
+    titulo.innerHTML = `
+        <span class="assistidos-estante-titulo-texto">
+            ${tituloCategoria}
+        </span>
+
+        <span class="assistidos-estante-contagem">
+            ${itens.length}
+        </span>
+    `;
 
     secao.appendChild(titulo);
 
@@ -251,6 +258,10 @@ function criarSecaoQueremos(itens) {
             <small>
                 Clique para descobrir o que está na nossa lista
             </small>
+        </span>
+
+        <span class="assistidos-queremos-contagem">
+            ${itens.length}
         </span>
 
         <span class="assistidos-queremos-seta">
