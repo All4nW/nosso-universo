@@ -1,0 +1,631 @@
+/* =========================================================
+   NOSSO FUTURO — ÁRVORE DE SONHOS
+   (sem scroll — cabe numa tela só; navegação global por página)
+   ========================================================= */
+
+.view[data-view="futuro"] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    padding: 80px 20px 14px;
+
+    background-color: #0a0510;
+}
+
+/* Camada da imagem — cobre a view inteira (atrás do título também),
+   com um zoom bem sutil ("respirando"), sem mover nada por cima dela */
+
+.view[data-view="futuro"]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background-image: url('../images/futuro/arvore-fundo.jpg');
+    background-size: cover;
+    background-position: center;
+
+    /* Reduz a árvore ~12% e ancora o encolhimento pela base, então
+       o que "some" é principalmente o topo — o tronco passa a
+       parecer que começa mais abaixo na tela */
+    transform: scale(0.88);
+    transform-origin: 50% 100%;
+
+    animation: futuro-arvore-respirar 12s ease-in-out infinite;
+}
+
+@keyframes futuro-arvore-respirar {
+    0%, 100% { transform: scale(0.88); }
+    50% { transform: scale(0.9); }
+}
+
+/* Brilho quente extra por trás da base do tronco, pra iluminação da
+   árvore se misturar com o fundo em vez de parecer uma foto colada */
+
+.view[data-view="futuro"]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    background: radial-gradient(
+        ellipse 40% 30% at 50% 92%,
+        rgba(245, 200, 140, 0.16),
+        transparent 70%
+    );
+}
+
+.view[data-view="futuro"] > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Introdução — compacta, pra sobrar espaço pra árvore ===== */
+
+.futuro-intro {
+    flex-shrink: 0;
+
+    width: min(560px, 90%);
+    margin: 0 auto 4px;
+    text-align: center;
+}
+
+.futuro-intro-simbolo {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 1.3rem;
+    animation: futuro-simbolo-balancar 5s ease-in-out infinite;
+}
+
+@keyframes futuro-simbolo-balancar {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(4deg); }
+}
+
+.futuro-intro h1 {
+    margin: 0 0 10px;
+    font-family: var(--font-heading);
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--color-text-light);
+}
+
+.futuro-intro p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    opacity: 0.75;
+}
+
+/* ===== Container da árvore — preenche o espaço restante da tela ===== */
+
+.futuro-arvore-container {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+
+    margin-top: 6px;
+}
+
+/* Partículas brilhantes por cima da árvore — mesma técnica das
+   estrelinhas de Cartas/Perfis, só que aqui num tom mais quente */
+
+.futuro-particulas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.futuro-particula {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+
+    background: #ffe9c2;
+    box-shadow: 0 0 7px 1.5px rgba(255, 217, 158, 0.8);
+
+    animation: futuro-particula-piscar var(--pduracao, 4s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+
+@keyframes futuro-particula-piscar {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.9; }
+}
+
+/* Zonas — invisíveis, só servem de âncora de posição (via --zx / --zy),
+   calibradas nos pontos onde os galhos da imagem realmente terminam */
+
+.futuro-zona {
+    position: absolute;
+    left: var(--zx);
+    top: var(--zy);
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* ===== Sonhos — um por galho, trocam juntos ao virar a página ===== */
+
+.futuro-sonhos {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.futuro-nuvem {
+    position: absolute;
+    left: var(--nx);
+    top: var(--ny);
+    transform: translate(-50%, -50%);
+
+    max-width: 190px;
+
+    opacity: 0;
+    animation:
+        futuro-nuvem-entrada 0.8s ease forwards var(--delay, 0s),
+        futuro-nuvem-flutuar 6s ease-in-out infinite var(--float-delay, 0s);
+}
+
+@keyframes futuro-nuvem-entrada {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes futuro-nuvem-flutuar {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: -6px; }
+}
+
+.futuro-nuvem-conteudo {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 12px 14px 11px;
+
+    border-radius: 22px 26px 20px 24px;
+
+    background: rgba(245, 210, 230, 0.05);
+    border: 1px solid rgba(232, 190, 205, 0.18);
+    backdrop-filter: blur(9px);
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.18),
+        0 0 22px rgba(232, 190, 205, 0.06);
+
+    cursor: pointer;
+    text-align: left;
+
+    transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.futuro-nuvem:hover .futuro-nuvem-conteudo {
+    transform: scale(1.06);
+    background: rgba(245, 210, 230, 0.08);
+    border-color: rgba(232, 190, 205, 0.4);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.22),
+        0 0 30px rgba(232, 190, 205, 0.12);
+}
+
+.futuro-nuvem-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+}
+
+.futuro-nuvem-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Emoji vira um selinho circular, com brilho sutil combinando
+   com a cor do status daquele sonho */
+
+.futuro-nuvem-emoji {
+    flex-shrink: 0;
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 0.72rem;
+    line-height: 1;
+
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.futuro-nuvem-titulo {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+    line-height: 1.25;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.futuro-nuvem-frase {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    opacity: 0.9;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Status agora é uma pilulazinha colorida, não texto solto */
+
+.futuro-nuvem-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+
+    margin-top: 3px;
+    padding: 2px 8px;
+
+    border-radius: 20px;
+
+    font-size: 0.54rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.futuro-nuvem-foto {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    margin-top: 1px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+.futuro-nuvem-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Cor de destaque por status — borda, selo do emoji e pilula do status
+   todos puxam pro mesmo tom, deixando o card "combinando" por dentro */
+
+.futuro-nuvem-status-sonhando .futuro-nuvem-conteudo { border-color: rgba(201, 167, 245, 0.28); }
+.futuro-nuvem-status-sonhando .futuro-nuvem-emoji { box-shadow: 0 0 10px rgba(201, 167, 245, 0.3), 0 0 0 1px rgba(201, 167, 245, 0.22) inset; }
+.futuro-nuvem-status-sonhando .futuro-nuvem-status { background: rgba(201, 167, 245, 0.14); color: #d9c6f7; }
+
+.futuro-nuvem-status-caminho .futuro-nuvem-conteudo { border-color: rgba(143, 227, 199, 0.32); }
+.futuro-nuvem-status-caminho .futuro-nuvem-emoji { box-shadow: 0 0 10px rgba(143, 227, 199, 0.35), 0 0 0 1px rgba(143, 227, 199, 0.25) inset; }
+.futuro-nuvem-status-caminho .futuro-nuvem-status { background: rgba(143, 227, 199, 0.14); color: #bdf2df; }
+
+.futuro-nuvem-status-vivido .futuro-nuvem-conteudo {
+    border-color: rgba(245, 217, 122, 0.4);
+    background: rgba(245, 217, 122, 0.07);
+}
+.futuro-nuvem-status-vivido .futuro-nuvem-emoji { box-shadow: 0 0 12px rgba(245, 217, 122, 0.45), 0 0 0 1px rgba(245, 217, 122, 0.3) inset; }
+.futuro-nuvem-status-vivido .futuro-nuvem-status { background: rgba(245, 217, 122, 0.18); color: #f9e6a8; }
+
+.futuro-nuvem-status-reimaginado .futuro-nuvem-conteudo { border-color: rgba(168, 200, 240, 0.32); }
+.futuro-nuvem-status-reimaginado .futuro-nuvem-emoji { box-shadow: 0 0 10px rgba(168, 200, 240, 0.35), 0 0 0 1px rgba(168, 200, 240, 0.25) inset; }
+.futuro-nuvem-status-reimaginado .futuro-nuvem-status { background: rgba(168, 200, 240, 0.14); color: #cfe0f7; }
+
+/* ===== Navegação global — vira TODOS os galhos de uma vez ===== */
+
+.futuro-seta-global {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-lilac);
+    font-size: 1.1rem;
+
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.futuro-seta-global:hover {
+    background: rgba(201, 167, 245, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.futuro-seta-global.oculto {
+    display: none;
+}
+
+.futuro-seta-esquerda { left: 12px; }
+.futuro-seta-direita { right: 12px; }
+
+.futuro-pagina-indicador {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.55);
+
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* ===== Legenda dos status ===== */
+
+.futuro-legenda {
+    flex-shrink: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+
+    margin: 8px auto 0;
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    color: var(--color-text-muted);
+}
+
+.futuro-legenda-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.futuro-legenda-icone {
+    font-style: normal;
+    color: rgba(201, 167, 245, 0.85);
+}
+
+/* =========================================================
+   CARTÃO DO SONHO ABERTO — TELA CHEIA
+   ========================================================= */
+
+.sonho-aberto-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 6000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(4, 4, 10, 0.85);
+    backdrop-filter: blur(6px);
+
+    opacity: 1;
+    transition: opacity 0.35s ease, visibility 0s linear 0s;
+}
+
+.sonho-aberto-overlay.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.sonho-aberto-cartao {
+    position: relative;
+
+    width: min(480px, 100%);
+    max-height: 82vh;
+    overflow-y: auto;
+
+    padding: 38px 32px 30px;
+
+    border-radius: 16px;
+
+    background: linear-gradient(165deg, rgba(30, 22, 40, 0.96), rgba(12, 10, 20, 0.98));
+    border: 1px solid rgba(201, 167, 245, 0.25);
+
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 40px rgba(201, 167, 245, 0.1);
+
+    text-align: center;
+
+    transform: scale(0.92);
+    transition: transform 0.35s ease;
+}
+
+.sonho-aberto-overlay:not(.oculto) .sonho-aberto-cartao {
+    transform: scale(1);
+}
+
+.sonho-aberto-fechar {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-text-light);
+    font-size: 1rem;
+
+    transition: background 0.25s ease;
+}
+
+.sonho-aberto-fechar:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.sonho-aberto-foto {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin: 0 0 18px;
+}
+
+.sonho-aberto-foto:empty,
+.sonho-aberto-foto[src=""] {
+    display: none;
+}
+
+.sonho-aberto-categoria {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(201, 167, 245, 0.85);
+    margin-bottom: 8px;
+}
+
+.sonho-aberto-status {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 0.66rem;
+    color: var(--color-text-muted);
+}
+
+.sonho-aberto-titulo {
+    margin: 0 0 14px;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    color: var(--color-text-light);
+}
+
+.sonho-aberto-frase {
+    margin: 0 0 16px;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(232, 190, 205, 0.85);
+}
+
+.sonho-aberto-descricao {
+    margin: 0 0 16px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    white-space: pre-line;
+}
+
+.sonho-aberto-descricao:empty {
+    display: none;
+}
+
+.sonho-aberto-datas {
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--font-body);
+    font-size: 0.64rem;
+    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+    opacity: 0.75;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .view[data-view="futuro"] {
+        padding: 74px 10px 10px;
+    }
+
+    .futuro-nuvem {
+        max-width: 130px;
+    }
+
+    .futuro-nuvem-conteudo {
+        padding: 7px 8px;
+        gap: 6px;
+    }
+
+    .futuro-nuvem-foto {
+        width: 30px;
+        height: 30px;
+    }
+
+    .futuro-nuvem-titulo {
+        font-size: 0.6rem;
+    }
+
+    .futuro-nuvem-frase {
+        font-size: 0.52rem;
+        -webkit-line-clamp: 1;
+    }
+
+    .futuro-seta-global {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+
+    .futuro-seta-esquerda { left: 6px; }
+    .futuro-seta-direita { right: 6px; }
+
+    .sonho-aberto-cartao {
+        padding: 32px 22px 24px;
+    }
+
+    .sonho-aberto-titulo {
+        font-size: 1.15rem;
+    }
+
+}

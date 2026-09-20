@@ -351,22 +351,22 @@
     },
     {
         "id": "crepusculo-lua-nova",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Crepúsculo - Lua Nova",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1789263631290.jpg",
-        "notaEu": null,
-        "notaEla": null,
+        "notaEu": 9,
+        "notaEla": 10,
         "memoria": ""
     },
     {
         "id": "crepusculo-eclipse",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Crepúsculo - Eclipse",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1789263647394.jpg",
-        "notaEu": null,
-        "notaEla": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     },
     {

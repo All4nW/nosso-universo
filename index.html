@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="assets/css/estrelas.css">
     <link rel="stylesheet" href="assets/css/assistidos.css">
     <link rel="stylesheet" href="assets/css/cartas.css">
+    <link rel="stylesheet" href="assets/css/futuro.css">
 </head>
 <body>
 <div id="timeline-fundo"></div>
@@ -202,6 +203,18 @@
 
 </div>
 
+<div class="sonho-aberto-overlay oculto" id="sonho-aberto-overlay">
+    <div class="sonho-aberto-cartao" id="sonho-aberto-cartao">
+        <button class="sonho-aberto-fechar" id="sonho-aberto-fechar" aria-label="Fechar">×</button>
+        <span class="sonho-aberto-categoria" id="sonho-aberto-categoria"></span>
+        <span class="sonho-aberto-status" id="sonho-aberto-status"></span>
+        <h2 class="sonho-aberto-titulo" id="sonho-aberto-titulo"></h2>
+        <p class="sonho-aberto-frase" id="sonho-aberto-frase"></p>
+        <p class="sonho-aberto-descricao" id="sonho-aberto-descricao"></p>
+        <div class="sonho-aberto-datas" id="sonho-aberto-datas"></div>
+    </div>
+</div>
+
 <section class="view" data-view="assistidos">
     <h1 class="section-title">Tudo Que Já Assistimos <3 </h1>
     <p class="assistidos-subtitulo"></p>
@@ -211,10 +224,45 @@
     <button id="assistidos-topo-btn" class="scroll-topo-btn" aria-label="Voltar ao topo">↑</button>
 </section>
 
-        <section class="view" data-view="futuro">
-            <h1>Nosso futuro</h1>
-            <p>Em construção...</p>
-        </section>
+<section class="view" data-view="futuro">
+
+    <div class="futuro-intro">
+        <span class="futuro-intro-simbolo">🌳</span>
+        <h1>Nosso Futuro</h1>
+        <p>Sonhos que ainda estamos sonhando, construindo, vivendo — ou apenas guardando com carinho.</p>
+    </div>
+
+<div class="futuro-arvore-container">
+
+    <div class="futuro-arvore-imagem"></div>
+
+<div class="futuro-particulas" aria-hidden="true">
+    <span class="futuro-particula" style="--px: 40%; --py: 30%; --pdelay: 0s; --pduracao: 3.5s;"></span>
+    <span class="futuro-particula" style="--px: 60%; --py: 25%; --pdelay: 0.6s; --pduracao: 4s;"></span>
+    <span class="futuro-particula" style="--px: 30%; --py: 45%; --pdelay: 1.2s; --pduracao: 3.2s;"></span>
+    <span class="futuro-particula" style="--px: 70%; --py: 48%; --pdelay: 0.9s; --pduracao: 4.2s;"></span>
+    <span class="futuro-particula" style="--px: 50%; --py: 55%; --pdelay: 1.8s; --pduracao: 3.8s;"></span>
+</div>
+
+<div class="futuro-zona" data-categoria="nos" style="--zx: 39%; --zy: 3%;"></div>
+<div class="futuro-zona" data-categoria="familia" style="--zx: 62%; --zy: 8%;"></div>
+<div class="futuro-zona" data-categoria="vida" style="--zx: 33%; --zy: 29%;"></div>
+<div class="futuro-zona" data-categoria="lugares" style="--zx: 67%; --zy: 33%;"></div>
+<div class="futuro-zona" data-categoria="bobos" style="--zx: 27%; --zy: 45%;"></div>
+<div class="futuro-zona" data-categoria="umdia" style="--zx: 74%; --zy: 47%;"></div>
+
+    <div class="futuro-sonhos" id="futuro-sonhos"></div>
+
+    <button id="futuro-seta-esq" class="futuro-seta-global futuro-seta-esquerda oculto" aria-label="Página anterior">‹</button>
+    <button id="futuro-seta-dir" class="futuro-seta-global futuro-seta-direita oculto" aria-label="Próxima página">›</button>
+
+    <span id="futuro-pagina-indicador" class="futuro-pagina-indicador"></span>
+
+</div>
+
+    <div class="futuro-legenda" id="futuro-legenda"></div>
+
+</section>
 
  <section class="view estrelas-view" data-view="estrelas">
 
@@ -335,6 +383,7 @@
     <script src="assets/js/estrelas.js"></script>
     <script src="assets/js/assistidos.js"></script>
     <script src="assets/js/cartas.js"></script>
+    <script src="assets/js/futuro.js"></script>
     <script src="assets/js/heart-intro.js"></script>
     <script src="assets/js/ultimo-ajuste.js"></script>
     
