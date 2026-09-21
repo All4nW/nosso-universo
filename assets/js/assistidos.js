@@ -95,18 +95,11 @@ function selarInfoTopo(item) {
 // COR AMBIENTE — extrai a cor dominante da capa
 // =====================================================
 
-// =====================================================
-// COR AMBIENTE — extrai a cor dominante da capa (COM LOGS)
-// =====================================================
-
 function extrairCorAmbiente(src) {
-
-    console.log("🎨 Iniciando extração de cor para:", src);
 
     return new Promise((resolve) => {
 
         if (!src) {
-            console.log("🎨 Sem capa (src vazio) — abortando.");
             resolve(null);
             return;
         }
@@ -115,8 +108,6 @@ function extrairCorAmbiente(src) {
         img.crossOrigin = "anonymous";
 
         img.onload = () => {
-
-            console.log("🎨 Imagem carregou OK, extraindo pixels...");
 
             try {
 
@@ -158,7 +149,6 @@ function extrairCorAmbiente(src) {
                 }
 
                 if (!total) {
-                    console.log("🎨 Nenhum pixel válido encontrado (imagem muito clara/escura?).");
                     resolve(null);
                     return;
                 }
@@ -167,54 +157,24 @@ function extrairCorAmbiente(src) {
                 g = Math.round(g / total);
                 b = Math.round(b / total);
 
-                console.log("🎨 Cor extraída com sucesso:", { r, g, b });
+                console.log("🎨 Cor extraída:", { r, g, b }, "de", src);
 
                 resolve({ r, g, b });
 
             } catch (erro) {
 
-                console.error("🎨 ERRO ao ler pixels (provavelmente CORS/canvas tainted):", erro);
+                console.warn("Não deu pra extrair cor da capa:", erro);
                 resolve(null);
 
             }
 
         };
 
-        img.onerror = (erro) => {
-            console.error("🎨 ERRO ao carregar a imagem da capa (onerror disparou):", src, erro);
-            resolve(null);
-        };
+        img.onerror = () => resolve(null);
 
         img.src = src;
 
     });
-
-}
-
-function aplicarCorAmbienteModal(cor) {
-
-    console.log("🎨 Aplicando cor no modal:", cor);
-
-    const conteudo = document.getElementById("modal-content");
-
-    if (!conteudo) {
-        console.error("🎨 ERRO: #modal-content não encontrado no DOM!");
-        return;
-    }
-
-    if (!cor) {
-        console.log("🎨 Cor nula — removendo variáveis (fica no lilás padrão).");
-        conteudo.style.removeProperty("--cor-ambiente-r");
-        conteudo.style.removeProperty("--cor-ambiente-g");
-        conteudo.style.removeProperty("--cor-ambiente-b");
-        return;
-    }
-
-    conteudo.style.setProperty("--cor-ambiente-r", cor.r);
-    conteudo.style.setProperty("--cor-ambiente-g", cor.g);
-    conteudo.style.setProperty("--cor-ambiente-b", cor.b);
-
-    console.log("🎨 Variáveis aplicadas! Classe atual do elemento:", conteudo.className);
 
 }
 
@@ -230,9 +190,33 @@ function aplicarCorAmbienteModal(cor) {
         return;
     }
 
-    conteudo.style.setProperty("--cor-ambiente-r", cor.r);
-    conteudo.style.setProperty("--cor-ambiente-g", cor.g);
-    conteudo.style.setProperty("--cor-ambiente-b", cor.b);
+    let { r, g, b } = cor;
+
+    // Aumenta a saturação — afasta cada canal da média, deixando
+    // a cor mais "viva" em vez de cinza/apagada.
+    const media = (r + g + b) / 3;
+    const fatorSaturacao = 1.4;
+
+    r = media + (r - media) * fatorSaturacao;
+    g = media + (g - media) * fatorSaturacao;
+    b = media + (b - media) * fatorSaturacao;
+
+    // Garante um brilho mínimo (capas muito escuras ainda geram reflexo visível)
+    const max = Math.max(r, g, b);
+    if (max < 150) {
+        const fator = 150 / (max || 1);
+        r *= fator;
+        g *= fator;
+        b *= fator;
+    }
+
+    r = Math.round(Math.min(255, Math.max(0, r)));
+    g = Math.round(Math.min(255, Math.max(0, g)));
+    b = Math.round(Math.min(255, Math.max(0, b)));
+
+    conteudo.style.setProperty("--cor-ambiente-r", r);
+    conteudo.style.setProperty("--cor-ambiente-g", g);
+    conteudo.style.setProperty("--cor-ambiente-b", b);
 
 }
 
@@ -480,10 +464,6 @@ function criarCardContinuar(item, indice) {
 // DETALHES (MODAL) — LAYOUT NOVO + COR AMBIENTE
 // =====================================================
 
-// =====================================================
-// DETALHES (MODAL) — LAYOUT NOVO + COR AMBIENTE
-// =====================================================
-
 function abrirDetalhesAssistido(item, dados) {
 
     const { notaEu, notaEla, ehListaFutura, ehContinuar = false } = dados;
@@ -492,10 +472,6 @@ function abrirDetalhesAssistido(item, dados) {
         console.warn("abrirModal() não foi encontrado.");
         return;
     }
-
-    // =================================================
-    // AINDA QUEREMOS ASSISTIR — versão simples
-    // =================================================
 
     if (ehListaFutura) {
 
@@ -516,10 +492,6 @@ function abrirDetalhesAssistido(item, dados) {
         return;
 
     }
-
-    // =================================================
-    // PROGRESSO (só quando está "continuar assistindo")
-    // =================================================
 
     let linhaProgresso = "";
 
@@ -545,10 +517,6 @@ function abrirDetalhesAssistido(item, dados) {
         `;
 
     }
-
-    // =================================================
-    // NOTAS — bloco com selo circular + divisor
-    // =================================================
 
     const temNotaEu = notaEu > 0;
     const temNotaEla = notaEla > 0;
@@ -579,10 +547,6 @@ function abrirDetalhesAssistido(item, dados) {
         </div>
     `;
 
-    // =================================================
-    // CITAÇÃO / MEMÓRIA — só se existir
-    // =================================================
-
     const citacaoHtml = item.memoria
         ? `
             <p class="assistido-modal-citacao">
@@ -594,10 +558,6 @@ function abrirDetalhesAssistido(item, dados) {
             </div>
         `
         : "";
-
-    // =================================================
-    // EYEBROW (linha pequena acima do título)
-    // =================================================
 
     const eyebrow =
         ehContinuar
@@ -611,9 +571,6 @@ function abrirDetalhesAssistido(item, dados) {
         fotos: item.capa ? [item.capa] : [],
         layoutModal: "assistido"
     });
-
-    // ===== AQUI é a parte que precisa existir de fato =====
-    console.log("🎨 Chamando extração de cor para o item:", item.titulo, item.capa);
 
     if (item.capa) {
         extrairCorAmbiente(item.capa).then((cor) => aplicarCorAmbienteModal(cor));

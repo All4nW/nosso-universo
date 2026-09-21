@@ -1324,22 +1324,37 @@
 @media (max-width: 760px) {
 
     .continuar-lateral-btn {
-        top: auto;
-        bottom: 90px;
-        right: 14px;
+        top: 100px;
+        bottom: auto;
+        right: 12px;
         transform: none;
 
         flex-direction: row;
+        gap: 6px;
 
-        padding: 10px 16px;
+        padding: 8px 12px;
 
         border-radius: 999px;
-        border: 1px solid rgba(201, 167, 245, 0.3);
+        border: 1px solid rgba(201, 167, 245, 0.25);
+
+        background: linear-gradient(160deg, rgba(111, 58, 173, 0.55), rgba(25, 50, 100, 0.6));
+
+        box-shadow: -4px 6px 16px rgba(0, 0, 0, 0.3);
     }
 
+    /* Esconde o texto "Continuar assistindo" — só ícone + número */
     .continuar-lateral-btn-texto {
-        writing-mode: horizontal-tb;
-        font-size: 0.68rem;
+        display: none;
+    }
+
+    .continuar-lateral-btn-icone {
+        font-size: 0.95rem;
+    }
+
+    .continuar-lateral-btn-contagem {
+        min-width: 18px;
+        height: 18px;
+        font-size: 0.6rem;
     }
 
     .continuar-lateral-painel {
@@ -1702,9 +1717,7 @@
 
 }
 /* =========================================================
-   COR AMBIENTE — reflexo da capa no fundo do modal
-   Variáveis setadas via JS; valores padrão = lilás do site,
-   pra funcionar mesmo se a extração falhar (ex: sem CORS).
+   COR AMBIENTE — a cor da capa "lava" o modal inteiro
    ========================================================= */
 
 .modal-content-layout-assistido {
@@ -1712,22 +1725,24 @@
     --cor-ambiente-g: 167;
     --cor-ambiente-b: 245;
 
-    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.35);
+    position: relative;
+
+    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5);
 
     background:
-        radial-gradient(
-            ellipse 900px 500px at 0% 0%,
-            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.16),
-            transparent 60%
-        ),
-        linear-gradient(160deg, rgba(20, 16, 38, 0.94), rgba(10, 8, 20, 0.97));
+        linear-gradient(
+            165deg,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.65) 0%,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.28) 32%,
+            rgba(12, 10, 24, 0.96) 68%
+        );
 
     box-shadow:
-        0 0 0 1px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.08),
+        0 0 0 1px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.25),
         0 30px 80px rgba(0, 0, 0, 0.55),
-        0 0 70px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.10);
+        0 0 100px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.3);
 
-    transition: background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
+    transition: background 0.7s ease, border-color 0.7s ease, box-shadow 0.7s ease;
 }
 
 .modal-content-layout-assistido #modal-data {
@@ -1748,4 +1763,19 @@
 
 .modal-content-layout-assistido .modal-decoracao-sparkle {
     color: rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b));
+}
+/* =========================================================
+   AJUSTE FINAL — SCROLL DO MODAL (fica por último de propósito,
+   pra sempre vencer qualquer regra duplicada acima)
+   ========================================================= */
+
+.modal-content-layout-assistido {
+    max-height: 85vh;
+    max-height: 85dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+body.modal-aberto {
+    overflow: hidden;
 }
