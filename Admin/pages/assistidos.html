@@ -179,7 +179,122 @@
 
                 </div>
 
+<!-- STATUS (assistido / assistindo) -->
 
+<div
+    id="assistidos-status-area"
+    class="campo"
+>
+
+    <label for="assistidos-item-status">
+        Status
+    </label>
+
+    <select id="assistidos-item-status">
+
+        <option value="assistido">
+            ✓ Já assistimos
+        </option>
+
+        <option value="assistindo">
+            ▶ Assistindo agora
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- PROGRESSO — FILME -->
+
+<div
+    id="assistidos-progresso-filme"
+    class="assistidos-notas-area oculto"
+>
+
+    <div class="campo">
+        <label for="assistidos-minuto-atual">
+            Minuto atual
+        </label>
+        <input
+            type="number"
+            id="assistidos-minuto-atual"
+            min="0"
+            placeholder="Ex.: 45"
+        >
+    </div>
+
+    <div class="campo">
+        <label for="assistidos-duracao-total">
+            Duração total (min)
+        </label>
+        <input
+            type="number"
+            id="assistidos-duracao-total"
+            min="0"
+            placeholder="Ex.: 120"
+        >
+    </div>
+
+</div>
+
+
+<!-- PROGRESSO — SÉRIE / ANIME -->
+
+<div
+    id="assistidos-progresso-serie"
+    class="assistidos-notas-area oculto"
+>
+
+    <div class="campo">
+        <label for="assistidos-temporada">
+            Temporada atual
+        </label>
+        <input
+            type="number"
+            id="assistidos-temporada"
+            min="1"
+            placeholder="Ex.: 2"
+        >
+    </div>
+
+    <div class="campo">
+        <label for="assistidos-episodio">
+            Episódio atual
+        </label>
+        <input
+            type="number"
+            id="assistidos-episodio"
+            min="1"
+            placeholder="Ex.: 6"
+        >
+    </div>
+
+    <div class="campo">
+        <label for="assistidos-minuto-episodio">
+            Minuto atual do episódio
+        </label>
+        <input
+            type="number"
+            id="assistidos-minuto-episodio"
+            min="0"
+            placeholder="Ex.: 12"
+        >
+    </div>
+
+    <div class="campo">
+        <label for="assistidos-duracao-episodio">
+            Duração do episódio (min)
+        </label>
+        <input
+            type="number"
+            id="assistidos-duracao-episodio"
+            min="0"
+            placeholder="Ex.: 24"
+        >
+    </div>
+
+</div>
                 <!-- ANO -->
 
                 <div class="campo">

@@ -21,10 +21,17 @@
     },
     {
         "id": "filme-futuro",
-        "categoria": "queremos",
+        "categoria": "series",
         "titulo": "Arcane",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1786909282135.jpg",
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 2,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
         "notaEu": null,
         "notaEla": null,
         "memoria": ""
@@ -371,22 +378,26 @@
     },
     {
         "id": "crepusculo-amanhecer-pt-1",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Crepúsculo - Amanhecer Pt. 1",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1789263712075.jpg",
-        "notaEu": null,
-        "notaEla": null,
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 8,
+        "notaEla": 8,
         "memoria": ""
     },
     {
         "id": "crepusculo-amanhecer-pt-2",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Crepúsculo - Amanhecer Pt. 2",
         "ano": null,
         "capa": "assets/images/assistidos/assistido-1789263724484.jpg",
-        "notaEu": null,
-        "notaEla": null,
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     },
     {
@@ -417,6 +428,23 @@
         "capa": "assets/images/assistidos/assistido-1789359689719.jpg",
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "des-encantado",
+        "categoria": "series",
+        "titulo": "(Des)encanto",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1790015498492.png",
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 2,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]

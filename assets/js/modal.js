@@ -150,6 +150,29 @@ function abrirModal(item) {
 
         }
 
+        // Layout especial (usado pelos Assistidos)
+        if (item.layoutModal) {
+            conteudo.classList.add(`modal-content-layout-${item.layoutModal}`);
+        }
+
+        // Remove decorações de uma abertura anterior
+        conteudo.querySelectorAll('.modal-decoracao-sparkle').forEach((el) => el.remove());
+
+        // Decoração flutuante (folhas/brilhos) só no layout "assistido"
+        if (item.layoutModal === 'assistido') {
+
+            const icones = ['🍃', '✧', '✦', '🍃', '✧'];
+
+            icones.forEach((icone, indice) => {
+                const span = document.createElement('span');
+                span.className = `modal-decoracao-sparkle modal-decoracao-sparkle-${indice + 1}`;
+                span.textContent = icone;
+                span.setAttribute('aria-hidden', 'true');
+                conteudo.appendChild(span);
+            });
+
+        }
+
     }
 
     const fotosContainer = document.getElementById('modal-fotos');

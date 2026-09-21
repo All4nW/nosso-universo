@@ -366,7 +366,24 @@ function configurarEventosAssistidos() {
         "change",
         atualizarCampoNotas
     );
+    categoria?.addEventListener(
+        "change",
+        atualizarCampoNotas
+    );
 
+
+    document
+        .getElementById("assistidos-item-status")
+        ?.addEventListener(
+            "change",
+            atualizarCampoProgresso
+        );
+
+
+    imagem?.addEventListener(
+        "change",
+        previewImagemAssistido
+    );
 
     imagem?.addEventListener(
         "change",
@@ -476,7 +493,42 @@ function abrirModalAssistido(item = null) {
         "assistidos-memoria"
     ).value =
         item?.memoria || "";
+    document.getElementById(
+        "assistidos-item-status"
+    ).value =
+        item?.status || "assistido";
 
+
+    document.getElementById(
+        "assistidos-minuto-atual"
+    ).value =
+        item?.progresso?.minutoAtual ?? "";
+
+    document.getElementById(
+        "assistidos-duracao-total"
+    ).value =
+        item?.progresso?.duracaoTotal ?? "";
+
+
+    document.getElementById(
+        "assistidos-temporada"
+    ).value =
+        item?.progresso?.temporada ?? "";
+
+    document.getElementById(
+        "assistidos-episodio"
+    ).value =
+        item?.progresso?.episodio ?? "";
+
+    document.getElementById(
+        "assistidos-minuto-episodio"
+    ).value =
+        item?.progresso?.minutoAtualEpisodio ?? "";
+
+    document.getElementById(
+        "assistidos-duracao-episodio"
+    ).value =
+        item?.progresso?.duracaoEpisodio ?? "";
 
     const preview =
         document.getElementById(
@@ -553,13 +605,79 @@ function atualizarCampoNotas() {
         );
 
 
-    if (!area) return;
+    if (area) {
+
+        area.style.display =
+            categoria === "queremos"
+                ? "none"
+                : "grid";
+
+    }
 
 
-    area.style.display =
-        categoria === "queremos"
-            ? "none"
-            : "grid";
+    const statusArea =
+        document.getElementById(
+            "assistidos-status-area"
+        );
+
+
+    if (statusArea) {
+
+        statusArea.style.display =
+            categoria === "queremos"
+                ? "none"
+                : "block";
+
+    }
+
+
+    atualizarCampoProgresso();
+
+}
+
+
+// =====================================================
+// PROGRESSO — mostra o bloco certo (filme x série/anime),
+// e só quando o status for "assistindo"
+// =====================================================
+
+function atualizarCampoProgresso() {
+
+    const categoria =
+        document.getElementById(
+            "assistidos-categoria"
+        ).value;
+
+    const status =
+        document.getElementById(
+            "assistidos-item-status"
+        )?.value;
+
+    const blocoFilme =
+        document.getElementById(
+            "assistidos-progresso-filme"
+        );
+
+    const blocoSerie =
+        document.getElementById(
+            "assistidos-progresso-serie"
+        );
+
+    if (!blocoFilme || !blocoSerie) return;
+
+    const mostrarProgresso =
+        categoria !== "queremos" &&
+        status === "assistindo";
+
+    blocoFilme.classList.toggle(
+        "oculto",
+        !(mostrarProgresso && categoria === "filmes")
+    );
+
+    blocoSerie.classList.toggle(
+        "oculto",
+        !(mostrarProgresso && (categoria === "series" || categoria === "animes"))
+    );
 
 }
 
@@ -690,6 +808,54 @@ async function salvarAssistido(evento) {
     }
 
 
+    const status =
+        categoria === "queremos"
+            ? null
+            : (document.getElementById("assistidos-item-status")?.value || "assistido");
+
+
+    let progresso = null;
+
+
+    if (status === "assistindo") {
+
+        if (categoria === "filmes") {
+
+            progresso = {
+
+                minutoAtual:
+                    Number(document.getElementById("assistidos-minuto-atual").value) || 0,
+
+                duracaoTotal:
+                    Number(document.getElementById("assistidos-duracao-total").value) || 0
+
+            };
+
+        }
+
+        else if (categoria === "series" || categoria === "animes") {
+
+            progresso = {
+
+                temporada:
+                    Number(document.getElementById("assistidos-temporada").value) || 1,
+
+                episodio:
+                    Number(document.getElementById("assistidos-episodio").value) || 1,
+
+                minutoAtualEpisodio:
+                    Number(document.getElementById("assistidos-minuto-episodio").value) || 0,
+
+                duracaoEpisodio:
+                    Number(document.getElementById("assistidos-duracao-episodio").value) || 0
+
+            };
+
+        }
+
+    }
+
+
     const novoItem = {
 
         id:
@@ -708,6 +874,10 @@ async function salvarAssistido(evento) {
             ) || null,
 
         capa,
+
+        status,
+
+        progresso,
 
         notaEu:
             categoria === "queremos"
