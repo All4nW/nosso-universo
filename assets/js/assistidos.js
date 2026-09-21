@@ -95,6 +95,15 @@ function selarInfoTopo(item) {
 // COR AMBIENTE — extrai a cor dominante da capa
 // =====================================================
 
+function ehMesmaOrigem(src) {
+    try {
+        const url = new URL(src, window.location.href);
+        return url.origin === window.location.origin;
+    } catch {
+        return true; // caminho relativo simples, assume mesma origem
+    }
+}
+
 function extrairCorAmbiente(src) {
 
     return new Promise((resolve) => {
@@ -105,7 +114,13 @@ function extrairCorAmbiente(src) {
         }
 
         const img = new Image();
-        img.crossOrigin = "anonymous";
+
+        // Só força modo "anônimo" quando a imagem é de outro domínio.
+        // Em imagens do próprio site, isso pode causar falha de
+        // carregamento silenciosa em alguns hosts (ex: GitHub Pages).
+        if (!ehMesmaOrigem(src)) {
+            img.crossOrigin = "anonymous";
+        }
 
         img.onload = () => {
 
@@ -123,17 +138,27 @@ function extrairCorAmbiente(src) {
                 const { data } = ctx.getImageData(0, 0, tamanho, tamanho);
 
                 let r = 0, g = 0, b = 0, total = 0;
+                let pixelsOpacos = 0;
+                let pixelsClaros = 0;
 
                 for (let i = 0; i < data.length; i += 4) {
 
                     const alpha = data[i + 3];
                     if (alpha < 100) continue;
 
+                    pixelsOpacos++;
+
                     const pr = data[i];
                     const pg = data[i + 1];
                     const pb = data[i + 2];
 
                     const luminancia = (pr + pg + pb) / 3;
+
+                    // Conta como "quase branco" pra decisão de capa clara
+                    if (luminancia > 200) {
+                        pixelsClaros++;
+                    }
+
                     if (luminancia < 20 || luminancia > 235) continue;
 
                     const max = Math.max(pr, pg, pb);
@@ -148,6 +173,17 @@ function extrairCorAmbiente(src) {
 
                 }
 
+                // Capa majoritariamente clara (ex: fundo branco de
+                // comédia romântica) — melhor usar o tom neutro padrão
+                // do que forçar uma cor extraída só dos poucos pixels
+                // coloridos que sobraram.
+                const proporcaoClara = pixelsOpacos ? pixelsClaros / pixelsOpacos : 0;
+
+                if (proporcaoClara > 0.55) {
+                    resolve(null);
+                    return;
+                }
+
                 if (!total) {
                     resolve(null);
                     return;
@@ -156,8 +192,6 @@ function extrairCorAmbiente(src) {
                 r = Math.round(r / total);
                 g = Math.round(g / total);
                 b = Math.round(b / total);
-
-                console.log("🎨 Cor extraída:", { r, g, b }, "de", src);
 
                 resolve({ r, g, b });
 

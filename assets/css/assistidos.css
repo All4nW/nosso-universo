@@ -1701,18 +1701,35 @@
 
 @media (max-width: 640px) {
 
-    .modal-content-layout-assistido #modal-fotos img {
-        max-height: 45vh;
-        border-radius: 14px;
-    }
-
     .modal-content-layout-assistido #modal-titulo {
-        font-size: 1.5rem;
+        margin: 6px 0 10px;
     }
 
-    .modal-decoracao-sparkle-2,
-    .modal-decoracao-sparkle-5 {
-        display: none;
+    .assistido-modal-progresso {
+        margin-bottom: 12px;
+    }
+
+    .assistido-modal-progresso-texto {
+        margin-bottom: 4px;
+    }
+
+    .assistido-modal-divisor {
+        margin: 10px 0 12px;
+    }
+
+    .assistido-modal-notas {
+        gap: 8px;
+        margin-bottom: 2px;
+    }
+
+    .assistido-modal-nota-item {
+        gap: 8px;
+    }
+
+    .assistido-modal-citacao {
+        margin: 2px 0;
+        font-size: 0.92rem;
+        line-height: 1.5;
     }
 
 }
