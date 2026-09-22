@@ -212,22 +212,70 @@ function extrairCorAmbiente(src) {
 
 }
 
+// =====================================================
+// COR AMBIENTE — controle de concorrência + cache
+// =====================================================
+
+let corAmbienteTokenAtual = 0;
+const cacheCorAmbiente = new Map();
+
+function resetarCorAmbienteModal() {
+
+    const conteudo = document.getElementById("modal-content");
+    if (!conteudo) return;
+
+    conteudo.style.removeProperty("--cor-ambiente-r");
+    conteudo.style.removeProperty("--cor-ambiente-g");
+    conteudo.style.removeProperty("--cor-ambiente-b");
+
+}
+
+async function aplicarCorDaCapaComControle(src) {
+
+    // Cada chamada pega um token novo; só a chamada mais recente
+    // pode aplicar sua cor no final — as anteriores são descartadas.
+    corAmbienteTokenAtual += 1;
+    const meuToken = corAmbienteTokenAtual;
+
+    // Reseta na hora pro lilás neutro, evitando "flash" da cor
+    // do item anterior enquanto a nova é calculada.
+    resetarCorAmbienteModal();
+
+    if (!src) return;
+
+    let cor;
+
+    if (cacheCorAmbiente.has(src)) {
+
+        cor = cacheCorAmbiente.get(src);
+
+    } else {
+
+        cor = await extrairCorAmbiente(src);
+        cacheCorAmbiente.set(src, cor);
+
+    }
+
+    // Se outro clique aconteceu enquanto essa extração rodava,
+    // essa resposta já está desatualizada — ignora.
+    if (meuToken !== corAmbienteTokenAtual) return;
+
+    aplicarCorAmbienteModal(cor);
+
+}
+
 function aplicarCorAmbienteModal(cor) {
 
     const conteudo = document.getElementById("modal-content");
     if (!conteudo) return;
 
     if (!cor) {
-        conteudo.style.removeProperty("--cor-ambiente-r");
-        conteudo.style.removeProperty("--cor-ambiente-g");
-        conteudo.style.removeProperty("--cor-ambiente-b");
+        resetarCorAmbienteModal();
         return;
     }
 
     let { r, g, b } = cor;
 
-    // Aumenta a saturação — afasta cada canal da média, deixando
-    // a cor mais "viva" em vez de cinza/apagada.
     const media = (r + g + b) / 3;
     const fatorSaturacao = 1.4;
 
@@ -235,7 +283,6 @@ function aplicarCorAmbienteModal(cor) {
     g = media + (g - media) * fatorSaturacao;
     b = media + (b - media) * fatorSaturacao;
 
-    // Garante um brilho mínimo (capas muito escuras ainda geram reflexo visível)
     const max = Math.max(r, g, b);
     if (max < 150) {
         const fator = 150 / (max || 1);
@@ -517,11 +564,7 @@ function abrirDetalhesAssistido(item, dados) {
             layoutModal: "assistido"
         });
 
-        if (item.capa) {
-            extrairCorAmbiente(item.capa).then((cor) => aplicarCorAmbienteModal(cor));
-        } else {
-            aplicarCorAmbienteModal(null);
-        }
+aplicarCorDaCapaComControle(item.capa);
 
         return;
 
@@ -606,11 +649,7 @@ function abrirDetalhesAssistido(item, dados) {
         layoutModal: "assistido"
     });
 
-    if (item.capa) {
-        extrairCorAmbiente(item.capa).then((cor) => aplicarCorAmbienteModal(cor));
-    } else {
-        aplicarCorAmbienteModal(null);
-    }
+aplicarCorDaCapaComControle(item.capa);
 
 }
 
