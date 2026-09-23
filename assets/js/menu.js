@@ -21,8 +21,6 @@ async function carregarNavbar() {
     }
 }
 
-// Mostra o link do painel administrativo apenas quando o site
-// está rodando localmente (seu PC) — nunca na versão pública do GitHub Pages.
 function mostrarLinkAdminSeLocal() {
     const ehLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const linkAdmin = document.getElementById('admin-link');
@@ -31,11 +29,139 @@ function mostrarLinkAdminSeLocal() {
         linkAdmin.classList.remove('oculto');
     }
 }
+
 function resolverCaminhoAudio(caminho) {
     if (!caminho) return '';
     if (caminho.startsWith('http://') || caminho.startsWith('https://')) return caminho;
     if (caminho.startsWith('/uploads/')) return `http://localhost:3000${caminho}`;
     return caminho;
+}
+
+
+// =====================================================
+// COR POR MÚSICA — hash determinístico (mesma música =
+// sempre a mesma cor), sem precisar de nenhuma imagem.
+// =====================================================
+
+function hashStringParaNumero(texto) {
+    let hash = 0;
+    for (let i = 0; i < texto.length; i++) {
+        hash = (hash << 5) - hash + texto.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash);
+}
+
+function hslParaRgb(h, s, l) {
+    s /= 100;
+    l /= 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+
+    let r = 0, g = 0, b = 0;
+
+    if (h < 60)       { r = c; g = x; b = 0; }
+    else if (h < 120) { r = x; g = c; b = 0; }
+    else if (h < 180) { r = 0; g = c; b = x; }
+    else if (h < 240) { r = 0; g = x; b = c; }
+    else if (h < 300) { r = x; g = 0; b = c; }
+    else              { r = c; g = 0; b = x; }
+
+    return {
+        r: Math.round((r + m) * 255),
+        g: Math.round((g + m) * 255),
+        b: Math.round((b + m) * 255)
+    };
+}
+
+function corDaMusica(musica) {
+    const chave = (musica.titulo || musica.arquivo || 'musica');
+    const hash = hashStringParaNumero(chave);
+
+    const matiz = hash % 360;
+    // Saturação e luminosidade fixas em uma faixa que combina
+    // com a paleta lilás/rosa do site — só o matiz (a "cor" em
+    // si) varia de música pra música.
+    const saturacao = 55 + (hash % 20);
+    const luminosidade = 62 + (hash % 10);
+
+    return hslParaRgb(matiz, saturacao, luminosidade);
+}
+
+function aplicarCorDaMusica(musica) {
+    const popup = document.getElementById('player-popup');
+    if (!popup || !musica) return;
+
+    const { r, g, b } = corDaMusica(musica);
+
+    popup.style.setProperty('--player-cor-r', r);
+    popup.style.setProperty('--player-cor-g', g);
+    popup.style.setProperty('--player-cor-b', b);
+}
+// =====================================================
+// CORAÇÕES FLUTUANTES DENTRO DO PLAYER
+// =====================================================
+
+let intervaloCoracoesPlayer = null;
+
+function garantirContainerCoracoesPlayer() {
+    const popupEl = document.getElementById('player-popup');
+    if (!popupEl) return null;
+
+    let container = popupEl.querySelector('.player-coracoes-flutuantes');
+
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'player-coracoes-flutuantes';
+        popupEl.insertBefore(container, popupEl.firstChild);
+    }
+
+    return container;
+}
+
+function criarCoracaoFlutuantePlayer() {
+    const container = garantirContainerCoracoesPlayer();
+    if (!container) return;
+
+    const emojis = ['💗', '💜', '♡', '💕'];
+    const cores = ['#f5c2d1', '#c9a7f5', '#f0a8c9', '#dcc6fb'];
+
+    const coracao = document.createElement('span');
+    coracao.className = 'player-coracao-flutuante';
+    coracao.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    const esquerda = 10 + Math.random() * 80;
+    const tamanho = 0.7 + Math.random() * 0.5;
+    const duracao = 3 + Math.random() * 2.5;
+    const deriva = (Math.random() - 0.5) * 40;
+    const rotacao = (Math.random() - 0.5) * 40;
+
+    coracao.style.left = `${esquerda}%`;
+    coracao.style.setProperty('--pc-tamanho', `${tamanho}rem`);
+    coracao.style.setProperty('--pc-cor', cores[Math.floor(Math.random() * cores.length)]);
+    coracao.style.setProperty('--pc-duracao', `${duracao}s`);
+    coracao.style.setProperty('--pc-deriva', `${deriva}px`);
+    coracao.style.setProperty('--pc-rotacao', `${rotacao}deg`);
+
+    container.appendChild(coracao);
+
+    setTimeout(() => coracao.remove(), duracao * 1000 + 200);
+}
+
+function iniciarCoracoesPlayer() {
+    if (intervaloCoracoesPlayer) return;
+
+    criarCoracaoFlutuantePlayer();
+    intervaloCoracoesPlayer = setInterval(criarCoracaoFlutuantePlayer, 900);
+}
+
+function pararCoracoesPlayer() {
+    if (intervaloCoracoesPlayer) {
+        clearInterval(intervaloCoracoesPlayer);
+        intervaloCoracoesPlayer = null;
+    }
 }
 
 function ativarComportamentoDoSom() {
@@ -52,6 +178,13 @@ function ativarComportamentoDoSom() {
     const btnListaToggle = document.getElementById('player-lista-toggle');
     const listaContainer = document.getElementById('player-lista');
 
+    // Barra de progresso
+    const barraProgresso = document.getElementById('player-barra-progresso');
+    const progressoPreenchimento = document.getElementById('player-progresso-preenchimento');
+    const progressoBolinha = document.getElementById('player-progresso-bolinha');
+    const tempoAtualEl = document.getElementById('player-tempo-atual');
+    const tempoTotalEl = document.getElementById('player-tempo-total');
+
     if (!botaoSom) return;
 
     let playlist = [];
@@ -59,15 +192,10 @@ function ativarComportamentoDoSom() {
     let audio = new Audio();
     let tocando = false;
     let mutado = false;
+    let arrastandoProgresso = false;
 
-    // Marca se o usuário já interagiu com a página (toque/clique/
-    // scroll/tecla), mesmo que a playlist ainda não tenha carregado.
-    // Assim, qualquer um dos dois "terminar por último" já dispara
-    // a música — resolve a corrida entre carregar a playlist e o
-    // primeiro toque no mobile, onde a rede é mais lenta.
     let usuarioJaInteragiu = false;
 
-    // Volume global (0 a 1), padrão 25%. Guardado no navegador para lembrar entre visitas.
     let volumeAtual =
         parseFloat(localStorage.getItem('nossoUniversoVolume')) || 0.25;
 
@@ -107,9 +235,6 @@ function ativarComportamentoDoSom() {
         }
     }
 
-    // Mede se o nome da música cabe no espaço disponível; se não couber,
-    // ativa uma animação de "letreiro" (vai e volta) mostrando o nome
-    // completo aos poucos, como em players de celular.
     function ajustarRolagemTitulo() {
         if (!tituloEl) return;
 
@@ -120,8 +245,6 @@ function ativarComportamentoDoSom() {
         tituloEl.style.removeProperty('--scroll-distance');
         tituloEl.style.removeProperty('--scroll-duration');
 
-        // Espera o layout assentar antes de medir, senão a largura
-        // pode vir errada (0px) logo após trocar o texto.
         requestAnimationFrame(() => {
             const larguraWrapper = wrapper.clientWidth;
             const larguraTexto = tituloEl.scrollWidth;
@@ -144,11 +267,116 @@ function ativarComportamentoDoSom() {
         botaoSom.textContent = tocando ? '🔊' : '🎵';
     }
 
+
+    // =================================================
+    // BARRA DE PROGRESSO — cálculo do intervalo da faixa
+    // (respeitando inicioSegundos/fimSegundos definidos
+    // no admin) e formatação de tempo
+    // =================================================
+
+    function formatarTempo(segundos) {
+        if (!isFinite(segundos) || segundos < 0) segundos = 0;
+        const min = Math.floor(segundos / 60);
+        const seg = Math.floor(segundos % 60);
+        return `${min}:${String(seg).padStart(2, '0')}`;
+    }
+
+    function obterIntervaloFaixa() {
+        const musica = playlist[indiceAtual];
+        if (!musica) return { inicio: 0, fim: audio.duration || 0 };
+
+        const inicio = musica.inicioSegundos || 0;
+        const fim = musica.fimSegundos > 0 ? musica.fimSegundos : (audio.duration || 0);
+
+        return { inicio, fim };
+    }
+
+    function atualizarBarraProgresso() {
+        if (arrastandoProgresso) return;
+        if (!barraProgresso) return;
+
+        const { inicio, fim } = obterIntervaloFaixa();
+        const duracaoEfetiva = Math.max(0.001, fim - inicio);
+
+        const posicaoAtual = Math.min(
+            duracaoEfetiva,
+            Math.max(0, audio.currentTime - inicio)
+        );
+
+        const percentual = (posicaoAtual / duracaoEfetiva) * 100;
+
+        if (progressoPreenchimento) progressoPreenchimento.style.width = `${percentual}%`;
+        if (progressoBolinha) progressoBolinha.style.left = `${percentual}%`;
+
+        if (tempoAtualEl) tempoAtualEl.textContent = formatarTempo(posicaoAtual);
+        if (tempoTotalEl) tempoTotalEl.textContent = formatarTempo(duracaoEfetiva);
+    }
+
+    function buscarPosicaoPelaBarra(clientX) {
+        if (!barraProgresso) return;
+
+        const rect = barraProgresso.getBoundingClientRect();
+        const fracao = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+
+        const { inicio, fim } = obterIntervaloFaixa();
+        const duracaoEfetiva = Math.max(0.001, fim - inicio);
+
+        const novoTempo = inicio + fracao * duracaoEfetiva;
+
+        audio.currentTime = novoTempo;
+
+        // Atualiza visualmente na hora, sem esperar o próximo timeupdate
+        const percentual = fracao * 100;
+        if (progressoPreenchimento) progressoPreenchimento.style.width = `${percentual}%`;
+        if (progressoBolinha) progressoBolinha.style.left = `${percentual}%`;
+        if (tempoAtualEl) tempoAtualEl.textContent = formatarTempo(novoTempo - inicio);
+    }
+
+    if (barraProgresso) {
+
+        const iniciarArrasto = (evento) => {
+            evento.stopPropagation();
+            arrastandoProgresso = true;
+            barraProgresso.classList.add('progresso-arrastando');
+
+            const clientX = evento.touches ? evento.touches[0].clientX : evento.clientX;
+            buscarPosicaoPelaBarra(clientX);
+        };
+
+        const moverArrasto = (evento) => {
+            if (!arrastandoProgresso) return;
+            const clientX = evento.touches ? evento.touches[0].clientX : evento.clientX;
+            buscarPosicaoPelaBarra(clientX);
+        };
+
+        const finalizarArrasto = () => {
+            if (!arrastandoProgresso) return;
+            arrastandoProgresso = false;
+            barraProgresso.classList.remove('progresso-arrastando');
+        };
+
+        barraProgresso.addEventListener('mousedown', iniciarArrasto);
+        barraProgresso.addEventListener('touchstart', iniciarArrasto, { passive: true });
+
+        window.addEventListener('mousemove', moverArrasto);
+        window.addEventListener('touchmove', moverArrasto, { passive: true });
+
+        window.addEventListener('mouseup', finalizarArrasto);
+        window.addEventListener('touchend', finalizarArrasto);
+
+    }
+
     audio.addEventListener('timeupdate', () => {
         const musica = playlist[indiceAtual];
         if (musica && musica.fimSegundos > 0 && audio.currentTime >= musica.fimSegundos) {
             proximaFaixa();
+            return;
         }
+        atualizarBarraProgresso();
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+        atualizarBarraProgresso();
     });
 
     audio.addEventListener('ended', () => {
@@ -163,13 +391,15 @@ function ativarComportamentoDoSom() {
         audio.src = resolverCaminhoAudio(musica.arquivo);
 
         aplicarVolume();
+        aplicarCorDaMusica(musica);
 
         audio.addEventListener('loadedmetadata', () => {
             audio.currentTime = musica.inicioSegundos || 0;
+            atualizarBarraProgresso();
         }, { once: true });
 
         atualizarTitulo();
-        renderizarListaMusicas(); // NOVO
+        renderizarListaMusicas();
 
         if (tocando) {
             audio.play().catch(() => {
@@ -209,15 +439,15 @@ function ativarComportamentoDoSom() {
             }
         }
 
+        // Começa em uma música aleatória, pra não ficar sempre
+        // repetindo a primeira da lista a cada visita.
         if (playlist.length) {
+            indiceAtual = Math.floor(Math.random() * playlist.length);
             atualizarTitulo();
-            renderizarListaMusicas(); // NOVO
+            aplicarCorDaMusica(playlist[indiceAtual]);
+            renderizarListaMusicas();
         }
 
-        // Se o usuário já tinha interagido ANTES da playlist terminar
-        // de carregar (comum no mobile, onde a tentativa de
-        // localhost:3000 demora mais pra falhar), toca agora que
-        // os dados finalmente chegaram.
         if (usuarioJaInteragiu && !tocando && playlist.length) {
             alternarPlayPause();
         }
@@ -272,22 +502,19 @@ function ativarComportamentoDoSom() {
         });
     }
 
-function dispararCoracaoNoBotao(botao) {
-    if (typeof criarExplosaoCoracoes !== 'function' || !botao) return;
+    function dispararCoracaoNoBotao(botao) {
+        if (typeof criarExplosaoCoracoes !== 'function' || !botao) return;
 
-    const rect = botao.getBoundingClientRect();
-    criarExplosaoCoracoes(rect.left + rect.width / 2, rect.top + rect.height / 2);
-}
+        const rect = botao.getBoundingClientRect();
+        criarExplosaoCoracoes(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+
     const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
     function primeiraInteracao() {
 
         usuarioJaInteragiu = true;
 
-        // "Desbloqueia" o elemento de áudio ainda dentro do gesto
-        // do usuário — em navegadores mobile (Safari/iOS em especial),
-        // isso conta como permissão pro elemento tocar mais tarde,
-        // mesmo que a playlist só chegue depois desse toque.
         audio.play().catch(() => {});
 
         if (!tocando && playlist.length) alternarPlayPause();
@@ -304,7 +531,7 @@ function dispararCoracaoNoBotao(botao) {
         botaoSom.classList.remove('sound-toggle-glow');
     }, 3000);
 
-        function renderizarListaMusicas() {
+    function renderizarListaMusicas() {
         if (!listaContainer) return;
 
         listaContainer.innerHTML = '';

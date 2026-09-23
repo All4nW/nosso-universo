@@ -6,6 +6,7 @@ body {
     background-color: var(--color-bg-dark);
     color: var(--color-text-light);
     font-family: var(--font-primary);
+    overflow: hidden;
 }
 
 #app {
