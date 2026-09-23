@@ -301,7 +301,60 @@ function aplicarCorAmbienteModal(cor) {
 
 }
 
+// =====================================================
+// PRÉ-CARREGAMENTO DE CORES — calcula em segundo plano,
+// assim que a lista carrega, pra abrir qualquer modal
+// já com a cor pronta no cache (sem travar no clique).
+// =====================================================
 
+function agendarTarefaOciosa(tarefa) {
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(tarefa, { timeout: 2000 });
+    } else {
+        setTimeout(tarefa, 300);
+    }
+}
+
+function preCarregarCoresAssistidos(itens) {
+
+    const capas = [...new Set(
+        itens.map(item => item.capa).filter(Boolean)
+    )];
+
+    let indice = 0;
+
+    function processarProxima(deadline) {
+
+        while (
+            indice < capas.length &&
+            (!deadline || deadline.timeRemaining() > 0)
+        ) {
+
+            const capa = capas[indice];
+            indice++;
+
+            if (!cacheCorAmbiente.has(capa)) {
+
+                // Não aguarda (await) de propósito — dispara a
+                // extração e segue pro próximo item da fila; cada
+                // uma se resolve sozinha e vai enchendo o cache.
+                extrairCorAmbiente(capa).then((cor) => {
+                    cacheCorAmbiente.set(capa, cor);
+                });
+
+            }
+
+        }
+
+        if (indice < capas.length) {
+            agendarTarefaOciosa(processarProxima);
+        }
+
+    }
+
+    agendarTarefaOciosa(processarProxima);
+
+}
 // =====================================================
 // CARREGAR
 // =====================================================
