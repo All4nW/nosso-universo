@@ -1,0 +1,68 @@
+[
+    {
+        "id": "sonho-nossa-casa",
+        "categoria": "vida",
+        "titulo": "Nossa casa",
+        "frase": "Um cantinho nosso, com cheiro de café, plantas e paz.",
+        "status": "caminho",
+        "dataCriacao": "2026-01-10",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    },
+    {
+        "id": "sonho-casamento",
+        "categoria": "nos",
+        "titulo": "Nos casar",
+        "frase": "Um dia dizer sim, do nosso jeito.",
+        "status": "sonhando",
+        "dataCriacao": "2026-02-14",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    },
+    {
+        "id": "sonho-familia",
+        "categoria": "familia",
+        "titulo": "Nossa família",
+        "frase": "Construir um lar, com muito amor, risadas e nossos pequenos.",
+        "status": "sonhando",
+        "dataCriacao": "2026-03-01",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    },
+    {
+        "id": "sonho-viajar",
+        "categoria": "lugares",
+        "titulo": "Conhecer lugares juntos",
+        "frase": "Ver o mundo de mãos dadas, colecionando boas histórias.",
+        "status": "caminho",
+        "dataCriacao": "2026-01-20",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    },
+    {
+        "id": "sonho-cachorro",
+        "categoria": "bobos",
+        "titulo": "Nosso cachorrinho",
+        "frase": "Um dia, quem sabe, ter um amigo de quatro patas pra dividir a vida.",
+        "status": "reimaginado",
+        "dataCriacao": "2026-02-05",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    },
+    {
+        "id": "sonho-um-dia",
+        "categoria": "umdia",
+        "titulo": "Uma viagem sem planejar tudo",
+        "frase": "Só nós dois, um destino aleatório, boas comidas, muita risada e zero planejamento.",
+        "status": "sonhando",
+        "dataCriacao": "2026-04-12",
+        "dataRealizacao": null,
+        "descricao": "",
+        "imagem": ""
+    }
+]

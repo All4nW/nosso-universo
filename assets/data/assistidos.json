@@ -1,0 +1,675 @@
+[
+    {
+        "id": "interestelar",
+        "categoria": "filmes",
+        "titulo": "Como Perder Um Homem Em 10 Dias",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786914265562.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 178,
+            "g": 162,
+            "b": 129
+        }
+    },
+    {
+        "id": "stranger-things",
+        "categoria": "series",
+        "titulo": "Stranger Things",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912075843.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 81,
+            "g": 44,
+            "b": 35
+        }
+    },
+    {
+        "id": "filme-futuro",
+        "categoria": "series",
+        "titulo": "Arcane",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786909282135.jpg",
+        "cor": {
+            "r": 48,
+            "g": 46,
+            "b": 64
+        },
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 6,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "teste",
+        "categoria": "filmes",
+        "titulo": "10 Coisas Que Eu Odeio Em Você",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786914286025.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": null
+    },
+    {
+        "id": "a-casa-de-cera",
+        "categoria": "filmes",
+        "titulo": "A Casa De Cera",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910287157.jpg",
+        "notaEu": 7,
+        "notaEla": 9,
+        "memoria": "",
+        "cor": {
+            "r": 40,
+            "g": 76,
+            "b": 73
+        }
+    },
+    {
+        "id": "harry-potter",
+        "categoria": "queremos",
+        "titulo": "Harry Potter",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910514468.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 59,
+            "g": 86,
+            "b": 111
+        }
+    },
+    {
+        "id": "diario-de-uma-paixao",
+        "categoria": "filmes",
+        "titulo": "Diário De Uma Paixão",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910587348.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 130,
+            "g": 134,
+            "b": 166
+        }
+    },
+    {
+        "id": "como-eu-era-antes-de-voce",
+        "categoria": "filmes",
+        "titulo": "Como Eu Era Antes De Você",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910661404.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 169,
+            "g": 128,
+            "b": 113
+        }
+    },
+    {
+        "id": "antes-do-amanhecer",
+        "categoria": "filmes",
+        "titulo": "Antes Do Amanhecer",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910679581.jpg",
+        "notaEu": 8,
+        "notaEla": 9,
+        "memoria": "",
+        "cor": {
+            "r": 130,
+            "g": 140,
+            "b": 150
+        }
+    },
+    {
+        "id": "annabelle-1",
+        "categoria": "filmes",
+        "titulo": "Annabelle 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910911355.jpg",
+        "notaEu": 10,
+        "notaEla": 8,
+        "memoria": "",
+        "cor": {
+            "r": 76,
+            "g": 48,
+            "b": 33
+        }
+    },
+    {
+        "id": "annabelle-2",
+        "categoria": "filmes",
+        "titulo": "Annabelle 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910928467.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 89,
+            "g": 55,
+            "b": 37
+        }
+    },
+    {
+        "id": "annabelle-3",
+        "categoria": "filmes",
+        "titulo": "Annabelle 3",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786910946139.jpg",
+        "notaEu": 7,
+        "notaEla": 8,
+        "memoria": "",
+        "cor": {
+            "r": 110,
+            "g": 11,
+            "b": 17
+        }
+    },
+    {
+        "id": "a-freira-1",
+        "categoria": "filmes",
+        "titulo": "A Freira 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911076244.jpg",
+        "notaEu": 10,
+        "notaEla": 9,
+        "memoria": "",
+        "cor": null
+    },
+    {
+        "id": "a-freira-2",
+        "categoria": "filmes",
+        "titulo": "A Freira 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911099291.jpg",
+        "notaEu": 8,
+        "notaEla": 7,
+        "memoria": "",
+        "cor": {
+            "r": 54,
+            "g": 46,
+            "b": 25
+        }
+    },
+    {
+        "id": "invocacao-do-mal-1",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911303427.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 133,
+            "g": 134,
+            "b": 133
+        }
+    },
+    {
+        "id": "invocacao-do-mal-2",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911320691.jpg",
+        "notaEu": 8,
+        "notaEla": 8,
+        "memoria": "",
+        "cor": {
+            "r": 56,
+            "g": 48,
+            "b": 56
+        }
+    },
+    {
+        "id": "invocacao-do-mal-3",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 3",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911336115.webp",
+        "notaEu": 8,
+        "notaEla": 6,
+        "memoria": "",
+        "cor": {
+            "r": 100,
+            "g": 52,
+            "b": 44
+        }
+    },
+    {
+        "id": "invocacao-do-mal-4",
+        "categoria": "filmes",
+        "titulo": "Invocação Do Mal 4",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911355787.jpg",
+        "notaEu": 9,
+        "notaEla": 5,
+        "memoria": "",
+        "cor": {
+            "r": 63,
+            "g": 48,
+            "b": 32
+        }
+    },
+    {
+        "id": "solo-leveling",
+        "categoria": "animes",
+        "titulo": "Solo Leveling",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911767051.webp",
+        "notaEu": 10,
+        "notaEla": 8,
+        "memoria": "",
+        "cor": {
+            "r": 75,
+            "g": 81,
+            "b": 106
+        }
+    },
+    {
+        "id": "frieren",
+        "categoria": "animes",
+        "titulo": "Frieren",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911826258.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 139,
+            "g": 175,
+            "b": 153
+        }
+    },
+    {
+        "id": "attack-on-titan",
+        "categoria": "animes",
+        "titulo": "Attack On Titan",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911865578.webp",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 139,
+            "g": 82,
+            "b": 49
+        }
+    },
+    {
+        "id": "365-days-to-the-wedding",
+        "categoria": "animes",
+        "titulo": "365 Days To The Wedding",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786911888643.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": null
+    },
+    {
+        "id": "o-incrivel-mundo-de-gumball",
+        "categoria": "series",
+        "titulo": "O Incrível Mundo De Gumball",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912062499.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 122,
+            "g": 113,
+            "b": 105
+        }
+    },
+    {
+        "id": "supernatural",
+        "categoria": "series",
+        "titulo": "Supernatural",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912235058.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 57,
+            "g": 66,
+            "b": 132
+        }
+    },
+    {
+        "id": "minha-historia-de-amor-com-yamada-kun-nivel-999",
+        "categoria": "queremos",
+        "titulo": "Minha História de Amor com Yamada-kun Nível 999",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912457594.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 175,
+            "g": 166,
+            "b": 162
+        }
+    },
+    {
+        "id": "the-walking-dead",
+        "categoria": "queremos",
+        "titulo": "The Walking Dead",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912497130.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 66,
+            "g": 66,
+            "b": 52
+        }
+    },
+    {
+        "id": "sing",
+        "categoria": "filmes",
+        "titulo": "Sing",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912670345.jpg",
+        "notaEu": 10,
+        "notaEla": 7,
+        "memoria": "",
+        "cor": {
+            "r": 86,
+            "g": 97,
+            "b": 120
+        }
+    },
+    {
+        "id": "tokyo-ghoul",
+        "categoria": "queremos",
+        "titulo": "Tokyo Ghoul",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1786912738537.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 66,
+            "g": 82,
+            "b": 85
+        }
+    },
+    {
+        "id": "edward-maos-de-tesoura",
+        "categoria": "queremos",
+        "titulo": "Edward Mãos de Tesoura",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752121179.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": null
+    },
+    {
+        "id": "caroline",
+        "categoria": "filmes",
+        "titulo": "Coraline",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752199045.png",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 62,
+            "g": 111,
+            "b": 157
+        }
+    },
+    {
+        "id": "priscilla",
+        "categoria": "filmes",
+        "titulo": "Priscilla",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752233732.jpg",
+        "notaEu": 10,
+        "notaEla": 9,
+        "memoria": "",
+        "cor": {
+            "r": 85,
+            "g": 76,
+            "b": 66
+        }
+    },
+    {
+        "id": "para-todos-os-garotos-que-ja-amei",
+        "categoria": "queremos",
+        "titulo": "Para Todos Os Garotos Que Já Amei",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752314214.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": null
+    },
+    {
+        "id": "detona-ralph",
+        "categoria": "queremos",
+        "titulo": "Detona Ralph",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788835546409.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 86,
+            "g": 62,
+            "b": 80
+        }
+    },
+    {
+        "id": "wifi-ralph-quebrando-a-internet",
+        "categoria": "queremos",
+        "titulo": "WiFi Ralph: Quebrando a Internet",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788835590179.webp",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 62,
+            "g": 108,
+            "b": 144
+        }
+    },
+    {
+        "id": "crepusculo",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263495959.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 80,
+            "g": 69,
+            "b": 67
+        }
+    },
+    {
+        "id": "crepusculo-lua-nova",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo - Lua Nova",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263631290.jpg",
+        "notaEu": 9,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 66,
+            "g": 47,
+            "b": 30
+        }
+    },
+    {
+        "id": "crepusculo-eclipse",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo - Eclipse",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263647394.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 69,
+            "g": 68,
+            "b": 72
+        }
+    },
+    {
+        "id": "crepusculo-amanhecer-pt-1",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo - Amanhecer Pt. 1",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263712075.jpg",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 8,
+        "notaEla": 8,
+        "memoria": "",
+        "cor": {
+            "r": 84,
+            "g": 50,
+            "b": 43
+        }
+    },
+    {
+        "id": "crepusculo-amanhecer-pt-2",
+        "categoria": "filmes",
+        "titulo": "Crepúsculo - Amanhecer Pt. 2",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789263724484.jpg",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 68,
+            "g": 62,
+            "b": 63
+        }
+    },
+    {
+        "id": "o-mentalista",
+        "categoria": "queremos",
+        "titulo": "O Mentalista",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789318597602.jpg",
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "",
+        "cor": {
+            "r": 146,
+            "g": 110,
+            "b": 89
+        }
+    },
+    {
+        "id": "como-se-fosse-a-primeira-vez",
+        "categoria": "filmes",
+        "titulo": "Como Se Fosse a Primeira Vez",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789359596027.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 166,
+            "g": 132,
+            "b": 101
+        }
+    },
+    {
+        "id": "hotel-transilvania",
+        "categoria": "filmes",
+        "titulo": "Hotel Transilvânia",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1789359689719.jpg",
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "",
+        "cor": {
+            "r": 66,
+            "g": 92,
+            "b": 89
+        }
+    },
+    {
+        "id": "des-encantado",
+        "categoria": "series",
+        "titulo": "(Des)encanto",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1790015498492.png",
+        "cor": {
+            "r": 100,
+            "g": 136,
+            "b": 136
+        },
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 6,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "as-virgens-suicidas",
+        "categoria": "filmes",
+        "titulo": "As Virgens Suicidas",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1790559553808.jpg",
+        "cor": {
+            "r": 201,
+            "g": 145,
+            "b": 106
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 9,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "garota-interrompida",
+        "categoria": "queremos",
+        "titulo": "Garota, Interrompida",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1790559678157.jpg",
+        "cor": null,
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    }
+]

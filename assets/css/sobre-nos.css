@@ -1,0 +1,1705 @@
+/* =========================================================
+   MURAL — abas Timeline | Sobre Nós + mural do "Sobre Nós"
+   Arquivo próprio, linkado direto no <head> do site.
+   Sem backdrop-filter (custa caro no mobile).
+
+   Hierarquia: Mural (site) → título editorial da seção (Cormorant)
+   → pergunta pequena (Manrope) → resposta (Cormorant, protagonista)
+
+   Composição: grid de 12 colunas com peças em posições diferentes
+   (esquerda / direita / centro) e layouts variados por pergunta.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=EB+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+.sn-painel,
+.sn-drawer,
+.sn-menu-fab {
+    --sn-serif: 'Cormorant Garamond', var(--font-heading), Georgia, serif;
+    --sn-sans: 'Manrope', var(--font-primary), system-ui, sans-serif;
+    --sn-azul: #a8c8f0;
+    --sn-rosa: var(--color-pink, #f5c2d1);
+}
+
+/* ---- Linha do topo: só as abas ---- */
+
+.sn-topo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 56px;
+}
+
+/* ---- Seletor de abas ---- */
+
+.sn-abas {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: min(320px, calc(100% - 32px));
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(201, 167, 245, 0.2);
+}
+
+.sn-abas-marcador {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(201, 167, 245, 0.3), rgba(245, 194, 209, 0.22));
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sn-abas[data-ativa="sobre"] .sn-abas-marcador {
+    transform: translateX(100%);
+}
+
+.sn-aba {
+    position: relative;
+    z-index: 1;
+    min-height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.sn-aba.ativa {
+    color: var(--color-text-light);
+}
+
+/* ---- Painel "Sobre Nós": largo no desktop pra usar as laterais ---- */
+
+.sn-painel {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px 140px;
+    font-family: var(--sn-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.sn-painel[hidden] {
+    display: none;
+}
+
+.sn-vazio {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* ---- Botão ☰: flutuante no canto, fora da linha das abas.
+   Pra mudar de lugar: ajuste right / bottom. ---- */
+
+.sn-menu-fab {
+    position: fixed;
+    right: 24px;
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    z-index: 690;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(201, 167, 245, 0.4);
+    background: var(--color-bg-darker);
+    color: var(--color-lilac);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.sn-menu-fab.visivel {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.sn-menu-fab.visivel:hover {
+    border-color: rgba(245, 194, 209, 0.6);
+    transform: scale(1.06);
+}
+
+/* bolinha rosa: tem um filtro de categoria ligado */
+.sn-menu-fab.filtrando::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--sn-rosa);
+    box-shadow: 0 0 0 2px var(--color-bg-darker);
+}
+
+/* ---- Overlay (sem blur, só opacidade) ---- */
+
+.sn-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 700;
+    background: rgba(5, 5, 16, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.sn-drawer-overlay.visivel {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ---- Índice flutuante: parece uma página do mural, não uma sidebar ---- */
+
+.sn-drawer {
+    position: fixed;
+    z-index: 701;
+    background: rgba(14, 12, 34, 0.98);
+    border: 1px solid rgba(201, 167, 245, 0.28);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+}
+
+.sn-drawer-titulo {
+    padding: 20px 24px 8px;
+    font-family: var(--sn-serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--color-text-light);
+}
+
+.sn-drawer-lista {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 18px 16px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.sn-drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 4px;
+    border-bottom: 1px dotted rgba(201, 167, 245, 0.22);
+    text-align: left;
+    color: var(--color-text-muted);
+    font-family: var(--sn-sans);
+    font-weight: 500;
+    font-size: 0.96rem;
+    transition: color 0.2s ease, padding 0.2s ease;
+}
+
+.sn-drawer-item:last-child {
+    border-bottom: 0;
+}
+
+.sn-drawer-item:hover {
+    color: var(--color-text-light);
+    padding-left: 10px;
+}
+
+.sn-drawer-item.ativo {
+    color: var(--color-text-light);
+}
+
+.sn-drawer-item.ativo::after {
+    content: '✦';
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--sn-rosa);
+}
+
+.sn-drawer-item-emoji {
+    width: 1.5rem;
+    text-align: center;
+    font-size: 1.15rem;
+}
+
+@media (min-width: 640px) {
+
+    .sn-drawer {
+        right: 24px;
+        bottom: 116px;
+        width: 290px;
+        border-radius: 22px 8px 22px 8px;
+        transform: translateY(8px) scale(0.96);
+        transform-origin: bottom right;
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .sn-drawer.aberta {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+}
+
+@media (max-width: 639px) {
+
+    .sn-drawer {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        border-radius: 24px 24px 0 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        transform: translateY(100%);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sn-drawer.aberta {
+        transform: translateY(0);
+    }
+
+    .sn-drawer::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        margin: 10px auto 0;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+}
+
+/* =========================================================
+   MURAL
+   ========================================================= */
+
+.sn-secoes.sn-trocando {
+    animation: sn-trocar-fade 0.35s ease;
+}
+
+@keyframes sn-trocar-fade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.sn-secao + .sn-secao {
+    margin-top: 140px;
+}
+
+/* Título de seção: editorial, alinhado à esquerda, com fio que corre pela largura */
+
+.sn-cat-titulo {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin: 0 0 72px;
+    font-family: var(--sn-serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 1.6rem + 2.4vw, 3.1rem);
+    line-height: 1;
+    letter-spacing: 0.005em;
+    text-transform: none;
+    color: var(--color-text-light);
+    text-shadow: 0 2px 16px rgba(5, 5, 16, 0.85);
+}
+
+.sn-cat-emoji {
+    font-style: normal;
+    font-size: 0.6em;
+}
+
+.sn-cat-titulo::after {
+    content: '';
+    flex: 1;
+    align-self: center;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(245, 194, 209, 0.5), transparent);
+}
+
+/* Grid do mural: 12 colunas, peças em posições diferentes */
+
+.sn-conteudo {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 96px;
+    align-items: start;
+}
+
+.sn-peca {
+    min-width: 0;
+    opacity: 0;
+    animation: sn-entrar 0.55s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes sn-entrar {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.sn-peca[data-pos="e"] { grid-column: 1 / span 8; }
+.sn-peca[data-pos="d"] { grid-column: 5 / span 8; }
+.sn-peca[data-pos="c"] { grid-column: 3 / span 8; }
+
+/* recados pequenos: dois cabem lado a lado, um mais baixo que o outro */
+.sn-peca[data-w="s"][data-pos="e"] { grid-column: 1 / span 5; }
+.sn-peca[data-w="s"][data-pos="d"] { grid-column: 8 / span 5; margin-top: 56px; }
+
+/* Pergunta: pequena e refinada, alinhada ao lado da peça */
+
+.sn-q {
+    margin: 0 0 8px;
+    font-family: var(--sn-sans);
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    text-wrap: balance;
+    color: rgba(236, 231, 250, 0.88);
+    text-shadow: 0 1px 10px rgba(5, 5, 16, 0.9);
+}
+
+.sn-q-emoji {
+    margin-right: 0.5em;
+}
+
+.sn-peca > .sn-q { max-width: 34ch; }
+.sn-peca[data-pos="e"] > .sn-q { text-align: left; }
+.sn-peca[data-pos="d"] > .sn-q { margin-left: auto; text-align: right; }
+.sn-peca[data-pos="c"] > .sn-q { margin-inline: auto; text-align: center; }
+
+/* Resposta: o elemento principal */
+
+.sn-resp {
+    display: block;
+    font-family: var(--sn-serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.25rem + 0.9vw, 1.9rem);
+    line-height: 1.12;
+    color: var(--color-text-light);
+    overflow-wrap: anywhere;
+}
+
+.sn-resp-g {
+    font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.5rem);
+}
+
+.sn-resp-p {
+    font-size: 1.1rem;
+}
+
+.sn-resp-vazia {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    opacity: 0.6;
+}
+
+.sn-tag {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--sn-serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+
+/* ---- Figurinha do personagem (não é avatar: é parte do mural) ---- */
+
+.sn-fig {
+    --fig: 84px;
+    --tilt: -5deg;
+    position: relative;
+    flex: none;
+    display: block;
+    width: var(--fig);
+    height: var(--fig);
+    overflow: hidden;
+    border-radius: 30%;
+    border: 3px solid var(--sn-cor);
+    background: rgba(9, 9, 28, 0.9);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), 0 0 0 4px var(--sn-halo);
+    transform: rotate(var(--tilt));
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: sn-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(var(--delay, 0s) + 0.25s);
+}
+
+.sn-fig img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+}
+
+@keyframes sn-pop {
+    from { opacity: 0; transform: scale(0.6) rotate(calc(var(--tilt) - 12deg)); }
+    to { opacity: 1; transform: scale(1) rotate(var(--tilt)); }
+}
+
+.sn-fig-allan {
+    --sn-cor: var(--sn-azul);
+    --sn-halo: rgba(168, 200, 240, 0.16);
+}
+
+.sn-fig-jhennyfer {
+    --sn-cor: var(--sn-rosa);
+    --sn-halo: rgba(245, 194, 209, 0.16);
+    --tilt: 5deg;
+}
+
+.sn-fig-g { --fig: 132px; }
+.sn-fig-m { --fig: 104px; }
+.sn-fig-p { --fig: 54px; }
+
+.sn-fig-p {
+    border-width: 2px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* reação leve ao passar o mouse */
+.sn-nota:hover .sn-fig,
+.sn-post:hover .sn-fig,
+.sn-destaque:hover .sn-fig-g,
+.sn-faixa:hover .sn-fig {
+    transform: translateY(-6px) rotate(calc(var(--tilt) * -0.6)) scale(1.07);
+}
+
+/* ---- Nota (par / diagonal) ---- */
+
+.sn-nota {
+    position: relative;
+    min-width: 0;
+    padding: 54px 22px 22px;
+    border-radius: 26px 10px 26px 10px;
+    border: 1px solid var(--sn-borda);
+    background: var(--sn-fundo);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sn-nota:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.sn-nota > .sn-fig {
+    position: absolute;
+    top: -42px;
+}
+
+.sn-nota-allan {
+    --sn-borda: rgba(168, 200, 240, 0.4);
+    --sn-fundo: rgba(168, 200, 240, 0.09);
+    text-align: left;
+    transform: rotate(-1.2deg);
+}
+
+.sn-nota-allan > .sn-fig { left: 16px; }
+
+.sn-nota-jhennyfer {
+    --sn-borda: rgba(245, 194, 209, 0.4);
+    --sn-fundo: rgba(245, 194, 209, 0.09);
+    text-align: right;
+    border-radius: 10px 26px 10px 26px;
+    transform: rotate(1.2deg);
+}
+
+.sn-nota-jhennyfer > .sn-fig { right: 16px; }
+
+.sn-nota-vazia {
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.sn-nota-vazia .sn-fig {
+    filter: saturate(0.75);
+    opacity: 0.85;
+}
+
+.sn-coracao {
+    flex: none;
+    align-self: center;
+    margin: 0 16px;
+    font-size: 1rem;
+    color: var(--sn-rosa);
+    text-shadow: 0 0 12px rgba(245, 194, 209, 0.5);
+}
+
+/* par: lado a lado, a nota dela um pouco mais baixa */
+
+.sn-par {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 46px;
+}
+
+.sn-par .sn-nota {
+    flex: 1 1 0;
+}
+
+.sn-par .sn-nota-jhennyfer { margin-top: 36px; }
+
+.sn-par.sn-inv { flex-direction: row-reverse; }
+.sn-par.sn-inv .sn-nota-jhennyfer { margin-top: 0; }
+.sn-par.sn-inv .sn-nota-allan { margin-top: 36px; }
+
+/* diagonal: uma nota alta, outra baixa, pergunta no canto vazio */
+
+.sn-diag {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 36px;
+    padding-top: 46px;
+}
+
+.sn-diag .sn-nota-allan { grid-column: 1; grid-row: 1; }
+.sn-diag > .sn-q { grid-column: 2; grid-row: 1; align-self: end; margin: 0 0 22px 14px; text-align: left; }
+.sn-diag .sn-nota-jhennyfer { grid-column: 2; grid-row: 2; margin-top: 60px; margin-left: 28px; }
+
+.sn-diag.sn-inv .sn-nota-jhennyfer { grid-column: 1; grid-row: 1; margin: 0; }
+.sn-diag.sn-inv .sn-nota-allan { grid-column: 2; grid-row: 2; margin-top: 60px; margin-left: 28px; }
+
+/* ---- Recado preso no mural (post) ---- */
+
+.sn-post {
+    --sn-cor: var(--color-lilac);
+    position: relative;
+    padding: 36px 24px 16px;
+    border-radius: 6px 16px 8px 14px;
+    background: rgba(240, 235, 255, 0.07);
+    border: 1px solid rgba(201, 167, 245, 0.3);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.3);
+    transform: rotate(var(--r, -1deg));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sn-post:hover {
+    transform: rotate(0deg) translateY(-3px);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.38);
+}
+
+.sn-pino {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f9d5e3, #d97a95);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.55);
+    transform: translateX(-50%);
+}
+
+.sn-post .sn-q {
+    margin: 0 0 12px;
+    text-align: left;
+}
+
+.sn-post-linha {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px dashed rgba(201, 167, 245, 0.25);
+}
+
+.sn-post-linha .sn-resp {
+    min-width: 0;
+    font-size: 1.45rem;
+}
+
+/* recado de "nosso"/"os dois": uma resposta + os dois personagens no rodapé */
+
+.sn-recado > .sn-resp {
+    font-size: 1.6rem;
+}
+
+.sn-recado-rodape {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(201, 167, 245, 0.25);
+}
+
+.sn-recado-rodape .sn-tag {
+    margin: 0;
+}
+
+.sn-recado-figs {
+    display: flex;
+}
+
+.sn-recado-figs .sn-fig + .sn-fig {
+    margin-left: -10px;
+}
+
+/* ---- Destaque: personagem grande, texto menor ---- */
+
+.sn-destaque {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.sn-dest-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.sn-dest-texto .sn-q {
+    text-align: left;
+}
+
+.sn-dest-outro {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(201, 167, 245, 0.25);
+}
+
+/* ---- Faixa horizontal (respostas em comum) ---- */
+
+.sn-faixa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+}
+
+.sn-faixa-centro {
+    min-width: 0;
+    max-width: 460px;
+    text-align: center;
+}
+
+.sn-faixa-centro .sn-q {
+    text-align: center;
+}
+
+.sn-faixa .sn-fig-allan { --tilt: -7deg; }
+.sn-faixa .sn-fig-jhennyfer { --tilt: 7deg; }
+
+/* =========================================================
+   Linguagem visual de cada categoria (sutil, mesma família)
+   ========================================================= */
+
+/* Gostos: mais leve e divertido */
+[data-tema="gostos"] .sn-nota { border-radius: 34px 34px 34px 12px; }
+[data-tema="gostos"] .sn-nota-jhennyfer { border-radius: 34px 34px 12px 34px; }
+[data-tema="gostos"] .sn-fig { border-radius: 42%; }
+
+/* Entretenimento: figurinhas mais "cartucho / pôster" */
+[data-tema="entretenimento"] .sn-fig { border-radius: 14px; }
+[data-tema="entretenimento"] .sn-nota { border-radius: 14px; }
+
+/* Música: encarte / playlist, perguntas numeradas como faixas */
+[data-tema="musica"] .sn-conteudo { counter-reset: faixa; }
+[data-tema="musica"] .sn-q::before {
+    counter-increment: faixa;
+    content: counter(faixa, decimal-leading-zero);
+    margin-right: 0.8em;
+    font-variant-numeric: tabular-nums;
+    color: var(--sn-rosa);
+}
+[data-tema="musica"] .sn-fig { border-radius: 50%; }
+
+/* Personalidade: fichas / anotações */
+[data-tema="personalidade"] .sn-nota,
+[data-tema="personalidade"] .sn-post {
+    border-radius: 4px;
+    border-top: 3px solid var(--sn-cor, var(--color-lilac));
+}
+[data-tema="personalidade"] .sn-nota-jhennyfer { border-radius: 4px; }
+
+/* Só nossas: memórias, figurinhas viram polaroids */
+[data-tema="nossas"] .sn-fig {
+    border-radius: 6px;
+    border-color: rgba(255, 244, 235, 0.92);
+    border-bottom-width: 12px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+}
+[data-tema="nossas"] .sn-fig-p { border-bottom-width: 7px; }
+
+/* Futuro: mais aberto, contornos tracejados, mais respiro */
+[data-tema="futuro"] .sn-conteudo { row-gap: 120px; }
+[data-tema="futuro"] .sn-nota,
+[data-tema="futuro"] .sn-post {
+    background: transparent;
+    border-style: dashed;
+    box-shadow: none;
+}
+
+/* =========================================================
+   Celular: composição própria, não o desktop comprimido
+   ========================================================= */
+
+@media (max-width: 639px) {
+
+    .sn-topo {
+        margin-bottom: 44px;
+    }
+
+    .sn-painel {
+        padding: 0 18px 130px;
+    }
+
+    .sn-menu-fab {
+        right: 16px;
+        bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .sn-secao + .sn-secao {
+        margin-top: 110px;
+    }
+
+    .sn-cat-titulo {
+        margin-bottom: 60px;
+    }
+
+    .sn-conteudo,
+    [data-tema="futuro"] .sn-conteudo {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 84px;
+    }
+
+    /* uma coluna, mas as peças ainda deslocam pros lados */
+    .sn-peca[data-pos][data-w] {
+        grid-column: 1;
+        margin-top: 0;
+    }
+
+    .sn-peca[data-pos="e"][data-w] { margin-right: 6%; }
+    .sn-peca[data-pos="d"][data-w] { margin-left: 6%; }
+
+    .sn-peca > .sn-q {
+        max-width: none;
+    }
+
+    .sn-q {
+        font-size: 1rem;
+        line-height: 1.45;
+    }
+
+    /* par: notas em escada, coração entre elas */
+    .sn-par,
+    .sn-par.sn-inv {
+        flex-direction: column;
+        padding-top: 46px;
+    }
+
+    .sn-par .sn-nota,
+    .sn-par.sn-inv .sn-nota {
+        flex: none;
+        width: 82%;
+        margin-top: 0;
+    }
+
+    .sn-par .sn-nota-jhennyfer {
+        align-self: flex-end;
+        margin-top: 54px;
+    }
+
+    .sn-par .sn-coracao {
+        position: absolute;
+        margin: 0;
+    }
+
+    .sn-par {
+        position: relative;
+    }
+
+    .sn-par .sn-coracao {
+        top: 58%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .sn-par.sn-inv {
+        flex-direction: column-reverse;
+    }
+
+    .sn-par.sn-inv .sn-nota-allan {
+        align-self: flex-end;
+        margin-top: 54px;
+    }
+
+    .sn-par.sn-inv .sn-nota-jhennyfer {
+        align-self: flex-start;
+        margin-top: 0;
+    }
+
+    /* diagonal continua em duas colunas, mais justa */
+    .sn-diag {
+        column-gap: 14px;
+    }
+
+    .sn-diag .sn-nota-jhennyfer,
+    .sn-diag.sn-inv .sn-nota-allan {
+        margin-left: 0;
+        margin-top: 56px;
+    }
+
+    .sn-diag > .sn-q {
+        margin: 0 0 18px 4px;
+    }
+
+    .sn-nota {
+        padding: 52px 16px 18px;
+    }
+
+    .sn-resp,
+    .sn-post-linha .sn-resp {
+        font-size: 1.5rem;
+    }
+
+    .sn-resp-g {
+        font-size: 1.9rem;
+    }
+
+    /* destaque: personagem menor ao lado */
+    .sn-destaque {
+        gap: 20px;
+    }
+
+    .sn-fig-g {
+        --fig: 100px;
+    }
+
+    /* faixa: personagens juntos em cima, texto embaixo */
+    .sn-faixa {
+        flex-wrap: wrap;
+        gap: 4px 0;
+    }
+
+    .sn-faixa .sn-fig {
+        --fig: 88px;
+    }
+
+    .sn-faixa-centro {
+        order: 3;
+        flex-basis: 100%;
+        max-width: none;
+        margin-top: 18px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sn-peca,
+    .sn-fig,
+    .sn-secoes.sn-trocando {
+        animation: none;
+        opacity: 1;
+    }
+
+    .sn-abas-marcador,
+    .sn-drawer,
+    .sn-nota,
+    .sn-post,
+    .sn-fig,
+    .sn-menu-fab {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   AJUSTES DE POSICIONAMENTO
+   Mais equilíbrio entre as peças, espaço que acompanha a altura
+   da tela, título e pergunta mais explícitos.
+   (Bloco só de posição/tamanho; pra desfazer, apague daqui pra baixo.)
+   ========================================================= */
+
+/* ---- Título de seção e pergunta mais explícitos (todas as telas) ---- */
+
+.sn-cat-titulo {
+    font-size: clamp(2.5rem, 1.9rem + 2.6vw, 3.4rem);
+    text-shadow: 0 2px 18px rgba(5, 5, 16, 0.95), 0 0 3px rgba(5, 5, 16, 0.9);
+}
+
+.sn-cat-emoji {
+    font-size: 0.7em;
+}
+
+.sn-q {
+    font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    color: #fff;
+    text-shadow: 0 1px 12px rgba(5, 5, 16, 0.95), 0 0 2px rgba(5, 5, 16, 0.9);
+}
+
+/* pergunta sempre alinhada à borda esquerda da peça (não mais solta pro lado) */
+.sn-peca > .sn-q,
+.sn-peca[data-pos="d"] > .sn-q,
+.sn-peca[data-pos="c"] > .sn-q {
+    max-width: 44ch;
+    margin: 0 0 10px;
+    text-align: left;
+}
+
+/* nada de scroll parando com peça colada no topo */
+.sn-peca {
+    scroll-margin-top: 110px;
+}
+
+/* ---- Desktop ---- */
+
+@media (min-width: 640px) {
+
+    /* mais compacto: as peças se deslocam pouco (1 coluna) em vez de espalhar */
+    .sn-painel {
+        max-width: 980px;
+        padding-bottom: max(140px, 24vh);
+    }
+
+    .sn-secao + .sn-secao {
+        margin-top: clamp(96px, 15vh, 150px);
+    }
+
+    .sn-cat-titulo {
+        margin-bottom: clamp(44px, 7vh, 64px);
+    }
+
+    /* espaço entre grupos acompanha a altura da tela */
+    .sn-conteudo,
+    [data-tema="futuro"] .sn-conteudo {
+        row-gap: clamp(56px, 9vh, 84px);
+    }
+
+    .sn-peca[data-pos="e"] { grid-column: 1 / span 10; }
+    .sn-peca[data-pos="c"] { grid-column: 2 / span 10; }
+    .sn-peca[data-pos="d"] { grid-column: 3 / span 10; }
+
+    /* Doce / Salgado: lado a lado, colados e mais no alto */
+    .sn-peca[data-w="s"][data-pos="e"] { grid-column: 1 / span 6; }
+    .sn-peca[data-w="s"][data-pos="d"] { grid-column: 7 / span 6; margin-top: 22px; }
+
+    /* par (Comida, Fruta): notas alinhadas pelo topo e mais próximas */
+    .sn-par {
+        max-width: 700px;
+    }
+
+    .sn-par .sn-nota-jhennyfer,
+    .sn-par.sn-inv .sn-nota-allan {
+        margin-top: 0;
+    }
+
+    .sn-coracao {
+        margin: 0 12px;
+    }
+
+    /* diagonal (Bebida): card de baixo mais perto da pergunta */
+    .sn-diag {
+        max-width: 700px;
+        column-gap: 24px;
+    }
+
+    .sn-diag > .sn-q {
+        margin: 0 0 14px 6px;
+    }
+
+    .sn-diag .sn-nota-jhennyfer,
+    .sn-diag.sn-inv .sn-nota-allan {
+        margin-top: 52px;
+        margin-left: 0;
+    }
+
+    /* destaque (Fast-Food): título, resposta e personagem no mesmo bloco, alinhados */
+    .sn-destaque {
+        width: fit-content;
+        max-width: 100%;
+        margin-inline: auto;
+        gap: 28px;
+    }
+
+    .sn-dest-texto {
+        flex: 0 1 420px;
+        text-align: left;
+    }
+
+    .sn-dest-texto .sn-resp {
+        text-align: left;
+    }
+
+}
+
+/* ---- Telas baixas: personagens e espaços menores pra caber ---- */
+
+@media (min-width: 640px) and (max-height: 760px) {
+
+    .sn-fig-g { --fig: 108px; }
+
+    .sn-conteudo,
+    [data-tema="futuro"] .sn-conteudo {
+        row-gap: 52px;
+    }
+
+    .sn-topo {
+        margin-bottom: 40px;
+    }
+
+}
+
+/* ---- Celular: garante espaço no fim pra última peça não ficar cortada ---- */
+
+@media (max-width: 639px) {
+
+    .sn-painel {
+        padding-bottom: max(130px, 22vh);
+    }
+
+    .sn-conteudo,
+    [data-tema="futuro"] .sn-conteudo {
+        row-gap: clamp(64px, 10vh, 84px);
+    }
+
+}
+
+/* =========================================================
+   TESTE: ícone ao lado do título + moldura de balão (imagem)
+   ========================================================= */
+
+/* Ícone ao lado do título da categoria (ex.: icon_comida.png) */
+
+.sn-cat-icone {
+    flex: none;
+    align-self: center;
+    width: clamp(56px, 6vw, 76px);
+    height: auto;
+    margin: -10px 0 -10px 2px;
+    transform: rotate(5deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sn-cat-titulo:hover .sn-cat-icone {
+    transform: rotate(-4deg) scale(1.08);
+}
+
+/* Moldura de balão: a imagem é o card. O personagem entra no quadro
+   e a resposta é escrita por cima, no papel.
+
+   Se o personagem ou o texto não caírem certinho no desenho, ajuste
+   só estas variáveis (valores em % da largura/altura da imagem):
+   --slot-*  = o quadro onde entra o personagem
+   --txt-*   = a área do papel onde fica escrita a resposta
+   --txt-cor = cor da letra (escura, pra ler no papel claro)
+   Pra enxergar as áreas enquanto ajusta, descomente as 2 linhas de outline. */
+
+.sn-nota-balao {
+    --slot-cx: 22.8%;
+    --slot-cy: 45%;
+    --slot-w: 30%;
+    --slot-h: 49%;
+    --slot-rot: -12deg;
+    --txt-x: 44%;
+    --txt-y: 22%;
+    --txt-w: 49%;
+    --txt-h: 56%;
+    --txt-rot: -3deg;
+    --txt-cor: #2f1f42;
+    container-type: inline-size;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    text-align: center;
+    transform: none;
+}
+
+.sn-nota-balao:hover {
+    box-shadow: none;
+}
+
+.sn-balao-fundo {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.4));
+}
+
+.sn-balao-foto {
+    position: absolute;
+    z-index: 2;
+    left: var(--slot-cx);
+    top: var(--slot-cy);
+    width: var(--slot-w);
+    height: var(--slot-h);
+    overflow: hidden;
+    border-radius: 3px;
+    transform: translate(-50%, -50%) rotate(var(--slot-rot));
+    /* outline: 2px dashed lime; */
+}
+
+.sn-balao-foto img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sn-nota-balao:hover .sn-balao-foto img {
+    transform: scale(1.07);
+}
+
+/* resposta por cima da imagem, no papel */
+.sn-balao-texto {
+    position: absolute;
+    z-index: 3;
+    left: var(--txt-x);
+    top: var(--txt-y);
+    width: var(--txt-w);
+    height: var(--txt-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    font-size: clamp(0.8rem, calc(var(--tam, 8) * 1cqw), 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.005em;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+    line-height: 1.02;
+    text-wrap: balance;
+    color: var(--txt-cor);
+    transform: rotate(var(--txt-rot));
+    /* outline: 2px dashed hotpink; */
+}
+
+.sn-nota-balao .sn-resp-vazia {
+    color: var(--txt-cor);
+    opacity: 0.45;
+}
+
+/* par com moldura: um pouco mais largo pra caber a imagem */
+@media (min-width: 640px) {
+
+    .sn-par:has(.sn-nota-balao) {
+        max-width: 840px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sn-cat-icone,
+    .sn-balao-foto img {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   ORGANIZAÇÃO: coluna única, uma pergunta embaixo da outra
+   (sem zigue-zague), com espaçamento igual entre todas.
+   Título e perguntas compartilham a mesma borda esquerda.
+   ========================================================= */
+
+.sn-secao {
+    max-width: 780px;
+    margin-inline: auto;
+}
+
+.sn-conteudo,
+[data-tema="futuro"] .sn-conteudo {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(64px, 10vh, 96px);
+}
+
+.sn-peca[data-pos][data-w] {
+    grid-column: 1;
+    margin: 0;
+}
+
+/* título da categoria: ícone + texto, centralizados na mesma linha */
+.sn-cat-titulo {
+    align-items: center;
+}
+
+.sn-cat-icone {
+    margin: -10px 0;
+}
+
+/* par: notas alinhadas, ocupando a coluna toda */
+.sn-par,
+.sn-par:has(.sn-nota-balao) {
+    max-width: none;
+}
+
+/* diagonal → pergunta em cima, as duas notas alinhadas embaixo */
+.sn-diag {
+    max-width: none;
+    padding-top: 0;
+    column-gap: 24px;
+}
+
+.sn-diag > .sn-q {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    align-self: auto;
+    margin: 0 0 56px;
+}
+
+.sn-diag .sn-nota-allan,
+.sn-diag.sn-inv .sn-nota-jhennyfer {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+}
+
+.sn-diag .sn-nota-jhennyfer,
+.sn-diag.sn-inv .sn-nota-allan {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+}
+
+/* recados e destaque alinhados à esquerda, na mesma borda da pergunta */
+.sn-post {
+    max-width: 640px;
+}
+
+.sn-destaque {
+    margin-inline: 0;
+}
+
+/* =========================================================
+   BALÕES EM TODOS OS LAYOUTS
+   Allan  → icon_balao.png
+   Jhennyfer → icon_balao_1.png
+   Cada nota é a moldura (imagem) com o personagem no quadro e a
+   resposta no papel. Os layouts só mudam o tamanho e o arranjo.
+   ========================================================= */
+
+/* O balão da Jhennyfer (icon_balao_1) é o espelho do balão do Allan:
+   quadro à direita, diagonal invertida e papel à esquerda.
+   Se precisar de ajuste fino, mexa só aqui. */
+.sn-nota-balao.sn-nota-jhennyfer {
+    --slot-cx: 77.2%;
+    --slot-cy: 45%;
+    --slot-w: 30%;
+    --slot-h: 49%;
+    --slot-rot: 12deg;
+    --txt-x: 7%;
+    --txt-y: 22%;
+    --txt-w: 49%;
+    --txt-h: 56%;
+    --txt-rot: 3deg;
+}
+
+/* sem personagem "saltando" pra fora, então não precisa de folga em cima */
+.sn-par,
+.sn-par.sn-inv {
+    padding-top: 0;
+}
+
+.sn-par .sn-nota {
+    flex: 1 1 0;
+}
+
+.sn-par.sn-compacto {
+    max-width: 640px;
+}
+
+.sn-tag {
+    text-align: center;
+}
+
+/* diagonal: pergunta em cima; uma nota à esquerda, a outra à direita
+   e um pouco mais baixa, encostando de leve */
+
+.sn-diag,
+.sn-diag.sn-inv {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+}
+
+.sn-diag > .sn-q {
+    order: 0;
+    margin: 0 0 16px;
+}
+
+.sn-diag .sn-nota {
+    width: 62%;
+    flex: none;
+}
+
+.sn-diag .sn-nota-allan {
+    order: 1;
+    align-self: flex-start;
+    margin-top: 0;
+}
+
+.sn-diag .sn-nota-jhennyfer {
+    order: 2;
+    align-self: flex-end;
+    margin-top: -20px;
+    z-index: 2;
+}
+
+.sn-diag.sn-inv .sn-nota-jhennyfer {
+    order: 1;
+    align-self: flex-start;
+    margin-top: 0;
+    z-index: auto;
+}
+
+.sn-diag.sn-inv .sn-nota-allan {
+    order: 2;
+    align-self: flex-end;
+    margin-top: -20px;
+    z-index: 2;
+}
+
+/* destaque: uma nota grande e uma menor ao lado (texto menor na pequena) */
+
+.sn-destaque,
+.sn-destaque.sn-inv {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3%;
+    width: 100%;
+    max-width: none;
+}
+
+.sn-destaque.sn-inv {
+    flex-direction: row-reverse;
+}
+
+.sn-nota-grande {
+    flex: 0 0 60%;
+}
+
+.sn-nota-pequena {
+    flex: 0 0 37%;
+}
+
+/* ---- Celular: composição própria ---- */
+
+@media (max-width: 639px) {
+
+    /* par: em escada, cada nota quase na largura toda, sem coração no meio */
+    .sn-par .sn-nota,
+    .sn-par.sn-inv .sn-nota {
+        width: 88%;
+    }
+
+    .sn-par .sn-nota-jhennyfer {
+        margin-top: 14px;
+    }
+
+    .sn-par.sn-inv .sn-nota-allan {
+        margin-top: 14px;
+    }
+
+    .sn-par .sn-coracao {
+        display: none;
+    }
+
+    .sn-par.sn-compacto {
+        max-width: none;
+    }
+
+    /* diagonal: notas mais largas pra o texto caber no papel */
+    .sn-diag .sn-nota {
+        width: 80%;
+    }
+
+    /* destaque: grande em cima, pequena embaixo à direita */
+    .sn-destaque,
+    .sn-destaque.sn-inv {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .sn-destaque.sn-inv {
+        flex-direction: column-reverse;
+    }
+
+    .sn-nota-grande {
+        flex: none;
+        width: 100%;
+    }
+
+    .sn-nota-pequena {
+        flex: none;
+        width: 72%;
+        align-self: flex-end;
+    }
+
+}
+
+/* =========================================================
+   REFINO: pergunta em fita, cards menores, colagem feita à mão,
+   coração delicado. Mais fundo aparecendo entre as peças.
+   ========================================================= */
+
+/* ---- Pergunta: centralizada, em destaque, sobre a fita (icon_perguntas) ---- */
+
+.sn-peca[data-pos] > .sn-q {
+    display: block;
+    width: fit-content;
+    max-width: min(100%, 36ch);
+    margin: 0 auto 34px;
+    padding: 13px 44px 15px;
+    text-align: center;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(35, 18, 70, 0.9), 0 0 2px rgba(35, 18, 70, 0.8);
+    background: var(--fita) center / 100% 100% no-repeat;
+    transform: rotate(var(--qrot, -1deg));
+}
+
+/* ---- Coluna mais estreita e cards menores: sobra fundo ---- */
+
+.sn-secao {
+    max-width: 720px;
+}
+
+.sn-conteudo,
+[data-tema="futuro"] .sn-conteudo {
+    row-gap: clamp(72px, 12vh, 108px);
+}
+
+.sn-par,
+.sn-par:has(.sn-nota-balao) {
+    max-width: 560px;
+    margin-inline: auto;
+    transform: translateX(var(--px, 0px));
+}
+
+/* ---- Coração: pequeno e delicado ---- */
+
+.sn-coracao {
+    margin: 0 6px;
+    font-size: 0.68rem;
+    opacity: 0.75;
+    text-shadow: none;
+}
+
+/* ---- Colagem à mão: cada card com uma leve rotação e altura própria.
+   Os valores se repetem em ciclos de 4 perguntas. ---- */
+
+.sn-nota-balao {
+    transform: translateY(var(--dy, 0px)) rotate(var(--rot, 0deg));
+}
+
+.sn-nota-balao.sn-nota-allan {
+    --dy: var(--a-dy, 0px);
+    --rot: var(--a-rot, 0deg);
+}
+
+.sn-nota-balao.sn-nota-jhennyfer {
+    --dy: var(--j-dy, 0px);
+    --rot: var(--j-rot, 0deg);
+}
+
+.sn-nota-balao:hover {
+    transform: translateY(calc(var(--dy, 0px) - 4px)) rotate(0deg) scale(1.03);
+}
+
+.sn-conteudo > .sn-peca:nth-child(4n+1) {
+    --a-rot: -2deg;  --a-dy: 0px;
+    --j-rot: 1.6deg; --j-dy: 14px;
+    --px: -8px;      --qrot: -1.5deg;
+}
+
+.sn-conteudo > .sn-peca:nth-child(4n+2) {
+    --a-rot: 1.4deg; --a-dy: 10px;
+    --j-rot: -2deg;  --j-dy: -2px;
+    --px: 10px;      --qrot: 1deg;
+}
+
+.sn-conteudo > .sn-peca:nth-child(4n+3) {
+    --a-rot: -1deg;  --a-dy: 6px;
+    --j-rot: 2.4deg; --j-dy: 0px;
+    --px: -4px;      --qrot: -0.6deg;
+}
+
+.sn-conteudo > .sn-peca:nth-child(4n+4) {
+    --a-rot: 2deg;   --a-dy: 0px;
+    --j-rot: -1.2deg; --j-dy: 16px;
+    --px: 6px;       --qrot: 1.6deg;
+}
+
+/* ---- Celular ---- */
+
+@media (max-width: 639px) {
+
+    .sn-par .sn-nota,
+    .sn-par.sn-inv .sn-nota {
+        width: 78%;
+    }
+
+    .sn-peca[data-pos] > .sn-q {
+        padding: 12px 34px 14px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sn-nota-balao,
+    .sn-par {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   BALÃO DUPLO (icon_balao_2) — respostas em comum ("nosso" / "os dois")
+   Um balão só: Allan no polaroid da esquerda, Jhennyfer no da direita,
+   resposta no papel do meio. Sem coração e sem legenda embaixo.
+
+   Se o personagem ou o texto não caírem certinho no desenho, ajuste
+   só estas variáveis (% da largura/altura da imagem):
+   --slot-w / --slot-h / --slot-cy = tamanho e altura dos dois quadros
+   .sn-foto-esq / .sn-foto-dir     = posição (--slot-cx) e diagonal (--slot-rot)
+   --txt-*                         = área do papel onde fica a resposta
+   ========================================================= */
+
+.sn-nota-balao.sn-nota-dupla {
+    --slot-w: 27%;
+    --slot-h: 49%;
+    --slot-cy: 45%;
+    --txt-x: 33%;
+    --txt-y: 20%;
+    --txt-w: 34%;
+    --txt-h: 60%;
+    --txt-rot: 0deg;
+    --dy: 0px;
+    --rot: calc(var(--j-rot, 0deg) * -0.7);
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+}
+
+.sn-foto-esq {
+    --slot-cx: 20.7%;
+    --slot-rot: -12deg;
+}
+
+.sn-foto-dir {
+    --slot-cx: 79.3%;
+    --slot-rot: 12deg;
+}
+
+@media (max-width: 639px) {
+
+    .sn-nota-balao.sn-nota-dupla {
+        max-width: 94%;
+    }
+
+}
+
+/* =========================================================
+   AJUSTE: balões um pouco maiores, balão duplo no mesmo porte,
+   e texto que nunca quebra palavra nem é cortado
+   ========================================================= */
+
+/* Texto do papel: sem cortar (overflow visível), sem quebrar palavra no meio.
+   O JS diminui a letra até caber; a quebra só entra como último recurso. */
+.sn-balao-texto {
+    overflow: visible;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: manual;
+}
+
+/* área do papel um pouco mais larga (Allan à direita do polaroid, Jhennyfer espelhado) */
+.sn-nota-balao {
+    --txt-x: 42%;
+    --txt-w: 52%;
+}
+
+.sn-nota-balao.sn-nota-jhennyfer {
+    --txt-x: 6%;
+    --txt-w: 52%;
+}
+
+/* balões um pouco maiores (antes 560px) */
+.sn-par,
+.sn-par:has(.sn-nota-balao) {
+    max-width: 620px;
+}
+
+/* balão duplo: mesmo porte visual dos outros (polaroids do mesmo tamanho) */
+.sn-nota-balao.sn-nota-dupla {
+    --txt-x: 32%;
+    --txt-w: 36%;
+    max-width: 420px;
+}
+
+@media (max-width: 639px) {
+
+    .sn-par .sn-nota,
+    .sn-par.sn-inv .sn-nota {
+        width: 84%;
+    }
+
+    .sn-nota-balao.sn-nota-dupla {
+        max-width: 92%;
+    }
+
+}
+
+
+/* =========================================================
+   FONTE DAS RESPOSTAS + ESPAÇO DO TEXTO NO BALÃO DUPLO
+   ========================================================= */
+
+/* EB Garamond: mesmo ar elegante da Cormorant, mas com letra mais "cheia"
+   (x-height maior), então lê bem mesmo em tamanho pequeno no papel.
+   Pra voltar à Cormorant: troque por var(--sn-serif) na linha abaixo. */
+.sn-balao-texto {
+    font-family: 'EB Garamond', var(--sn-serif);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.08;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* No balão duplo, só o trecho de papel que aparece entre os dois polaroids
+   serve pra escrever (~28% da largura). O texto ficava por baixo das molduras. */
+.sn-nota-balao.sn-nota-dupla {
+    --txt-x: 36.5%;
+    --txt-y: 20%;
+    --txt-w: 27%;
+    --txt-h: 60%;
+}

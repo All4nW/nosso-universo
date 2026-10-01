@@ -1,0 +1,89 @@
+<div class="page-header">
+    <h2 class="page-header-titulo">Sobre Nós</h2>
+    <p class="page-header-subtitulo">Gostos e preferências seus e dela, que aparecem na aba "Sobre Nós" da Timeline.</p>
+</div>
+
+<div class="timeline-admin-topo">
+    <span id="sn-aviso" class="settings-card-descricao" style="display:none; margin-right:auto;">● Alterações ainda não sincronizadas</span>
+    <button type="button" id="sn-sincronizar" class="settings-botao settings-botao-secundario">🔄 Sincronizar com o site</button>
+    <button type="button" id="sn-nova-categoria" class="settings-botao settings-botao-primario">＋ Nova categoria</button>
+</div>
+
+<!-- Editor (serve para categoria e para item) -->
+<section id="sn-editor" class="settings-card timeline-admin-formulario" style="display:none;">
+    <div class="settings-card-header">
+        <span class="settings-card-icone">💗</span>
+        <div>
+            <h3 id="sn-editor-titulo" class="settings-card-titulo"></h3>
+        </div>
+    </div>
+
+    <div class="settings-card-corpo">
+
+        <div id="sn-campos-categoria">
+            <div class="settings-field">
+                <label class="settings-label">Emoji</label>
+                <input type="text" id="sn-cat-emoji" class="settings-input" maxlength="8" placeholder="🍕">
+            </div>
+            <div class="settings-field">
+                <label class="settings-label">Nome da categoria</label>
+                <input type="text" id="sn-cat-titulo" class="settings-input" placeholder="Ex: Comidas">
+            </div>
+        </div>
+
+        <div id="sn-campos-item" style="display:none;">
+            <div class="settings-field">
+                <label class="settings-label">Tipo</label>
+                <select id="sn-item-tipo" class="settings-input">
+                    <option value="duo">Allan e Jhennyfer (cada um com a sua resposta)</option>
+                    <option value="juntos">Nosso (uma resposta só)</option>
+                </select>
+            </div>
+
+            <div class="settings-field">
+                <label class="settings-label">Emoji (opcional)</label>
+                <input type="text" id="sn-item-emoji" class="settings-input" maxlength="8" placeholder="🍔">
+            </div>
+
+            <div class="settings-field">
+                <label class="settings-label">Título do item</label>
+                <input type="text" id="sn-item-rotulo" class="settings-input" placeholder="Ex: Comida preferida">
+            </div>
+
+            <div id="sn-campo-duo">
+                <div class="settings-field">
+                    <label class="settings-label">Allan</label>
+                    <input type="text" id="sn-item-eu" class="settings-input" placeholder="Ex: Hambúrguer">
+                </div>
+                <div class="settings-field">
+                    <label class="settings-label">Jhennyfer</label>
+                    <input type="text" id="sn-item-ela" class="settings-input" placeholder="Ex: Pizza">
+                </div>
+            </div>
+
+            <div id="sn-campo-juntos" style="display:none;">
+                <div class="settings-field">
+                    <label class="settings-label">Resposta</label>
+                    <input type="text" id="sn-item-texto" class="settings-input" placeholder="Ex: Minecraft">
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-acoes-rodape">
+            <button type="button" id="sn-cancelar" class="settings-botao settings-botao-secundario">Cancelar</button>
+            <button type="button" id="sn-salvar" class="settings-botao settings-botao-primario">Salvar</button>
+        </div>
+
+    </div>
+</section>
+
+<div id="sn-lista">
+    <div class="timeline-admin-vazio">Carregando...</div>
+</div>
+
+<style>
+    .settings-input option {
+        color: #1a1a2e;
+        background-color: #ffffff;
+    }
+</style>

@@ -1,0 +1,2647 @@
+/* ===== Link fixo para voltar ao hub ===== */
+
+.home-link {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: var(--spacing-lg);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    font-size: 1.2rem;
+    transition: var(--transition-smooth);
+}
+
+.home-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* ===== Hub: cards em grade, com toque "espalhado" ===== */
+
+.view[data-view="hub"] {
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.hub-container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 1150px;
+    width: 100%;
+    padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.hub-card {
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+}
+
+.view-ativa .hub-card {
+    animation: entrada-card 0.7s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.hub-card-float {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 195px;
+
+    transform: rotate(var(--rot, 0deg));
+    transition: transform 0.4s ease;
+
+    animation: flutuar var(--float-duration, 6s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+}
+
+.hub-card:hover .hub-card-float {
+    animation-play-state: paused;
+    transform: rotate(0deg) scale(1.08);
+}
+
+/* ===== Pilha de fotos (stack) dentro de cada card ===== */
+
+.hub-card-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin-bottom: var(--spacing-sm);
+}
+
+.stack-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.stack-layer-3 {
+    background: linear-gradient(135deg, var(--color-blue-night), var(--color-purple));
+    transform: rotate(-8deg);
+    z-index: 1;
+}
+
+.stack-layer-2 {
+    background: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+    transform: rotate(6deg);
+    z-index: 2;
+}
+
+.stack-layer-1 {
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--color-purple), var(--color-blue-night));
+    transform: rotate(0deg);
+    z-index: 3;
+}
+
+.stack-layer-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.hub-card:hover .stack-layer-3 {
+    transform: rotate(-16deg) translate(-16px, 8px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.hub-card:hover .stack-layer-2 {
+    transform: rotate(12deg) translate(16px, 8px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.hub-card:hover .stack-layer-1 {
+    transform: rotate(0deg) translateY(-6px) scale(1.03);
+}
+
+/* ===== Título e descrição do card ===== */
+
+/* ===== Título (sempre visível) ===== */
+
+.hub-card-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    margin-top: var(--spacing-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hub-card-title::before,
+.hub-card-title::after {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 167, 245, 0.5), transparent);
+}
+
+/* ===== Descrição (overlay sobre a foto, só no hover) ===== */
+
+.hub-card-desc {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-sm);
+
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--color-text-light);
+
+    background: rgba(5, 5, 16, 0.75);
+    border-radius: 10px;
+
+    opacity: 0;
+    transition: var(--transition-smooth);
+}
+
+.hub-card:hover .hub-card-desc {
+    opacity: 1;
+}
+
+/* ===== Animações ===== */
+
+@keyframes entrada-card {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes flutuar {
+    0%, 100% {
+        transform: rotate(var(--rot, 0deg)) translateY(0);
+    }
+    50% {
+        transform: rotate(var(--rot, 0deg)) translateY(-10px);
+    }
+}
+.hub-card.hub-card-selecionado {
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    transform: scale(1.2);
+    opacity: 0;
+}
+.sound-toggle {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: calc(var(--spacing-lg) + 56px);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+}
+
+.sound-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+.sound-toggle-glow {
+    animation: glow-pulse 1s ease-in-out 3;
+}
+
+@keyframes glow-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(201, 167, 245, 0);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(201, 167, 245, 0.8);
+    }
+}
+.click-heart {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    color: var(--color-pink);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 9998;
+
+    animation: click-heart-rise 0.9s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes click-heart-rise {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1);
+    }
+}
+
+.click-glow {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 167, 245, 0.6), transparent 70%);
+    pointer-events: none;
+    z-index: 9997;
+
+    animation: click-glow-expand 0.6s ease-out forwards;
+}
+
+@keyframes click-glow-expand {
+    0% {
+        width: 10px;
+        height: 10px;
+        opacity: 0.9;
+    }
+    100% {
+        width: 140px;
+        height: 140px;
+        opacity: 0;
+    }
+}
+/* ===== Título de seção (reutilizável) ===== */
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+/* ===== Timeline ===== */
+
+.view[data-view="timeline"] {
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.timeline-container {
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--color-lilac), transparent);
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    position: relative;
+    width: calc(50% - 40px);
+    margin-bottom: var(--spacing-xl);
+    cursor: pointer;
+}
+
+.timeline-item-esquerda {
+    margin-right: auto;
+}
+
+.timeline-item-direita {
+    margin-left: auto;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-lilac);
+    box-shadow: 0 0 10px rgba(201, 167, 245, 0.6);
+}
+
+.timeline-item-esquerda .timeline-marker {
+    right: -34px;
+}
+
+.timeline-item-direita .timeline-marker {
+    left: -34px;
+}
+
+.timeline-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(201, 167, 245, 0.2);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    transition: var(--transition-smooth);
+}
+
+.timeline-item:hover .timeline-card {
+    border-color: rgba(201, 167, 245, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-card-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.timeline-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.timeline-card-data {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-lilac);
+}
+
+.timeline-card-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    margin: 4px 0;
+}
+
+.timeline-card-resumo {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+/* =========================================================
+   ANIMAÇÃO DE ENTRADA — cards "caem" de cima pra baixo ao
+   entrar na Timeline, um de cada vez (efeito escalonado via
+   --delay, definido inline pelo JS), com uma estrelinha
+   brilhando ao lado do marcador no momento em que o card surge.
+   ========================================================= */
+
+@keyframes entrada-timeline-item {
+    0% {
+        opacity: 0;
+        transform: translateY(-46px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-item-entrando {
+    animation: entrada-timeline-item 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.timeline-entrada-estrela {
+    position: absolute;
+    top: -8px;
+    font-size: 0.85rem;
+    opacity: 0;
+    pointer-events: none;
+    color: var(--color-lilac);
+    z-index: 3;
+}
+
+.timeline-item-esquerda .timeline-entrada-estrela {
+    right: -32px;
+}
+
+.timeline-item-direita .timeline-entrada-estrela {
+    left: -32px;
+}
+
+.timeline-item-entrando .timeline-entrada-estrela {
+    animation: brilho-estrela-entrada 0.9s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes brilho-estrela-entrada {
+    0% {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.4) rotate(-25deg);
+    }
+    45% {
+        opacity: 1;
+        transform: translateY(0) scale(1.3) rotate(12deg);
+    }
+    75% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 640px) {
+
+    .timeline-item-esquerda .timeline-entrada-estrela,
+    .timeline-item-direita .timeline-entrada-estrela {
+        left: -30px;
+        right: auto;
+    }
+
+}
+
+@media (max-width: 500px) {
+    .hub-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .timeline-container {
+        padding: 0 16px;
+    }
+
+    .timeline-container::before {
+        left: 22px;
+    }
+
+    /* Em vez de dividir em metades (que ficava espremido),
+       os cards ganham quase a largura toda, e o zigue-zague vira
+       um leve deslocamento alternado — mais folga pra ler o texto,
+       mas ainda dá aquele ritmo visual esquerda/direita. */
+
+    .timeline-item {
+        width: calc(100% - 54px);
+        margin-right: 0 !important;
+    }
+
+    .timeline-item-esquerda {
+        margin-left: 54px;
+    }
+
+    .timeline-item-direita {
+        margin-left: 74px;
+    }
+
+    .timeline-item-esquerda .timeline-marker,
+    .timeline-item-direita .timeline-marker {
+        left: -32px;
+        right: auto;
+        top: 6px;
+    }
+
+    .timeline-marker {
+        width: 12px;
+        height: 12px;
+    }
+
+    .timeline-card {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .timeline-card-titulo {
+        font-size: 1rem;
+    }
+
+    .timeline-card-resumo {
+        font-size: 0.82rem;
+    }
+
+    .timeline-badge-futuro,
+    .timeline-badge-sugestao,
+    .timeline-contagem {
+        font-size: 0.62rem;
+        padding: 3px 9px;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .timeline-container {
+        padding: 0 10px;
+    }
+
+    .timeline-item {
+        width: calc(100% - 46px);
+    }
+
+    .timeline-item-esquerda {
+        margin-left: 46px;
+    }
+
+    .timeline-item-direita {
+        margin-left: 60px;
+    }
+
+    .timeline-item-esquerda .timeline-marker,
+    .timeline-item-direita .timeline-marker {
+        left: -28px;
+    }
+
+}
+
+/* ===== Modal reutilizável ===== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 16, 0.85);
+    backdrop-filter: blur(4px);
+    padding: var(--spacing-lg);
+
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.modal-overlay.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    max-height: 85dvh; /* mais confiável no mobile; navegadores sem suporte ignoram e usam a linha de cima */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    background: var(--color-bg-darker);
+    border: 1px solid rgba(201, 167, 245, 0.3);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+}
+
+body.modal-aberto {
+    overflow: hidden;
+}
+
+.modal-fechar {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-light);
+    font-size: 1rem;
+    transition: var(--transition-smooth);
+}
+
+.modal-fechar:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.modal-fotos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-fotos img {
+    width: 100%;
+    max-height: 55vh;
+    border-radius: 10px;
+    /* contain em vez de cover: mostra a imagem inteira, sem cortar */
+    object-fit: contain;
+    /* preenche o espaço "sobrando" (letterbox) com um fundo escuro,
+       pra não ficar branco quando a imagem não preenche o quadro */
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.modal-data {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-lilac);
+}
+
+.modal-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-text-light);
+    margin: var(--spacing-sm) 0;
+}
+
+.modal-descricao {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    white-space: pre-line;
+}
+
+/* ===== Galeria ===== */
+
+.view[data-view="galeria"] {
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: 90px;
+    padding-bottom: 100px;
+}
+.galeria-pastas-wrapper {
+    position: relative;
+}
+
+.galeria-pastas-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    max-width: 1000px;
+    margin: 0 auto var(--spacing-lg);
+}
+
+.galeria-pasta-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 190px;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    cursor: pointer;
+
+    background: linear-gradient(155deg, #fcfcfc, #ede4d3);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 40px 70px rgba(0, 0, 0, 0.3);
+
+    transform: rotate(var(--rot, 0deg));
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Camada extra atrás, simulando outra "folha" dentro da pasta —
+   dá profundidade real ao card, em vez de ficar liso */
+.galeria-pasta-card::before {
+    content: '';
+    position: absolute;
+    inset: 6px 6px -6px 6px;
+    z-index: -1;
+    border-radius: 8px;
+    background: rgba(232, 227, 218, 0.9);
+    transform: rotate(3deg);
+}
+
+.galeria-pasta-card:hover {
+    transform: rotate(0deg) scale(1.06);
+    box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.4),
+        0 24px 50px rgba(0, 0, 0, 0.6),
+        0 50px 80px rgba(0, 0, 0, 0.35);
+    z-index: 2;
+}
+
+.galeria-pasta-capa {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+    background: #000;
+}
+
+.galeria-pasta-capa img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galeria-pasta-nome {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #111111;
+    transition: font-size 0.4s ease;
+}
+
+.galeria-pasta-quantidade {
+    font-size: 0.68rem;
+    color: #423a2e;
+    margin-top: 2px;
+    transition: opacity 0.3s ease;
+}
+
+/* Estado "recolhido": pastas menores, sem a contagem de fotos */
+.galeria-pastas-recolhida .galeria-pasta-card {
+    width: 110px;
+    padding: var(--spacing-sm);
+}
+.galeria-pastas-recolhida .galeria-pasta-card {
+    transform: rotate(0deg);
+}
+
+.galeria-pastas-recolhida .galeria-pasta-nome {
+    font-size: 0.75rem;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-quantidade {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+}
+
+/* ===== Linha divisória ===== */
+
+.galeria-divisor {
+    border: none;
+    height: 1px;
+    max-width: 900px;
+    margin: var(--spacing-lg) auto;
+    background: linear-gradient(90deg, transparent, rgba(201, 167, 245, 0.4), transparent);
+}
+
+/* ===== Área de fotos de uma pasta ===== */
+
+.galeria-fotos-container.oculto {
+    display: none;
+}
+
+.galeria-fotos-entrando {
+    animation: galeria-fotos-fade 0.6s ease;
+}
+
+@keyframes galeria-fotos-fade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.galeria-fotos-container {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.galeria-pasta-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+@media (max-width: 600px) {
+    .galeria-fotos-lista {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+}
+
+.galeria-fotos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.galeria-foto-item {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+
+    opacity: 0;
+    animation: entrada-card 0.6s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.galeria-foto-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(201, 167, 245, 0.15);
+    transition: var(--transition-smooth);
+}
+
+.galeria-foto-item:hover .galeria-foto-thumb {
+    border-color: rgba(201, 167, 245, 0.5);
+    transform: scale(1.02);
+}
+
+.galeria-foto-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galeria-foto-data {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+    text-align: center;
+}
+
+.galeria-vazio {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+    grid-column: 1 / -1;
+}
+
+/* =========================================================
+   PERFIS — layout especial dentro da pasta "Perfil" da Galeria
+   Título de cada plataforma separado (estilo Cartas: itálico +
+   linha decorativa dos dois lados), e logo abaixo uma faixa
+   compacta com a(s) foto(s) — a sua e, quando houver, a dela
+   ao lado, com uma linha fina separando as duas.
+   ========================================================= */
+
+.galeria-perfis-vista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    grid-template-columns: none;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ---- Título "Nossos Perfis" (cabeçalho geral da pasta) ---- */
+
+.perfil-titulo-icone {
+    display: block;
+    width: 34px;
+    height: auto;
+    margin: 0 auto 6px;
+    animation: coracao-pulsar 2.4s ease-in-out infinite;
+}
+
+.perfil-subtitulo {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+    margin-top: 6px;
+}
+
+/* ---- Título de cada plataforma (estilo Cartas) ---- */
+
+.perfil-secao {
+    opacity: 0;
+    animation: entrada-card 0.7s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.perfil-secao-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.perfil-secao-cabecalho::before,
+.perfil-secao-cabecalho::after {
+    content: '';
+    flex: 1;
+    max-width: 70px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245, 194, 209, 0.4), transparent);
+}
+
+.perfil-secao-emoji {
+    font-size: 1rem;
+}
+
+.perfil-secao-titulo {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+/* ---- Fotos empilhadas na diagonal — sem caixa de fundo, a
+   própria foto é o layout, com moldura tipo polaroid e sombra ---- */
+
+.perfil-secao-midia-wrapper {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+}
+
+.perfil-secao-midia {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 24px 0 34px;
+}
+
+/* TikTok: prints verticais precisam de mais altura pra não
+   ficarem espremidos — só essa plataforma fica maior. */
+
+.perfil-secao-midia-tiktok {
+    min-height: 0;
+    padding: 24px 0 34px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    max-width: 260px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto img {
+    max-height: 430px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
+    margin-left: -105px;
+}
+
+/* Sombra de contato no "chão", embaixo da pilha de fotos —
+   um borrão escuro elíptico que dá a sensação de profundidade,
+   como se as fotos estivessem apoiadas numa mesa. */
+
+.perfil-secao-midia::before {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 24px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
+    filter: blur(4px);
+    z-index: 0;
+}
+
+.perfil-secao-foto {
+    position: relative;
+    width: auto;
+    max-width: 200px;
+    background: linear-gradient(155deg, #ffffff, #f2ece1);
+    padding: 8px 8px 22px;
+    border-radius: 6px;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 40px 70px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Toque de cor por plataforma, bem sutil, na própria moldura */
+
+.perfil-secao-midia-discord .perfil-secao-foto {
+    background: linear-gradient(155deg, #f5f3ff, #e4e0f9);
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    background: linear-gradient(155deg, #fff2f6, #fbdde8);
+}
+
+.perfil-secao-midia-roblox .perfil-secao-foto {
+    background: linear-gradient(155deg, #f7ecfd, #e8d6f8);
+}
+
+.perfil-secao-midia-genshin .perfil-secao-foto {
+    background: linear-gradient(155deg, #f2edff, #e0d3fb);
+}
+
+.perfil-secao-foto > img:not(.perfil-decoracao-clipe-coracao) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 2px;
+    background: #000;
+}
+
+/* TikTok: fotos verticais ganham mais espaço pra não ficarem
+   minúsculas — só nessa plataforma. */
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    max-width: 240px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto img {
+    max-height: 380px;
+}
+
+/* Uma foto sozinha: tomba levemente pra um lado só */
+
+.perfil-secao-foto:only-of-type {
+    transform: rotate(-4deg);
+}
+
+/* Duas fotos: a primeira fica atrás, tombada pra esquerda; a
+   segunda vem por cima, tombada pra direita e puxada por cima
+   da primeira — como duas fotos empilhadas na mesa. */
+
+.perfil-secao-foto:nth-of-type(1):not(:only-of-type) {
+    transform: rotate(-8deg);
+    z-index: 1;
+}
+
+.perfil-secao-foto:nth-of-type(2) {
+    transform: rotate(7deg) translate(4px, 6px);
+    margin-left: -70px;
+    z-index: 2;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
+    margin-left: -90px;
+}
+
+.perfil-secao-foto:hover {
+    transform: rotate(0deg) scale(1.08) !important;
+    box-shadow:
+        0 6px 10px rgba(0, 0, 0, 0.4),
+        0 26px 50px rgba(0, 0, 0, 0.65),
+        0 50px 80px rgba(0, 0, 0, 0.35);
+    z-index: 5;
+}
+
+/* Coraçãozinho-prendedor flutuando por cima da pilha de fotos */
+
+.perfil-decoracao-clipe-coracao {
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%) rotate(-6deg);
+    width: 34px;
+    height: auto;
+    z-index: 6;
+    pointer-events: none;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+/* Clipe de papel no canto superior, alternando cor */
+
+.perfil-decoracao-clipe {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 32px;
+    height: auto;
+    z-index: 3;
+    transform: translateX(-50%) rotate(-12deg);
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+
+/* Posição do clipe, individual por categoria — a maioria repete
+   o padrão (que já ficou bom), só ajusta quem precisar. */
+
+.perfil-secao-midia-discord .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-instagram .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-roblox .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-genshin .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-widgetable .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+.perfil-secao-midia-rave .perfil-decoracao-clipe {
+    top: 18px;
+}
+
+/* TikTok: fotos bem mais altas, o clipe precisa descer mais
+   pra continuar colado na borda de cima do card. */
+
+.perfil-secao-midia-tiktok .perfil-decoracao-clipe {
+    top: -10px;
+}
+
+/* Florzinha ou coração fino no canto inferior, alternando por seção */
+
+.perfil-decoracao-canto {
+    position: absolute;
+    bottom: 2px;
+    right: 6%;
+    width: 48px;
+    height: auto;
+    z-index: 3;
+    opacity: 0.95;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    pointer-events: none;
+}
+
+@media (max-width: 640px) {
+
+    .perfil-secao-midia {
+        min-height: 190px;
+        padding: 18px 0 26px;
+    }
+
+    .perfil-secao-midia-tiktok {
+        min-height: 260px;
+    }
+
+    .perfil-secao-foto {
+        max-width: 150px;
+    }
+
+    .perfil-secao-foto img {
+        max-height: 210px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto {
+        max-width: 180px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto img {
+        max-height: 280px;
+    }
+
+    .perfil-secao-foto:nth-of-type(2) {
+        margin-left: -50px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
+        margin-left: -65px;
+    }
+
+    .perfil-secao-cabecalho::before,
+    .perfil-secao-cabecalho::after {
+        max-width: 40px;
+    }
+
+    .perfil-decoracao-clipe-coracao {
+        width: 28px;
+    }
+
+    .perfil-decoracao-clipe {
+        width: 24px;
+    }
+
+    .perfil-decoracao-canto {
+        width: 36px;
+    }
+
+}
+
+
+
+/* ---- Decorações de fundo flutuantes (só na pasta Perfis) ---- */
+
+.perfil-fundo-decoracoes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.perfil-fundo-decoracoes img {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    width: 30px;
+    height: auto;
+    opacity: 0.22;
+    animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+
+@keyframes flutuar-decoracao-perfil {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-16px) rotate(6deg);
+    }
+}
+
+/* Conteúdo dos Perfis fica acima da camada de decoração de fundo */
+
+.perfil-titulo-icone,
+.perfil-subtitulo,
+.galeria-pasta-titulo,
+.galeria-perfis-vista {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---- Contador "1 / 6" no visualizador de foto ---- */
+
+.foto-visualizador-contagem {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+}
+
+/* ===== Botão flutuante: voltar ao topo ===== */
+
+.scroll-topo-btn {
+    position: fixed;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 60;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+}
+
+.scroll-topo-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+/* ===== Eventos futuros na timeline ===== */
+
+.timeline-item-futuro .timeline-card {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.4);
+    background: rgba(245, 194, 209, 0.03);
+}
+
+.timeline-item-futuro .timeline-marker {
+    background: var(--color-pink);
+    box-shadow: 0 0 12px rgba(245, 194, 209, 0.7);
+    animation: pulso-marcador-futuro 2s ease-in-out infinite;
+}
+
+@keyframes pulso-marcador-futuro {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+.timeline-badge-futuro {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.7rem;
+    color: var(--color-pink);
+    background: linear-gradient(135deg, rgba(245, 194, 209, 0.15), rgba(201, 167, 245, 0.1));
+    border: 1px solid rgba(245, 194, 209, 0.35);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: var(--spacing-sm);
+    animation: brilho-badge-futuro 3s ease-in-out infinite;
+}
+
+/* Itens futuros ("sonho a caminho") sempre mostram a tag numa
+   linha e a data na linha de baixo — evita a data quebrar no
+   meio (ex: "22 DE" numa linha, "DEZEMBRO DE 2026" na outra). */
+
+.timeline-item-futuro .timeline-card-data {
+    display: block;
+    margin-top: 4px;
+}
+
+@keyframes brilho-badge-futuro {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(245, 194, 209, 0);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(245, 194, 209, 0.4);
+    }
+}
+
+/* ===== Contador regressivo ao lado do "Um sonho a caminho" ===== */
+
+/* ===== Contador regressivo: no topo do card, sobre a borda ===== */
+
+/* o card vira a referência de posição do contador */
+.timeline-item-futuro .timeline-card {
+    position: relative;
+}
+
+.timeline-contagem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+
+    /* -100% = totalmente acima da borda; -88% = encosta de leve nela.
+       Pra subir mais, aumente o número (ex.: -110%); pra descer, diminua. */
+    transform: translate(-50%, -88%);
+
+    padding: 4px 12px;
+
+    font-family: var(--font-primary);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+
+    color: var(--color-text-muted);
+
+    /* fundo opaco: a borda tracejada do card não aparece por trás */
+    background:
+        linear-gradient(rgba(201, 167, 245, 0.12), rgba(201, 167, 245, 0.12)),
+        var(--color-bg-darker);
+    border: 1px solid rgba(201, 167, 245, 0.35);
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* números em destaque; as letras (d h m s) ficam mais discretas */
+.timeline-contagem b {
+    font-weight: 700;
+    color: var(--color-text-light);
+}
+
+/* ===== Selo de quem sugeriu ===== */
+
+.timeline-badge-sugestao {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-bottom: var(--spacing-sm);
+    margin-right: 6px;
+}
+
+.timeline-badge-sugestao-ela {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+.timeline-badge-sugestao-mim {
+    color: #a8c8f0;
+    background: rgba(168, 200, 240, 0.12);
+    border: 1px solid rgba(168, 200, 240, 0.3);
+}
+/* =========================================================
+   SELO CIRCULAR DE TIPO/CATEGORIA
+   Ícone num círculo com gradiente e brilho — sobreposto na
+   foto (canto) ou como avatar do card quando não há foto.
+   ========================================================= */
+
+.timeline-selo-circulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    line-height: 1;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+
+    /* Sombra atrás do emoji: garante contraste mesmo quando o
+       fundo do círculo tem cor parecida com a do próprio emoji
+       (ex: emoji dourado sobre círculo dourado). */
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+/* Avatar do card (só aparece quando não há foto) — inline, um
+   pouco puxado pra esquerda e com respiro até a data ao lado. */
+
+.timeline-selo-circulo-avatar {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: -4px;
+    margin-right: 8px;
+}
+
+/* ---- Gradientes por tipo ---- */
+
+.timeline-selo-tipo-marco {
+    background: linear-gradient(135deg, #d4a017, #7a5c00);
+    box-shadow: 0 4px 16px rgba(122, 92, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-momento {
+    background: linear-gradient(135deg, #dcc6fb, #8a6fc9);
+    box-shadow: 0 4px 16px rgba(138, 111, 201, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-jogo {
+    background: linear-gradient(135deg, #b6f2dd, #4fb894);
+    box-shadow: 0 4px 16px rgba(79, 184, 148, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-encontro {
+    background: linear-gradient(135deg, #fbd9e3, #e0698a);
+    box-shadow: 0 4px 16px rgba(224, 105, 138, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.timeline-selo-tipo-sonho {
+    background: linear-gradient(135deg, #d9a8c9, #8a5a9e);
+    box-shadow: 0 4px 18px rgba(138, 90, 158, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    animation: pulso-selo-sonho 2.4s ease-in-out infinite;
+}
+
+@keyframes pulso-selo-sonho {
+    0%, 100% { box-shadow: 0 4px 18px rgba(138, 90, 158, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) inset; }
+    50%      { box-shadow: 0 4px 26px rgba(138, 90, 158, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; }
+}
+
+
+/* =========================================================
+   BORDA E MARCADOR DO CARD POR TIPO
+   ========================================================= */
+
+.timeline-item-tipo-marco .timeline-card {
+    border-color: rgba(245, 217, 122, 0.5);
+    box-shadow: 0 0 20px rgba(245, 217, 122, 0.1);
+}
+.timeline-item-tipo-marco .timeline-marker {
+    background: linear-gradient(135deg, #f9e6a8, #d4a017);
+    box-shadow: 0 0 12px rgba(212, 160, 23, 0.7);
+}
+
+.timeline-item-tipo-jogo .timeline-card {
+    border-color: rgba(143, 227, 199, 0.4);
+}
+.timeline-item-tipo-jogo .timeline-marker {
+    background: linear-gradient(135deg, #b6f2dd, #4fb894);
+    box-shadow: 0 0 12px rgba(79, 184, 148, 0.65);
+}
+
+.timeline-item-tipo-encontro .timeline-card {
+    border-color: rgba(245, 194, 209, 0.4);
+}
+.timeline-item-tipo-encontro .timeline-marker {
+    background: linear-gradient(135deg, #fbd9e3, #e0698a);
+    box-shadow: 0 0 12px rgba(224, 105, 138, 0.65);
+}
+
+.timeline-item-tipo-sonho .timeline-card {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.35);
+}
+.admin-link {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: calc(var(--spacing-lg) + 112px);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    font-size: 1.1rem;
+    transition: var(--transition-smooth);
+}
+.admin-link.oculto {
+    display: none;
+}
+
+.admin-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+}
+/* ===== Topo do modal: data + badges ===== */
+
+.modal-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: 4px;
+}
+
+.modal-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.modal-badge-tipo,
+.modal-badge-sugestao {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    letter-spacing: 0.4px;
+    border-radius: 20px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.modal-badge-sugestao-ela {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+.modal-badge-sugestao-mim {
+    color: #a8c8f0;
+    background: rgba(168, 200, 240, 0.12);
+    border: 1px solid rgba(168, 200, 240, 0.3);
+}
+
+/* Tipo — cor base de cada selo */
+
+.modal-badge-tipo-marco {
+    color: #e0b84a;
+    background: rgba(212, 160, 23, 0.15);
+    border: 1px solid rgba(212, 160, 23, 0.4);
+}
+
+.modal-badge-tipo-momento {
+    color: var(--color-lilac);
+    background: rgba(201, 167, 245, 0.12);
+    border: 1px solid rgba(201, 167, 245, 0.3);
+}
+
+.modal-badge-tipo-jogo {
+    color: #8fe3c7;
+    background: rgba(143, 227, 199, 0.12);
+    border: 1px solid rgba(143, 227, 199, 0.3);
+}
+
+.modal-badge-tipo-encontro,
+.modal-badge-tipo-sonho {
+    color: var(--color-pink);
+    background: rgba(245, 194, 209, 0.12);
+    border: 1px solid rgba(245, 194, 209, 0.3);
+}
+
+
+/* =========================================================
+   LAYOUT DO MODAL POR TIPO
+   Cada tipo muda a moldura, o brilho de fundo e ganha um
+   ícone grande "d'água" no canto — sem mexer no conteúdo.
+   ========================================================= */
+
+.modal-content {
+    position: relative;
+    overflow: hidden; /* pro ícone de fundo não vazar */
+}
+
+.modal-content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* ---- Marco: o mais "cerimonioso" ---- */
+
+.modal-content-tipo-marco {
+    border-color: rgba(245, 217, 122, 0.5);
+    box-shadow: 0 0 40px rgba(245, 217, 122, 0.12), 0 20px 60px rgba(0, 0, 0, 0.4);
+    background:
+        linear-gradient(180deg, rgba(245, 217, 122, 0.06), transparent 40%),
+        var(--color-bg-darker);
+}
+
+.modal-content-tipo-marco::before {
+    content: '⭐';
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    font-size: 6rem;
+    opacity: 0.06;
+    transform: rotate(12deg);
+    pointer-events: none;
+}
+
+.modal-content-tipo-marco .modal-titulo {
+    background: linear-gradient(90deg, #f5d97a, var(--color-text-light) 60%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ---- Jogo: lúdico ---- */
+
+.modal-content-tipo-jogo {
+    border-color: rgba(143, 227, 199, 0.4);
+    box-shadow: 0 0 30px rgba(143, 227, 199, 0.1), 0 20px 60px rgba(0, 0, 0, 0.4);
+    background:
+        linear-gradient(180deg, rgba(79, 184, 148, 0.06), transparent 40%),
+        var(--color-bg-darker);
+}
+
+.modal-content-tipo-jogo::before {
+    content: '🎮';
+    position: absolute;
+    bottom: -20px;
+    left: -14px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    transform: rotate(-10deg);
+    pointer-events: none;
+}
+
+/* ---- Encontro: caloroso, presencial ---- */
+
+.modal-content-tipo-encontro {
+    border-color: rgba(245, 194, 209, 0.45);
+    box-shadow: 0 0 30px rgba(245, 194, 209, 0.12), 0 20px 60px rgba(0, 0, 0, 0.4);
+    background:
+        linear-gradient(180deg, rgba(224, 105, 138, 0.06), transparent 40%),
+        var(--color-bg-darker);
+}
+
+.modal-content-tipo-encontro::before {
+    content: '💞';
+    position: absolute;
+    top: -14px;
+    left: -10px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    transform: rotate(-8deg);
+    pointer-events: none;
+}
+
+/* ---- Sonho: etéreo, tracejado ---- */
+
+.modal-content-tipo-sonho {
+    border-style: dashed;
+    border-color: rgba(245, 194, 209, 0.4);
+    background: linear-gradient(180deg, rgba(245, 194, 209, 0.05), transparent 50%), var(--color-bg-darker);
+}
+
+.modal-content-tipo-sonho::before {
+    content: '🪄';
+    position: absolute;
+    bottom: -20px;
+    right: -10px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    pointer-events: none;
+}
+
+.modal-content-tipo-sonho .modal-titulo {
+    font-style: italic;
+}
+
+/* ---- Momento: acolhedor, tom lilás ---- */
+
+.modal-content-tipo-momento {
+    border-color: rgba(138, 111, 201, 0.45);
+    box-shadow: 0 0 30px rgba(138, 111, 201, 0.12), 0 20px 60px rgba(0, 0, 0, 0.4);
+    background:
+        linear-gradient(180deg, rgba(138, 111, 201, 0.06), transparent 40%),
+        var(--color-bg-darker);
+}
+
+.modal-content-tipo-momento::before {
+    content: '🎀';
+    position: absolute;
+    top: -16px;
+    right: -8px;
+    font-size: 5.5rem;
+    opacity: 0.06;
+    transform: rotate(10deg);
+    pointer-events: none;
+}
+
+/* =========================================================
+   MINI PLAYER — discreto, com um único ponto de destaque
+   ========================================================= */
+
+.player-container {
+    position: relative;
+}
+
+.player-popup {
+    position: absolute;
+    top: 52px;
+    left: 0;
+
+    width: 225px;
+
+    border-radius: 20px;
+
+    background: rgba(20, 18, 32, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    z-index: 200;
+    overflow: hidden;
+
+    opacity: 1;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.player-popup.oculto {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.97);
+}
+
+/* ===== Linha principal — sempre visível: capa, título, controles ===== */
+
+.player-linha-principal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 10px;
+}
+
+.player-capa {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    color: var(--color-bg-dark);
+    background: linear-gradient(135deg, var(--color-lilac), var(--color-pink));
+}
+
+.player-titulo-wrapper {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.player-titulo {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.76rem;
+
+    color: var(--color-text-light);
+
+    white-space: nowrap;
+}
+
+.player-titulo.titulo-rolando {
+    animation: titulo-rolar var(--scroll-duration, 6s) ease-in-out infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes titulo-rolar {
+    0%, 12% {
+        transform: translateX(0);
+    }
+    88%, 100% {
+        transform: translateX(var(--scroll-distance, 0));
+    }
+}
+
+.player-coracao-pulso {
+    font-size: 0.55rem;
+    flex-shrink: 0;
+
+    color: var(--color-pink);
+    opacity: 0.6;
+
+    animation: player-coracao-bater 2.6s ease-in-out infinite;
+}
+
+@keyframes player-coracao-bater {
+
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.85;
+    }
+
+}
+
+/* Volume — sobe pra linha do título, compacto e colado à direita */
+
+.player-volume-mini {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 2px;
+    margin-left: 4px;
+}
+
+/* ===== Controles de tocar — ganham linha própria, centralizados ===== */
+
+.player-controles-linha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 6px 10px 8px;
+}
+
+.player-botao {
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--color-text-muted);
+
+    font-size: 0.8rem;
+
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.player-botao:hover {
+    color: var(--color-pink);
+    transform: scale(1.15);
+}
+
+.player-botao:active {
+    transform: scale(0.86);
+}
+
+.player-botao-principal {
+    position: relative;
+    width: 30px;
+    height: 30px;
+
+    font-size: 0.85rem;
+
+    color: var(--color-bg-dark);
+
+    background: linear-gradient(135deg, var(--color-lilac), var(--color-pink));
+}
+
+.player-botao-principal:hover {
+    transform: scale(1.08);
+}
+
+.player-botao-principal:active {
+    transform: scale(0.92);
+}
+
+/* ===== Lista de músicas — botão "nossas músicas" + lista ===== */
+
+.player-extra {
+    padding: 6px 10px 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Botões de volume — agora vivem na linha do título */
+
+.player-botao-volume {
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    transition: color 0.25s ease;
+}
+
+.player-botao-volume:hover {
+    color: var(--color-lilac);
+}
+
+#player-mute {
+    font-size: 0.75rem;
+}
+
+.player-volume-coracao {
+    position: relative;
+    width: 20px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 1px;
+}
+
+.player-volume-coracao-fundo {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.15);
+}
+
+.player-volume-coracao-cheio {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 0.85rem;
+    color: var(--color-pink);
+    overflow: hidden;
+    width: 25%;
+    transition: width 0.25s ease;
+}
+
+.player-volume-texto {
+    font-size: 0.62rem;
+    color: var(--color-text-muted);
+
+    min-width: 28px;
+    text-align: center;
+}
+
+
+/* ===== Botão que abre a lista de músicas — discreto, sem pílula ===== */
+
+.player-lista-botao {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding: 6px 4px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.7rem;
+    transition: var(--transition-smooth);
+}
+
+.player-lista-botao:hover {
+    color: var(--color-lilac);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#player-lista-seta {
+    color: var(--color-pink);
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.player-lista-botao.player-lista-aberta #player-lista-seta {
+    transform: rotate(180deg);
+}
+
+
+/* ===== Lista de músicas ===== */
+
+.player-lista {
+    margin-top: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.player-lista.oculto {
+    display: none;
+}
+
+.player-lista-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: var(--transition-smooth);
+}
+
+.player-lista-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.player-lista-item.player-lista-item-ativa {
+    position: relative;
+    background: linear-gradient(90deg, rgba(245, 194, 209, 0.15), rgba(201, 167, 245, 0.1));
+}
+
+.player-lista-item.player-lista-item-ativa::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 15%;
+    bottom: 15%;
+    width: 3px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--color-lilac), var(--color-pink));
+}
+
+.player-lista-play {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-lilac);
+    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-lista-item:hover .player-lista-play {
+    background: rgba(245, 194, 209, 0.2);
+}
+
+.player-lista-nome {
+    font-size: 0.76rem;
+    color: var(--color-text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-lista-item-ativa .player-lista-nome {
+    color: var(--color-pink);
+}
+
+/* Scrollbar discreta dentro da lista */
+.player-lista::-webkit-scrollbar {
+    width: 5px;
+}
+
+.player-lista::-webkit-scrollbar-thumb {
+    background: rgba(245, 194, 209, 0.3);
+    border-radius: 10px;
+}
+
+/* ===== Mobile: player vira um cartão maior, mais fácil de tocar ===== */
+
+@media (max-width: 500px) {
+    .player-popup {
+        width: calc(100vw - 40px);
+        max-width: 225px;
+        left: 4px;
+    }
+
+    .player-titulo-wrapper {
+        max-width: 90px;
+    }
+}
+
+/* ===== Visualizador de foto (fullscreen com setas) ===== */
+
+.foto-visualizador {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 16, 0.92);
+    backdrop-filter: blur(6px);
+    padding: var(--spacing-lg);
+
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.foto-visualizador.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.foto-visualizador-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.foto-visualizador-img {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.foto-visualizador-legenda {
+    margin-top: var(--spacing-md);
+    text-align: center;
+}
+
+.foto-visualizador-pasta {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+}
+
+.foto-visualizador-data {
+    font-size: 0.75rem;
+    color: var(--color-lilac);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.foto-visualizador-descricao {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+    max-width: 500px;
+}
+
+.foto-visualizador-fechar {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-text-light);
+    font-size: 1.1rem;
+}
+
+.foto-visualizador-seta {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-text-light);
+    font-size: 1.4rem;
+}
+
+.foto-visualizador-seta:hover {
+    background: rgba(201, 167, 245, 0.2);
+}
+
+.foto-visualizador-seta-esquerda {
+    left: var(--spacing-lg);
+}
+
+.foto-visualizador-seta-direita {
+    right: var(--spacing-lg);
+}
+
+.hub-fundo-decoracoes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hub-fundo-decoracoes img {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    width: 30px;
+    height: auto;
+    opacity: 0.22;
+    animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+
+.hub-card.hub-card-tocado .stack-layer-3 {
+    transform: rotate(-16deg) translate(-16px, 8px);
+}
+.hub-card.hub-card-tocado .stack-layer-2 {
+    transform: rotate(12deg) translate(16px, 8px);
+}
+.hub-card.hub-card-tocado .stack-layer-1 {
+    transform: rotate(0deg) translateY(-6px) scale(1.03);
+}
+.hub-card.hub-card-tocado .hub-card-desc {
+    opacity: 1;
+}
+
+.galeria-pasta-emoji {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 2;
+
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.85rem;
+
+    background: rgba(5, 5, 16, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+}
+/* =========================================================
+   BARRA DE PROGRESSO
+   ========================================================= */
+
+.player-progresso-linha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 2px 10px 4px;
+}
+
+.player-tempo {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    color: var(--color-text-muted);
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.player-barra-progresso {
+    position: relative;
+    flex: 1;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.player-barra-progresso::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.player-progresso-preenchimento {
+    position: absolute;
+    left: 0;
+    height: 3px;
+    border-radius: 3px;
+    width: 0%;
+
+    background: linear-gradient(
+        90deg,
+        rgb(var(--player-cor-r, 201), var(--player-cor-g, 167), var(--player-cor-b, 245)),
+        rgba(var(--player-cor-r, 201), var(--player-cor-g, 167), var(--player-cor-b, 245), 0.6)
+    );
+
+    box-shadow: 0 0 6px rgba(var(--player-cor-r, 201), var(--player-cor-g, 167), var(--player-cor-b, 245), 0.5);
+
+    pointer-events: none;
+}
+
+.player-progresso-bolinha {
+    position: absolute;
+    left: 0%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+
+    background: rgb(var(--player-cor-r, 201), var(--player-cor-g, 167), var(--player-cor-b, 245));
+    box-shadow: 0 0 8px rgba(var(--player-cor-r, 201), var(--player-cor-g, 167), var(--player-cor-b, 245), 0.7);
+
+    transform: translate(-50%, 0) scale(0);
+    transition: transform 0.15s ease;
+
+    pointer-events: none;
+}
+
+.player-barra-progresso:hover .player-progresso-bolinha,
+.player-barra-progresso.progresso-arrastando .player-progresso-bolinha {
+    transform: translate(-50%, 0) scale(1);
+}
+
+
+/* =========================================================
+   COR AMBIENTE POR MÚSICA — reflete nos destaques do player
+   ========================================================= */
+
+#player-popup {
+    --player-cor-r: 201;
+    --player-cor-g: 167;
+    --player-cor-b: 245;
+
+    transition: box-shadow 0.6s ease, border-color 0.6s ease;
+}
+
+#player-popup {
+    background:
+        linear-gradient(
+            160deg,
+            rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.35) 0%,
+            rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.12) 40%,
+            rgba(20, 18, 32, 0.85) 75%
+        );
+
+    border-color: rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.35);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.15);
+}
+
+#player-popup .player-capa {
+    background: linear-gradient(
+        135deg,
+        rgb(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b)),
+        rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.6)
+    );
+}
+
+#player-popup .player-botao-principal {
+    background: linear-gradient(
+        135deg,
+        rgb(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b)),
+        rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.7)
+    );
+}
+
+#player-popup .player-coracao-pulso {
+    color: rgb(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b));
+}
+
+#player-popup .player-lista-item-ativa {
+    background: linear-gradient(
+        90deg,
+        rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.18),
+        rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.06)
+    );
+}
+
+#player-popup .player-lista-item-ativa::before {
+    background: rgb(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b));
+}
+
+#player-popup .player-lista-item-ativa .player-lista-nome {
+    color: rgb(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b));
+}
+/* =========================================================
+   PLAYER — PALETA ROSA/ROXO FOFA + CORAÇÕES FLUTUANTES
+   ========================================================= */
+
+#player-popup {
+    background:
+        linear-gradient(
+            160deg,
+            rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.30) 0%,
+            rgba(245, 194, 209, 0.16) 35%,
+            rgba(111, 58, 173, 0.20) 65%,
+            rgba(24, 16, 34, 0.92) 100%
+        );
+
+    border-color: rgba(245, 194, 209, 0.35);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(201, 167, 245, 0.18),
+        0 0 20px rgba(245, 194, 209, 0.12);
+
+    overflow: hidden;
+}
+
+
+/* ---- Container dos coraçõezinhos flutuantes ---- */
+
+.player-coracoes-flutuantes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.player-coracao-flutuante {
+    position: absolute;
+    bottom: -10px;
+    font-size: var(--pc-tamanho, 0.9rem);
+    color: var(--pc-cor, #f5c2d1);
+    opacity: 0;
+
+    animation: player-coracao-subir var(--pc-duracao, 4s) ease-in forwards;
+}
+
+@keyframes player-coracao-subir {
+
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0.6) rotate(0deg);
+    }
+
+    12% {
+        opacity: 0.85;
+    }
+
+    80% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-190px) translateX(var(--pc-deriva, 10px)) scale(1.05) rotate(var(--pc-rotacao, 12deg));
+    }
+
+}
+
+
+/* Garante que o conteúdo real do player fica acima dos corações */
+
+#player-popup .player-linha-principal,
+#player-popup .player-progresso-linha,
+#player-popup .player-controles-linha,
+#player-popup .player-extra {
+    position: relative;
+    z-index: 1;
+}
+/* =========================================================
+   FILTRO DE ÁLBUNS — genérico, aparece quando a pasta tem
+   fotos agrupadas em mais de um "album" (ex: Minecraft 2025/2026)
+   ========================================================= */
+
+.galeria-filtro-albuns {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 auto 24px;
+}
+
+.galeria-filtro-album {
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(201, 167, 245, 0.25);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    transition: var(--transition-smooth);
+}
+
+.galeria-filtro-album:hover {
+    color: var(--color-text-light);
+    border-color: rgba(201, 167, 245, 0.5);
+}
+
+.galeria-filtro-album.ativo {
+    background: linear-gradient(135deg, rgba(201, 167, 245, 0.3), rgba(245, 194, 209, 0.2));
+    border-color: rgba(201, 167, 245, 0.5);
+    color: var(--color-text-light);
+    font-weight: 600;
+}
+
+.galeria-foto-album-selo {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 2;
+
+    padding: 2px 8px;
+    border-radius: 20px;
+
+    background: rgba(5, 5, 16, 0.7);
+    backdrop-filter: blur(3px);
+
+    font-family: var(--font-body);
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+    letter-spacing: 0.3px;
+}
+.galeria-video-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    pointer-events: none;
+}
+
+.galeria-video-play-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(5, 5, 16, 0.6);
+    color: var(--color-text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.galeria-video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.35), rgba(25, 50, 100, 0.4));
+    color: var(--color-text-light);
+}
+
+.galeria-video-play {
+    font-size: 1.6rem;
+    opacity: 0.85;
+}
+
+.galeria-video-placeholder small {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.foto-visualizador-video {
+    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+.foto-visualizador-video {
+    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.foto-visualizador-img.oculto {
+    display: none;
+}

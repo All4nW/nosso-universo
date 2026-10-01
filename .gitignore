@@ -1,0 +1,9 @@
+﻿node_modules/
+backend/node_modules/
+backend/uploads/*
+!backend/uploads/.gitkeep
+.tmp.driveupload/
+
+backend/database/*.db
+backend/database/*.sqlite
+backend/database/*.sqlite3

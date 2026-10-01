@@ -1,0 +1,764 @@
+let pastasAdmin = [];
+let pastaEditandoId = null;
+let pastaCapaSelecionada = null;
+
+let pastaAbertaId = null;
+let pastaAbertaEhPerfil = false;
+let fotosAdmin = [];
+let fotoEditandoId = null;
+let fotoImagemSelecionada = null;
+
+let galeriaDragId = null;
+let filtroAlbumAdminAtivo = null;
+
+
+async function initGaleria() {
+    await carregarPastasAdmin();
+    registrarEventosGaleria();
+}
+
+
+// Detecta se uma pasta é a pasta especial "Perfil" (case-insensitive,
+// e aceita variações tipo "Perfis" também).
+function ehPastaDePerfis(pasta) {
+    return Boolean(
+        pasta &&
+        pasta.nome &&
+        pasta.nome.trim().toLowerCase().includes('perfil')
+    );
+}
+
+
+// ===== PASTAS =====
+
+async function carregarPastasAdmin() {
+    const container = document.getElementById('pastas-admin-itens');
+    if (!container) return;
+
+    try {
+        const resposta = await fetch('http://localhost:3000/api/galeria/pastas?admin=true');
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        pastasAdmin = await resposta.json();
+        renderizarPastasAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao carregar pastas:', erro);
+        container.innerHTML = '<div class="timeline-admin-vazio">❌ Não foi possível carregar as pastas.</div>';
+    }
+}
+
+function renderizarPastasAdmin() {
+    const container = document.getElementById('pastas-admin-itens');
+    if (!container) return;
+
+    if (!pastasAdmin.length) {
+        container.innerHTML = '<div class="timeline-admin-vazio">📁 Nenhuma pasta criada ainda.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    pastasAdmin.forEach((pasta) => {
+        const el = document.createElement('div');
+        el.className = 'timeline-admin-item';
+        el.draggable = false;
+        el.dataset.id = pasta.id;
+
+        const capa = pasta.capa ? resolverImagemGaleria(pasta.capa) : '';
+
+        el.innerHTML = `
+            <div class="timeline-admin-arrastar">⋮⋮</div>
+            ${capa
+                ? `<img class="timeline-admin-thumb" src="${capa}" alt="" onerror="this.style.display='none'">`
+                : `<div class="timeline-admin-thumb timeline-admin-thumb-vazio">📁</div>`
+            }
+            <div class="timeline-admin-info">
+                <h3>${escaparHtmlGaleria(pasta.nome)}</h3>
+                <div class="timeline-admin-tags">
+                    ${pasta.ativo
+                        ? '<span class="ativo">● Visível</span>'
+                        : '<span class="inativo">● Oculta</span>'
+                    }
+                </div>
+            </div>
+            <div class="timeline-admin-acoes">
+                <button type="button" class="timeline-admin-btn" data-acao="abrir-fotos" data-id="${pasta.id}" title="Gerenciar fotos">📸</button>
+                <button type="button" class="timeline-admin-btn" data-acao="editar-pasta" data-id="${pasta.id}" title="Editar">✎</button>
+                <button type="button" class="timeline-admin-btn timeline-admin-excluir" data-acao="excluir-pasta" data-id="${pasta.id}" title="Excluir">🗑</button>
+            </div>
+        `;
+
+        adicionarEventosDragGaleria(el, 'pasta');
+        container.appendChild(el);
+    });
+}
+
+function abrirFormularioNovaPasta() {
+    pastaEditandoId = null;
+    pastaCapaSelecionada = null;
+
+    document.getElementById('pasta-nome').value = '';
+    document.getElementById('pasta-ativa').checked = true;
+    document.getElementById('pasta-capa-atual').innerHTML = '';
+    document.getElementById('pasta-form-titulo').textContent = 'Nova pasta';
+    document.getElementById('pasta-formulario').style.display = 'block';
+}
+
+function editarPasta(id) {
+    const pasta = pastasAdmin.find(p => p.id === id);
+    if (!pasta) return;
+
+    pastaEditandoId = id;
+    pastaCapaSelecionada = null;
+
+    document.getElementById('pasta-nome').value = pasta.nome;
+    document.getElementById('pasta-ativa').checked = Boolean(pasta.ativo);
+    document.getElementById('pasta-capa-atual').innerHTML =
+        pasta.capa ? `<img src="${resolverImagemGaleria(pasta.capa)}" alt="">` : 'Sem capa.';
+    document.getElementById('pasta-form-titulo').textContent = 'Editar pasta';
+    document.getElementById('pasta-formulario').style.display = 'block';
+}
+
+function fecharFormularioPasta() {
+    pastaEditandoId = null;
+    pastaCapaSelecionada = null;
+    document.getElementById('pasta-formulario').style.display = 'none';
+}
+
+async function salvarPasta() {
+    const nome = document.getElementById('pasta-nome').value.trim();
+    if (!nome) { alert('Digite o nome da pasta.'); return; }
+
+    const formulario = new FormData();
+    formulario.append('nome', nome);
+    formulario.append('ativo', document.getElementById('pasta-ativa').checked);
+
+    const capaInput = document.getElementById('pasta-capa');
+    if (capaInput.files[0]) formulario.append('capa', capaInput.files[0]);
+
+    try {
+        let url = 'http://localhost:3000/api/galeria/pastas';
+        let metodo = 'POST';
+
+        if (pastaEditandoId) {
+            url += `/${pastaEditandoId}`;
+            metodo = 'PUT';
+        }
+
+        const resposta = await fetch(url, { method: metodo, body: formulario });
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+
+        fecharFormularioPasta();
+        await carregarPastasAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao salvar pasta:', erro);
+        alert('❌ Não foi possível salvar a pasta.');
+    }
+}
+
+async function excluirPasta(id) {
+    const pasta = pastasAdmin.find(p => p.id === id);
+    if (!pasta) return;
+    if (!confirm(`Excluir a pasta "${pasta.nome}" e todas as fotos dela?`)) return;
+
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/galeria/pastas/${id}`, { method: 'DELETE' });
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        await carregarPastasAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao excluir pasta:', erro);
+        alert('Erro ao excluir pasta.');
+    }
+}
+
+
+// ===== FOTOS =====
+
+async function abrirGerenciadorFotos(pastaId) {
+    const pasta = pastasAdmin.find(p => p.id === pastaId);
+    if (!pasta) return;
+
+    pastaAbertaId = pastaId;
+    pastaAbertaEhPerfil = ehPastaDePerfis(pasta);
+    filtroAlbumAdminAtivo = null;
+
+    document.getElementById('fotos-pasta-nome').textContent = `Fotos — ${pasta.nome}`;
+    document.getElementById('fotos-secao').style.display = 'block';
+    document.getElementById('fotos-secao').scrollIntoView({ behavior: 'smooth' });
+
+    // Mostra o campo "Plataforma" só quando a pasta aberta é a de Perfil.
+    const campoPlataforma = document.getElementById('foto-plataforma-campo');
+    if (campoPlataforma) {
+        campoPlataforma.style.display = pastaAbertaEhPerfil ? 'block' : 'none';
+    }
+
+    await carregarFotosAdmin();
+}
+
+function fecharGerenciadorFotos() {
+    pastaAbertaId = null;
+    pastaAbertaEhPerfil = false;
+    filtroAlbumAdminAtivo = null;
+    document.getElementById('fotos-secao').style.display = 'none';
+}
+
+async function carregarFotosAdmin() {
+    const container = document.getElementById('fotos-admin-itens');
+    if (!container || !pastaAbertaId) return;
+
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/galeria/fotos?pastaId=${pastaAbertaId}&admin=true`);
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        fotosAdmin = await resposta.json();
+        renderizarFotosAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao carregar fotos:', erro);
+        container.innerHTML = '<div class="timeline-admin-vazio">❌ Não foi possível carregar as fotos.</div>';
+    }
+}
+
+// Rótulos amigáveis pra exibir a plataforma na listagem do admin
+const LABELS_PLATAFORMA_ADMIN = {
+    discord: '💬 Discord',
+    roblox: '🎮 Roblox',
+    tiktok: '🎵 TikTok',
+    instagram: '📸 Instagram',
+    widgetable: '🧩 Widgetable',
+    rave: '🎬 Rave',
+    genshin: '✨ Genshin Impact'
+};
+
+function renderizarFotosAdmin() {
+    const container = document.getElementById('fotos-admin-itens');
+    if (!container) return;
+
+    renderizarAlbunsAdmin();
+    atualizarIndicadorFiltroAlbumAdmin();
+
+    const fotosVisiveis = filtroAlbumAdminAtivo
+        ? fotosAdmin.filter(f => (f.album || '').trim() === filtroAlbumAdminAtivo)
+        : fotosAdmin.filter(f => !(f.album || '').trim());
+
+    if (!fotosVisiveis.length) {
+        container.innerHTML = filtroAlbumAdminAtivo
+            ? '<div class="timeline-admin-vazio">📸 Nenhuma foto neste álbum ainda.</div>'
+            : '<div class="timeline-admin-vazio">📸 Nenhuma foto sem álbum. As fotos organizadas estão dentro dos álbuns acima.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    fotosVisiveis.forEach((foto) => {
+        const el = document.createElement('div');
+        el.className = 'timeline-admin-item';
+        el.dataset.id = foto.id;
+
+        const rotuloPlataforma =
+            foto.plataforma && LABELS_PLATAFORMA_ADMIN[foto.plataforma]
+                ? LABELS_PLATAFORMA_ADMIN[foto.plataforma]
+                : '';
+
+        const thumbHtml = ehVideoAdmin(foto.imagem)
+            ? `<video class="timeline-admin-thumb" src="${resolverImagemGaleria(foto.imagem)}" muted preload="metadata" playsinline></video>`
+            : `<img class="timeline-admin-thumb" src="${resolverImagemGaleria(foto.imagem)}" alt="" onerror="this.style.display='none'">`;
+
+        el.innerHTML = `
+            <div class="timeline-admin-arrastar">⋮⋮</div>
+            ${thumbHtml}
+            <div class="timeline-admin-info">
+                <div class="timeline-admin-data">${formatarDataGaleria(foto.data)}</div>
+                <h3>${escaparHtmlGaleria(foto.descricao || 'Sem descrição')}</h3>
+                <div class="timeline-admin-tags">
+                    ${foto.album ? `<span>📁 ${escaparHtmlGaleria(foto.album)}</span>` : ''}
+                    ${rotuloPlataforma ? `<span>${rotuloPlataforma}</span>` : ''}
+                    ${foto.ativo ? '<span class="ativo">● Visível</span>' : '<span class="inativo">● Oculta</span>'}
+                </div>
+            </div>
+            <div class="timeline-admin-acoes">
+                <button type="button" class="timeline-admin-btn" data-acao="editar-foto" data-id="${foto.id}" title="Editar">✎</button>
+                <button type="button" class="timeline-admin-btn timeline-admin-excluir" data-acao="excluir-foto" data-id="${foto.id}" title="Excluir">🗑</button>
+            </div>
+        `;
+
+        adicionarEventosDragGaleria(el, 'foto');
+        container.appendChild(el);
+    });
+}
+
+function atualizarIndicadorFiltroAlbumAdmin() {
+    const indicador = document.getElementById('filtro-album-admin-indicador');
+    if (!indicador) return;
+
+    if (filtroAlbumAdminAtivo) {
+        indicador.style.display = 'flex';
+        indicador.querySelector('span').textContent = `📁 Mostrando álbum: ${filtroAlbumAdminAtivo}`;
+    } else {
+        indicador.style.display = 'none';
+    }
+}
+
+function abrirFiltroAlbumAdmin(album) {
+    filtroAlbumAdminAtivo = album;
+    renderizarFotosAdmin();
+}
+
+function fecharFiltroAlbumAdmin() {
+    filtroAlbumAdminAtivo = null;
+    renderizarFotosAdmin();
+}
+
+function renderizarAlbunsAdmin() {
+    const container = document.getElementById('albuns-admin-itens');
+    if (!container) return;
+
+    const albuns = obterAlbunsExistentesNaPasta();
+
+    if (!albuns.length) {
+        container.innerHTML = '<div class="timeline-admin-vazio">Nenhum álbum criado ainda nesta pasta.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    albuns.forEach((album) => {
+        const quantidade = fotosAdmin.filter(f => (f.album || '').trim() === album).length;
+
+        const el = document.createElement('div');
+        el.className = 'timeline-admin-item';
+        el.innerHTML = `
+            <div class="timeline-admin-thumb timeline-admin-thumb-vazio">📁</div>
+            <div class="timeline-admin-info">
+                <h3>${escaparHtmlGaleria(album)}</h3>
+                <div class="timeline-admin-tags">
+                    <span>${quantidade} ${quantidade === 1 ? 'foto' : 'fotos'}</span>
+                </div>
+            </div>
+            <div class="timeline-admin-acoes">
+                <button type="button" class="timeline-admin-btn" data-acao="ver-album" data-album="${escaparHtmlGaleria(album)}" title="Ver fotos deste álbum">👁</button>
+                <button type="button" class="timeline-admin-btn" data-acao="editar-album" data-album="${escaparHtmlGaleria(album)}" title="Renomear">✎</button>
+                <button type="button" class="timeline-admin-btn timeline-admin-excluir" data-acao="excluir-album" data-album="${escaparHtmlGaleria(album)}" title="Excluir álbum">🗑</button>
+            </div>
+        `;
+        container.appendChild(el);
+    });
+}
+
+async function atualizarAlbumDaFoto(foto, novoAlbum) {
+    const formulario = new FormData();
+    formulario.append('pastaId', foto.pastaId);
+    formulario.append('data', foto.data || '');
+    formulario.append('descricao', foto.descricao || '');
+    formulario.append('plataforma', foto.plataforma || '');
+    formulario.append('album', novoAlbum);
+    formulario.append('ativo', foto.ativo ? 'true' : 'false');
+
+    const resposta = await fetch(`http://localhost:3000/api/galeria/fotos/${foto.id}`, {
+        method: 'PUT',
+        body: formulario
+    });
+
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+}
+
+async function renomearAlbum(nomeAntigo) {
+    const novoNome = prompt(`Novo nome para o álbum "${nomeAntigo}":`, nomeAntigo);
+    if (!novoNome) return;
+
+    const nomeFinal = novoNome.trim();
+    if (!nomeFinal || nomeFinal === nomeAntigo) return;
+
+    const fotosDoAlbum = fotosAdmin.filter(f => (f.album || '').trim() === nomeAntigo);
+
+    try {
+        await Promise.all(
+            fotosDoAlbum.map((foto) => atualizarAlbumDaFoto(foto, nomeFinal))
+        );
+
+        filtroAlbumAdminAtivo = null;
+        await carregarFotosAdmin();
+        alert('✅ Álbum renomeado! Clique em "Sincronizar com o site" pra publicar a mudança.');
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao renomear álbum:', erro);
+        alert('❌ Não foi possível renomear o álbum em todas as fotos.');
+    }
+}
+
+async function excluirAlbum(nome) {
+    const fotosDoAlbum = fotosAdmin.filter(f => (f.album || '').trim() === nome);
+
+    if (!confirm(`Excluir o álbum "${nome}"? As ${fotosDoAlbum.length} foto(s) dele ficarão sem álbum (e vão parar de aparecer nos filtros até você atribuir outro álbum a elas).`)) {
+        return;
+    }
+
+    try {
+        await Promise.all(
+            fotosDoAlbum.map((foto) => atualizarAlbumDaFoto(foto, ''))
+        );
+
+        filtroAlbumAdminAtivo = null;
+        await carregarFotosAdmin();
+        alert('✅ Álbum excluído! Clique em "Sincronizar com o site" pra publicar a mudança.');
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao excluir álbum:', erro);
+        alert('❌ Não foi possível excluir o álbum em todas as fotos.');
+    }
+}
+
+// Pega os álbuns já usados nas fotos da pasta atualmente aberta,
+// pra alimentar o select sem precisar de tabela nova no banco.
+function obterAlbunsExistentesNaPasta() {
+    const vistos = new Set();
+    const albuns = [];
+
+    fotosAdmin.forEach((foto) => {
+        const album = (foto.album || '').trim();
+        if (album && !vistos.has(album)) {
+            vistos.add(album);
+            albuns.push(album);
+        }
+    });
+
+    return albuns.sort();
+}
+
+function popularSelectAlbuns(albumSelecionado) {
+    const select = document.getElementById('foto-album-select');
+    const novoInput = document.getElementById('foto-album-novo');
+    if (!select) return;
+
+    const albuns = obterAlbunsExistentesNaPasta();
+
+    select.innerHTML = `
+        <option value="">Sem álbum</option>
+        ${albuns.map(album => `<option value="${escaparHtmlGaleria(album)}">${escaparHtmlGaleria(album)}</option>`).join('')}
+        <option value="__novo__">＋ Criar novo álbum...</option>
+    `;
+
+    select.value = (albumSelecionado && albuns.includes(albumSelecionado))
+        ? albumSelecionado
+        : '';
+
+    if (novoInput) {
+        novoInput.style.display = 'none';
+        novoInput.value = '';
+    }
+}
+
+function abrirFormularioNovaFoto() {
+    fotoEditandoId = null;
+    fotoImagemSelecionada = null;
+
+    document.getElementById('foto-data').value = '';
+    document.getElementById('foto-descricao').value = '';
+    popularSelectAlbuns('');
+
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+    if (campoPlataformaSelect) campoPlataformaSelect.value = '';
+
+    document.getElementById('foto-ativa').checked = true;
+    document.getElementById('foto-imagem-atual').innerHTML = '';
+    document.getElementById('foto-formulario').style.display = 'block';
+}
+
+function editarFoto(id) {
+    const foto = fotosAdmin.find(f => f.id === id);
+    if (!foto) return;
+
+    fotoEditandoId = id;
+    fotoImagemSelecionada = null;
+
+    document.getElementById('foto-data').value = foto.data;
+    document.getElementById('foto-descricao').value = foto.descricao || '';
+    popularSelectAlbuns(foto.album || '');
+
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+    if (campoPlataformaSelect) campoPlataformaSelect.value = foto.plataforma || '';
+
+    document.getElementById('foto-ativa').checked = Boolean(foto.ativo);
+    document.getElementById('foto-imagem-atual').innerHTML = ehVideoAdmin(foto.imagem)
+        ? `<video src="${resolverImagemGaleria(foto.imagem)}" muted preload="metadata" playsinline controls style="max-width:100%;"></video>`
+        : `<img src="${resolverImagemGaleria(foto.imagem)}" alt="">`;
+
+    document.getElementById('foto-formulario').style.display = 'block';
+}
+
+function fecharFormularioFoto() {
+    fotoEditandoId = null;
+    fotoImagemSelecionada = null;
+    document.getElementById('foto-formulario').style.display = 'none';
+}
+
+async function salvarFoto() {
+    if (!pastaAbertaId) return;
+
+    const data = document.getElementById('foto-data').value;
+    const imagemInput = document.getElementById('foto-imagem');
+
+    if (!fotoEditandoId && !imagemInput.files[0]) {
+        alert('Escolha uma imagem.');
+        return;
+    }
+
+    const campoPlataformaSelect = document.getElementById('foto-plataforma');
+
+    const selectAlbum = document.getElementById('foto-album-select');
+    const novoAlbumInput = document.getElementById('foto-album-novo');
+
+    let albumFinal = '';
+
+    if (selectAlbum) {
+        if (selectAlbum.value === '__novo__') {
+            albumFinal = (novoAlbumInput?.value || '').trim();
+
+            if (!albumFinal) {
+                alert('Digite o nome do novo álbum.');
+                return;
+            }
+        } else {
+            albumFinal = selectAlbum.value;
+        }
+    }
+
+    const formulario = new FormData();
+    formulario.append('pastaId', pastaAbertaId);
+    formulario.append('data', data);
+    formulario.append('descricao', document.getElementById('foto-descricao').value);
+    formulario.append('plataforma', campoPlataformaSelect ? campoPlataformaSelect.value : '');
+    formulario.append('album', albumFinal);
+    formulario.append('ativo', document.getElementById('foto-ativa').checked);
+
+    if (imagemInput.files[0]) formulario.append('imagem', imagemInput.files[0]);
+
+    try {
+        let url = 'http://localhost:3000/api/galeria/fotos';
+        let metodo = 'POST';
+
+        if (fotoEditandoId) {
+            url += `/${fotoEditandoId}`;
+            metodo = 'PUT';
+        }
+
+        const resposta = await fetch(url, { method: metodo, body: formulario });
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+
+        fecharFormularioFoto();
+        await carregarFotosAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao salvar foto:', erro);
+        alert('❌ Não foi possível salvar a foto.');
+    }
+}
+
+async function excluirFoto(id) {
+    if (!confirm('Excluir esta foto?')) return;
+
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/galeria/fotos/${id}`, { method: 'DELETE' });
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        await carregarFotosAdmin();
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao excluir foto:', erro);
+        alert('Erro ao excluir foto.');
+    }
+}
+
+
+// ===== SINCRONIZAR =====
+
+async function sincronizarGaleria() {
+    try {
+        const resposta = await fetch('http://localhost:3000/api/galeria/exportar');
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        const resultado = await resposta.json();
+        alert(`✅ Galeria sincronizada! ${resultado.quantidade} pastas exportadas.\n\nAgora é só fazer o commit/push para publicar.`);
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao sincronizar:', erro);
+        alert('❌ Não foi possível sincronizar com o site.');
+    }
+}
+
+
+// ===== EVENTOS =====
+
+function registrarEventosGaleria() {
+    document.getElementById('btn-nova-pasta')?.addEventListener('click', abrirFormularioNovaPasta);
+    document.getElementById('pasta-btn-cancelar')?.addEventListener('click', fecharFormularioPasta);
+    document.getElementById('pasta-btn-salvar')?.addEventListener('click', salvarPasta);
+    document.getElementById('btn-sincronizar-galeria')?.addEventListener('click', sincronizarGaleria);
+
+    document.getElementById('btn-voltar-pastas')?.addEventListener('click', fecharGerenciadorFotos);
+    document.getElementById('btn-nova-foto')?.addEventListener('click', abrirFormularioNovaFoto);
+
+    document.getElementById('foto-album-select')?.addEventListener('change', (event) => {
+        const novoInput = document.getElementById('foto-album-novo');
+        if (!novoInput) return;
+
+        if (event.target.value === '__novo__') {
+            novoInput.style.display = 'block';
+            novoInput.focus();
+        } else {
+            novoInput.style.display = 'none';
+            novoInput.value = '';
+        }
+    });
+
+    document.getElementById('foto-btn-cancelar')?.addEventListener('click', fecharFormularioFoto);
+    document.getElementById('foto-btn-salvar')?.addEventListener('click', salvarFoto);
+
+    document.getElementById('pastas-admin-itens')?.addEventListener('click', (event) => {
+        const botao = event.target.closest('[data-acao]');
+        if (!botao) return;
+        const id = botao.dataset.id;
+
+        if (botao.dataset.acao === 'abrir-fotos') abrirGerenciadorFotos(id);
+        if (botao.dataset.acao === 'editar-pasta') editarPasta(id);
+        if (botao.dataset.acao === 'excluir-pasta') excluirPasta(id);
+    });
+
+    document.getElementById('fotos-admin-itens')?.addEventListener('click', (event) => {
+        const botao = event.target.closest('[data-acao]');
+        if (!botao) return;
+        const id = botao.dataset.id;
+
+        if (botao.dataset.acao === 'editar-foto') editarFoto(id);
+        if (botao.dataset.acao === 'excluir-foto') excluirFoto(id);
+    });
+
+    document.getElementById('albuns-admin-itens')?.addEventListener('click', (event) => {
+        const botao = event.target.closest('[data-acao]');
+        if (!botao) return;
+        const album = botao.dataset.album;
+
+        if (botao.dataset.acao === 'ver-album') abrirFiltroAlbumAdmin(album);
+        if (botao.dataset.acao === 'editar-album') renomearAlbum(album);
+        if (botao.dataset.acao === 'excluir-album') excluirAlbum(album);
+    });
+
+    document.getElementById('filtro-album-admin-fechar')?.addEventListener('click', fecharFiltroAlbumAdmin);
+}
+
+
+// ===== DRAG & DROP =====
+
+function adicionarEventosDragGaleria(elemento, tipo) {
+    elemento.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.timeline-admin-arrastar')) {
+            elemento.draggable = true;
+        }
+    });
+
+    elemento.addEventListener('dragstart', () => {
+        galeriaDragId = elemento.dataset.id;
+        elemento.classList.add('timeline-admin-dragging');
+    });
+
+    elemento.addEventListener('dragend', () => {
+        elemento.classList.remove('timeline-admin-dragging');
+        elemento.draggable = false;
+        galeriaDragId = null;
+    });
+
+    elemento.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (galeriaDragId && galeriaDragId !== elemento.dataset.id) {
+            elemento.classList.add('timeline-admin-drag-over');
+        }
+    });
+
+    elemento.addEventListener('dragleave', (e) => {
+        e.currentTarget.classList.remove('timeline-admin-drag-over');
+    });
+
+    elemento.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        const destino = e.currentTarget;
+        destino.classList.remove('timeline-admin-drag-over');
+
+        if (!galeriaDragId || galeriaDragId === destino.dataset.id) return;
+
+        const containerId = tipo === 'pasta' ? 'pastas-admin-itens' : 'fotos-admin-itens';
+        const lista = document.getElementById(containerId);
+        const arrastado = lista.querySelector(`[data-id="${CSS.escape(galeriaDragId)}"]`);
+        if (!arrastado) return;
+
+        const todos = [...lista.children];
+        const iArrastado = todos.indexOf(arrastado);
+        const iDestino = todos.indexOf(destino);
+
+        if (iArrastado < iDestino) destino.after(arrastado);
+        else destino.before(arrastado);
+
+        await salvarNovaOrdemGaleria(tipo);
+    });
+}
+
+async function salvarNovaOrdemGaleria(tipo) {
+    const containerId = tipo === 'pasta' ? 'pastas-admin-itens' : 'fotos-admin-itens';
+    const endpoint = tipo === 'pasta' ? 'pastas/reordenar' : 'fotos/reordenar';
+
+    const itens = [...document.querySelectorAll(`#${containerId} .timeline-admin-item`)];
+    const ids = itens.map(item => item.dataset.id);
+
+    try {
+        const resposta = await fetch(`http://localhost:3000/api/galeria/${endpoint}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao reordenar:', erro);
+        alert('Não foi possível salvar a nova ordem.');
+        if (tipo === 'pasta') await carregarPastasAdmin();
+        else await carregarFotosAdmin();
+    }
+}
+
+
+// ===== UTILITÁRIOS =====
+
+function resolverImagemGaleria(caminho) {
+    if (!caminho) return '';
+    if (caminho.startsWith('http://') || caminho.startsWith('https://')) return caminho;
+    if (caminho.startsWith('/uploads/')) return `http://localhost:3000${caminho}`;
+    return caminho;
+}
+
+function formatarDataGaleria(data) {
+    if (!data) return '';
+    const partes = data.split('-');
+    if (partes.length !== 3) return data;
+    const d = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function escaparHtmlGaleria(texto) {
+    return String(texto || '')
+        .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+}
+
+function ehVideoAdmin(caminho) {
+    return /\.(mp4|webm|mov|ogg)$/i.test(caminho || '');
+}
+
+// ===== EXPOR / AUTO-INIT =====
+
+window.initGaleria = initGaleria;
+
+// O arquivo se chama "gallery.js" (inglês), mas a função é
+// "initGaleria" (português). Se o painel monta o nome da função
+// a partir do nome do arquivo, ele pode estar procurando por
+// "initGallery" e nunca achando — por isso expomos os dois nomes,
+// cobrindo qualquer uma das duas convenções.
+window.initGallery = initGaleria;
+
+function iniciarGaleriaAutomaticamente() {
+    if (document.getElementById('pastas-admin-itens')) initGaleria();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarGaleriaAutomaticamente);
+} else {
+    iniciarGaleriaAutomaticamente();
+}

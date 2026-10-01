@@ -1,0 +1,899 @@
+{
+  "categorias": [
+    {
+      "id": "gostos",
+      "emoji": "🍕",
+      "titulo": "Gostos",
+      "itens": [
+        {
+          "id": "gostos-comida-preferida",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Comida Preferida",
+          "eu": "Hambúrguer",
+          "ela": "Fricassê"
+        },
+        {
+          "id": "gostos-bebida-preferida",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Bebida Preferida",
+          "eu": "Coca Cola",
+          "ela": "Coca Cola, Suco de Maracujá, Energético"
+        },
+        {
+          "id": "gostos-doce-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Doce Preferido",
+          "eu": "Trufa de Ninho",
+          "ela": "Surpresa de Uva"
+        },
+        {
+          "id": "gostos-salgado-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Salgado Preferido",
+          "eu": "Enroladinho de Salsicha",
+          "ela": "Porco Espinho"
+        },
+        {
+          "id": "gostos-fast-food-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Fast-Food Preferido",
+          "eu": "Hambúrguer",
+          "ela": "Pastel"
+        },
+        {
+          "id": "gostos-fruta-preferida",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Fruta Preferida",
+          "eu": "Abacaxi",
+          "ela": "Uva"
+        },
+        {
+          "id": "gostos-sobremesa-preferida",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Sobremesa Preferida",
+          "eu": "Pudim",
+          "ela": "Mousse de Maracujá/Limão"
+        },
+        {
+          "id": "gostos-sabor-de-sorvete-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Sabor de Sorvete Preferido",
+          "eu": "Misto",
+          "ela": "Chocolate"
+        },
+        {
+          "id": "gostos-pizza-preferida",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Pizza Preferida",
+          "eu": "Calabresa",
+          "ela": "Palmito"
+        },
+        {
+          "id": "gostos-comida-que-nao-suporta",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Comida que Não Suporta",
+          "eu": "Bucho",
+          "ela": "Xuxu"
+        },
+        {
+          "id": "gostos-comida-que-gostaria-de-experimentar",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Comida Que Gostaria de Experimentar",
+          "eu": "Macaron",
+          "ela": "Lula"
+        },
+        {
+          "id": "gostos-lugar-favorito-para-comer",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Lugar Favorito Para Comer",
+          "eu": "Em Casa Assistindo Algo",
+          "ela": "Em Casa Assistindo Algo"
+        }
+      ]
+    },
+    {
+      "id": "entretenimento",
+      "emoji": "🎮",
+      "titulo": "Entretenimento",
+      "itens": [
+        {
+          "id": "entretenimento-jogo-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Jogo Preferido",
+          "eu": "Genshin Impact",
+          "ela": "Genshin Impact, Resident Evil 4"
+        },
+        {
+          "id": "entretenimento-jogo-que-mais-jogou",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Jogo Que Mais Jogou",
+          "eu": "Genshin Impact",
+          "ela": "Roblox"
+        },
+        {
+          "id": "entretenimento-jogo-que-gostaria-de-jogar-junto",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Jogo Que Gostaria de Jogar Junto",
+          "eu": "Detroit",
+          "ela": "Detroit"
+        },
+        {
+          "id": "entretenimento-personagem-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Personagem de Jogo Favorito",
+          "eu": "Arthur Morgan",
+          "ela": "Lauma"
+        },
+        {
+          "id": "entretenimento-personagem-com-quem-mais-se-identifica",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Personagem Com Quem Mais Se Identifica",
+          "eu": "Arthur Morgan",
+          "ela": "Castiel e Dean Whinchester"
+        },
+        {
+          "id": "entretenimento-filme-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Filme Favorito",
+          "eu": "Shrek",
+          "ela": "Como Perder Um Homem Em 10 Dias"
+        },
+        {
+          "id": "entretenimento-serie-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Série Favorita",
+          "eu": "Supernatural",
+          "ela": "Supernatural"
+        },
+        {
+          "id": "entretenimento-anime-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Anime Favorito",
+          "eu": "Naruto, Hunter x Hunter, Black Clover, Haikyuu, Frieren",
+          "ela": "Attack OnTitan, Frieren"
+        },
+        {
+          "id": "entretenimento-desenho-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Desenho Favorito",
+          "eu": "O Incrível Mundo de Gumball",
+          "ela": "(Des)encanto"
+        },
+        {
+          "id": "entretenimento-filme-que-mais-marcou",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Filme Que Mais Marcou",
+          "eu": "10 Coisas Que Eu Odeio Em Você",
+          "ela": "Como Eu Era Antes de Você"
+        },
+        {
+          "id": "entretenimento-serie-que-assistiria-novamente",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Série Que Assistiria Novamente",
+          "eu": "Supernatural",
+          "ela": "Supernatural"
+        },
+        {
+          "id": "entretenimento-filme-serie-que-lembra-o-outro",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Filme/Série Que Lembra o Outro",
+          "eu": "10 Coisas Que Eu Odeio Em Você",
+          "ela": "10 Coisas Que Eu Odeio Em Você"
+        },
+        {
+          "id": "entretenimento-jogo-que-lembra-voces-dois",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Jogo Que Lembra Vocês Dois",
+          "texto": "Minecraft"
+        },
+        {
+          "id": "entretenimento-jogo-que-comecaram-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Jogo Que Começaram Juntos",
+          "texto": "Detroit"
+        },
+        {
+          "id": "entretenimento-jogo-que-mais-gostam-de-jogar-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Jogo Que Mais Gostam de Jogar Juntos",
+          "texto": "Minecraft"
+        }
+      ]
+    },
+    {
+      "id": "musica",
+      "emoji": "🎵",
+      "titulo": "Música",
+      "itens": [
+        {
+          "id": "musica-musica-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Música Favorita",
+          "eu": "Friends - Chase Atlantic",
+          "ela": "Destroy Myself Just For You - Montell Fish"
+        },
+        {
+          "id": "musica-artista-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Artista Favorito",
+          "eu": "Luan Santana",
+          "ela": "Joji, Lana Del Rey, Frank Ocean, Montell Fish"
+        },
+        {
+          "id": "musica-banda-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Banda Favorita",
+          "eu": "Chase Atlantic",
+          "ela": "Guns n' Roses"
+        },
+        {
+          "id": "musica-genero-musical-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Gênero musical favorito",
+          "eu": "Pop Alternativo Sombrio",
+          "ela": "Rock"
+        },
+        {
+          "id": "musica-musica-que-mais-escuta-atualmente",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Música Que Mais Escuta Atualmente",
+          "eu": "Join Me In Death",
+          "ela": "Love You Right"
+        },
+        {
+          "id": "musica-musica-que-lembra-o-outro",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Música Que Lembra o Outro",
+          "eu": "Can't Take My Eyes Off You",
+          "ela": "Friends"
+        },
+        {
+          "id": "musica-musica-que-representa-voces",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Música Que Representa Vocês",
+          "texto": "Cant Help Falling In Love"
+        },
+        {
+          "id": "musica-musica-que-gostaria-de-ouvir-junto-pessoalmente",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Música Que Gostaria de Ouvir Junto Pessoalmente",
+          "eu": "Chuva de Arroz",
+          "ela": "Love Me"
+        },
+        {
+          "id": "musica-musica-que-marcou-algum-momento",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Música Que Marcou Algum Momento",
+          "eu": "Cant Take My Eyes Off You",
+          "ela": "Cant Take My Eyes Off You"
+        }
+      ]
+    },
+    {
+      "id": "preferencias",
+      "emoji": "🎨",
+      "titulo": "Preferências",
+      "itens": [
+        {
+          "id": "preferencias-cor-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Cor Favorita",
+          "eu": "Azul",
+          "ela": "Roxo"
+        },
+        {
+          "id": "preferencias-animal-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Animal Favorito",
+          "eu": "Gato",
+          "ela": "Gato"
+        },
+        {
+          "id": "preferencias-flor-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Flor Favorita",
+          "eu": "Phalaenopsis Azul",
+          "ela": "Tulipa, Lírio"
+        },
+        {
+          "id": "preferencias-estacao-do-ano-favorita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Estação do Ano Favorita",
+          "eu": "Outono",
+          "ela": "Outono"
+        },
+        {
+          "id": "preferencias-clima-preferido",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Clima Preferido",
+          "eu": "Frio",
+          "ela": "Frio"
+        },
+        {
+          "id": "preferencias-lugar-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Lugar Favorito",
+          "eu": "Meu Quartinho",
+          "ela": "Minha Cama"
+        },
+        {
+          "id": "preferencias-pais-que-gostaria-de-conhecer",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "País Que Gostaria de Conhecer",
+          "eu": "Canadá",
+          "ela": "Japão"
+        },
+        {
+          "id": "preferencias-cidade-que-gostaria-de-conhecer",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Cidade Que Gostaria de Conhecer",
+          "eu": "Batel - PR",
+          "ela": "Gramado - RS"
+        },
+        {
+          "id": "preferencias-lugar-onde-gostaria-de-morar",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Lugar Onde Gostaria de Morar",
+          "eu": "Curitiba ou Canadá",
+          "ela": "Curitiba ou Japão"
+        },
+        {
+          "id": "preferencias-horario-favorito-do-dia",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Horário Favorito do Dia",
+          "eu": "Madrugada",
+          "ela": "Madrugada"
+        },
+        {
+          "id": "preferencias-dia-da-semana-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Dia da Semana Favorito",
+          "eu": "Sexta",
+          "ela": "Sexta"
+        },
+        {
+          "id": "preferencias-numero-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Número Favorito",
+          "eu": "15",
+          "ela": "8"
+        },
+        {
+          "id": "preferencias-cheiro-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Cheiro Favorito",
+          "eu": "Comida",
+          "ela": "Livros Novos"
+        },
+        {
+          "id": "preferencias-tipo-de-roupa-que-mais-gosta",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Tipo de Roupa Que Mais Gosta",
+          "eu": "Folgada",
+          "ela": "Confortável"
+        },
+        {
+          "id": "preferencias-estilo-que-mais-gosta",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Estilo Que Mais Gosta",
+          "eu": "Streetwear Minimalista",
+          "ela": "Acubi Grunge"
+        }
+      ]
+    },
+    {
+      "id": "personalidade",
+      "emoji": "🧠",
+      "titulo": "Personalidade",
+      "itens": [
+        {
+          "id": "personalidade-mais-introvertido-ou-extrovertido",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Mais Introvertido ou Extrovertido?",
+          "texto": "Introvertido"
+        },
+        {
+          "id": "personalidade-o-que-mais-irrita",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Mais Irrita?",
+          "eu": "Barulho",
+          "ela": "Gente Falando Alto"
+        },
+        {
+          "id": "personalidade-o-que-mais-deixa-feliz",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Mais Deixa Feliz?",
+          "eu": "Comer Hamburguer ou Pizza",
+          "ela": "Comer Docinho"
+        },
+        {
+          "id": "personalidade-o-que-faz-rir-facilmente",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Faz Rir Facilmente?",
+          "eu": "Jhennyfer",
+          "ela": "Piadas Bestas"
+        },
+        {
+          "id": "personalidade-o-que-costuma-fazer-quando-esta-triste",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Costuma Fazer Quando Está Triste?",
+          "eu": "Comer",
+          "ela": "Chorar"
+        },
+        {
+          "id": "personalidade-o-que-mais-valoriza-em-uma-pessoa",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Mais Valoriza Em Uma Pessoa?",
+          "eu": "Compaixão",
+          "ela": "Sinceridade"
+        },
+        {
+          "id": "personalidade-maior-qualidade",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Maior Qualidade",
+          "texto": "Intenso"
+        },
+        {
+          "id": "personalidade-maior-defeito",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Maior Defeito",
+          "texto": "Impulsivo"
+        },
+        {
+          "id": "personalidade-maior-medo",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Maior Medo",
+          "eu": "Perder a Jhennyfer",
+          "ela": "Meg Morrer"
+        },
+        {
+          "id": "personalidade-uma-mania",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Uma Mania",
+          "eu": "Irritar Outra Pessoa",
+          "ela": "Querer Tudo do Meu Jeito"
+        },
+        {
+          "id": "personalidade-uma-coisa-que-sempre-faz",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Uma Coisa Que Sempre Faz",
+          "eu": "Mexer no PC",
+          "ela": "Perguntar o Porquê Em Tudo."
+        },
+        {
+          "id": "personalidade-algo-que-gostaria-de-aprender",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Algo Que Gostaria de Aprender",
+          "eu": "Tocar Violino ou Piano",
+          "ela": "Croché"
+        },
+        {
+          "id": "personalidade-algo-que-gostaria-de-melhorar-em-si-mesmo",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Algo Que Gostaria de Melhorar Em Si Mesmo",
+          "eu": "Insegurança",
+          "ela": "Impulsividade"
+        },
+        {
+          "id": "personalidade-o-que-mais-gosta-de-receber",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Mais Gosta de Receber?",
+          "eu": "Afeto",
+          "ela": "Elogios"
+        },
+        {
+          "id": "personalidade-o-que-mais-gosta-de-fazer-quando-esta-sozinho",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "O Que Mais Gosta de Fazer Quando Está Sozinho?",
+          "eu": "Jogar ou Programar",
+          "ela": "Ouvir Música"
+        }
+      ]
+    },
+    {
+      "id": "sonossas",
+      "emoji": "❤️",
+      "titulo": "Só nossas",
+      "itens": [
+        {
+          "id": "sonossas-primeiro-apelido-que-recebeu-do-outro",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Primeiro Apelido Que Recebeu do Outro",
+          "eu": "Bebe",
+          "ela": "Bebe"
+        },
+        {
+          "id": "sonossas-apelido-favorito",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Apelido Favorito",
+          "eu": "Amor e Bebe",
+          "ela": "Bebezinha e Princesa"
+        },
+        {
+          "id": "sonossas-primeiro-jogo-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro Jogo Juntos",
+          "texto": "Roblox"
+        },
+        {
+          "id": "sonossas-jogo-favorito-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Jogo Favorito Juntos",
+          "texto": "Minecraft"
+        },
+        {
+          "id": "sonossas-primeiro-filme-serie-que-assistiram-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro Filme/Série que Assistiram Juntos",
+          "texto": "Como Perder Um Homem Em 10 Dias"
+        },
+        {
+          "id": "sonossas-primeira-coisa-que-fizeram-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeira Coisa Que Fizeram Juntos",
+          "texto": "Call"
+        },
+        {
+          "id": "sonossas-primeiro-eu-te-amo",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro “Eu Te Amo”",
+          "texto": "Allan"
+        },
+        {
+          "id": "sonossas-primeiro-momento-em-que-percebeu-que-estava-apaixonado",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro Momento Em Que Percebeu Que Estava Apaixonado",
+          "texto": "Quando Terminamos e Voltamos, Jogando Minecraft Juntinhos No Ano Novo"
+        },
+        {
+          "id": "sonossas-memoria-favorita-da-relacao",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Memória Favorita da Relação",
+          "texto": "Quando Assistimos"
+        },
+        {
+          "id": "sonossas-coisa-que-voces-sempre-fazem-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Coisa Que Vocês Sempre Fazem Juntos",
+          "texto": "Ser Bastante Presente Na Vida Um Do Outro"
+        },
+        {
+          "id": "sonossas-coisa-que-mais-gostam-um-no-outro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Coisa Que Mais Gostam Um No Outro",
+          "texto": "Seu Jeitinho Único"
+        },
+        {
+          "id": "sonossas-algo-que-querem-fazer-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Algo Que Querem Fazer Juntos",
+          "texto": "Passear e Comer BK"
+        },
+        {
+          "id": "sonossas-lugar-que-querem-conhecer-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Lugar Que Querem Conhecer Juntos",
+          "texto": "BK"
+        },
+        {
+          "id": "sonossas-primeiro-filme-que-querem-assistir-pessoalmente",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro Filme Que Querem Assistir Pessoalmente",
+          "texto": "Diário de Uma Paixao e 10 Coisas Que Odeio Em Voce"
+        },
+        {
+          "id": "sonossas-primeiro-jogo-que-querem-jogar-pessoalmente",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeiro Jogo Que Querem Jogar Pessoalmente",
+          "texto": "Roblox e Minecraft"
+        },
+        {
+          "id": "sonossas-algo-que-estao-esperando-ansiosamente",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Algo Que Estão Esperando Ansiosamente",
+          "texto": "Nosso Encontro"
+        },
+        {
+          "id": "sonossas-um-sonho-que-querem-realizar-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Um Sonho Que Querem Realizar Juntos",
+          "texto": "Morar Juntos"
+        }
+      ]
+    },
+    {
+      "id": "nosdois",
+      "emoji": "👀",
+      "titulo": "Nós dois",
+      "itens": [
+        {
+          "id": "nosdois-quem-dorme-primeiro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Dorme Primeiro?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-acorda-primeiro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Acorda Primeiro?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-manda-mais-mensagem",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Manda Mais Mensagem?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-e-mais-ciumento",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem é Mais Ciumento?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-e-mais-carinhoso",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem é Mais Carinhoso?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-pede-desculpa-primeiro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Pede Desculpa Primeiro?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-e-mais-teimoso",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem é Mais Teimoso?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-e-mais-dramatico",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem é Mais Dramático?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-ri-mais",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Ri Mais?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-demora-mais-para-responder",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Demora Mais Para Responder?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-escolheria-o-filme",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Escolheria o Filme?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-escolheria-o-restaurante",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Escolheria o Restaurante?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-gastaria-dinheiro-primeiro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Gastaria Dinheiro Primeiro?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-faria-uma-surpresa-primeiro",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Faria Uma Surpresa Primeiro?",
+          "texto": "Jhennyfer"
+        },
+        {
+          "id": "nosdois-quem-teria-mais-chance-de-esquecer-alguma-coisa",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Teria Mais Chance de Esquecer Alguma Coisa?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-fala-mais",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem Fala Mais?",
+          "texto": "Allan"
+        },
+        {
+          "id": "nosdois-quem-e-mais-provavel-de-dizer-vamos-fazer-isso-do-nada",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Quem é Mais Provável de Dizer “Vamos Fazer Isso” do Nada?",
+          "texto": "Allan"
+        }
+      ]
+    },
+    {
+      "id": "futuro",
+      "emoji": "🏠",
+      "titulo": "Futuro",
+      "itens": [
+        {
+          "id": "futuro-onde-gostaria-de-morar",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Onde Gostaria de Morar?",
+          "texto": "Curitiba ou Japão"
+        },
+        {
+          "id": "futuro-casa-ou-apartamento",
+          "tipo": "duo",
+          "emoji": "",
+          "rotulo": "Casa ou Apartamento?",
+          "eu": "Casa",
+          "ela": "Casa"
+        },
+        {
+          "id": "futuro-como-imagina-a-casa-de-voces",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Como Imagina a Casa de Vocês?",
+          "texto": "Algo Bem Confortável e Bonitinho"
+        },
+        {
+          "id": "futuro-lugar-dos-sonhos-para-viajar-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Lugar Dos Sonhos Para Viajar Juntos",
+          "texto": "Japão"
+        },
+        {
+          "id": "futuro-primeira-viagem-que-gostariam-de-fazer",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Primeira Viagem Que Gostariam de Fazer",
+          "texto": "Curitiba"
+        },
+        {
+          "id": "futuro-algo-que-querem-comprar-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Algo Que Querem Comprar Juntos",
+          "texto": "Nossa Casa"
+        },
+        {
+          "id": "futuro-algo-que-querem-construir-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Algo Que Querem Construir Juntos",
+          "texto": "Nossa Família"
+        },
+        {
+          "id": "futuro-animal-de-estimacao-que-gostariam-de-ter",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Animal de Estimação Que Gostariam de Ter",
+          "texto": "Gatinhos e Cachorros"
+        },
+        {
+          "id": "futuro-coisa-que-querem-fazer-quando-morarem-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Coisa Que Querem Fazer Quando Morarem Juntos",
+          "texto": "Fazer Seu Café da Manha e Almoço"
+        },
+        {
+          "id": "futuro-como-imaginam-um-dia-normal-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Como Imaginam Um Dia Normal Juntos",
+          "texto": "Assistir Algo Juntinhos"
+        },
+        {
+          "id": "futuro-um-sonho-que-querem-realizar-juntos",
+          "tipo": "juntos",
+          "emoji": "",
+          "rotulo": "Um Sonho Que Querem Realizar Juntos",
+          "texto": "Comprar Nossa Casa"
+        }
+      ]
+    }
+  ]
+}

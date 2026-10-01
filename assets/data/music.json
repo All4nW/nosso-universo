@@ -1,0 +1,282 @@
+[
+  {
+    "id": "73a46c54-1aa4-4607-b533-050f59fb1aac",
+    "titulo": "The First Time",
+    "arquivo": "assets/audio/1790821467061-660117018.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "e1eaf7ce-4085-4303-a836-108fd9577d98",
+    "titulo": "No. 1 Party Anthem - Arctic Monkeys",
+    "arquivo": "assets/audio/1789240301134-601224514.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "3a72709e-5e25-4801-8210-0e8de0b3b61a",
+    "titulo": "Everybody Here Wants You - Jeff Buckley",
+    "arquivo": "assets/audio/1787347756126-61697788.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 150,
+    "volume": 80
+  },
+  {
+    "id": "fb7a034f-6790-4ab3-b25d-6b20afb44487",
+    "titulo": "Come Back - The Five Stairsteps",
+    "arquivo": "assets/audio/1787355185214-750224783.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "37acaf75-6416-4990-8c3f-59e57297c442",
+    "titulo": "Aliança - Tribalistas",
+    "arquivo": "assets/audio/1789241206131-148867210.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "11d653f4-d19e-4e7b-b1a9-7047292c2e72",
+    "titulo": "Razões E Emoções - NX Zero",
+    "arquivo": "assets/audio/1790821983816-625103455.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "64d14c06-0d4c-4fc1-849f-1b1e5ef32aed",
+    "titulo": "Purple Rain",
+    "arquivo": "assets/audio/1786382129043-756500976.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 227,
+    "volume": 80
+  },
+  {
+    "id": "cf8e74fb-09de-4a9a-b0d4-b5a2fd36f121",
+    "titulo": "Bryan Adams - Heaven",
+    "arquivo": "assets/audio/1787355153132-919484098.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "d40a816d-04d4-47a6-b1c9-2ff31748cbcf",
+    "titulo": "Forever - The Little Dippers",
+    "arquivo": "assets/audio/1789091751422-630971634.mp3",
+    "inicioSegundos": 20,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "c8d245a5-4a3f-43fe-81f8-fb27f7e58320",
+    "titulo": "I Thought I Saw Your Face Today",
+    "arquivo": "assets/audio/1786296886744-782869942.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "37cc2acc-7f0d-48e0-8fce-66a21666e1c5",
+    "titulo": "Can't Help Falling In Love",
+    "arquivo": "assets/audio/1786650935618-446569618.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 106,
+    "volume": 80
+  },
+  {
+    "id": "93458cd3-60e1-4441-b09c-d7ddf15e5246",
+    "titulo": "Stand By Me - Ben E. King",
+    "arquivo": "assets/audio/1786244515730-758922345.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "dd6c69a8-7a9a-4b61-8b50-9f754d67efee",
+    "titulo": "Meddle About - Chase Atlantic",
+    "arquivo": "assets/audio/1786243506093-347736336.mp3",
+    "inicioSegundos": 12,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "64f8305b-0ac3-4daa-9089-0b3bbcf6ffd5",
+    "titulo": "I love you Babyyyyyy",
+    "arquivo": "assets/audio/1786244242258-875667711.mp3",
+    "inicioSegundos": 80,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "6a5afce2-d70a-40b1-be9c-9f68e856dd2d",
+    "titulo": "Carry on Wayward Son",
+    "arquivo": "assets/audio/1786296203300-324992328.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 167,
+    "volume": 80
+  },
+  {
+    "id": "238fe8ad-7676-4af3-a320-1c76cc624283",
+    "titulo": "True (2003 Remaster) - Spandau Ballet",
+    "arquivo": "assets/audio/1789240281402-857459950.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "2e12ab8d-6ce9-407d-a4f2-4ff028ccc5f6",
+    "titulo": "See You Again - Tyler, The Creator",
+    "arquivo": "assets/audio/1789240291446-527775090.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "057731e5-3a9a-40d1-9515-ee535e5f9dde",
+    "titulo": "My Love Mine All Mine - Mitski",
+    "arquivo": "assets/audio/1789240308790-223200817.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "3b2c7f1c-1f14-4ba5-b115-8b3a9f7013da",
+    "titulo": "Love You Right - Montell Fish",
+    "arquivo": "assets/audio/1789240327694-416268085.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "f761919c-afbd-4bea-8d7d-df86fb2892a7",
+    "titulo": "Love Me - Elvis Presley",
+    "arquivo": "assets/audio/1789240337902-899129237.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "e054556e-4e7a-49ea-b9a3-1a77487f0d81",
+    "titulo": "Good Looking - Suki Waterhouse",
+    "arquivo": "assets/audio/1789240344501-169469912.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "7c5d6ac9-0d4b-41ef-9780-8f0b607c3e42",
+    "titulo": "Video Games - Lana Del Rey",
+    "arquivo": "assets/audio/1789240601076-941970973.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "d971bc6c-0184-4819-a534-069f9db42ac2",
+    "titulo": "Something About You - Eyedress",
+    "arquivo": "assets/audio/1789240613773-429985846.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "42744bfa-7843-40f6-ae3b-fe4127c3a477",
+    "titulo": "My Moon My Man",
+    "arquivo": "assets/audio/1789240619316-790104310.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "b99bcc4f-ea85-4e01-a4e1-f58b4d44c67f",
+    "titulo": "Let The Light In - Lana Del Rey",
+    "arquivo": "assets/audio/1789240625997-986204308.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "fca314bb-2142-4eb5-a780-38be64d94dcd",
+    "titulo": "Kiss Me - Sixpence None The Richer",
+    "arquivo": "assets/audio/1789240633876-653830596.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "39acacfc-f5fc-431d-abc3-5d31f8e34e7f",
+    "titulo": "Every Breath You Take - The Police",
+    "arquivo": "assets/audio/1789240642164-904322235.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "059f2a0a-b298-4eef-b366-4a6a10c0898c",
+    "titulo": "Congratulations (feat. Bilal) - Mac Miller",
+    "arquivo": "assets/audio/1789240653077-215893801.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "b854001e-f9bf-4f6e-8c32-9fcceaca2469",
+    "titulo": "Apocalypse - Cigarettes After Sex",
+    "arquivo": "assets/audio/1789240660244-872334130.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "f814b3a2-cd45-412f-a1f6-78f90be8c0dd",
+    "titulo": "Fall in Love with You. - Montell Fish",
+    "arquivo": "assets/audio/1789240894308-41389928.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "54e0901a-f3d1-4024-905d-8218f2f161eb",
+    "titulo": "Cherry - Lana Del Rey",
+    "arquivo": "assets/audio/1789240902021-782829895.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "93aede0f-3c87-41de-85ed-21fa6dd4ef36",
+    "titulo": "He's My Man - Luvcat",
+    "arquivo": "assets/audio/1789241064267-258685410.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "36315e09-62c3-4c3e-ae95-075e80a9edf4",
+    "titulo": "Jhennyfer",
+    "arquivo": "assets/audio/1789241960996-892211020.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "c60b6ae1-36d6-4c43-99e7-e17bd114a1c6",
+    "titulo": "Anjos",
+    "arquivo": "assets/audio/1789241968746-918538828.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  },
+  {
+    "id": "c558ea8f-ff6a-4a81-98a2-fddae44942a2",
+    "titulo": "Recomeçar - Tim Bernardes",
+    "arquivo": "assets/audio/1789241976251-735375011.mp3",
+    "inicioSegundos": 0,
+    "fimSegundos": 0,
+    "volume": 80
+  }
+]
