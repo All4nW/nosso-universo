@@ -228,6 +228,27 @@
     background: rgba(255, 255, 255, 0.1);
     transform: scale(1.1);
 }
+
+.tela-link {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: calc(var(--spacing-lg) + 112px);
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-lilac);
+    transition: var(--transition-smooth);
+}
+
+.tela-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
 .sound-toggle-glow {
     animation: glow-pulse 1s ease-in-out 3;
 }
@@ -1536,7 +1557,7 @@ body.modal-aberto {
 .admin-link {
     position: fixed;
     top: var(--spacing-lg);
-    left: calc(var(--spacing-lg) + 112px);
+    left: calc(var(--spacing-lg) + 168px);   /* era 112px */
     z-index: 100;
     width: 40px;
     height: 40px;

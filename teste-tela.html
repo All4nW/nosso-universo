@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste de transmissão 💗</title>
+<style>
+:root { --bg:#0b0b1e; --card:#15132e; --borda:rgba(201,167,245,.28); --lilas:#c9a7f5; --rosa:#f5c2d1; --texto:#f1ecfb; --mudo:#a79fc2; --ok:#8fe3c7; --erro:#ff8fa3; --aviso:#f5d97a; }
+* { box-sizing: border-box; }
+body { margin:0; padding:22px 14px 70px; color:var(--texto); line-height:1.5;
+       font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
+       background: radial-gradient(1200px 600px at 50% -10%, #2a1d52 0%, var(--bg) 60%); }
+main { max-width:760px; margin:0 auto; }
+h1 { margin:0 0 4px; font-size:1.6rem; }
+h2 { margin:0 0 10px; font-size:1.05rem; color:var(--rosa); }
+.mudo { color:var(--mudo); font-size:.9rem; margin:0 0 14px; }
+.card { background:var(--card); border:1px solid var(--borda); border-radius:16px; padding:16px; margin:14px 0; }
+.card[hidden] { display:none; }
+.linha { display:flex; gap:10px; flex-wrap:wrap; }
+button, select { font:inherit; color:var(--texto); background:rgba(201,167,245,.14); border:1px solid var(--borda);
+                 border-radius:12px; padding:11px 14px; cursor:pointer; }
+button.principal { background:linear-gradient(135deg,#8a6fc9,#d97a95); border:0; font-weight:600; }
+button:disabled { opacity:.45; cursor:default; }
+label { display:block; font-size:.82rem; color:var(--mudo); margin:10px 0 4px; }
+textarea { width:100%; min-height:84px; font-size:16px; font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--texto);
+           background:rgba(0,0,0,.35); border:1px solid var(--borda); border-radius:10px; padding:10px; resize:vertical; }
+.passo { margin-top:16px; padding-top:14px; border-top:1px dashed var(--borda); }
+.passo:first-of-type { border-top:0; margin-top:0; padding-top:0; }
+.msg { margin-top:10px; font-size:.88rem; min-height:1.3em; }
+.msg.erro { color:var(--erro); } .msg.ok { color:var(--ok); } .msg.aviso { color:var(--aviso); }
+video { width:100%; max-height:70vh; background:#000; border-radius:12px; margin-top:12px; }
+.grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }
+.grade div { background:rgba(0,0,0,.28); border-radius:10px; padding:8px 10px; }
+.grade span { display:block; font-size:.72rem; color:var(--mudo); }
+.grade b { font-size:.95rem; font-variant-numeric:tabular-nums; }
+details { background:var(--card); border:1px solid var(--borda); border-radius:14px; padding:10px 14px; }
+summary { cursor:pointer; color:var(--lilas); }
+ol { padding-left:20px; margin:10px 0 4px; font-size:.9rem; color:var(--mudo); }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Teste de transmissão 💗</h1>
+<p class="mudo">Serve só pra descobrir se a conexão direta entre vocês funciona bem. Não tem servidor: os códigos vão e voltam por WhatsApp/Discord.</p>
+
+<details>
+  <summary>Como fazer o teste</summary>
+  <ol>
+    <li>Quem tem o PC clica em <b>Vou transmitir</b> (Chrome ou Edge). Quem vai olhar clica em <b>Vou assistir</b> (celular serve).</li>
+    <li>Idealmente o celular fica na <b>4G/5G</b>, fora do Wi-Fi: é o caso mais difícil e o mais importante de testar.</li>
+    <li>Transmissor: escolhe a qualidade, clica <b>Escolher tela e gerar código</b>, marca "compartilhar áudio" na janela do navegador e manda o código pro outro.</li>
+    <li>Espectador: cola o código, clica <b>Gerar resposta</b> e manda o código de resposta de volta.</li>
+    <li>Transmissor cola a resposta e clica <b>Conectar</b>. Deixem rodando uns 3 a 5 minutos com algo em movimento (jogo ou vídeo).</li>
+    <li>Cada um clica <b>Copiar relatório</b> no fim e cola no chat.</li>
+  </ol>
+</details>
+
+<section id="escolha" class="card">
+  <h2>Quem é você nesse teste?</h2>
+  <div class="linha">
+    <button id="btnTransmitir" class="principal">🖥️ Vou transmitir (PC)</button>
+    <button id="btnAssistir">📱 Vou assistir</button>
+  </div>
+</section>
+
+<section id="painelTransmitir" class="card" hidden>
+  <h2>🖥️ Transmitir</h2>
+  <div class="passo">
+    <div class="linha">
+      <div><label for="qualidade">Qualidade</label>
+        <select id="qualidade">
+          <option value="720p30">720p · 30 fps</option>
+          <option value="1080p30" selected>1080p · 30 fps</option>
+          <option value="1080p60">1080p · 60 fps</option>
+        </select></div>
+      <div><label for="conteudo">Tipo de conteúdo</label>
+        <select id="conteudo">
+          <option value="motion" selected>Movimento (jogo, filme)</option>
+          <option value="detail">Detalhe (texto, slides)</option>
+        </select></div>
+    </div>
+    <label><input type="checkbox" id="capturarAudio" checked> Capturar áudio</label>
+    <p style="margin:12px 0 0"><button id="btnGerarOferta" class="principal">1. Escolher tela e gerar código</button></p>
+  </div>
+  <div class="passo">
+    <label for="codigoOferta">2. Seu código (mande pra ela)</label>
+    <textarea id="codigoOferta" readonly placeholder="aparece aqui depois do passo 1"></textarea>
+    <p style="margin:8px 0 0"><button id="copiarOferta">Copiar código</button></p>
+  </div>
+  <div class="passo">
+    <label for="colarResposta">3. Cole aqui o código de resposta dela</label>
+    <textarea id="colarResposta" placeholder="cole o código que ela mandar de volta"></textarea>
+    <p style="margin:8px 0 0"><button id="btnConectar" class="principal">Conectar</button></p>
+  </div>
+  <div id="msgT" class="msg"></div>
+</section>
+
+<section id="painelAssistir" class="card" hidden>
+  <h2>📱 Assistir</h2>
+  <div class="passo">
+    <label for="colarOferta">1. Cole aqui o código que o transmissor mandou</label>
+    <textarea id="colarOferta" placeholder="cole o código aqui"></textarea>
+    <p style="margin:8px 0 0"><button id="btnGerarResposta" class="principal">Gerar resposta</button></p>
+  </div>
+  <div class="passo">
+    <label for="codigoResposta">2. Seu código de resposta (mande de volta)</label>
+    <textarea id="codigoResposta" readonly placeholder="aparece aqui depois do passo 1"></textarea>
+    <p style="margin:8px 0 0"><button id="copiarResposta">Copiar código</button></p>
+  </div>
+  <video id="video" autoplay playsinline muted controls></video>
+  <p style="margin:10px 0 0"><button id="btnSom">🔊 Ativar som</button></p>
+  <div id="msgA" class="msg"></div>
+</section>
+
+<section id="diag" class="card" hidden>
+  <h2>📊 Diagnóstico ao vivo</h2>
+  <div class="grade" id="grade"></div>
+  <p style="margin:12px 0 0" class="linha">
+    <button id="btnRelatorio">Copiar relatório</button>
+    <button id="btnReiniciar">Recomeçar</button>
+  </p>
+  <div id="msgR" class="msg"></div>
+</section>
+
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const ICE = { iceServers: [{ urls: [
+  "stun:stun.l.google.com:19302",
+  "stun:stun1.l.google.com:19302",
+  "stun:stun.cloudflare.com:3478"
+] }] };
+
+const QUALIDADES = {
+  "720p30":  { l: 1280, a: 720,  fps: 30, bps: 2500000 },
+  "1080p30": { l: 1920, a: 1080, fps: 30, bps: 4500000 },
+  "1080p60": { l: 1920, a: 1080, fps: 60, bps: 7000000 }
+};
+
+let pc = null, fluxoLocal = null, timer = null, papel = "", anterior = {}, amostras = [];
+
+/* CODEC-INICIO */
+// O SDP é só texto ASCII: JSON + base64 basta pra mandar por WhatsApp.
+const paraCodigo = (obj) => btoa(JSON.stringify(obj));
+const deCodigo = (txt) => JSON.parse(atob(txt.replace(/\s+/g, "")));
+/* CODEC-FIM */
+
+function aviso(id, texto, tipo) {
+  const el = $(id); el.textContent = texto; el.className = "msg " + (tipo || "");
+}
+
+async function copiar(texto, idMsg) {
+  try { await navigator.clipboard.writeText(texto); }
+  catch { const t = document.createElement("textarea"); t.value = texto; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  aviso(idMsg, "Copiado ✅", "ok");
+}
+
+function esperarIce(conexao, limite = 5000) {
+  return new Promise((resolve) => {
+    if (conexao.iceGatheringState === "complete") return resolve();
+    let t;
+    const fim = () => { conexao.removeEventListener("icegatheringstatechange", mudou); clearTimeout(t); resolve(); };
+    const mudou = () => { if (conexao.iceGatheringState === "complete") fim(); };
+    conexao.addEventListener("icegatheringstatechange", mudou);
+    t = setTimeout(fim, limite);
+  });
+}
+
+function novaConexao() {
+  const c = new RTCPeerConnection(ICE);
+  const atualizar = () => {
+    const s = c.connectionState || c.iceConnectionState;
+    const rotulos = { new:"aguardando", connecting:"conectando…", checking:"conectando…", connected:"conectado ✅", completed:"conectado ✅",
+                      disconnected:"instável ⚠️", failed:"falhou ❌", closed:"encerrada" };
+    definir("estado", rotulos[s] || s);
+    if (s === "failed") {
+      aviso(papel === "t" ? "msgT" : "msgA",
+        "Não conectou. Provavelmente uma das redes (ex.: 4G com CGNAT) bloqueia a conexão direta, e aí precisaríamos de um servidor TURN. Isso já é uma resposta útil do teste.", "erro");
+    }
+  };
+  c.addEventListener("connectionstatechange", atualizar);
+  c.addEventListener("iceconnectionstatechange", atualizar);
+  $("diag").hidden = false;
+  return c;
+}
+
+/* ---------- escolha de papel ---------- */
+
+$("btnTransmitir").onclick = () => { papel = "t"; $("escolha").hidden = true; $("painelTransmitir").hidden = false; montarGrade(); };
+$("btnAssistir").onclick = () => { papel = "a"; $("escolha").hidden = true; $("painelAssistir").hidden = false; montarGrade(); };
+$("btnReiniciar").onclick = () => location.reload();
+$("copiarOferta").onclick = () => copiar($("codigoOferta").value, "msgT");
+$("copiarResposta").onclick = () => copiar($("codigoResposta").value, "msgA");
+
+/* ---------- transmissor ---------- */
+
+$("btnGerarOferta").onclick = async () => {
+  const q = QUALIDADES[$("qualidade").value];
+  try {
+    aviso("msgT", "Escolha a tela ou aba que quer compartilhar…");
+    fluxoLocal = await navigator.mediaDevices.getDisplayMedia({
+      video: { width: { ideal: q.l }, height: { ideal: q.a }, frameRate: { ideal: q.fps, max: q.fps } },
+      audio: $("capturarAudio").checked ? { echoCancellation: false, noiseSuppression: false, autoGainControl: false } : false
+    });
+  } catch (e) {
+    return aviso("msgT", "Não foi possível capturar a tela: " + (e.message || e.name), "erro");
+  }
+
+  pc = novaConexao();
+  const trilhaVideo = fluxoLocal.getVideoTracks()[0];
+  trilhaVideo.contentHint = $("conteudo").value;
+  trilhaVideo.onended = () => aviso("msgT", "Você parou o compartilhamento.", "aviso");
+
+  const emissor = pc.addTransceiver(trilhaVideo, { direction: "sendonly", streams: [fluxoLocal] }).sender;
+  fluxoLocal.getAudioTracks().forEach((a) => pc.addTransceiver(a, { direction: "sendonly", streams: [fluxoLocal] }));
+
+  try {
+    const p = emissor.getParameters();
+    if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+    p.encodings[0].maxBitrate = q.bps;
+    p.encodings[0].maxFramerate = q.fps;
+    await emissor.setParameters(p);
+  } catch (e) { console.warn("Não deu pra limitar a taxa:", e); }
+
+  aviso("msgT", "Reunindo caminhos de rede…");
+  await pc.setLocalDescription(await pc.createOffer());
+  await esperarIce(pc);
+  $("codigoOferta").value = paraCodigo({ type: pc.localDescription.type, sdp: pc.localDescription.sdp });
+
+  const semAudio = fluxoLocal.getAudioTracks().length === 0 && $("capturarAudio").checked;
+  aviso("msgT", semAudio
+    ? "Código pronto, mas SEM áudio: na janela de compartilhar, marque 'Compartilhar áudio da guia/do sistema'."
+    : "Código pronto. Copie e mande pra ela.", semAudio ? "aviso" : "ok");
+  iniciarStats();
+};
+
+$("btnConectar").onclick = async () => {
+  if (!pc) return aviso("msgT", "Faça o passo 1 antes.", "erro");
+  try {
+    await pc.setRemoteDescription(deCodigo($("colarResposta").value));
+    aviso("msgT", "Conectando… se em ~15 segundos não aparecer 'conectado', veja o diagnóstico abaixo.");
+  } catch (e) { aviso("msgT", "Código de resposta inválido ou incompleto. Confira se colou inteiro.", "erro"); }
+};
+
+/* ---------- espectador ---------- */
+
+$("btnGerarResposta").onclick = async () => {
+  let oferta;
+  try { oferta = deCodigo($("colarOferta").value); }
+  catch { return aviso("msgA", "Código inválido ou incompleto. Confira se colou inteiro.", "erro"); }
+
+  pc = novaConexao();
+  const fluxoRemoto = new MediaStream();
+  pc.ontrack = (e) => {
+    fluxoRemoto.addTrack(e.track);
+    $("video").srcObject = fluxoRemoto;
+    $("video").play().catch(() => {});
+    aviso("msgA", "Recebendo a transmissão 🎉 Toque em 'Ativar som' pra ouvir.", "ok");
+  };
+
+  aviso("msgA", "Reunindo caminhos de rede…");
+  await pc.setRemoteDescription(oferta);
+  await pc.setLocalDescription(await pc.createAnswer());
+  await esperarIce(pc);
+  $("codigoResposta").value = paraCodigo({ type: pc.localDescription.type, sdp: pc.localDescription.sdp });
+  aviso("msgA", "Resposta pronta. Copie e mande de volta pro transmissor.", "ok");
+  iniciarStats();
+};
+
+$("btnSom").onclick = () => { const v = $("video"); v.muted = false; v.volume = 1; v.play().catch(() => {}); };
+
+/* ---------- diagnóstico ---------- */
+
+const CAMPOS = [["estado","Conexão"],["rota","Caminho"],["rtt","Atraso (ping)"],["res","Resolução"],["fps","Quadros/s"],
+                ["kbps","Taxa"],["perda","Perda de pacotes"],["jitter","Jitter"],["audio","Áudio"],["limite","Limitação (envio)"]];
+
+function montarGrade() {
+  $("diag").hidden = false;
+  $("grade").innerHTML = CAMPOS.map(([k, n]) => `<div><span>${n}</span><b id="d-${k}">—</b></div>`).join("");
+}
+function definir(k, v) { const el = $("d-" + k); if (el) el.textContent = v; }
+
+function iniciarStats() { if (!timer) timer = setInterval(coletar, 1000); }
+
+async function coletar() {
+  if (!pc) return;
+  const rel = await pc.getStats();
+  const porId = {}; rel.forEach((r) => { porId[r.id] = r; });
+
+  let par = null;
+  rel.forEach((r) => { if (r.type === "transport" && r.selectedCandidatePairId) par = porId[r.selectedCandidatePairId]; });
+  if (!par) rel.forEach((r) => { if (r.type === "candidate-pair" && r.nominated && r.state === "succeeded") par = r; });
+
+  const a = { t: Date.now() };
+
+  if (par) {
+    const loc = porId[par.localCandidateId], rem = porId[par.remoteCandidateId];
+    a.local = loc && loc.candidateType; a.remoto = rem && rem.candidateType;
+    if (par.currentRoundTripTime != null) a.rtt = par.currentRoundTripTime * 1000;
+    const relay = a.local === "relay" || a.remoto === "relay";
+    a.rota = relay ? "via relay (TURN)" : (a.local === "host" && a.remoto === "host" ? "direta (mesma rede)" : "direta (P2P pela internet)");
+  }
+
+  const taxa = (r, bytes) => {
+    const ant = anterior[r.id]; anterior[r.id] = { bytes, ts: r.timestamp };
+    return ant && r.timestamp > ant.ts ? ((bytes - ant.bytes) * 8) / ((r.timestamp - ant.ts) / 1000) / 1000 : null;
+  };
+
+  rel.forEach((r) => {
+    const tipo = r.kind || r.mediaType;
+    if (r.type === "inbound-rtp" && tipo === "video") {
+      a.fps = r.framesPerSecond; a.res = r.frameWidth ? r.frameWidth + "×" + r.frameHeight : null;
+      a.kbps = taxa(r, r.bytesReceived);
+      const total = (r.packetsLost || 0) + (r.packetsReceived || 0);
+      a.perda = total ? ((r.packetsLost || 0) / total) * 100 : 0;
+      if (r.jitter != null) a.jitter = r.jitter * 1000;
+    }
+    if (r.type === "inbound-rtp" && tipo === "audio") {
+      const k = taxa(r, r.bytesReceived); a.audio = k != null && k > 1 ? "recebendo" : "sem áudio";
+    }
+    if (r.type === "outbound-rtp" && tipo === "video") {
+      a.fps = r.framesPerSecond; a.res = r.frameWidth ? r.frameWidth + "×" + r.frameHeight : null;
+      a.kbps = taxa(r, r.bytesSent); a.limite = r.qualityLimitationReason || "none";
+    }
+    if (r.type === "remote-inbound-rtp" && (r.kind || r.mediaType) === "video") {
+      if (r.fractionLost != null) a.perda = r.fractionLost * 100;
+      if (r.jitter != null) a.jitter = r.jitter * 1000;
+    }
+  });
+
+  const f = (n, d) => (n == null || isNaN(n) ? "—" : n.toFixed(d));
+  if (a.rota) definir("rota", a.rota);
+  if (a.rtt != null) definir("rtt", f(a.rtt, 0) + " ms");
+  if (a.res) definir("res", a.res);
+  if (a.fps != null) definir("fps", f(a.fps, 0));
+  if (a.kbps != null) definir("kbps", f(a.kbps, 0) + " kbps");
+  if (a.perda != null) definir("perda", f(a.perda, 1) + " %");
+  if (a.jitter != null) definir("jitter", f(a.jitter, 0) + " ms");
+  if (a.audio) definir("audio", a.audio);
+  if (a.limite) definir("limite", { none: "nenhuma", cpu: "CPU do PC", bandwidth: "internet" }[a.limite] || a.limite);
+
+  amostras.push(a);
+}
+
+$("btnRelatorio").onclick = () => {
+  const media = (arr) => (arr.length ? arr.reduce((s, x) => s + x, 0) / arr.length : null);
+  const f = (n, d = 0) => (n == null ? "—" : n.toFixed(d));
+  const col = (k) => amostras.map((x) => x[k]).filter((x) => x != null && !isNaN(x));
+  const ult = (k) => { const v = col(k); return v.length ? v[v.length - 1] : null; };
+  const rtts = col("rtt"), limites = amostras.map((x) => x.limite).filter(Boolean);
+  const texto = [
+    "RELATÓRIO DO TESTE — " + (papel === "t" ? "transmissor" : "espectador"),
+    "Duração: " + amostras.length + " s",
+    "Caminho: " + (amostras.map((x) => x.rota).filter(Boolean).pop() || "—"),
+    "Atraso: média " + f(media(rtts)) + " ms, máx " + f(rtts.length ? Math.max(...rtts) : null) + " ms",
+    "Quadros/s: média " + f(media(col("fps"))),
+    "Taxa: média " + f(media(col("kbps"))) + " kbps",
+    "Perda de pacotes: " + f(ult("perda"), 1) + " %",
+    "Resolução: " + (amostras.map((x) => x.res).filter(Boolean).pop() || "—"),
+    "Áudio: " + (amostras.map((x) => x.audio).filter(Boolean).pop() || "—"),
+    "Limitação no envio: " + (limites.length ? limites[limites.length - 1] : "—"),
+    "Navegador: " + navigator.userAgent
+  ].join("\n");
+  copiar(texto, "msgR");
+};
+</script>
+</body>
+</html>
