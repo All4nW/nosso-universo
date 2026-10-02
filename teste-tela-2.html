@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste de transmissão v2 💗</title>
+<style>
+:root { --bg:#0b0b1e; --card:#15132e; --borda:rgba(201,167,245,.28); --lilas:#c9a7f5; --rosa:#f5c2d1; --texto:#f1ecfb; --mudo:#a79fc2; --ok:#8fe3c7; --erro:#ff8fa3; --aviso:#f5d97a; }
+* { box-sizing: border-box; }
+body { margin:0; padding:22px 14px 70px; color:var(--texto); line-height:1.5;
+       font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
+       background: radial-gradient(1200px 600px at 50% -10%, #2a1d52 0%, var(--bg) 60%); }
+main { max-width:760px; margin:0 auto; }
+h1 { margin:0 0 4px; font-size:1.6rem; }
+h2 { margin:0 0 10px; font-size:1.05rem; color:var(--rosa); }
+.mudo { color:var(--mudo); font-size:.9rem; margin:0 0 14px; }
+.card { background:var(--card); border:1px solid var(--borda); border-radius:16px; padding:16px; margin:14px 0; }
+.card[hidden] { display:none; }
+.linha { display:flex; gap:10px; flex-wrap:wrap; }
+button, select { font:inherit; color:var(--texto); background:rgba(201,167,245,.14); border:1px solid var(--borda);
+                 border-radius:12px; padding:11px 14px; cursor:pointer; }
+button.principal { background:linear-gradient(135deg,#8a6fc9,#d97a95); border:0; font-weight:600; }
+button:disabled { opacity:.45; cursor:default; }
+label { display:block; font-size:.82rem; color:var(--mudo); margin:10px 0 4px; }
+input[type=text] { width:100%; font-size:20px; letter-spacing:.2em; text-transform:uppercase; color:var(--texto);
+           background:rgba(0,0,0,.35); border:1px solid var(--borda); border-radius:10px; padding:10px 12px; }
+.codigo { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:2.4rem; letter-spacing:.3em; text-align:center;
+          background:rgba(0,0,0,.35); border:1px dashed var(--borda); border-radius:12px; padding:14px 8px; margin:8px 0;
+          user-select:all; }
+.msg { margin-top:10px; font-size:.88rem; min-height:1.3em; white-space:pre-line; }
+.msg.erro { color:var(--erro); } .msg.ok { color:var(--ok); } .msg.aviso { color:var(--aviso); }
+video { width:100%; max-height:70vh; background:#000; border-radius:12px; margin-top:12px; }
+.grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }
+.grade div { background:rgba(0,0,0,.28); border-radius:10px; padding:8px 10px; }
+.grade span { display:block; font-size:.72rem; color:var(--mudo); }
+.grade b { font-size:.95rem; font-variant-numeric:tabular-nums; }
+details { background:var(--card); border:1px solid var(--borda); border-radius:14px; padding:10px 14px; }
+summary { cursor:pointer; color:var(--lilas); }
+ol { padding-left:20px; margin:10px 0 4px; font-size:.9rem; color:var(--mudo); }
+.checks label { display:flex; gap:8px; align-items:center; color:var(--texto); font-size:.9rem; margin:8px 0 0; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<main>
+
+<h1>Teste de transmissão</h1>
+<p class="mudo">Teste</p>
+
+<details>
+  <summary></summary>
+  <ol>
+
+  </ol>
+</details>
+
+<section class="card">
+  <h2>🌐 Testar minha rede (10 segundos)</h2>
+  <p class="mudo" style="margin:0 0 10px"></p>
+  <button id="btnRede">Testar minha rede</button>
+  <div id="resRede" class="msg"></div>
+</section>
+
+<section id="escolha" class="card">
+  <h2>Quem é você nesse teste?</h2>
+  <div class="linha">
+    <button id="btnTransmitir" class="principal">Allan</button>
+    <button id="btnAssistir">Jhenny fofura</button>
+  </div>
+</section>
+
+<section id="painelTransmitir" class="card" hidden>
+  <h2>🖥️ Transmitir</h2>
+  <label for="codigoDigitado">Código que ela mandou</label>
+  <input type="text" id="codigoDigitado" maxlength="8" autocomplete="off" placeholder="ABC123">
+  <div class="linha">
+    <div><label for="qualidade">Qualidade</label>
+      <select id="qualidade">
+        <option value="720p30">720p · 30 fps</option>
+        <option value="1080p30" selected>1080p · 30 fps</option>
+        <option value="1080p60">1080p · 60 fps</option>
+      </select></div>
+    <div><label for="conteudo">Tipo de conteúdo</label>
+      <select id="conteudo">
+        <option value="motion" selected>Movimento (jogo, filme)</option>
+        <option value="detail">Detalhe (texto, slides)</option>
+      </select></div>
+  </div>
+  <div class="checks">
+    <label><input type="checkbox" id="capturarAudio" checked> Capturar áudio</label>
+    <label><input type="checkbox" id="usarTurn"> Permitir relay gratuito (TURN do PeerJS) se a conexão direta falhar</label>
+  </div>
+  <p style="margin:14px 0 0"><button id="btnGo" class="principal">Escolher tela e conectar</button></p>
+  <div id="msgT" class="msg"></div>
+</section>
+
+<section id="painelAssistir" class="card" hidden>
+  <h2>📱 Assistir</h2>
+  <p class="mudo" style="margin:0">Mande este código pra mim, nenem</p>
+  <div class="codigo" id="codigoSala">······</div>
+  <p style="margin:0"><button id="copiarCodigo">Copiar código</button></p>
+  <video id="video" autoplay playsinline muted controls></video>
+  <p style="margin:10px 0 0"><button id="btnSom">🔊 Ativar som</button></p>
+  <div id="msgA" class="msg"></div>
+</section>
+
+<section id="diag" class="card" hidden>
+  <h2>📊 Diagnóstico ao vivo</h2>
+  <div class="grade" id="grade"></div>
+  <p style="margin:12px 0 0" class="linha">
+    <button id="btnRelatorio">Copiar relatório</button>
+    <button id="btnReiniciar">Recomeçar</button>
+  </p>
+  <div id="msgR" class="msg"></div>
+</section>
+
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const QUALIDADES = {
+  "720p30":  { l: 1280, a: 720,  fps: 30, bps: 2500000 },
+  "1080p30": { l: 1920, a: 1080, fps: 30, bps: 4500000 },
+  "1080p60": { l: 1920, a: 1080, fps: 60, bps: 7000000 }
+};
+
+const STUNS = ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun.cloudflare.com:3478"];
+
+let peer = null, chamada = null, pcAnexado = null, fluxoLocal = null, timer = null;
+let papel = "", anterior = {}, amostras = [], eventos = [], candidatos = { locais: {}, remotos: {} }, pares = null, resultadoRede = "";
+const t0 = Date.now();
+
+function evento(texto) { eventos.push({ s: Math.round((Date.now() - t0) / 1000), texto }); }
+
+function aviso(id, texto, tipo) {
+  const el = $(id); el.textContent = texto; el.className = "msg " + (tipo || "");
+}
+
+async function copiar(texto, idMsg) {
+  try { await navigator.clipboard.writeText(texto); }
+  catch { const t = document.createElement("textarea"); t.value = texto; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  aviso(idMsg, "Copiado ✅", "ok");
+}
+
+function configICE() {
+  const servidores = [{ urls: STUNS }];
+  const turn = $("usarTurn");
+  if (turn && turn.checked) {
+    servidores.push({ urls: ["turn:eu-0.turn.peerjs.com:3478", "turn:us-0.turn.peerjs.com:3478"], username: "peerjs", credential: "peerjsp" });
+  }
+  return { iceServers: servidores };
+}
+
+function bibliotecaOk(idMsg) {
+  if (typeof Peer !== "undefined") return true;
+  aviso(idMsg, "A biblioteca de conexão (PeerJS) não carregou. Confira a internet e recarregue a página.", "erro");
+  return false;
+}
+
+/* ---------- teste de rede (NAT) ---------- */
+
+function esperarIce(conexao, limite) {
+  return new Promise((resolve) => {
+    if (conexao.iceGatheringState === "complete") return resolve();
+    let t;
+    const fim = () => { conexao.removeEventListener("icegatheringstatechange", mudou); clearTimeout(t); resolve(); };
+    const mudou = () => { if (conexao.iceGatheringState === "complete") fim(); };
+    conexao.addEventListener("icegatheringstatechange", mudou);
+    t = setTimeout(fim, limite);
+  });
+}
+
+$("btnRede").onclick = async () => {
+  $("btnRede").disabled = true;
+  aviso("resRede", "Testando…");
+  const lista = [];
+  try {
+    const c = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun.cloudflare.com:3478" }] });
+    c.createDataChannel("teste");
+    c.onicecandidate = (e) => {
+      const m = e.candidate && /candidate:\S+ \d+ (\w+) \d+ (\S+) (\d+) typ (\w+)/.exec(e.candidate.candidate);
+      if (m) lista.push({ proto: m[1].toLowerCase(), ip: m[2], porta: m[3], tipo: m[4] });
+    };
+    await c.setLocalDescription(await c.createOffer());
+    await esperarIce(c, 6000);
+    c.close();
+  } catch (e) {
+    $("btnRede").disabled = false;
+    return aviso("resRede", "Não consegui rodar o teste: " + (e.message || e), "erro");
+  }
+
+  const srflx = lista.filter((x) => x.tipo === "srflx" && x.proto === "udp" && !x.ip.includes(":"));
+  const enderecos = new Set(srflx.map((x) => x.ip + ":" + x.porta));
+  const ips = new Set(srflx.map((x) => x.ip));
+  const ip = srflx.length ? srflx[0].ip : "";
+  const cgnat = /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./.test(ip);
+  const privado = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(ip);
+
+  let linhas, tipo;
+  if (!srflx.length) {
+    tipo = "erro";
+    linhas = ["❌ Nenhum endereço público encontrado.", "O servidor de teste não respondeu: a rede pode estar bloqueando esse tipo de tráfego (UDP)."];
+  } else if (enderecos.size === 1) {
+    tipo = "ok";
+    linhas = ["✅ Rede boa pra conexão direta (NAT do tipo 'cone').", "IP público visto de fora: " + ip];
+  } else if (ips.size === 1) {
+    tipo = "erro";
+    linhas = ["❌ NAT simétrico: a porta muda a cada destino.", "A conexão direta costuma falhar assim; provavelmente vai precisar de TURN.", "IP público visto de fora: " + ip];
+  } else {
+    tipo = "aviso";
+    linhas = ["⚠️ O IP público muda conforme o destino (balanceamento ou CGNAT).", "A conexão direta pode ser instável."];
+  }
+  if (cgnat) linhas.push("⚠️ O IP começa com 100.64–127: sua operadora usa CGNAT (IP compartilhado).");
+  if (privado) linhas.push("⚠️ Esse IP é privado: provavelmente há dois roteadores em cadeia (NAT duplo).");
+
+  resultadoRede = "Teste de rede: " + linhas.join(" ");
+  aviso("resRede", linhas.join("\n"), tipo);
+  $("btnRede").disabled = false;
+};
+
+/* ---------- papel ---------- */
+
+$("btnTransmitir").onclick = () => { papel = "t"; $("escolha").hidden = true; $("painelTransmitir").hidden = false; montarGrade(); };
+$("btnAssistir").onclick = () => { papel = "a"; $("escolha").hidden = true; $("painelAssistir").hidden = false; montarGrade(); abrirSala(); };
+$("btnReiniciar").onclick = () => location.reload();
+$("copiarCodigo").onclick = () => copiar($("codigoSala").textContent, "msgA");
+
+/* ---------- ligação com a conexão do PeerJS ---------- */
+
+const ROTULOS = { new: "aguardando", connecting: "conectando…", checking: "conectando…", connected: "conectado ✅", completed: "conectado ✅",
+                  disconnected: "instável ⚠️", failed: "falhou ❌", closed: "encerrada" };
+
+function atualizarEstado(c) {
+  const s = c.connectionState || c.iceConnectionState;
+  definir("estado", ROTULOS[s] || s);
+  const idMsg = papel === "t" ? "msgT" : "msgA";
+  if (s === "failed") {
+    aviso(idMsg, "A conexão direta não fechou. Clique em 'Copiar relatório' nos dois lados e mande pra mim: ele mostra o porquê.", "erro");
+  } else if (s === "connected" || s === "completed") {
+    aviso(idMsg, papel === "a" ? "Conectado ✅ Toque em 'Ativar som' pra ouvir." : "Conectado ✅ Já está transmitindo.", "ok");
+  }
+}
+
+// A conexão (RTCPeerConnection) nasce dentro do PeerJS; ligamos nossos avisos nela uma vez só.
+function anexarPc() {
+  const c = chamada && chamada.peerConnection;
+  if (!c) return false;
+  if (c === pcAnexado) return true;
+  pcAnexado = c;
+  c.addEventListener("iceconnectionstatechange", () => { evento("ICE: " + c.iceConnectionState); atualizarEstado(c); });
+  c.addEventListener("connectionstatechange", () => { evento("conexão: " + c.connectionState); atualizarEstado(c); });
+  c.addEventListener("icegatheringstatechange", () => evento("busca de caminhos: " + c.iceGatheringState));
+  evento("conexão criada");
+  atualizarEstado(c);
+  return true;
+}
+
+/* ---------- espectador ---------- */
+
+function gerarCodigo() {
+  const letras = "abcdefghjkmnpqrstuvwxyz23456789";
+  let c = ""; for (let i = 0; i < 6; i++) c += letras[Math.floor(Math.random() * letras.length)];
+  return c;
+}
+
+function abrirSala(tentativa = 0) {
+  if (!bibliotecaOk("msgA")) return;
+  const codigo = gerarCodigo();
+  aviso("msgA", "Abrindo a sala…");
+  peer = new Peer("nu-" + codigo, { config: configICE() });
+
+  peer.on("open", () => {
+    $("codigoSala").textContent = codigo.toUpperCase();
+    evento("sala aberta: " + codigo);
+    aviso("msgA", "Sala aberta. Aguardando o transmissor…", "ok");
+  });
+
+  peer.on("error", (e) => {
+    evento("erro na sinalização: " + e.type);
+    if (e.type === "unavailable-id" && tentativa < 3) { peer.destroy(); return abrirSala(tentativa + 1); }
+    aviso("msgA", "Erro no servidor de sinalização: " + e.type + ". Recarregue a página.", "erro");
+  });
+
+  peer.on("call", (c) => {
+    evento("chamada recebida");
+    chamada = c;
+    c.answer();                 // só recebe, não envia nada
+    anexarPc();
+    iniciarStats();
+    c.on("stream", (fluxo) => {
+      evento("vídeo recebido");
+      $("video").srcObject = fluxo;
+      $("video").play().catch(() => {});
+      aviso("msgA", "Recebendo a transmissão 🎉 Toque em 'Ativar som' pra ouvir.", "ok");
+    });
+  });
+}
+
+$("btnSom").onclick = () => { const v = $("video"); v.muted = false; v.volume = 1; v.play().catch(() => {}); };
+
+/* ---------- transmissor ---------- */
+
+async function limitarEnvio(q) {
+  for (let i = 0; i < 8; i++) {
+    const c = chamada && chamada.peerConnection;
+    const emissor = c && c.getSenders().find((s) => s.track && s.track.kind === "video");
+    if (emissor) {
+      try {
+        const p = emissor.getParameters();
+        if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+        p.encodings[0].maxBitrate = q.bps;
+        p.encodings[0].maxFramerate = q.fps;
+        await emissor.setParameters(p);
+        evento("limite de envio aplicado");
+        return;
+      } catch (e) { /* tenta de novo */ }
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+}
+
+$("btnGo").onclick = async () => {
+  if (!bibliotecaOk("msgT")) return;
+  const codigo = $("codigoDigitado").value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (codigo.length < 4) return aviso("msgT", "Digite o código que ela mandou.", "erro");
+
+  const q = QUALIDADES[$("qualidade").value];
+  try {
+    aviso("msgT", "Escolha a tela ou aba que quer compartilhar…");
+    fluxoLocal = await navigator.mediaDevices.getDisplayMedia({
+      video: { width: { ideal: q.l }, height: { ideal: q.a }, frameRate: { ideal: q.fps, max: q.fps } },
+      audio: $("capturarAudio").checked ? { echoCancellation: false, noiseSuppression: false, autoGainControl: false } : false
+    });
+  } catch (e) {
+    return aviso("msgT", "Não foi possível capturar a tela: " + (e.message || e.name), "erro");
+  }
+
+  const faixa = fluxoLocal.getVideoTracks()[0];
+  faixa.contentHint = $("conteudo").value;
+  faixa.onended = () => aviso("msgT", "Você parou o compartilhamento.", "aviso");
+  evento("tela escolhida");
+
+  $("btnGo").disabled = true;
+  aviso("msgT", "Conectando ao servidor de sinalização…");
+  peer = new Peer(undefined, { config: configICE() });
+
+  peer.on("error", (e) => {
+    evento("erro na sinalização: " + e.type);
+    $("btnGo").disabled = false;
+    aviso("msgT", e.type === "peer-unavailable"
+      ? "Não achei essa sala. Confira o código e se a página dela está aberta."
+      : "Erro no servidor de sinalização: " + e.type, "erro");
+  });
+
+  peer.on("open", () => {
+    evento("sinalização ok, chamando");
+    chamada = peer.call("nu-" + codigo, fluxoLocal);
+    anexarPc();
+    limitarEnvio(q);
+    iniciarStats();
+    aviso("msgT", "Chamando… se em uns 15 segundos não aparecer 'conectado', veja o diagnóstico abaixo.");
+  });
+};
+
+/* ---------- diagnóstico ---------- */
+
+const CAMPOS = [["estado","Conexão"],["rota","Caminho"],["rtt","Atraso (ping)"],["res","Resolução"],["fps","Quadros/s"],
+                ["kbps","Taxa"],["perda","Perda de pacotes"],["jitter","Jitter"],["audio","Áudio"],["limite","Limitação (envio)"]];
+
+function montarGrade() {
+  $("diag").hidden = false;
+  $("grade").innerHTML = CAMPOS.map(([k, n]) => `<div><span>${n}</span><b id="d-${k}">—</b></div>`).join("");
+}
+function definir(k, v) { const el = $("d-" + k); if (el) el.textContent = v; }
+
+function iniciarStats() { if (!timer) timer = setInterval(coletar, 1000); }
+
+async function coletar() {
+  anexarPc();
+  const pc = chamada && chamada.peerConnection;
+  if (!pc) return;
+  const rel = await pc.getStats();
+  const porId = {}; rel.forEach((r) => { porId[r.id] = r; });
+
+  let par = null;
+  rel.forEach((r) => { if (r.type === "transport" && r.selectedCandidatePairId) par = porId[r.selectedCandidatePairId]; });
+  if (!par) rel.forEach((r) => { if (r.type === "candidate-pair" && r.nominated && r.state === "succeeded") par = r; });
+
+  const a = { t: Date.now() };
+  const somas = { total: 0, falhos: 0, esperando: 0, enviados: 0, recebidos: 0, respRec: 0, respEnv: 0 };
+
+  rel.forEach((r) => {
+    if (r.type === "local-candidate") candidatos.locais[r.id] = r.candidateType + "/" + r.protocol;
+    if (r.type === "remote-candidate") candidatos.remotos[r.id] = r.candidateType + "/" + r.protocol;
+    if (r.type === "candidate-pair") {
+      somas.total++;
+      if (r.state === "failed") somas.falhos++;
+      if (r.state === "waiting" || r.state === "frozen" || r.state === "in-progress") somas.esperando++;
+      somas.enviados += r.requestsSent || 0; somas.recebidos += r.requestsReceived || 0;
+      somas.respRec += r.responsesReceived || 0; somas.respEnv += r.responsesSent || 0;
+    }
+  });
+  pares = somas;
+
+  if (par) {
+    const loc = porId[par.localCandidateId], rem = porId[par.remoteCandidateId];
+    a.local = loc && loc.candidateType; a.remoto = rem && rem.candidateType;
+    if (par.currentRoundTripTime != null) a.rtt = par.currentRoundTripTime * 1000;
+    const relay = a.local === "relay" || a.remoto === "relay";
+    a.rota = relay ? "via relay (TURN)" : (a.local === "host" && a.remoto === "host" ? "direta (mesma rede)" : "direta (P2P pela internet)");
+  }
+
+  const taxa = (r, bytes) => {
+    const ant = anterior[r.id]; anterior[r.id] = { bytes, ts: r.timestamp };
+    return ant && r.timestamp > ant.ts ? ((bytes - ant.bytes) * 8) / ((r.timestamp - ant.ts) / 1000) / 1000 : null;
+  };
+
+  rel.forEach((r) => {
+    const tipo = r.kind || r.mediaType;
+    if (r.type === "inbound-rtp" && tipo === "video") {
+      a.fps = r.framesPerSecond; a.res = r.frameWidth ? r.frameWidth + "×" + r.frameHeight : null;
+      a.kbps = taxa(r, r.bytesReceived);
+      const total = (r.packetsLost || 0) + (r.packetsReceived || 0);
+      a.perda = total ? ((r.packetsLost || 0) / total) * 100 : 0;
+      if (r.jitter != null) a.jitter = r.jitter * 1000;
+    }
+    if (r.type === "inbound-rtp" && tipo === "audio") {
+      const k = taxa(r, r.bytesReceived); a.audio = k != null && k > 1 ? "recebendo" : "sem áudio";
+    }
+    if (r.type === "outbound-rtp" && tipo === "video") {
+      a.fps = r.framesPerSecond; a.res = r.frameWidth ? r.frameWidth + "×" + r.frameHeight : null;
+      a.kbps = taxa(r, r.bytesSent); a.limite = r.qualityLimitationReason || "none";
+    }
+    if (r.type === "remote-inbound-rtp" && (r.kind || r.mediaType) === "video") {
+      if (r.fractionLost != null) a.perda = r.fractionLost * 100;
+      if (r.jitter != null) a.jitter = r.jitter * 1000;
+    }
+  });
+
+  const f = (n, d) => (n == null || isNaN(n) ? "—" : n.toFixed(d));
+  if (a.rota) definir("rota", a.rota);
+  if (a.rtt != null) definir("rtt", f(a.rtt, 0) + " ms");
+  if (a.res) definir("res", a.res);
+  if (a.fps != null) definir("fps", f(a.fps, 0));
+  if (a.kbps != null) definir("kbps", f(a.kbps, 0) + " kbps");
+  if (a.perda != null) definir("perda", f(a.perda, 1) + " %");
+  if (a.jitter != null) definir("jitter", f(a.jitter, 0) + " ms");
+  if (a.audio) definir("audio", a.audio);
+  if (a.limite) definir("limite", { none: "nenhuma", cpu: "CPU do PC", bandwidth: "internet" }[a.limite] || a.limite);
+
+  amostras.push(a);
+}
+
+function resumo(mapa) {
+  const cont = {};
+  Object.values(mapa).forEach((v) => { cont[v] = (cont[v] || 0) + 1; });
+  const txt = Object.entries(cont).map(([k, n]) => k + "×" + n).join(", ");
+  return txt || "nenhum";
+}
+
+$("btnRelatorio").onclick = () => {
+  const media = (arr) => (arr.length ? arr.reduce((s, x) => s + x, 0) / arr.length : null);
+  const f = (n, d = 0) => (n == null ? "—" : n.toFixed(d));
+  const col = (k) => amostras.map((x) => x[k]).filter((x) => x != null && !isNaN(x));
+  const ult = (k) => { const v = col(k); return v.length ? v[v.length - 1] : null; };
+  const rtts = col("rtt"), limites = amostras.map((x) => x.limite).filter(Boolean);
+
+  const linhas = [
+    "RELATÓRIO v2 — " + (papel === "t" ? "transmissor" : "espectador"),
+    "Duração: " + Math.round((Date.now() - t0) / 1000) + " s",
+    resultadoRede || "Teste de rede: não rodou",
+    "Caminho: " + (amostras.map((x) => x.rota).filter(Boolean).pop() || "—"),
+    "Atraso: média " + f(media(rtts)) + " ms, máx " + f(rtts.length ? Math.max(...rtts) : null) + " ms",
+    "Quadros/s: média " + f(media(col("fps"))),
+    "Taxa: média " + f(media(col("kbps"))) + " kbps",
+    "Perda de pacotes: " + f(ult("perda"), 1) + " %",
+    "Resolução: " + (amostras.map((x) => x.res).filter(Boolean).pop() || "—"),
+    "Áudio: " + (amostras.map((x) => x.audio).filter(Boolean).pop() || "—"),
+    "Limitação no envio: " + (limites.length ? limites[limites.length - 1] : "—"),
+    "Caminhos meus: " + resumo(candidatos.locais),
+    "Caminhos do outro lado: " + resumo(candidatos.remotos),
+    pares ? "Pares testados: " + pares.total + " (falhos " + pares.falhos + ", em espera " + pares.esperando + ")" : "Pares testados: —",
+    pares ? "Pacotes de teste: enviei " + pares.enviados + ", recebi " + pares.recebidos + ", respostas que recebi " + pares.respRec + ", respostas que dei " + pares.respEnv : "",
+    "Linha do tempo:",
+    ...eventos.map((e) => "  +" + e.s + "s " + e.texto),
+    "Navegador: " + navigator.userAgent
+  ].filter(Boolean);
+
+  copiar(linhas.join("\n"), "msgR");
+};
+</script>
+</body>
+</html>
