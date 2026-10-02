@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
 <title>Nossa Salinha 💗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
@@ -106,9 +106,106 @@ dialog .hint{font-size:12px;opacity:.6;margin-top:6px}
  .pad{bottom:104px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== sala: profundidade ===== */
+body{background:radial-gradient(1px 1px at 22px 34px,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 96px 128px,rgba(217,194,255,.6),transparent),radial-gradient(1.5px 1.5px at 160px 66px,rgba(255,214,236,.5),transparent),radial-gradient(120% 80% at 50% 0%,#1d0f2e 0%,var(--bg) 60%);background-size:210px 210px,210px 210px,210px 210px,auto}
+.stage,.base{position:relative;z-index:1}
+.drape{position:fixed;top:0;bottom:150px;width:min(12vw,170px);z-index:0;pointer-events:none;background:repeating-linear-gradient(90deg,#34114e 0 12px,#4a1b6c 12px 24px,#2c0e44 24px 38px);box-shadow:inset 0 -40px 40px -20px #0c0713}
+.drape.l{left:0;-webkit-mask-image:linear-gradient(90deg,#000 50%,transparent);mask-image:linear-gradient(90deg,#000 50%,transparent)}
+.drape.r{right:0;-webkit-mask-image:linear-gradient(270deg,#000 50%,transparent);mask-image:linear-gradient(270deg,#000 50%,transparent)}
+.beam{position:fixed;top:0;left:50%;width:70vw;height:70vh;transform:translateX(-50%);z-index:0;pointer-events:none;background:linear-gradient(rgba(210,160,255,.09),transparent 80%);clip-path:polygon(46% 0,54% 0,100% 100%,0 100%)}
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:170px;z-index:0;pointer-events:none;background:linear-gradient(transparent,rgba(70,28,104,.35))}
+.screen{border:8px solid #190f26;outline:1px solid rgba(201,168,255,.28);outline-offset:6px}
+.seat{position:relative}
+.seat::before{content:"";position:absolute;left:50%;top:62px;width:128px;height:30px;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(150,80,210,.35),transparent 70%);z-index:0}
+.seat[data-s=on] .av{box-shadow:0 0 22px rgba(255,160,220,.28)}
+.ctrl{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 24px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+.ctrl button:active{transform:scale(.9)}
+.ctrl button.on{background:rgba(255,143,199,.35);box-shadow:0 0 0 1px rgba(255,143,199,.5)}
+/* ===== caderninho: nick, avatar, hora ===== */
+.pad{box-shadow:inset 6px 0 0 rgba(255,143,199,.28),0 14px 40px rgba(0,0,0,.5)}
+.pad .x{position:absolute;top:8px;right:10px;background:none;border:0;font-size:18px;opacity:.7;padding:4px}
+.row{display:flex;gap:6px;align-items:flex-end;max-width:90%;align-self:flex-start}
+.row.me{align-self:flex-end;flex-direction:row-reverse}
+.row>div{min-width:0}
+.row i{font-style:normal;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:15px;flex:none}
+.row small{display:block;font-size:11px;opacity:.7;margin:0 4px 1px}
+.row.me small{text-align:right}
+.row small b{font-family:var(--hand);font-size:15px}
+.row .m{max-width:none;align-self:auto}
+.say button{width:40px;height:40px;border-radius:50%;background:rgba(255,143,199,.25);flex:none}
+/* prévia da mensagem (chat fechado) */
+#peek{position:absolute;left:12px;bottom:12px;z-index:5;max-width:min(70%,340px);display:flex;gap:8px;align-items:center;text-align:left;background:rgba(30,16,46,.8);backdrop-filter:blur(8px);border:1px solid rgba(255,143,199,.35);border-radius:16px;padding:7px 12px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.4s}
+#peek.show{opacity:1;transform:none;pointer-events:auto}
+#peek i{font-style:normal;font-size:20px}
+#peek b{display:block;font-family:var(--hand);font-size:16px;line-height:1}
+#peek em{font-style:normal;font-family:var(--hand);font-size:19px;line-height:1.1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* celular em pé */
+.rot{display:none}
+@media (orientation:portrait) and (max-width:700px){
+ .stage{display:block;padding:8px 0 0}
+ .screen{width:100%;border-width:4px;border-radius:10px;outline:0}
+ .drape,.beam{display:none}
+ .rot{display:block;text-align:center;font-size:12px;opacity:.5;margin-top:8px}
+}
+/* tela ampliada: o vídeo ocupa tudo, controles só ao tocar */
+body.imm .drape,body.imm .beam,body.imm::after,body.imm .rot,body.imm .seat{display:none}
+body.imm .stage{display:block;padding:0}
+body.imm .screen{position:fixed;inset:0;width:100%;aspect-ratio:auto;border:0;border-radius:0;outline:0;box-shadow:none}
+body.imm .base{position:fixed;left:0;right:0;bottom:0;height:auto;display:flex;justify-content:center;padding:26px 0 calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(5,3,10,.8));opacity:0;pointer-events:none;transition:opacity .3s;z-index:6}
+body.imm.ui .base{opacity:1;pointer-events:auto}
+body.imm:not(.ui) .bar{opacity:0;pointer-events:none}
+body.imm .pad{left:auto;right:10px;width:300px;bottom:12px;max-height:calc(var(--vvh,100dvh) - 20px)}
+body.imm #msgs{min-height:40px}
+body.kb .pad{bottom:calc(var(--kb) + 8px);max-height:calc(var(--vvh) - 16px)}
+
+/* ===== passada de design ===== */
+.screen{border:4px solid #190f26;border-radius:18px;outline:1px solid rgba(201,168,255,.22);outline-offset:5px;width:min(100%,calc((100dvh - 215px)*16/9))}
+.stage{padding-top:34px}
+.cap{position:fixed;top:8px;left:0;right:0;text-align:center;font-family:var(--hand);font-size:20px;opacity:.55;z-index:1;pointer-events:none}
+.lights{position:fixed;top:0;left:0;right:0;height:26px;z-index:0;pointer-events:none;opacity:.55;background:radial-gradient(circle 2.5px at 50% 14px,rgba(255,200,230,.95),transparent 3px) 0 0/46px 26px repeat-x;filter:drop-shadow(0 0 4px rgba(255,150,210,.6));animation:tw 5s ease-in-out infinite alternate}
+@keyframes tw{to{opacity:.9}}
+.candle{position:fixed;left:min(14vw,200px);bottom:62px;width:10px;height:24px;border-radius:3px;background:linear-gradient(90deg,#d8c8f0,#a890d0);z-index:0;pointer-events:none}
+.candle::before{content:"";position:absolute;left:50%;top:-12px;width:7px;height:12px;transform:translateX(-50%);border-radius:50% 50% 40% 40%;background:#ffd79a;box-shadow:0 0 16px 6px rgba(255,170,120,.35);animation:fl 2.2s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translateX(-50%) scale(1.1,.92);opacity:.85}}
+.screen:not(.live):not(.prev)::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.045) 0 32%,transparent 32%);pointer-events:none}
+.led{width:7px;height:7px;border-radius:50%;background:#ff8fc7;box-shadow:0 0 10px #ff8fc7;animation:breathe 2.4s ease-in-out infinite}
+.seat small::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;background:#6ee7a0}
+.seat[data-s=off] small::before{background:#8a8296}
+.seat[data-s=re] small::before{background:#ffcf6e}
+.av,.row i,#peek i,.prev{background-size:cover;background-position:center}
+#peek i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:18px}
+.ctrl{position:relative}
+.ctrl::before,.ctrl::after{content:"✦";position:absolute;font-size:10px;color:var(--rose);opacity:.6}
+.ctrl::before{left:-16px;top:4px}.ctrl::after{right:-16px;bottom:4px}
+.ctrl button{color:var(--lilac)}
+.ctrl button.on{color:#fff}
+.ctrl svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* configurações */
+dialog{width:min(94vw,520px);border:1px solid #6b3fa0;border-radius:22px;background:linear-gradient(#22143a,#1a0f2e);box-shadow:0 0 0 4px rgba(107,63,160,.15),0 30px 80px rgba(0,0,0,.6);padding:22px 24px;max-height:94dvh}
+.dh{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.dh h3{flex:1;margin:0;font-size:32px}
+.chip{background:transparent;border:1px solid rgba(201,168,255,.5);border-radius:99px;padding:8px 16px;font-size:14px;transition:.2s}
+.chip:hover{background:rgba(201,168,255,.15)}
+.chip.go{background:#9b6bd8;border-color:#9b6bd8;color:#fff;font-weight:600}
+.xx{background:none;border:0;font-size:20px;opacity:.7;padding:4px}
+.fld{margin:14px 0}
+.fld>span{display:block;font-size:15px;margin-bottom:6px}
+dialog select,dialog input{width:100%;max-width:none;background:#2a1a45;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:11px 14px;font-size:15px}
+.inp{position:relative}.inp em{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-style:normal;font-size:12px;opacity:.5}
+.avrow{display:flex;gap:12px;align-items:center}
+.drop{flex:1;border:1px dashed rgba(201,168,255,.45);background:rgba(255,255,255,.03);border-radius:12px;padding:14px;text-align:left}
+.drop b{display:block;font-size:14px}.drop small{font-size:12px;opacity:.6}
+.prev{width:64px;height:64px;border-radius:16px;background-color:#2a1a45;display:grid;place-items:center;font-size:32px;border:1px solid rgba(255,143,199,.4);flex:none}
+.row2{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+@media (max-width:900px){.candle,.lights{display:none}}
+@media (orientation:portrait) and (max-width:700px){.cap{display:none}.stage{padding-top:8px}.screen{width:100%;border-radius:12px;outline:0}}
+body.imm .candle,body.imm .lights,body.imm .cap{display:none}
 </style>
 </head>
 <body>
+<div class="lights"></div><div class="cap">✦ nossa salinha ✦</div><div class="candle"></div>
+<div class="beam"></div><div class="drape l"></div><div class="drape r"></div>
 
 <div class="who" id="who">
   <h1>Quem está entrando?</h1>
@@ -125,10 +222,13 @@ dialog .hint{font-size:12px;opacity:.6;margin-top:6px}
     <div class="bar"><button class="pill" id="bPrev">👁 Preview</button><button class="pill" id="bStop2">Parar</button></div>
     <div class="wait" id="wait"></div>
     <button class="pill" id="snd" hidden>🔊 Ativar som</button>
+    <button id="peek" type="button" aria-label="Abrir chat"></button>
   </div>
+  <p class="rot">↻ Deite o celular para ver em tela cheia</p>
 </main>
 
 <section class="pad" id="pad" aria-label="Chat">
+  <button class="x" id="padX" aria-label="Fechar chat">✕</button>
   <h3>caderninho 💜</h3>
   <div id="msgs"></div>
   <div class="say"><input id="txt" maxlength="500" placeholder="escreve aqui…" autocomplete="off"><button id="send" aria-label="Enviar">✦</button></div>
@@ -137,30 +237,24 @@ dialog .hint{font-size:12px;opacity:.6;margin-top:6px}
 <footer class="base">
   <div class="seat" id="seatMe" data-s="re"><div class="av" id="avMe"></div><div class="chair"></div><small id="stMe"></small><b id="nmMe"></b></div>
   <nav class="ctrl">
-    <button id="bChat" title="Chat" aria-label="Chat">💬<span id="dot"></span></button>
-    <button id="bSet" title="Configurações" aria-label="Configurações">⚙️</button>
-    <button id="bExit" title="Sair" aria-label="Sair">🚪</button>
+    <button id="bChat" title="Chat" aria-label="Chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></svg><span id="dot"></span></button>
+    <button id="bSet" title="Configurações" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></button>
+    <button id="bFs" title="Tela cheia" aria-label="Tela cheia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button id="bExit" title="Sair" aria-label="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4h9v17M3 21h18"/><circle cx="12.5" cy="12.5" r=".8"/></svg></button>
   </nav>
   <div class="seat o" id="seatO" data-s="off"><div class="av" id="avO"></div><div class="chair"></div><small id="stO"></small><b id="nmO"></b></div>
 </footer>
 
 <dialog id="dlg">
-  <h3>Configurações</h3>
-  <label>Seu nome <input id="cMy" maxlength="14"></label>
-  <label>Seu avatar <select id="cMyAv"></select></label>
-  <label>Nome do outro <input id="cO" maxlength="14"></label>
-  <label>Avatar do outro <select id="cOAv"></select></label>
-  <label>Transmissão
-    <select id="cQ"><option value="motion">Filme ou jogo (fluidez)</option><option value="detail">Texto e imagem (nitidez)</option></select></label>
-  <label>Qualidade máxima
-    <select id="cB"><option value="4">4 Mbps</option><option value="8">8 Mbps</option><option value="12">12 Mbps</option></select></label>
-  <label>Quadros por segundo
-    <select id="cF"><option value="30">30</option><option value="60">60</option></select></label>
-  <p class="hint">Qualidade e quadros valem para quem transmite e se aplicam na hora.</p>
-  <div class="row">
-    <button class="pill" id="cWho">Trocar quem sou</button>
-    <button class="pill" id="cOk">Pronto</button>
-  </div>
+  <div class="dh"><h3>Configurações</h3><button class="chip" id="cWho" type="button">⇄ Trocar quem sou</button><button class="xx" id="cX" type="button" aria-label="Fechar">✕</button></div>
+  <div class="fld"><span>Seu nome</span><div class="inp"><input id="cMy" maxlength="20" autocomplete="off"><em id="cCount">0/20</em></div></div>
+  <div class="fld"><span>Seu avatar</span>
+    <div class="avrow"><button class="drop" id="cPick" type="button"><b>Selecionar imagem</b><small>Escolha uma foto da sua galeria</small></button><div class="prev" id="cPrev"></div></div>
+    <input type="file" id="cFile" accept="image/*" hidden></div>
+  <div class="fld"><span>Transmissão</span><select id="cQ"><option value="motion">Filme ou jogo (fluido)</option><option value="detail">Texto e imagem (nítido)</option></select></div>
+  <div class="fld"><span>Qualidade máxima</span><select id="cB"><option value="6">Econômica · 6 Mbps</option><option value="10">Alta · 10 Mbps</option><option value="16">Máxima · 16 Mbps</option></select></div>
+  <div class="fld"><span>Quadros por segundo</span><select id="cF"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></div>
+  <div class="row2"><button class="chip" id="cCancel" type="button">Cancelar</button><button class="chip go" id="cOk" type="button">✦ Salvar</button></div>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
@@ -187,16 +281,20 @@ const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayM
 function toast(t){ const d = $('toast'); d.textContent = t; d.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => d.classList.remove('show'), 3200); }
 function setSeat(w, s){ $('seat' + w).dataset.s = s; $('st' + w).textContent = {on:'aqui', off:'fora', re:'reconectando…'}[s]; }
 function pop(w){ const e = $('seat' + w); e.classList.remove('pop'); void e.offsetWidth; e.classList.add('pop'); }
+function setAv(el, img, emoji){
+  if (img){ el.style.backgroundImage = 'url("' + img + '")'; el.textContent = ''; }
+  else { el.style.backgroundImage = ''; el.textContent = emoji; }
+}
 function paintNames(){
-  $('nmMe').textContent = cfg.myName; $('avMe').textContent = cfg.myAv;
-  $('nmO').textContent = cfg.otherName; $('avO').textContent = cfg.otherAv;
+  $('nmMe').textContent = cfg.myName; setAv($('avMe'), cfg.myImg, cfg.myAv);
+  $('nmO').textContent = cfg.otherName; setAv($('avO'), cfg.otherImg, cfg.otherAv);
 }
 function renderWait(){
   const live = $('screen').classList.contains('live');
   let h = '';
   if (localStream) h = '<h2>Você está transmitindo ✨</h2><p>Preview escondido. Quem está na sala vê a sua tela.</p>';
   else if (!live){
-    h = '<h2>A sessão ainda não começou</h2><p>Quando alguém transmitir, a tela acende aqui.</p>';
+    h = '<span class="led"></span><h2>telão desligado</h2><p>quando alguém transmitir, ele acende.</p>';
     if (canShare) h += '<button class="pill" id="bShare">Transmitir minha tela</button>';
   }
   $('wait').innerHTML = h;
@@ -215,11 +313,16 @@ function updPrev(){
 
 /* ---------- chat ---------- */
 let msgs = [];
-function addMsg(from, text, save = true){
-  const d = document.createElement('div'); d.className = 'm' + (from === 'me' ? ' me' : ''); d.textContent = text;
-  $('msgs').appendChild(d); $('msgs').scrollTop = 1e9;
-  if (save){ msgs.push({from, text}); store.set('chat', msgs.slice(-60)); }
-  if (from !== 'me' && !$('pad').classList.contains('open')) $('dot').classList.add('on');
+function addMsg(from, text, save = true, ts = Date.now()){
+  const me = from === 'me', w = document.createElement('div'); w.className = 'row' + (me ? ' me' : '');
+  w.innerHTML = '<i></i><div><small><b></b> <span></span></small><div class="' + (me ? 'm me' : 'm') + '"></div></div>';
+  setAv(w.querySelector('i'), me ? cfg.myImg : cfg.otherImg, me ? cfg.myAv : cfg.otherAv);
+  w.querySelector('b').textContent = me ? cfg.myName : cfg.otherName;
+  w.querySelector('span').textContent = new Date(ts).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  w.querySelector('.m').textContent = text;
+  $('msgs').appendChild(w); $('msgs').scrollTop = 1e9;
+  if (save){ msgs.push({from, text, ts}); store.set('chat', msgs.slice(-60)); }
+  if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(text); }
 }
 function sendMsg(){
   const x = $('txt').value.trim(); if (!x) return;
@@ -230,7 +333,13 @@ function sendMsg(){
 /* ---------- qualidade ---------- */
 function boost(sdp){
   const k = cfg.mbps * 1000;
-  return sdp.replace(/(m=video[^\r\n]*\r\nc=[^\r\n]*\r\n)(b=[^\r\n]*\r\n)?/, '$1b=AS:' + k + '\r\n');
+  sdp = sdp.replace(/(m=video[^\r\n]*\r\nc=[^\r\n]*\r\n)(b=[^\r\n]*\r\n)?/, '$1b=AS:' + k + '\r\n');
+  [...sdp.matchAll(/a=rtpmap:(\d+) (?:VP8|VP9|H264|AV1)\/90000/g)].forEach(m => {
+    const id = m[1], add = 'x-google-min-bitrate=1500;x-google-start-bitrate=' + Math.round(k * .6) + ';x-google-max-bitrate=' + k;
+    const ex = new RegExp('(a=fmtp:' + id + ' [^\\r\\n]*)');
+    sdp = ex.test(sdp) ? sdp.replace(ex, '$1;' + add) : sdp.replace(new RegExp('(a=rtpmap:' + id + ' [^\\r\\n]*\\r\\n)'), '$1a=fmtp:' + id + ' ' + add + '\r\n');
+  });
+  return sdp;
 }
 async function tune(c){
   const pc = c && c.peerConnection; if (!pc) return;
@@ -243,7 +352,7 @@ async function tune(c){
       p.encodings[0].maxBitrate = cfg.mbps * 1e6;
       p.encodings[0].maxFramerate = cfg.fps;
       p.encodings[0].scaleResolutionDownBy = 1;
-      p.degradationPreference = cfg.quality === 'detail' ? 'maintain-resolution' : 'maintain-framerate';
+      p.degradationPreference = cfg.quality === 'detail' ? 'maintain-resolution' : 'balanced';
       await s.setParameters(p);
     }catch(e){}
   }
@@ -313,12 +422,20 @@ function setConn(c){
     if (conn !== c) return;
     lastSeen = Date.now();
     const again = everSeen; everSeen = true;
-    setSeat('O', 'on'); pop('O');
-    toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou 💜');
+    setSeat('O', 'on'); pop('O'); sendProfile();
+    toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou na Salinha 💗');
     if (localStream) startCall();
   };
   c.on('open', opened);
-  c.on('data', d => { lastSeen = Date.now(); if (d && d.t === 'chat' && d.x) addMsg('o', String(d.x).slice(0, 500)); });
+  c.on('data', d => {
+    lastSeen = Date.now(); if (!d) return;
+    if (d.t === 'chat' && d.x) addMsg('o', String(d.x).slice(0, 500));
+    else if (d.t === 'prof'){
+      cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
+      cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
+      store.set('cfg', cfg); paintNames();
+    }
+  });
   c.on('close', () => dropConn(c));
   c.on('error', () => dropConn(c));
   if (c.open) opened();
@@ -376,15 +493,84 @@ $('cOk').onclick = () => {
 $('bPrev').onclick = () => { prevOn = !prevOn; renderWait(); };
 $('bStop2').onclick = stopShare;
 $('cWho').onclick = () => { store.set('role', null); location.href = location.pathname; };
-['cMyAv','cOAv'].forEach(id => AVATARS.forEach(a => { const o = document.createElement('option'); o.value = o.textContent = a; $(id).appendChild(o); }));
+
+/* ---------- tela ampliada, chat sobre o vídeo, teclado ---------- */
+let pk, uiT;
+function peek(t){
+  const p = $('peek'); p.innerHTML = '<i></i><span><b></b><em></em></span>';
+  setAv(p.querySelector('i'), cfg.otherImg, cfg.otherAv); p.querySelector('b').textContent = cfg.otherName; p.querySelector('em').textContent = t;
+  p.classList.add('show'); clearTimeout(pk); pk = setTimeout(() => p.classList.remove('show'), 5000);
+}
+function showUi(){
+  document.body.classList.add('ui'); clearTimeout(uiT);
+  uiT = setTimeout(() => { if (document.activeElement !== $('txt') && !$('dlg').open) document.body.classList.remove('ui'); }, 3500);
+}
+function setChat(open){
+  $('pad').classList.toggle('open', open); $('bChat').classList.toggle('on', open);
+  if (open){ $('dot').classList.remove('on'); $('peek').classList.remove('show'); $('msgs').scrollTop = 1e9; showUi(); }
+}
+$('bChat').onclick = () => { const o = !$('pad').classList.contains('open'); setChat(o); if (o && !matchMedia('(pointer:coarse)').matches) $('txt').focus(); };
+$('padX').onclick = () => setChat(false);
+$('peek').onclick = () => setChat(true);
+function toggleFs(){
+  const d = document;
+  if (d.fullscreenElement){ d.exitFullscreen(); try{ screen.orientation.unlock(); }catch(e){} }
+  else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().then(() => { try{ screen.orientation.lock('landscape').catch(() => {}); }catch(e){} }).catch(() => {});
+  else if (vid.webkitEnterFullscreen && vid.srcObject) vid.webkitEnterFullscreen();
+  else toast('Deite o celular para ampliar');
+}
+$('bFs').onclick = toggleFs;
+$('screen').ondblclick = null;
+$('screen').addEventListener('click', e => {
+  if (e.target.closest('button') || !document.body.classList.contains('imm')) return;
+  if (document.body.classList.contains('ui')){ document.body.classList.remove('ui'); clearTimeout(uiT); } else showUi();
+});
+document.querySelector('.base').addEventListener('pointerdown', showUi);
+document.addEventListener('pointermove', () => { if (document.body.classList.contains('imm') && matchMedia('(hover:hover)').matches) showUi(); });
+function chkImm(){ document.body.classList.toggle('imm', matchMedia('(orientation:landscape) and (max-height:520px)').matches || !!document.fullscreenElement); }
+function vv(){
+  const v = window.visualViewport; if (!v) return;
+  const kb = Math.max(0, innerHeight - v.height - v.offsetTop), r = document.documentElement.style;
+  r.setProperty('--kb', kb + 'px'); r.setProperty('--vvh', v.height + 'px'); document.body.classList.toggle('kb', kb > 80);
+}
+['resize','orientationchange'].forEach(e => addEventListener(e, chkImm));
+document.addEventListener('fullscreenchange', chkImm);
+if (window.visualViewport){ visualViewport.addEventListener('resize', vv); visualViewport.addEventListener('scroll', vv); }
+chkImm(); vv();
+
+/* ---------- perfil e configurações ---------- */
+let tmpImg = null;
+function sendProfile(){ if (conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null}); }catch(e){} } }
+function paintPrev(){ setAv($('cPrev'), tmpImg, cfg.myAv); }
+$('bSet').onclick = () => {
+  $('cMy').value = cfg.myName; $('cCount').textContent = cfg.myName.length + '/20'; tmpImg = cfg.myImg || null; paintPrev();
+  $('cQ').value = cfg.quality; $('cB').value = cfg.mbps; $('cF').value = cfg.fps; $('dlg').showModal();
+};
+$('cMy').oninput = () => { $('cCount').textContent = $('cMy').value.length + '/20'; };
+$('cPick').onclick = () => $('cFile').click();
+$('cFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try{
+    const b = await createImageBitmap(f), n = Math.min(b.width, b.height), c = document.createElement('canvas'); c.width = c.height = 160;
+    c.getContext('2d').drawImage(b, (b.width - n) / 2, (b.height - n) / 2, n, n, 0, 0, 160, 160);
+    tmpImg = c.toDataURL('image/jpeg', .85); paintPrev();
+  }catch(err){ toast('Não consegui ler essa imagem'); }
+  e.target.value = '';
+};
+$('cCancel').onclick = $('cX').onclick = () => $('dlg').close();
+$('cOk').onclick = () => {
+  Object.assign(cfg, {myName:$('cMy').value.trim() || 'Você', myImg:tmpImg, quality:$('cQ').value, mbps:+$('cB').value, fps:+$('cF').value});
+  store.set('cfg', cfg); paintNames(); $('dlg').close(); sendProfile();
+  if (localStream){ const vt = localStream.getVideoTracks()[0]; if (vt){ vt.contentHint = cfg.quality; vt.applyConstraints({frameRate:{ideal:cfg.fps, max:cfg.fps}}).catch(() => {}); } tune(call); }
+};
 
 /* ---------- entrada ---------- */
 function boot(){
   myId = SALA + '-' + role; otherId = SALA + '-' + (role === 'a' ? 'b' : 'a');
   cfg = Object.assign({myName:'Você', otherName: role === 'a' ? 'Ela' : 'Ele', myAv: role === 'a' ? '🐻' : '🐰', otherAv: role === 'a' ? '🐰' : '🐻',
-                       quality:'motion', mbps:8, fps:30}, store.get('cfg', {}));
+                       quality:'motion', mbps:10, fps:30}, store.get('cfg', {}));
   paintNames(); setSeat('O', 'off'); renderWait();
-  store.get('chat', []).forEach(m => addMsg(m.from, m.text, false)); msgs = store.get('chat', []);
+  store.get('chat', []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now())); msgs = store.get('chat', []);
   $('dot').classList.remove('on');
   start();
 }
