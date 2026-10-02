@@ -201,15 +201,97 @@ dialog select,dialog input{width:100%;max-width:none;background:#2a1a45;border:1
 @media (max-width:900px){.candle,.lights{display:none}}
 @media (orientation:portrait) and (max-width:700px){.cap{display:none}.stage{padding-top:8px}.screen{width:100%;border-radius:12px;outline:0}}
 body.imm .candle,body.imm .lights,body.imm .cap{display:none}
+
+/* ===== correção do telão + celular em pé centralizado + decoração ===== */
+.stage{display:flex;align-items:center;justify-content:center}
+.rug{position:fixed;left:50%;bottom:-70px;width:min(78vw,1100px);height:200px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(120,60,170,.3),rgba(120,60,170,.12) 55%,transparent 72%);border:1px solid rgba(201,168,255,.06);z-index:0;pointer-events:none}
+.plant{position:fixed;right:min(14vw,200px);bottom:62px;width:16px;height:0;border-top:14px solid #6a3a8a;border-left:3px solid transparent;border-right:3px solid transparent;z-index:0;pointer-events:none}
+.plant::before,.plant::after{content:"";position:absolute;bottom:-1px;width:9px;height:24px;background:#58b88a;opacity:.7;border-radius:90% 0 90% 0}
+.plant::before{left:-4px;transform:rotate(-24deg)}
+.plant::after{right:-4px;transform:rotate(24deg) scaleX(-1)}
+.moon{position:fixed;top:44px;right:min(13vw,190px);width:26px;height:26px;border-radius:50%;box-shadow:inset -8px 0 0 0 #e9dcf7;opacity:.45;z-index:0;pointer-events:none}
+@media (max-width:900px){.plant,.moon,.rug{display:none}}
+body.imm .plant,body.imm .moon,body.imm .rug{display:none}
+@media (orientation:portrait) and (max-width:700px){
+ .stage{flex-direction:column;justify-content:center;padding:0 0 16px}
+ body.chatopen .stage{justify-content:flex-start;padding-top:8px}
+ .screen{width:calc(100% - 16px);margin:0 8px}
+ .plant,.moon,.rug{display:none}
+}
+
+/* ===== chat em papel, com foto e emojis ===== */
+.pad{background:repeating-linear-gradient(transparent 0 27px,rgba(120,70,140,.07) 27px 28px),linear-gradient(#f6e6ee,#ead8ec);color:#4a2c5e;border:5px solid #2a1a3a;border-radius:14px;backdrop-filter:none;padding:12px 12px 10px 24px;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+@media (min-width:561px){.pad{width:340px}}
+.pad::after{background:radial-gradient(circle,rgba(60,30,80,.35) 2.5px,transparent 3px) 0 0/6px 22px repeat-y}
+.pad header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pad h3{flex:1;margin:0;color:#4a2c5e;font-size:24px}
+.pad .x{position:static;color:#4a2c5e;font-size:18px;opacity:.8}
+.pad .fl{position:absolute;font-style:normal;font-size:20px;pointer-events:none}
+.f1{top:-14px;right:-12px}.f2{bottom:-12px;left:-10px}
+.row small{color:#6b4382;opacity:1}
+.row i{background-color:rgba(74,44,94,.12)}
+.row .m{background:#e4d2f0;border-color:#cdb2e4;color:#3c2250}
+.row .m.me{background:#f8cfe0;border-color:#efb1cb}
+.row .m.pic{padding:4px;background:transparent;border:0}
+.m img{display:block;max-width:100%;max-height:200px;border-radius:12px;cursor:zoom-in}
+.say{border-top:1px dashed rgba(74,44,94,.3);align-items:center}
+.field{flex:1;min-width:0;display:flex;align-items:center;background:rgba(255,255,255,.6);border:1px solid rgba(120,70,140,.3);border-radius:99px;padding:0 4px 0 12px}
+.say .field input{flex:1;min-width:0;width:auto;border:0;background:transparent;color:#3c2250;padding:7px 2px;font-size:19px}
+.say .field input::placeholder{color:#8a6a9c}
+.field button{width:34px;height:34px;background:none;border:0;font-size:19px;border-radius:50%;flex:none}
+.say #send{background:#ee7fa8;color:#fff;font-size:16px}
+.tray{display:none;border-top:1px dashed rgba(74,44,94,.3);padding-top:6px;margin-top:2px}
+.tray.show{display:block}
+.att.show{display:flex;gap:8px}
+.att button{flex:1;background:rgba(255,255,255,.6);border:1px solid rgba(120,70,140,.3);border-radius:99px;padding:8px;color:#4a2c5e}
+.emo{max-height:130px;overflow-y:auto}
+.emo .tabs{display:flex;gap:2px;position:sticky;top:0;background:#efdcea;padding-bottom:2px}
+.emo button{background:none;border:0;font-size:22px;padding:2px;border-radius:8px}
+.emo .tabs button{flex:1;font-size:20px}
+.eg{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}
+#lb{position:fixed;inset:0;z-index:40;background:rgba(5,2,10,.92);display:none;align-items:center;justify-content:center}
+#lb.on{display:flex}
+#lb img{max-width:96vw;max-height:92dvh;border-radius:10px}
+
+/* ===== configurações no estilo da referência ===== */
+dialog{width:min(94vw,400px);background:#130b20;border:1px solid #3d2860;border-radius:20px;padding:20px 20px 18px;box-shadow:0 0 0 1px rgba(201,168,255,.08),0 30px 80px rgba(0,0,0,.7);overflow:visible;max-height:none;font-family:var(--ui)}
+.dfl{position:absolute;font-style:normal;font-size:26px;filter:hue-rotate(35deg) saturate(.7);pointer-events:none}
+.dfl.a{top:-14px;left:-10px}.dfl.b{top:-12px;right:-10px;transform:scaleX(-1)}
+.dh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.dh h3{flex:1;margin:0;font-family:var(--ui);font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.tic{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid rgba(201,168,255,.35)}
+.ic{width:22px;height:22px;fill:none;stroke:#c9a8ff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tic .ic{width:18px;height:18px}
+.chip{font-family:var(--ui);font-size:13px;padding:8px 16px;color:var(--ink)}
+.back{margin-bottom:4px}
+.fld{display:grid;grid-template-columns:26px 1fr;column-gap:10px;margin:14px 0}
+.fld>.ic{margin-top:1px}
+.ft{display:block;font-size:14px;margin-bottom:6px}
+dialog select,dialog input{background:#1d1230;border:1px solid rgba(201,168,255,.25);border-radius:12px;padding:11px 14px;font-size:14px;font-family:var(--ui)}
+dialog select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a8ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-size:18px;background-position:right 14px center;padding-right:40px}
+.drop{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1px dashed rgba(201,168,255,.4);border-radius:12px;background:#1d1230;font-family:var(--ui)}
+.drop small{display:block}
+.prev{width:46px;height:46px;border-radius:12px;font-size:26px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.row2 .chip{padding:12px;font-size:15px;text-align:center;border-radius:99px}
+.chip#cCancel{border-color:#f0a3c6;color:#ffd9ea}
+.chip.go{background:linear-gradient(#f9bcd7,#ee93bd);border-color:#f3a6c8;color:#4a1f45;font-weight:700}
+@media (max-height:640px){dialog{overflow:auto;max-height:94dvh}.dfl{display:none}}
+
+/* ===== fundo animado da sala ===== */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:url("assets/images/salinha/fundo_salinha.gif") center/cover no-repeat}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 45%,rgba(12,7,19,.38),rgba(12,7,19,.85))}
+body.imm .bg{display:none}
 </style>
 </head>
 <body>
-<div class="lights"></div><div class="cap">✦ nossa salinha ✦</div><div class="candle"></div>
+<div class="bg" aria-hidden="true"></div>
+<div class="lights"></div><div class="cap">✦ nossa salinha ✦</div><div class="candle"></div><div class="plant"></div><div class="moon"></div><div class="rug"></div>
 <div class="beam"></div><div class="drape l"></div><div class="drape r"></div>
 
 <div class="who" id="who">
   <h1>Quem está entrando?</h1>
-  <button class="pill" data-r="a">Sou eu</button>
+  <button class="pill" data-r="a">Sou o Allan</button>
   <button class="pill" data-r="b">Sou a Jhennyfer</button>
 </div>
 
@@ -228,11 +310,18 @@ body.imm .candle,body.imm .lights,body.imm .cap{display:none}
 </main>
 
 <section class="pad" id="pad" aria-label="Chat">
-  <button class="x" id="padX" aria-label="Fechar chat">✕</button>
-  <h3>caderninho 💜</h3>
+  <i class="fl f1">🌸</i><i class="fl f2">🌼</i>
+  <header><h3>Chat</h3><button class="x" id="padX" aria-label="Fechar chat">✕</button></header>
   <div id="msgs"></div>
-  <div class="say"><input id="txt" maxlength="500" placeholder="escreve aqui…" autocomplete="off"><button id="send" aria-label="Enviar">✦</button></div>
+  <div class="tray emo" id="emo"></div>
+  <div class="tray att" id="att"><button type="button" id="aGal">🖼 Galeria</button><button type="button" id="aCam">📷 Tirar foto</button></div>
+  <div class="say">
+    <div class="field"><input id="txt" maxlength="500" placeholder="Escreve aqui…" autocomplete="off"><button id="bAtt" type="button" aria-label="Enviar imagem">🖼</button><button id="bEmo" type="button" aria-label="Emojis">😊</button></div>
+    <button id="send" type="button" aria-label="Enviar">➤</button>
+  </div>
+  <input type="file" id="fGal" accept="image/*" hidden><input type="file" id="fCam" accept="image/*" capture="environment" hidden>
 </section>
+<div id="lb"><img id="lbi" alt=""></div>
 
 <footer class="base">
   <div class="seat" id="seatMe" data-s="re"><div class="av" id="avMe"></div><div class="chair"></div><small id="stMe"></small><b id="nmMe"></b></div>
@@ -246,15 +335,15 @@ body.imm .candle,body.imm .lights,body.imm .cap{display:none}
 </footer>
 
 <dialog id="dlg">
-  <div class="dh"><h3>Configurações</h3><button class="chip" id="cWho" type="button">⇄ Trocar quem sou</button><button class="xx" id="cX" type="button" aria-label="Fechar">✕</button></div>
-  <div class="fld"><span>Seu nome</span><div class="inp"><input id="cMy" maxlength="20" autocomplete="off"><em id="cCount">0/20</em></div></div>
-  <div class="fld"><span>Seu avatar</span>
-    <div class="avrow"><button class="drop" id="cPick" type="button"><b>Selecionar imagem</b><small>Escolha uma foto da sua galeria</small></button><div class="prev" id="cPrev"></div></div>
-    <input type="file" id="cFile" accept="image/*" hidden></div>
-  <div class="fld"><span>Transmissão</span><select id="cQ"><option value="motion">Filme ou jogo (fluido)</option><option value="detail">Texto e imagem (nítido)</option></select></div>
-  <div class="fld"><span>Qualidade máxima</span><select id="cB"><option value="6">Econômica · 6 Mbps</option><option value="10">Alta · 10 Mbps</option><option value="16">Máxima · 16 Mbps</option></select></div>
-  <div class="fld"><span>Quadros por segundo</span><select id="cF"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></div>
-  <div class="row2"><button class="chip" id="cCancel" type="button">Cancelar</button><button class="chip go" id="cOk" type="button">✦ Salvar</button></div>
+  <i class="dfl a">🌸</i><i class="dfl b">🌸</i>
+  <div class="dh"><span class="tic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 4c2 2 2 4 0 6-2-2-2-4 0-6zM12 20c-2-2-2-4 0-6 2 2 2 4 0 6zM4 12c2-2 4-2 6 0-2 2-4 2-6 0zM20 12c-2 2-4 2-6 0 2-2 4-2 6 0z"/></svg></span><h3>Configurações</h3><button class="xx" id="cX" type="button" aria-label="Fechar">✕</button></div>
+  <button class="chip back" id="cWho" type="button">‹ Trocar quem sou</button>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/></svg><div><span class="ft">Seu nome</span><div class="inp"><input id="cMy" maxlength="20" autocomplete="off"><em id="cCount">0/20</em></div></div></div>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l5-4 3 3 3-2 3 3"/></svg><div><span class="ft">Seu avatar</span><button class="drop" id="cPick" type="button"><span class="prev" id="cPrev"></span><span><b>Selecionar imagem</b><small>Escolha uma foto da sua galeria</small></span></button><input type="file" id="cFile" accept="image/*" hidden></div></div>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.8"/><path d="M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5.5 5.5a9 9 0 0 0 0 13M18.5 5.5a9 9 0 0 1 0 13"/></svg><div><span class="ft">Transmissão</span><select id="cQ"><option value="motion">Filme ou jogo (fluido)</option><option value="detail">Texto e imagem (nítido)</option></select></div></div>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="11" rx="3"/><path d="M7.5 10v4M7.5 12h3M10.5 10v4M13.5 10v4h1.5a2 2 0 0 0 0-4h-1.5"/></svg><div><span class="ft">Qualidade máxima</span><select id="cB"><option value="6">Econômica · 6 Mbps</option><option value="10">Alta · 10 Mbps</option><option value="16">Máxima · 16 Mbps</option></select></div></div>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="3"/><path d="M5 15V8a3 3 0 0 1 3-3h7"/></svg><div><span class="ft">Quadros por segundo</span><select id="cF"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></div></div>
+  <div class="row2"><button class="chip" id="cCancel" type="button">Cancelar</button><button class="chip go" id="cOk" type="button">Salvar ✦</button></div>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
@@ -313,21 +402,23 @@ function updPrev(){
 
 /* ---------- chat ---------- */
 let msgs = [];
-function addMsg(from, text, save = true, ts = Date.now()){
+function addMsg(from, text, save = true, ts = Date.now(), img = null){
   const me = from === 'me', w = document.createElement('div'); w.className = 'row' + (me ? ' me' : '');
   w.innerHTML = '<i></i><div><small><b></b> <span></span></small><div class="' + (me ? 'm me' : 'm') + '"></div></div>';
   setAv(w.querySelector('i'), me ? cfg.myImg : cfg.otherImg, me ? cfg.myAv : cfg.otherAv);
   w.querySelector('b').textContent = me ? cfg.myName : cfg.otherName;
   w.querySelector('span').textContent = new Date(ts).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-  w.querySelector('.m').textContent = text;
+  const m = w.querySelector('.m');
+  if (img){ const im = document.createElement('img'); im.src = img; im.onclick = () => { $('lbi').src = img; $('lb').classList.add('on'); }; m.appendChild(im); m.classList.add('pic'); }
+  else m.textContent = text;
   $('msgs').appendChild(w); $('msgs').scrollTop = 1e9;
-  if (save){ msgs.push({from, text, ts}); store.set('chat', msgs.slice(-60)); }
-  if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(text); }
+  if (save){ msgs.push({from, text: img ? '📷 foto' : text, ts}); store.set('chat' + role, msgs.slice(-60)); }
+  if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(img ? '📷 mandou uma foto' : text); }
 }
 function sendMsg(){
   const x = $('txt').value.trim(); if (!x) return;
   if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
-  conn.send({t:'chat', x}); addMsg('me', x); $('txt').value = '';
+  conn.send({t:'chat', x}); addMsg('me', x); $('txt').value = ''; closeTrays();
 }
 
 /* ---------- qualidade ---------- */
@@ -430,10 +521,11 @@ function setConn(c){
   c.on('data', d => {
     lastSeen = Date.now(); if (!d) return;
     if (d.t === 'chat' && d.x) addMsg('o', String(d.x).slice(0, 500));
+    else if (d.t === 'img' && typeof d.x === 'string' && d.x.length < 900000 && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.x)) addMsg('o', '', true, Date.now(), d.x);
     else if (d.t === 'prof'){
       cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
       cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
-      store.set('cfg', cfg); paintNames();
+      store.set('cfg' + role, cfg); paintNames();
     }
   });
   c.on('close', () => dropConn(c));
@@ -485,9 +577,9 @@ $('bSet').onclick = () => {
   $('cQ').value = cfg.quality; $('cB').value = cfg.mbps; $('cF').value = cfg.fps; $('dlg').showModal();
 };
 $('cOk').onclick = () => {
-  cfg = {myName:$('cMy').value.trim() || 'Você', myAv:$('cMyAv').value, otherName:$('cO').value.trim() || 'Ela', otherAv:$('cOAv').value,
+  cfg = {myName:$('cMy').value.trim() || (role === 'a' ? 'Allan' : 'Jhennyfer'), myAv:$('cMyAv').value, otherName:$('cO').value.trim() || 'Ela', otherAv:$('cOAv').value,
          quality:$('cQ').value, mbps:+$('cB').value, fps:+$('cF').value};
-  store.set('cfg', cfg); paintNames(); $('dlg').close();
+  store.set('cfg' + role, cfg); paintNames(); $('dlg').close();
   if (localStream){ const vt = localStream.getVideoTracks()[0]; if (vt){ vt.contentHint = cfg.quality; vt.applyConstraints({frameRate:{ideal:cfg.fps, max:cfg.fps}}).catch(() => {}); } tune(call); }
 };
 $('bPrev').onclick = () => { prevOn = !prevOn; renderWait(); };
@@ -506,7 +598,7 @@ function showUi(){
   uiT = setTimeout(() => { if (document.activeElement !== $('txt') && !$('dlg').open) document.body.classList.remove('ui'); }, 3500);
 }
 function setChat(open){
-  $('pad').classList.toggle('open', open); $('bChat').classList.toggle('on', open);
+  $('pad').classList.toggle('open', open); $('bChat').classList.toggle('on', open); document.body.classList.toggle('chatopen', open);
   if (open){ $('dot').classList.remove('on'); $('peek').classList.remove('show'); $('msgs').scrollTop = 1e9; showUi(); }
 }
 $('bChat').onclick = () => { const o = !$('pad').classList.contains('open'); setChat(o); if (o && !matchMedia('(pointer:coarse)').matches) $('txt').focus(); };
@@ -538,6 +630,44 @@ document.addEventListener('fullscreenchange', chkImm);
 if (window.visualViewport){ visualViewport.addEventListener('resize', vv); visualViewport.addEventListener('scroll', vv); }
 chkImm(); vv();
 
+/* ---------- emojis e fotos no chat ---------- */
+const EMO = {
+  '😊':'😀😃😄😁😆😅😂🤣🥲😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😜🤪😝🤗🤭🤫🤔😐😑😶🙄😏😒😞😔😟😕🙁😣😖😫😩🥺😢😭😤😠😡🤯😳🥵🥶😱😨😰😥😓🤤😴🥱😷🤒🤕🤢🤮🥳😎🤓🧐',
+  '💗':'❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💘💝💋✨⭐🌟💫🔥🎉🎊🎈🎁🌸🌷🌹🌺🌼🌙☀️🌈☁️',
+  '👍':'👍👎👌✌️🤞🤟🤘🤙👋🤚🖐️✋👏🙌🤝🙏💪🫶🫂👀🧠🫠',
+  '🐱':'🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🙈🙉🙊🐔🐧🐦🐤🦄🐝🦋🐢🐙🐬🐳',
+  '🍕':'🍕🍔🍟🌭🍿🍩🍪🎂🍰🧁🍫🍬🍭🍓🍒🍑🍉🍌🍎🥑☕🧋🍺🍷',
+  '🎮':'🎮🎬🍿🎧🎵🎶📺📱💻📷🏠⚽🏀🎲🧩🚗✈️🌍'
+};
+function addEmo(e){
+  const i = $('txt'), a = i.selectionStart == null ? i.value.length : i.selectionStart, b = i.selectionEnd == null ? a : i.selectionEnd;
+  i.value = i.value.slice(0, a) + e + i.value.slice(b); try{ i.setSelectionRange(a + e.length, a + e.length); }catch(err){}
+}
+(function(){
+  const seg = t => (window.Intl && Intl.Segmenter) ? [...new Intl.Segmenter().segment(t)].map(x => x.segment) : Array.from(t);
+  const tabs = document.createElement('div'); tabs.className = 'tabs'; const grid = document.createElement('div'); grid.className = 'eg';
+  const show = k => { grid.innerHTML = ''; seg(EMO[k]).forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => addEmo(e); grid.appendChild(b); }); };
+  Object.keys(EMO).forEach(k => { const b = document.createElement('button'); b.type = 'button'; b.textContent = k; b.onclick = () => show(k); tabs.appendChild(b); });
+  $('emo').append(tabs, grid); show(Object.keys(EMO)[0]);
+})();
+function closeTrays(){ $('emo').classList.remove('show'); $('att').classList.remove('show'); }
+$('bEmo').onclick = () => { const o = !$('emo').classList.contains('show'); closeTrays(); $('emo').classList.toggle('show', o); };
+$('bAtt').onclick = () => { const o = !$('att').classList.contains('show'); closeTrays(); $('att').classList.toggle('show', o); };
+$('aGal').onclick = () => $('fGal').click();
+$('aCam').onclick = () => $('fCam').click();
+async function pickImg(e){
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try{
+    const b = await createImageBitmap(f), sc = Math.min(1, 1280 / Math.max(b.width, b.height)), c = document.createElement('canvas');
+    c.width = Math.round(b.width * sc); c.height = Math.round(b.height * sc); c.getContext('2d').drawImage(b, 0, 0, c.width, c.height);
+    let q = .8, d = c.toDataURL('image/jpeg', q); while (d.length > 350000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
+    if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
+    conn.send({t:'img', x:d}); addMsg('me', '', true, Date.now(), d); closeTrays();
+  }catch(err){ toast('Não consegui enviar essa imagem'); }
+}
+$('fGal').onchange = $('fCam').onchange = pickImg;
+$('lb').onclick = () => $('lb').classList.remove('on');
+
 /* ---------- perfil e configurações ---------- */
 let tmpImg = null;
 function sendProfile(){ if (conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null}); }catch(e){} } }
@@ -560,17 +690,20 @@ $('cFile').onchange = async e => {
 $('cCancel').onclick = $('cX').onclick = () => $('dlg').close();
 $('cOk').onclick = () => {
   Object.assign(cfg, {myName:$('cMy').value.trim() || 'Você', myImg:tmpImg, quality:$('cQ').value, mbps:+$('cB').value, fps:+$('cF').value});
-  store.set('cfg', cfg); paintNames(); $('dlg').close(); sendProfile();
+  store.set('cfg' + role, cfg); paintNames(); $('dlg').close(); sendProfile();
   if (localStream){ const vt = localStream.getVideoTracks()[0]; if (vt){ vt.contentHint = cfg.quality; vt.applyConstraints({frameRate:{ideal:cfg.fps, max:cfg.fps}}).catch(() => {}); } tune(call); }
 };
+
+/* economia de dados: sem o gif de fundo */
+if (navigator.connection && navigator.connection.saveData){ const g = document.querySelector('.bg'); if (g) g.remove(); }
 
 /* ---------- entrada ---------- */
 function boot(){
   myId = SALA + '-' + role; otherId = SALA + '-' + (role === 'a' ? 'b' : 'a');
-  cfg = Object.assign({myName:'Você', otherName: role === 'a' ? 'Ela' : 'Ele', myAv: role === 'a' ? '🐻' : '🐰', otherAv: role === 'a' ? '🐰' : '🐻',
-                       quality:'motion', mbps:10, fps:30}, store.get('cfg', {}));
+  cfg = Object.assign({myName: role === 'a' ? 'Allan' : 'Jhennyfer', otherName: role === 'a' ? 'Jhennyfer' : 'Allan', myAv: role === 'a' ? '🐻' : '🐰', otherAv: role === 'a' ? '🐰' : '🐻',
+                       quality:'motion', mbps:10, fps:30}, store.get('cfg' + role, {}));
   paintNames(); setSeat('O', 'off'); renderWait();
-  store.get('chat', []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now())); msgs = store.get('chat', []);
+  store.get('chat' + role, []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now())); msgs = store.get('chat' + role, []);
   $('dot').classList.remove('on');
   start();
 }
