@@ -275,7 +275,32 @@ function setChat(open){
   $('pad').classList.toggle('open', open); $('bChat').classList.toggle('on', open); document.body.classList.toggle('chatopen', open);
   if (open){ $('dot').classList.remove('on'); $('peek').classList.remove('show'); $('msgs').scrollTop = 1e9; showUi(); }
 }
-$('bChat').onclick = () => { const o = !$('pad').classList.contains('open'); setChat(o); if (o && !matchMedia('(pointer:coarse)').matches) $('txt').focus(); };
+$('bChat').onclick = () => {
+
+  /* Se as figurinhas estiverem abertas,
+     primeiro fecha só as figurinhas */
+  if ($('emo').classList.contains('show')){
+    $('emo').classList.remove('show');
+    $('bEmo').focus?.();
+    return;
+  }
+
+  /* Se a galeria/foto estiver aberta,
+     fecha somente ela */
+  if ($('att').classList.contains('show')){
+    $('att').classList.remove('show');
+    return;
+  }
+
+  /* Caso contrário, abre/fecha o chat normalmente */
+  const o = !$('pad').classList.contains('open');
+
+  setChat(o);
+
+  if (o && !matchMedia('(pointer:coarse)').matches){
+    $('txt').focus();
+  }
+};
 $('padX').onclick = () => setChat(false);
 $('peek').onclick = () => setChat(true);
 function toggleFs(){
@@ -305,28 +330,71 @@ if (window.visualViewport){ visualViewport.addEventListener('resize', vv); visua
 chkImm(); vv();
 
 /* ---------- emojis e fotos no chat ---------- */
-const EMO = {
-  '😊':'😀😃😄😁😆😅😂🤣🥲😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😜🤪😝🤗🤭🤫🤔😐😑😶🙄😏😒😞😔😟😕🙁😣😖😫😩🥺😢😭😤😠😡🤯😳🥵🥶😱😨😰😥😓🤤😴🥱😷🤒🤕🤢🤮🥳😎🤓🧐',
-  '💗':'❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💘💝💋✨⭐🌟💫🔥🎉🎊🎈🎁🌸🌷🌹🌺🌼🌙☀️🌈☁️',
-  '👍':'👍👎👌✌️🤞🤟🤘🤙👋🤚🖐️✋👏🙌🤝🙏💪🫶🫂👀🧠🫠',
-  '🐱':'🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🙈🙉🙊🐔🐧🐦🐤🦄🐝🦋🐢🐙🐬🐳',
-  '🍕':'🍕🍔🍟🌭🍿🍩🍪🎂🍰🧁🍫🍬🍭🍓🍒🍑🍉🍌🍎🥑☕🧋🍺🍷',
-  '🎮':'🎮🎬🍿🎧🎵🎶📺📱💻📷🏠⚽🏀🎲🧩🚗✈️🌍'
-};
-function addEmo(e){
-  const i = $('txt'), a = i.selectionStart == null ? i.value.length : i.selectionStart, b = i.selectionEnd == null ? a : i.selectionEnd;
-  i.value = i.value.slice(0, a) + e + i.value.slice(b); try{ i.setSelectionRange(a + e.length, a + e.length); }catch(err){}
+/* ---------- emojis e fotos no chat ---------- */
+
+function closeTrays(){
+  $('emo').classList.remove('show');
+  $('att').classList.remove('show');
 }
-(function(){
-  const seg = t => (window.Intl && Intl.Segmenter) ? [...new Intl.Segmenter().segment(t)].map(x => x.segment) : Array.from(t);
-  const tabs = document.createElement('div'); tabs.className = 'tabs'; const grid = document.createElement('div'); grid.className = 'eg';
-  const show = k => { grid.innerHTML = ''; seg(EMO[k]).forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => addEmo(e); grid.appendChild(b); }); };
-  Object.keys(EMO).forEach(k => { const b = document.createElement('button'); b.type = 'button'; b.textContent = k; b.onclick = () => show(k); tabs.appendChild(b); });
-    $('emoPane').append(tabs, grid); show(Object.keys(EMO)[0]);
-})();
-function closeTrays(){ $('emo').classList.remove('show'); $('att').classList.remove('show'); }
-$('bEmo').onclick = () => { const o = !$('emo').classList.contains('show'); closeTrays(); $('emo').classList.toggle('show', o); };
-$('bAtt').onclick = () => { const o = !$('att').classList.contains('show'); closeTrays(); $('att').classList.toggle('show', o); };
+
+/* botão X da aba de figurinhas */
+function ensureStickerClose(){
+  const emo = $('emo');
+
+  if (emo.querySelector('.emoClose')) return;
+
+  const x = document.createElement('button');
+
+  x.type = 'button';
+  x.className = 'emoClose';
+  x.innerHTML = '✕';
+  x.setAttribute('aria-label', 'Fechar figurinhas');
+
+  x.onclick = e => {
+    e.stopPropagation();
+    emo.classList.remove('show');
+  };
+
+  emo.prepend(x);
+}
+
+/* Figurinhas */
+$('bEmo').onclick = e => {
+  e.stopPropagation();
+
+  const aberto = $('emo').classList.contains('show');
+
+  /* clicou de novo no botão de figurinha = fecha */
+  if (aberto){
+    $('emo').classList.remove('show');
+    return;
+  }
+
+  /* abre somente figurinhas */
+  $('att').classList.remove('show');
+  $('emo').classList.add('show');
+
+  ensureStickerClose();
+  stkAbrir();
+};
+
+/* Galeria/foto */
+$('bAtt').onclick = e => {
+  e.stopPropagation();
+
+  const aberto = $('att').classList.contains('show');
+
+  if (aberto){
+    $('att').classList.remove('show');
+    return;
+  }
+
+  $('emo').classList.remove('show');
+  $('att').classList.add('show');
+};
+
+$('aGal').onclick = () => $('fGal').click();
+$('aCam').onclick = () => $('fCam').click();
 $('aGal').onclick = () => $('fGal').click();
 $('aCam').onclick = () => $('fCam').click();
 async function pickImg(e){
@@ -453,19 +521,13 @@ function sendSticker(nome){
 }
 
 /* alterna entre as abas Emojis / Figurinhas e entre Todas / Mais usadas */
-function stkPane(p){
-  document.querySelectorAll('.etop button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
-  $('emoPane').hidden = p !== 'emoPane';
-  $('stkPane').hidden = p !== 'stkPane';
-  if (p === 'stkPane'){
-    stkRender();
-    if (STK_LIST === null && !stkEsperando){
-      stkEsperando = true;
-      stkProbe().then(() => { stkEsperando = false; stkRender(); });
-    }
+function stkAbrir(){
+  stkRender();
+  if (STK_LIST === null && !stkEsperando){
+    stkEsperando = true;
+    stkProbe().then(() => { stkEsperando = false; stkRender(); });
   }
 }
-document.querySelectorAll('.etop button').forEach(b => b.onclick = () => stkPane(b.dataset.p));
 
 
 /* ---------- entrada ---------- */
