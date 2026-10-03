@@ -25,13 +25,6 @@ button{cursor:pointer}
 .cap{position:fixed;top:8px;left:0;right:0;text-align:center;font-family:var(--hand);font-size:20px;opacity:.55;z-index:1;pointer-events:none}
 .lights{position:fixed;top:0;left:0;right:0;height:26px;z-index:0;pointer-events:none;opacity:.55;background:radial-gradient(circle 2.5px at 50% 14px,rgba(255,200,230,.95),transparent 3px) 0 0/46px 26px repeat-x;filter:drop-shadow(0 0 4px rgba(255,150,210,.6));animation:tw 5s ease-in-out infinite alternate}
 @keyframes tw{to{opacity:.9}}
-.candle{position:fixed;left:min(14vw,200px);bottom:62px;width:10px;height:24px;border-radius:3px;background:linear-gradient(90deg,#f1dcc0,#c9a47c);z-index:0;pointer-events:none}
-.candle::before{content:"";position:absolute;left:50%;top:-12px;width:7px;height:12px;transform:translateX(-50%);border-radius:50% 50% 40% 40%;background:#ffd79a;box-shadow:0 0 16px 6px rgba(255,170,120,.35);animation:fl 2.2s ease-in-out infinite alternate}
-@keyframes fl{to{transform:translateX(-50%) scale(1.1,.92);opacity:.85}}
-.plant{position:fixed;right:min(14vw,200px);bottom:62px;width:16px;height:0;border-top:14px solid #8a5a3a;border-left:3px solid transparent;border-right:3px solid transparent;z-index:0;pointer-events:none}
-.plant::before,.plant::after{content:"";position:absolute;bottom:-1px;width:9px;height:24px;background:#58b88a;opacity:.7;border-radius:90% 0 90% 0}
-.plant::before{left:-4px;transform:rotate(-24deg)}
-.plant::after{right:-4px;transform:rotate(24deg) scaleX(-1)}
 .moon{position:fixed;top:44px;right:min(13vw,190px);width:26px;height:26px;border-radius:50%;box-shadow:inset -8px 0 0 0 #f1e6da;opacity:.45;z-index:0;pointer-events:none}
 @media (max-width:900px){.candle,.lights,.plant,.moon{display:none}}
 
@@ -245,3 +238,30 @@ body.imm #msgs{min-height:40px}
 .nm{font-family:'DM Sans',var(--ui);font-weight:600;font-size:13px;color:#e2c9ae;margin-right:5px}
 .m.pic .nm{display:block;margin:0 0 3px 4px}
 .sys{align-self:center;max-width:92%;text-align:center;font-family:'DM Sans',var(--ui);font-size:12px;color:#d9c3ab;opacity:.85;padding:3px 12px;border-radius:99px;background:rgba(255,255,255,.07)}
+/* ===== ajustes: fundo nítido, mensagens, campo sem rosa, tela ampliada só com o chat ===== */
+/* 1) fundo menos embaçado atrás do chat e do topo */
+.pad{-webkit-backdrop-filter:none;backdrop-filter:none}
+@media (orientation:portrait) and (max-width:700px){
+ body:not(.imm) .base{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* 2) mensagens: fonte limpa e balões mais leves */
+#msgs{gap:8px}
+.row{max-width:86%;gap:8px}
+.row i{width:30px;height:30px;font-size:17px}
+.m{padding:7px 13px;border-radius:18px;border-bottom-left-radius:6px;font-family:'DM Sans',var(--ui);font-weight:400;font-size:15.5px;line-height:1.35;background:rgba(255,235,215,.12);border:0;color:#f6ece0}
+.m.me{border-radius:18px;border-bottom-right-radius:6px;background:rgba(140,36,66,.7);color:#fff3ea}
+.m.pic,.m.me.pic{padding:4px;background:transparent;border:0}
+.nm{font-family:'DM Sans',var(--ui);font-weight:600;font-size:13px;color:#e8c9a8;margin-right:5px}
+.say .field input,.say .field input::placeholder{font-family:'DM Sans',var(--ui);font-size:16px}
+/* 3) campo de mensagem sem o contorno rosa */
+.say .field input:focus,.say .field input:focus-visible{outline:none}
+.field:focus-within{border-color:rgba(255,235,215,.32)}
+/* 4) tela ampliada: some a barra; só o botão de chat no canto de cima, à direita */
+body.imm .base{left:auto;right:10px;top:10px;bottom:auto;width:auto;padding:0;background:none}
+body.imm.ui .base{pointer-events:none}
+body.imm.ui .ctrl{pointer-events:auto}
+body.imm .ctrl{padding:0;gap:0;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+body.imm .ctrl::before,body.imm .ctrl::after{display:none}
+body.imm .ctrl button:not(#bChat){display:none}
+body.imm #bChat{width:40px;height:40px;background:rgba(14,9,6,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+body.imm .pad{max-height:calc(var(--vvh,100dvh) - 70px)}
