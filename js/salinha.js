@@ -322,7 +322,7 @@ function chkImm(){ document.body.classList.toggle('imm', matchMedia('(orientatio
 function vv(){
   const v = window.visualViewport; if (!v) return;
   const kb = Math.max(0, innerHeight - v.height - v.offsetTop), r = document.documentElement.style;
-  r.setProperty('--kb', kb + 'px'); r.setProperty('--vvh', v.height + 'px'); document.body.classList.toggle('kb', kb > 80);
+  r.setProperty('--vvh', v.height + 'px');
 }
 ['resize','orientationchange'].forEach(e => addEventListener(e, chkImm));
 document.addEventListener('fullscreenchange', chkImm);
@@ -596,4 +596,100 @@ else{
   }
   if (b) b.onclick = pip;
   try{ v.autoPictureInPicture = true; navigator.mediaSession.setActionHandler('enterpictureinpicture', pip); }catch(e){}
+})();
+/* ===== EXTRAS DO CHAT: responder mensagem, "digitando…", fechar bandeja ao tocar fora, teclado na tela ampliada ===== */
+(function(){
+  const nid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  let reply = null, lastSent = null, lastRecv = null, typHide = 0, typT = 0;
+
+  /* --- barra "respondendo a…" acima do campo de mensagem --- */
+  const bar = document.createElement('div'); bar.id = 'replyBar';
+  bar.innerHTML = '<span class="rbq"><b></b><em></em></span><button type="button" aria-label="Cancelar resposta">✕</button>';
+  $('pad').insertBefore(bar, document.querySelector('#pad .say'));
+  bar.querySelector('button').onclick = () => setReply(null);
+  function setReply(r){
+    reply = r; bar.classList.toggle('on', !!r);
+    if (r){ bar.querySelector('b').textContent = 'Respondendo a ' + r.n; bar.querySelector('em').textContent = r.s; if (!matchMedia('(pointer:coarse)').matches) $('txt').focus(); }
+  }
+
+  /* --- envio: cada mensagem ganha um id e, se houver resposta pendente, leva a citação --- */
+  const _setConn = setConn;
+  setConn = function(c){
+    const send = c.send.bind(c);
+    c.send = d => {
+      if (d && (d.t === 'chat' || d.t === 'img' || d.t === 'stk')){
+        d.id = nid(); lastSent = {id: d.id, r: reply};
+        if (reply){ d.r = reply; setReply(null); }
+      }
+      return send(d);
+    };
+    c.on('data', d => {                       /* roda antes do tratamento original */
+      if (!d) return;
+      if (d.t === 'typ'){ showTyping(!!d.on); return; }
+      if (d.t === 'chat' || d.t === 'img' || d.t === 'stk'){ showTyping(false); lastRecv = d; }
+    });
+    return _setConn(c);
+  };
+
+  /* --- mensagens: botão "↩ Responder", segurar = responder, citação clicável --- */
+  const _addMsg = addMsg;
+  addMsg = function(from, text, save, ts, img, stk){
+    _addMsg.apply(null, arguments);
+    const row = $('msgs').lastElementChild; if (!row || !row.classList.contains('row')) return;
+    const m = row.querySelector('.m'); if (!m) return;
+    const me = from === 'me', meta = me ? lastSent : lastRecv; if (me) lastSent = null; else lastRecv = null;
+    const id = (meta && meta.id) || nid(); row.dataset.id = id;
+    const info = {id, n: me ? cfg.myName : cfg.otherName, s: stk ? '🏷️ figurinha' : img ? '📷 foto' : String(text || '').slice(0, 80)};
+    const q = meta && meta.r;
+    if (q && q.s){
+      const rq = document.createElement('div'); rq.className = 'rq';
+      rq.innerHTML = '<b></b><span></span>'; rq.firstChild.textContent = String(q.n || '').slice(0, 20); rq.lastChild.textContent = String(q.s).slice(0, 80);
+      rq.onclick = e => { e.stopPropagation(); const t = $('msgs').querySelector('[data-id="' + String(q.id).replace(/[^A-Za-z0-9]/g, '') + '"]'); if (t){ t.scrollIntoView({block:'center', behavior:'smooth'}); t.classList.add('hl'); setTimeout(() => t.classList.remove('hl'), 1400); } };
+      const nm = m.querySelector('.nm'); nm ? nm.after(rq) : m.prepend(rq);
+    }
+    const col = document.createElement('div'); col.className = 'col'; m.replaceWith(col); col.appendChild(m);
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'rb'; btn.textContent = '↩ Responder'; btn.onclick = () => setReply(info); col.appendChild(btn);
+    let lp, sx = 0, sy = 0, held = false;
+    m.addEventListener('pointerdown', e => { held = false; sx = e.clientX; sy = e.clientY; clearTimeout(lp); lp = setTimeout(() => { held = true; setReply(info); if (navigator.vibrate) navigator.vibrate(20); }, 500); });
+    m.addEventListener('pointermove', e => { if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > 10) clearTimeout(lp); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => m.addEventListener(ev, () => clearTimeout(lp)));
+    m.addEventListener('click', e => { if (held){ e.stopPropagation(); e.preventDefault(); held = false; } }, true);
+    m.addEventListener('contextmenu', e => e.preventDefault());
+  };
+
+  /* --- "fulano está digitando…" --- */
+  function showTyping(on){
+    let el = $('typ'); clearTimeout(typHide);
+    if (!on){ if (el) el.remove(); return; }
+    if (!el){
+      el = document.createElement('div'); el.id = 'typ'; el.className = 'row';
+      el.innerHTML = '<i></i><div class="m"><b class="nm"></b><span class="dots"><s></s><s></s><s></s></span></div>';
+      setAv(el.querySelector('i'), cfg.otherImg, cfg.otherAv); el.querySelector('.nm').textContent = cfg.otherName + ' digitando';
+    }
+    $('msgs').appendChild(el); $('msgs').scrollTop = 1e9;
+    typHide = setTimeout(() => showTyping(false), 4500);
+  }
+  const typOff = () => { typT = 0; if (conn && conn.open){ try{ conn.send({t:'typ', on:0}); }catch(e){} } };
+  $('txt').addEventListener('input', () => {
+    if (!$('txt').value){ typOff(); return; }
+    const now = Date.now();
+    if (conn && conn.open && now - typT > 2000){ typT = now; try{ conn.send({t:'typ', on:1}); }catch(e){} }
+  });
+  $('txt').addEventListener('blur', typOff);
+
+  /* --- toque fora das bandejas (figurinhas / foto) fecha elas --- */
+  document.addEventListener('click', e => {
+    if (!$('emo').classList.contains('show') && !$('att').classList.contains('show')) return;
+    const path = e.composedPath ? e.composedPath() : [];
+    if (path.some(n => n && n.id && ['emo', 'att', 'bEmo', 'bAtt'].includes(n.id))) return;
+    closeTrays();
+  });
+
+  /* --- tela ampliada + teclado: o vídeo não encolhe e o chat cabe acima do teclado --- */
+  const setFh = () => { if (!document.body.classList.contains('typing')) document.documentElement.style.setProperty('--fh', innerHeight + 'px'); };
+  $('txt').addEventListener('focus', () => document.body.classList.add('typing'));
+  $('txt').addEventListener('blur', () => { document.body.classList.remove('typing'); setTimeout(setFh, 400); });
+  ['resize', 'orientationchange'].forEach(ev => addEventListener(ev, () => setTimeout(setFh, 150)));
+  document.addEventListener('fullscreenchange', () => setTimeout(setFh, 300));
+  setFh();
 })();
