@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Nossa Salinha 💗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&family=DM+Sans:wght@400;500&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/salinha.css?v=3">
+<link rel="stylesheet" href="css/salinha.css?v=4">
 </head>
 <body>
 <div class="bg" aria-hidden="true"></div>
@@ -37,7 +37,14 @@
   <i class="fl f1">🌸</i><i class="fl f2">🌼</i>
   <header><h3>Chat</h3><button class="x" id="padX" aria-label="Fechar chat">✕</button></header>
   <div id="msgs"></div>
-  <div class="tray emo" id="emo"></div>
+   <div class="tray emo" id="emo">
+    <div class="etop"><button type="button" class="on" data-p="emoPane">😊 Emojis</button><button type="button" data-p="stkPane">🎟 Figurinhas</button></div>
+    <div id="emoPane"></div>
+    <div id="stkPane" hidden>
+      <div class="stabs"><button type="button" class="on" data-s="all">Todas</button><button type="button" data-s="top">⭐ Mais usadas</button></div>
+      <div class="sg" id="sg"></div>
+    </div>
+  </div>
   <div class="tray att" id="att"><button type="button" id="aGal">🖼 Galeria</button><button type="button" id="aCam">📷 Tirar foto</button></div>
   <div class="say">
     <div class="field"><input id="txt" maxlength="500" placeholder="Escreve aqui…" autocomplete="off"><button id="bAtt" type="button" aria-label="Enviar imagem">🖼</button><button id="bEmo" type="button" aria-label="Emojis">😊</button></div>
@@ -71,6 +78,6 @@
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
-<script src="js/salinha.js?v=3"></script>
+<script src="js/salinha.js?v=4"></script>
 </body>
 </html>

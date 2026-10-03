@@ -53,17 +53,23 @@ function updPrev(){
 
 /* ---------- chat ---------- */
 let msgs = [];
-function addMsg(from, text, save = true, ts = Date.now(), img = null){
+function addMsg(from, text, save = true, ts = Date.now(), img = null, stk = null){
   const me = from === 'me', w = document.createElement('div'); w.className = 'row' + (me ? ' me' : '');
   w.innerHTML = '<i></i><div class="' + (me ? 'm me' : 'm') + '"></div>';
   setAv(w.querySelector('i'), me ? cfg.myImg : cfg.otherImg, me ? cfg.myAv : cfg.otherAv);
   const m = w.querySelector('.m');
-  if (!me){ const n = document.createElement('b'); n.className = 'nm'; n.textContent = cfg.otherName + (img ? '' : ':'); m.appendChild(n); }
-  if (img){ const im = document.createElement('img'); im.src = img; im.onclick = () => { $('lbi').src = img; $('lb').classList.add('on'); }; m.appendChild(im); m.classList.add('pic'); }
+  if (!me){ const n = document.createElement('b'); n.className = 'nm'; n.textContent = cfg.otherName + ((img || stk) ? '' : ':'); m.appendChild(n); }
+  if (stk){
+    const im = document.createElement('img'); im.className = 'stk'; im.src = STK_DIR + stk; im.alt = 'figurinha';
+    im.onerror = () => im.replaceWith(document.createTextNode('🎟 figurinha'));
+    im.onclick = () => { $('lbi').src = im.src; $('lb').classList.add('on'); };
+    m.appendChild(im); m.classList.add('pic');
+  }
+  else if (img){ const im = document.createElement('img'); im.src = img; im.onclick = () => { $('lbi').src = img; $('lb').classList.add('on'); }; m.appendChild(im); m.classList.add('pic'); }
   else m.appendChild(document.createTextNode(text));
   $('msgs').appendChild(w); $('msgs').scrollTop = 1e9;
-  if (save){ msgs.push({from, text: img ? '📷 foto' : text, ts}); store.set('chat' + role, msgs.slice(-60)); }
-  if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(img ? '📷 mandou uma foto' : text); }
+  if (save){ msgs.push({from, text: stk ? '' : (img ? '📷 foto' : text), stk: stk || undefined, ts}); store.set('chat' + role, msgs.slice(-60)); }
+  if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(stk ? '🎟 mandou uma figurinha' : (img ? '📷 mandou uma foto' : text)); }
 }
 function addSys(t){
   const d = document.createElement('div'); d.className = 'sys'; d.textContent = t;
@@ -179,7 +185,8 @@ function setConn(c){
     lastSeen = Date.now(); if (!d) return;
     if (d.t === 'chat' && d.x) addMsg('o', String(d.x).slice(0, 500));
     else if (d.t === 'img' && typeof d.x === 'string' && d.x.length < 900000 && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.x)) addMsg('o', '', true, Date.now(), d.x);
-    else if (d.t === 'prof'){
+        else if (d.t === 'stk' && typeof d.x === 'string' && /^[A-Za-z0-9_-]{1,40}\.(jpg|jpeg|png|webp|gif)$/i.test(d.x)) addMsg('o', '', true, Date.now(), null, d.x);
+        else if (d.t === 'prof'){
       cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
       cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
       store.set('cfg' + role, cfg); paintNames();
@@ -315,7 +322,7 @@ function addEmo(e){
   const tabs = document.createElement('div'); tabs.className = 'tabs'; const grid = document.createElement('div'); grid.className = 'eg';
   const show = k => { grid.innerHTML = ''; seg(EMO[k]).forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => addEmo(e); grid.appendChild(b); }); };
   Object.keys(EMO).forEach(k => { const b = document.createElement('button'); b.type = 'button'; b.textContent = k; b.onclick = () => show(k); tabs.appendChild(b); });
-  $('emo').append(tabs, grid); show(Object.keys(EMO)[0]);
+    $('emoPane').append(tabs, grid); show(Object.keys(EMO)[0]);
 })();
 function closeTrays(){ $('emo').classList.remove('show'); $('att').classList.remove('show'); }
 $('bEmo').onclick = () => { const o = !$('emo').classList.contains('show'); closeTrays(); $('emo').classList.toggle('show', o); };
@@ -364,13 +371,112 @@ $('cOk').onclick = () => {
 /* economia de dados: sem o gif de fundo */
 if (navigator.connection && navigator.connection.saveData){ const g = document.querySelector('.bg'); if (g) g.remove(); }
 
+
+/* ---------- figurinhas ---------- */
+const STK_DIR = 'assets/images/salinha/figurinhas/';
+/* Cada tipo = prefixo + número + extensão (figurinha1.jpg, figurinhagif1.gif...).
+   A página procura de 1 até "max"; o que ainda não existe some sozinho (não quebra nada).
+   Passou de 30? É só aumentar o max. Outro formato (png, webp)? Copie uma linha e troque a ext. */
+const STK_TIPOS = [
+  { prefixo: 'figurinha',    ext: 'jpg', max: 30 },
+  { prefixo: 'figurinhagif', ext: 'gif', max: 30 }
+];
+let STK_LIST = null, stkAba = 'all', stkLP = null, stkLongo = false, stkEsperando = false;
+
+const stkFavs = () => store.get('stkfav' + role, []);
+const stkUso = () => store.get('stkuse' + role, {});
+
+/* confere (só os cabeçalhos, sem baixar a imagem) quais arquivos existem na pasta */
+async function stkProbe(){
+  const nomes = [];
+  STK_TIPOS.forEach(t => { for (let n = 1; n <= t.max; n++) nomes.push(t.prefixo + n + '.' + t.ext); });
+  const ok = await Promise.all(nomes.map(nome =>
+    fetch(STK_DIR + nome, {method:'HEAD', cache:'no-cache'}).then(r => r.ok).catch(() => false)));
+  STK_LIST = nomes.filter((_, i) => ok[i]);
+}
+
+/* "Mais usadas" = as favoritas (primeiro) + as que você mais manda */
+function stkLista(){
+  if (stkAba !== 'top') return STK_LIST;
+  const favs = stkFavs().filter(n => STK_LIST.includes(n)), uso = stkUso();
+  const resto = Object.keys(uso).filter(n => STK_LIST.includes(n) && !favs.includes(n)).sort((a, b) => uso[b] - uso[a]).slice(0, 12);
+  return [...favs, ...resto];
+}
+
+function stkRender(){
+  const g = $('sg'); g.innerHTML = '';
+  const aviso = t => { const d = document.createElement('div'); d.className = 'vazio'; d.textContent = t; g.appendChild(d); };
+  if (STK_LIST === null){ aviso('carregando…'); return; }
+  const lista = stkLista();
+  if (!lista.length){
+    aviso(stkAba === 'top' ? 'Ainda não tem nenhuma aqui. Segure numa figurinha pra favoritar; as que você mais mandar também aparecem.' : 'Nenhuma figurinha encontrada na pasta.');
+    return;
+  }
+  const favs = stkFavs();
+  lista.forEach(nome => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sk' + (favs.includes(nome) ? ' fav' : '');
+    const im = document.createElement('img'); im.src = STK_DIR + nome; im.alt = ''; im.loading = 'lazy'; im.decoding = 'async'; im.draggable = false;
+    b.appendChild(im); stkBind(b, nome); g.appendChild(b);
+  });
+}
+
+function stkToggleFav(nome, btn){
+  const f = stkFavs(), tem = f.includes(nome);
+  store.set('stkfav' + role, tem ? f.filter(n => n !== nome) : [nome, ...f]);
+  btn.classList.toggle('fav', !tem);
+  toast(tem ? 'Tirada das mais usadas' : '⭐ Adicionada às mais usadas');
+}
+
+/* toque = envia · segurar (meio segundo) = favoritar / desfavoritar */
+function stkBind(btn, nome){
+  const cancela = () => clearTimeout(stkLP);
+  btn.addEventListener('pointerdown', () => {
+    stkLongo = false; clearTimeout(stkLP);
+    stkLP = setTimeout(() => { stkLongo = true; stkToggleFav(nome, btn); if (navigator.vibrate) navigator.vibrate(25); }, 520);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, cancela));
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+  btn.addEventListener('click', () => {
+    if (stkLongo){ stkLongo = false; if (stkAba === 'top') stkRender(); return; }
+    sendSticker(nome);
+  });
+}
+
+function sendSticker(nome){
+  if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
+  conn.send({t:'stk', x:nome});
+  addMsg('me', '', true, Date.now(), null, nome);
+  const u = stkUso(); u[nome] = (u[nome] || 0) + 1; store.set('stkuse' + role, u);
+  closeTrays();
+}
+
+/* alterna entre as abas Emojis / Figurinhas e entre Todas / Mais usadas */
+function stkPane(p){
+  document.querySelectorAll('.etop button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $('emoPane').hidden = p !== 'emoPane';
+  $('stkPane').hidden = p !== 'stkPane';
+  if (p === 'stkPane'){
+    stkRender();
+    if (STK_LIST === null && !stkEsperando){
+      stkEsperando = true;
+      stkProbe().then(() => { stkEsperando = false; stkRender(); });
+    }
+  }
+}
+document.querySelectorAll('.etop button').forEach(b => b.onclick = () => stkPane(b.dataset.p));
+document.querySelectorAll('.stabs button').forEach(b => b.onclick = () => {
+  stkAba = b.dataset.s;
+  document.querySelectorAll('.stabs button').forEach(x => x.classList.toggle('on', x === b));
+  stkRender();
+});
+
 /* ---------- entrada ---------- */
 function boot(){
   myId = SALA + '-' + role; otherId = SALA + '-' + (role === 'a' ? 'b' : 'a');
   cfg = Object.assign({myName: role === 'a' ? 'Allan' : 'Jhennyfer', otherName: role === 'a' ? 'Jhennyfer' : 'Allan', myAv: role === 'a' ? '🐻' : '🐰', otherAv: role === 'a' ? '🐰' : '🐻',
                        quality:'motion', mbps:10, fps:30}, store.get('cfg' + role, {}));
   paintNames(); setSeat('O', 'off'); renderWait();
-  store.get('chat' + role, []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now())); msgs = store.get('chat' + role, []);
+    store.get('chat' + role, []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now(), null, m.stk || null)); msgs = store.get('chat' + role, []);
   $('dot').classList.remove('on');
   start();
 }
