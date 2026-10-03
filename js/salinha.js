@@ -381,7 +381,7 @@ const STK_TIPOS = [
   { prefixo: 'figurinha',    ext: 'jpg', max: 30 },
   { prefixo: 'figurinhagif', ext: 'gif', max: 30 }
 ];
-let STK_LIST = null, stkAba = 'all', stkLP = null, stkLongo = false, stkEsperando = false;
+let STK_LIST = null, stkLP = null, stkLongo = false, stkEsperando = false;
 
 const stkFavs = () => store.get('stkfav' + role, []);
 const stkUso = () => store.get('stkuse' + role, {});
@@ -396,20 +396,16 @@ async function stkProbe(){
 }
 
 /* "Mais usadas" = as favoritas (primeiro) + as que você mais manda */
-function stkLista(){
-  if (stkAba !== 'top') return STK_LIST;
+function stkListaTop(){
   const favs = stkFavs().filter(n => STK_LIST.includes(n)), uso = stkUso();
   const resto = Object.keys(uso).filter(n => STK_LIST.includes(n) && !favs.includes(n)).sort((a, b) => uso[b] - uso[a]).slice(0, 12);
   return [...favs, ...resto];
 }
 
-function stkRender(){
-  const g = $('sg'); g.innerHTML = '';
-  const aviso = t => { const d = document.createElement('div'); d.className = 'vazio'; d.textContent = t; g.appendChild(d); };
-  if (STK_LIST === null){ aviso('carregando…'); return; }
-  const lista = stkLista();
+function stkGrid(g, lista, vazioTexto){
+  g.innerHTML = '';
   if (!lista.length){
-    aviso(stkAba === 'top' ? 'Ainda não tem nenhuma aqui. Segure numa figurinha pra favoritar; as que você mais mandar também aparecem.' : 'Nenhuma figurinha encontrada na pasta.');
+    const d = document.createElement('div'); d.className = 'vazio'; d.textContent = vazioTexto; g.appendChild(d);
     return;
   }
   const favs = stkFavs();
@@ -418,6 +414,12 @@ function stkRender(){
     const im = document.createElement('img'); im.src = STK_DIR + nome; im.alt = ''; im.loading = 'lazy'; im.decoding = 'async'; im.draggable = false;
     b.appendChild(im); stkBind(b, nome); g.appendChild(b);
   });
+}
+
+function stkRender(){
+  if (STK_LIST === null){ stkGrid($('sgAll'), [], 'carregando…'); return; }
+  stkGrid($('sgTop'), stkListaTop(), 'Nenhuma ainda. Segure numa figurinha pra favoritar.');
+  stkGrid($('sgAll'), STK_LIST, 'Nenhuma figurinha encontrada na pasta.');
 }
 
 function stkToggleFav(nome, btn){
@@ -437,7 +439,7 @@ function stkBind(btn, nome){
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, cancela));
   btn.addEventListener('contextmenu', e => e.preventDefault());
   btn.addEventListener('click', () => {
-    if (stkLongo){ stkLongo = false; if (stkAba === 'top') stkRender(); return; }
+       if (stkLongo){ stkLongo = false; stkRender(); return; }
     sendSticker(nome);
   });
 }
@@ -464,11 +466,7 @@ function stkPane(p){
   }
 }
 document.querySelectorAll('.etop button').forEach(b => b.onclick = () => stkPane(b.dataset.p));
-document.querySelectorAll('.stabs button').forEach(b => b.onclick = () => {
-  stkAba = b.dataset.s;
-  document.querySelectorAll('.stabs button').forEach(x => x.classList.toggle('on', x === b));
-  stkRender();
-});
+
 
 /* ---------- entrada ---------- */
 function boot(){
