@@ -450,3 +450,75 @@ body.imm.typing .pad{bottom:6px;max-height:calc(var(--vvh,100dvh) - 12px);paddin
 body.imm.typing .pad header{display:none}
 body.imm.typing .emo,body.imm.typing .att{display:none!important}
 body.imm.typing #msgs{min-height:0}
+/* =====================================================================
+   AJUSTES FINAIS (cole no FIM do css/salinha.css)
+   1) mensagem do canto: só ícone + texto
+   2) PC: borda do telão fina e escura
+   3) PC: chat mais bonito (só fora da tela ampliada)
+   4) avisa ao navegador que a página já é escura
+   ===================================================================== */
+
+/* ---- 4) a página já é escura: evita o "modo escuro forçado" do navegador (ex.: Samsung Internet) escurecer de novo ---- */
+:root{color-scheme:dark}
+
+/* ---- 1) mensagem que aparece no canto do telão: sem caixa, sem borda e sem nome ---- */
+#peek{
+  background:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  padding:0 !important;
+  border-radius:0 !important;
+}
+#peek b{display:none !important}                       /* tira o nome */
+#peek em{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 12px rgba(0,0,0,.85)}   /* texto legível sobre o vídeo */
+#peek i{box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.2)}             /* só um aro leve no ícone */
+
+/* ---- 2) e 3) só no PC / tela larga ---- */
+@media (min-width:701px){
+
+  /* borda do telão: fina, preta / cinza bem escuro (sem o marrom) */
+  body:not(.imm) .screen{
+    border:2px solid #202023;
+    outline:0;
+    box-shadow:0 0 0 1px #000,0 22px 60px rgba(0,0,0,.65),inset 0 0 40px rgba(0,0,0,.6);
+  }
+
+  /* chat maior e mais caprichado (a tela ampliada continua como está) */
+  body:not(.imm) .pad{
+    width:400px;
+    right:24px;
+    bottom:170px;
+    max-height:min(64dvh,580px);
+    padding:16px 16px 14px;
+    border-radius:24px;
+    background:linear-gradient(180deg,rgba(36,25,19,.95),rgba(20,13,10,.97));
+    border:1px solid rgba(255,235,215,.1);
+    box-shadow:0 28px 80px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,235,215,.07);
+  }
+  body:not(.imm) .pad header{padding-bottom:10px;margin-bottom:8px;border-bottom:1px solid rgba(255,235,215,.09)}
+  body:not(.imm) .pad h3{font-size:17px;letter-spacing:.02em}
+
+  body:not(.imm) #msgs{gap:10px;padding:4px 6px 10px 0;scrollbar-width:thin;scrollbar-color:rgba(255,235,215,.22) transparent}
+  body:not(.imm) #msgs::-webkit-scrollbar{width:6px}
+  body:not(.imm) #msgs::-webkit-scrollbar-thumb{background:rgba(255,235,215,.2);border-radius:99px}
+
+  body:not(.imm) .row{max-width:88%;gap:9px}
+  body:not(.imm) .row i{width:34px;height:34px;box-shadow:0 0 0 2px rgba(255,235,215,.12)}
+
+  body:not(.imm) .m{padding:9px 14px;font-size:15px;line-height:1.4;border-radius:18px 18px 18px 6px;background:rgba(255,235,215,.11)}
+  body:not(.imm) .m.me{border-radius:18px 18px 6px 18px;background:linear-gradient(135deg,#a82b50,#7a1f3c);box-shadow:0 6px 18px rgba(120,25,55,.35)}
+  body:not(.imm) .m.pic,
+  body:not(.imm) .m.me.pic{background:transparent;box-shadow:none;padding:2px}
+
+  body:not(.imm) .sys{font-size:11.5px;padding:4px 14px;background:rgba(255,235,215,.06);opacity:.9}
+
+  body:not(.imm) .say{padding-top:12px;gap:8px}
+  body:not(.imm) .field{background:rgba(255,255,255,.06);border:1px solid rgba(255,235,215,.14);padding:2px 6px 2px 16px;transition:border-color .2s,background .2s}
+  body:not(.imm) .field:focus-within{background:rgba(255,255,255,.09);border-color:rgba(255,235,215,.34)}
+  body:not(.imm) .say .field input{font-size:15px;padding:9px 2px}
+  body:not(.imm) #send{width:42px;height:42px;background:linear-gradient(135deg,#b02a52,#7a1f3c);box-shadow:0 6px 16px rgba(120,25,55,.45);transition:transform .15s}
+  body:not(.imm) #send:hover{transform:scale(1.06)}
+  body:not(.imm) .tray{border-radius:14px}
+}

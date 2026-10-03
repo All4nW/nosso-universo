@@ -693,3 +693,19 @@ else{
   document.addEventListener('fullscreenchange', () => setTimeout(setFh, 300));
   setFh();
 })();
+/* ---------- Enter leva direto pro campo de mensagem (PC, chat aberto, sem ampliar) ----------
+   Clicou em qualquer lugar do site e apertou Enter? Se o chat estiver aberto, o cursor já vai
+   pro "Escreve aqui…". Não mexe na tela ampliada, nem se você já estiver digitando, nem se
+   estiver com um botão selecionado (pra não disparar o botão sem querer). */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.isComposing) return;
+  const pad = document.getElementById('pad'), txt = document.getElementById('txt');
+  if (!pad || !txt || !pad.classList.contains('open')) return;           // chat fechado
+  if (document.body.classList.contains('imm')) return;                   // tela ampliada: fica como está
+  const dlg = document.getElementById('dlg'), lb = document.getElementById('lb');
+  if ((dlg && dlg.open) || (lb && lb.classList.contains('on'))) return;  // configurações ou foto aberta
+  const a = document.activeElement;
+  if (a && a !== document.body && a !== document.documentElement) return; // já está num campo ou botão
+  e.preventDefault();
+  txt.focus();
+});
