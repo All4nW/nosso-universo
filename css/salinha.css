@@ -15,10 +15,10 @@ button{cursor:pointer}
 /* ---------- fundo animado ---------- */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:url("../assets/images/salinha/fundo_salinha.gif") center/cover no-repeat}
 .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 45%,rgba(10,6,4,.3),rgba(10,6,4,.78))}
-/* celular em pé: o gif é cortado pelos lados. Pra mudar o pedaço da sala, troque o 82% (15% esquerda · 50% centro · 82% janela) */
+/* celular em pé: fundo próprio (vertical). Se o arquivo não for .gif, troque só a extensão aqui */
 @media (orientation:portrait) and (max-width:700px){
- .bg{background-position:var(--gif-x,82%) center}
- .bg::after{background:radial-gradient(130% 90% at 50% 40%,rgba(10,6,4,.12),rgba(10,6,4,.6))}
+ .bg{background-image:url("../assets/images/salinha/fundo_salinha_mobile.gif");background-position:center}
+ .bg::after{background:linear-gradient(rgba(10,6,4,.2),rgba(10,6,4,.4))}
 }
 
 /* ---------- decoração ---------- */
@@ -49,14 +49,14 @@ box-shadow:0 0 0 3px #17100b,0 0 0 4px #4a3322,0 22px 60px rgba(0,0,0,.65),inset
 .wait::before{content:"";position:absolute;inset:-30%;background:radial-gradient(40% 40% at 50% 40%,rgba(255,170,110,.12),transparent 70%);animation:drift 9s ease-in-out infinite alternate}
 @keyframes drift{to{transform:translate(8%,6%) scale(1.15)}}
 .wait>*{position:relative}
-.wait h2{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;font-size:clamp(30px,4.8vw,52px);letter-spacing:.01em;color:#f6e7d6;text-shadow:0 2px 18px rgba(255,170,110,.18)}
+.wait h2{font-family:var(--ui);font-style:normal;font-weight:500;font-size:clamp(22px,3.4vw,36px);letter-spacing:.02em;color:#f6e7d6;text-shadow:0 2px 18px rgba(255,170,110,.18)}
 .wait p{font-family:'DM Sans',var(--ui);font-weight:400;font-size:clamp(12px,1.7vw,15px);letter-spacing:.02em;color:#e8d6c2;opacity:.72;max-width:34ch}
 .led{width:7px;height:7px;border-radius:50%;background:#ff8fc7;box-shadow:0 0 10px #ff8fc7;animation:breathe 2.4s ease-in-out infinite}
-.led ~ h2{font-size:clamp(20px,2.4vw,28px);opacity:.5;text-shadow:none}
+.led ~ h2{font-size:clamp(18px,2.2vw,24px);opacity:.5;text-shadow:none}
 .bar{position:absolute;left:10px;top:10px;z-index:3;display:none;gap:8px}
 .screen.sharing .bar{display:flex}
 .bar .pill{padding:5px 12px;font-size:13px;background:rgba(14,9,6,.72);backdrop-filter:blur(6px)}
-#snd{position:absolute;right:10px;bottom:10px;z-index:3;background:rgba(14,9,6,.72);backdrop-filter:blur(6px)}
+#snd{position:absolute;right:10px;top:10px;z-index:3;background:rgba(14,9,6,.72);backdrop-filter:blur(6px)}
 #snd[hidden]{display:none}
 .rot{display:none}
 
@@ -100,14 +100,20 @@ transition:transform .2s ease,background .2s ease,box-shadow .2s ease,border-col
 #bChat::before{content:"💬"}
 #bSet::before{content:"⚙️"}
 #bPip::before{content:"📺"}
-#bExit::before{content:"🚪"}
-#bFs::before{content:"⛶";font-family:'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',system-ui,sans-serif;font-size:22px;color:var(--lilac)}
+#bExit::before{content:"";width:20px;height:20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2c9ae' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 4H5v16h5M15 8l4 4-4 4M19 12H9'/%3E%3C/svg%3E") center/contain no-repeat}
+/* botão de ampliar: fica no canto de baixo do telão; aparece ao tocar (ou passar o mouse) e some sozinho */
+#bFs{position:absolute;right:10px;bottom:10px;z-index:4;width:38px;height:38px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:rgba(14,9,6,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+#bFs::before{content:"";width:20px;height:20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f6e7d6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'/%3E%3C/svg%3E") center/contain no-repeat}
+html:fullscreen #bFs::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f6e7d6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5'/%3E%3C/svg%3E")}
+body.ui #bFs{opacity:1;pointer-events:auto}
+@media (hover:hover){.screen:hover #bFs{opacity:1;pointer-events:auto}}
+body.imm.chatopen #bFs{right:322px}
 #dot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--rose);display:none}
 #dot.on{display:block}
 @media (max-width:560px){
  .base{padding:4px 8px 10px;gap:4px}
  .ctrl{gap:6px;padding:6px 8px}.ctrl button{width:40px;height:40px}
- .ctrl button::before{font-size:18px}#bFs::before{font-size:20px}
+ .ctrl button::before{font-size:18px}
 }
 
 /* ---------- avisos ---------- */
@@ -213,7 +219,7 @@ body.imm #msgs{min-height:40px}
 /* ---------- CELULAR EM PÉ (estilo Rave): topo com controles + presença · vídeo · chat fixo embaixo ---------- */
 @media (orientation:portrait) and (max-width:700px){
  .cap{display:none}
- body:not(.imm) .base{position:fixed;top:0;left:0;right:0;bottom:auto;height:50px;z-index:6;display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:0 10px;background:rgba(14,9,6,.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+ body:not(.imm) .base{position:fixed;top:0;left:0;right:0;bottom:auto;height:50px;z-index:6;display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:0 10px;background:rgba(14,9,6,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
  body:not(.imm) .ctrl{order:0;padding:0;gap:2px;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
  body:not(.imm) .ctrl::before,body:not(.imm) .ctrl::after{display:none}
  body:not(.imm) .ctrl button{width:32px;height:32px}
@@ -228,9 +234,14 @@ body.imm #msgs{min-height:40px}
  body:not(.imm) .stage{display:block;padding:50px 0 0}
  body:not(.imm) .screen{width:100%;margin:0;border:0;border-radius:0;outline:0;box-shadow:none}
  body:not(.imm) #peek{display:none}
- body:not(.imm) .pad{display:flex;position:fixed;top:calc(50px + 56.25vw);left:0;right:0;bottom:0;width:auto;max-height:none;border-radius:0;border-width:1px 0 0;background:rgba(18,12,9,.96);box-shadow:none;animation:none}
+ body:not(.imm) .pad{display:flex;position:fixed;top:calc(50px + 56.25vw);left:0;right:0;bottom:0;width:auto;max-height:none;border-radius:0;border-width:1px 0 0;background:rgba(18,12,9,.5);box-shadow:none;animation:none}
  body:not(.imm) .pad header{display:none}
  body.kb:not(.imm) .pad{bottom:calc(var(--kb) + 8px);max-height:none}
 }
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* chat estilo Rave: nome só nas mensagens dos outros, avisos de entrou/saiu/reconectou */
+.nm{font-family:'DM Sans',var(--ui);font-weight:600;font-size:13px;color:#e2c9ae;margin-right:5px}
+.m.pic .nm{display:block;margin:0 0 3px 4px}
+.sys{align-self:center;max-width:92%;text-align:center;font-family:'DM Sans',var(--ui);font-size:12px;color:#d9c3ab;opacity:.85;padding:3px 12px;border-radius:99px;background:rgba(255,255,255,.07)}

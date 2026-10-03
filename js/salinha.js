@@ -55,16 +55,19 @@ function updPrev(){
 let msgs = [];
 function addMsg(from, text, save = true, ts = Date.now(), img = null){
   const me = from === 'me', w = document.createElement('div'); w.className = 'row' + (me ? ' me' : '');
-  w.innerHTML = '<i></i><div><small><b></b> <span></span></small><div class="' + (me ? 'm me' : 'm') + '"></div></div>';
+  w.innerHTML = '<i></i><div class="' + (me ? 'm me' : 'm') + '"></div>';
   setAv(w.querySelector('i'), me ? cfg.myImg : cfg.otherImg, me ? cfg.myAv : cfg.otherAv);
-  w.querySelector('b').textContent = me ? cfg.myName : cfg.otherName;
-  w.querySelector('span').textContent = new Date(ts).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
   const m = w.querySelector('.m');
+  if (!me){ const n = document.createElement('b'); n.className = 'nm'; n.textContent = cfg.otherName + (img ? '' : ':'); m.appendChild(n); }
   if (img){ const im = document.createElement('img'); im.src = img; im.onclick = () => { $('lbi').src = img; $('lb').classList.add('on'); }; m.appendChild(im); m.classList.add('pic'); }
-  else m.textContent = text;
+  else m.appendChild(document.createTextNode(text));
   $('msgs').appendChild(w); $('msgs').scrollTop = 1e9;
   if (save){ msgs.push({from, text: img ? '📷 foto' : text, ts}); store.set('chat' + role, msgs.slice(-60)); }
   if (!me && !$('pad').classList.contains('open')){ $('dot').classList.add('on'); peek(img ? '📷 mandou uma foto' : text); }
+}
+function addSys(t){
+  const d = document.createElement('div'); d.className = 'sys'; d.textContent = t;
+  $('msgs').appendChild(d); $('msgs').scrollTop = 1e9;
 }
 function sendMsg(){
   const x = $('txt').value.trim(); if (!x) return;
@@ -155,8 +158,9 @@ function refreshMe(){
   const ok = !!(peer && peer.open && !peer.disconnected && navigator.onLine);
   setSeat('Me', ok ? 'on' : 're');
   if (!ok && lastErr === 'unavailable-id') $('stMe').textContent = 'lugar ocupado';
-  if (!ok && !meLost){ meLost = true; toast('Reconectando...'); }
-  if (ok && meLost){ meLost = false; toast('Conectado novamente'); }
+  if (!ok && !meLost){ meLost = true; toast('Reconectando...'); if (refreshMe.was) addSys('Você ficou sem conexão'); }
+  if (ok && meLost){ meLost = false; toast('Conectado novamente'); if (refreshMe.was) addSys('Você reconectou'); }
+  if (ok) refreshMe.was = true;
 }
 function setConn(c){
   if (conn && conn !== c){ const o = conn; conn = null; try{ o.close(); }catch(e){} }
@@ -167,6 +171,7 @@ function setConn(c){
     const again = everSeen; everSeen = true;
     setSeat('O', 'on'); pop('O'); sendProfile();
     toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou na Salinha 💗');
+        addSys(again ? cfg.otherName + ' reconectou' : cfg.otherName + ' entrou na Salinha 💗');
     if (localStream) startCall();
   };
   c.on('open', opened);
@@ -189,7 +194,7 @@ function dropConn(c){
   if (conn === c){
     conn = null;
     setSeat('O', everSeen ? 're' : 'off');
-    if (everSeen) toast('Reconectando...');
+       if (everSeen){ toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
   }
 }
 function start(){
@@ -276,8 +281,8 @@ function toggleFs(){
 $('bFs').onclick = toggleFs;
 $('screen').ondblclick = null;
 $('screen').addEventListener('click', e => {
-  if (e.target.closest('button') || !document.body.classList.contains('imm')) return;
-  if (document.body.classList.contains('ui')){ document.body.classList.remove('ui'); clearTimeout(uiT); } else showUi();
+  if (e.target.closest('button')) return;
+  if (document.body.classList.contains('imm') && document.body.classList.contains('ui')){ document.body.classList.remove('ui'); clearTimeout(uiT); } else showUi();
 });
 document.querySelector('.base').addEventListener('pointerdown', showUi);
 document.addEventListener('pointermove', () => { if (document.body.classList.contains('imm') && matchMedia('(hover:hover)').matches) showUi(); });
