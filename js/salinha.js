@@ -411,3 +411,18 @@ else{
   check(); setInterval(check, 180000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - last > 120000) check(); });
 })();
+/* ---------- janela flutuante (quando sair do site) ---------- */
+(function(){
+  const v = $('vid'), b = $('bPip');
+  async function pip(){
+    try{
+      if (!v.srcObject){ toast('Ainda não tem transmissão para flutuar'); return; }
+      if (document.pictureInPictureElement){ await document.exitPictureInPicture(); return; }
+      if (document.pictureInPictureEnabled && v.requestPictureInPicture) await v.requestPictureInPicture();
+      else if (v.requestFullscreen){ await v.requestFullscreen(); toast('Aperte o botão Início e o vídeo fica flutuando'); }
+      else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+    }catch(e){ toast('Seu navegador não deixou abrir a janela flutuante'); }
+  }
+  if (b) b.onclick = pip;
+  try{ v.autoPictureInPicture = true; navigator.mediaSession.setActionHandler('enterpictureinpicture', pip); }catch(e){}
+})();
