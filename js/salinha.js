@@ -62,7 +62,6 @@ function addMsg(from, text, save = true, ts = Date.now(), img = null, stk = null
   if (stk){
     const im = document.createElement('img'); im.className = 'stk'; im.src = STK_DIR + stk; im.alt = 'figurinha';
     im.onerror = () => im.replaceWith(document.createTextNode('🎟 figurinha'));
-    im.onclick = () => { $('lbi').src = im.src; $('lb').classList.add('on'); };
     m.appendChild(im); m.classList.add('pic');
   }
   else if (img){ const im = document.createElement('img'); im.src = img; im.onclick = () => { $('lbi').src = img; $('lb').classList.add('on'); }; m.appendChild(im); m.classList.add('pic'); }
@@ -540,11 +539,6 @@ function boot(){
   $('dot').classList.remove('on');
   start();
 }
-if (role) boot();
-else{
-  $('who').classList.add('on');
-  $('who').querySelectorAll('button').forEach(b => b.onclick = () => { role = b.dataset.r; store.set('role', role); $('who').classList.remove('on'); boot(); });
-}
 
 
 /* ===== ATUALIZAÇÃO AUTOMÁTICA (bloco independente: pode ser apagado sem afetar o resto) =====
@@ -648,7 +642,18 @@ else{
       const nm = m.querySelector('.nm'); nm ? nm.after(rq) : m.prepend(rq);
     }
     const col = document.createElement('div'); col.className = 'col'; m.replaceWith(col); col.appendChild(m);
-    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'rb'; btn.textContent = '↩ Responder'; btn.onclick = () => setReply(info); col.appendChild(btn);
+
+     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'rb'; btn.textContent = '↩'; btn.title = 'Responder'; btn.setAttribute('aria-label', 'Responder'); btn.onclick = () => setReply(info);
+
+    const horaTxt = new Date(ts || Date.now()).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    const timeEl = document.createElement('time'); timeEl.className = 'tm'; timeEl.textContent = horaTxt;
+
+    const metaRow = document.createElement('div'); metaRow.className = 'meta';
+    metaRow.append(btn, timeEl);
+    col.appendChild(metaRow);
+
+    /* a hora fica escondida até tocar na mensagem */
+    m.addEventListener('click', () => { if (!held) row.classList.toggle('showtm'); });
     let lp, sx = 0, sy = 0, held = false;
     m.addEventListener('pointerdown', e => { held = false; sx = e.clientX; sy = e.clientY; clearTimeout(lp); lp = setTimeout(() => { held = true; setReply(info); if (navigator.vibrate) navigator.vibrate(20); }, 500); });
     m.addEventListener('pointermove', e => { if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > 10) clearTimeout(lp); });
@@ -709,3 +714,8 @@ document.addEventListener('keydown', e => {
   e.preventDefault();
   txt.focus();
 });
+if (role) boot();
+else{
+  $('who').classList.add('on');
+  $('who').querySelectorAll('button').forEach(b => b.onclick = () => { role = b.dataset.r; store.set('role', role); $('who').classList.remove('on'); boot(); });
+}

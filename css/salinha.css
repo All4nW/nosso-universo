@@ -165,7 +165,7 @@ background:rgba(22,15,11,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter
 .row.me small{text-align:right}
 .row small b{font-family:'DM Sans',var(--ui);font-size:11px;font-weight:600}
 .m{padding:5px 12px;border-radius:16px;border-bottom-left-radius:5px;font-family:'Caveat',var(--hand);font-weight:500;font-size:21px;line-height:1.15;word-wrap:break-word;background:rgba(255,235,215,.1);border:1px solid rgba(255,235,215,.14);color:#f6ece0}
-.m.me{border-radius:16px;border-bottom-right-radius:5px;background:rgba(120,30,55,.62);border-color:rgba(244,201,190,.3);color:#fff3ea}
+.m.me{border-radius:16px;border-bottom-right-radius:5px;background:rgba(10,8,6,.55);border-color:rgba(244,201,190,.3);color:#fff3ea}
 .m.pic{padding:4px;background:transparent;border:0}
 .m img{display:block;max-width:100%;max-height:200px;border-radius:12px;cursor:zoom-in}
 .say{display:flex;gap:6px;align-items:center;border-top:1px solid rgba(255,235,215,.12);padding-top:8px}
@@ -276,7 +276,7 @@ body.imm #msgs{min-height:40px}
 .row{max-width:86%;gap:8px}
 .row i{width:30px;height:30px;font-size:17px}
 .m{padding:7px 13px;border-radius:18px;border-bottom-left-radius:6px;font-family:'DM Sans',var(--ui);font-weight:400;font-size:15.5px;line-height:1.35;background:rgba(255,235,215,.12);border:0;color:#f6ece0}
-.m.me{border-radius:18px;border-bottom-right-radius:6px;background:rgba(140,36,66,.7);color:#fff3ea}
+.m.me{border-radius:18px;border-bottom-right-radius:6px;background:rgba(10,8,6,.55);color:#fff3ea}
 .m.pic,.m.me.pic{padding:4px;background:transparent;border:0}
 .nm{font-family:'DM Sans',var(--ui);font-weight:600;font-size:13px;color:#e8c9a8;margin-right:5px}
 .say .field input,.say .field input::placeholder{font-family:'DM Sans',var(--ui);font-size:16px}
@@ -301,7 +301,7 @@ body.imm .pad{max-height:calc(var(--vvh,100dvh) - 70px)}
 @media (orientation:portrait) and (max-width:700px){
  body:not(.imm) .ctrl{gap:12px}
 }
-body.imm .pad{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-color:rgba(255,255,255,.1)}
+body.imm .pad{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border-color:rgba(255,255,255,.1)}
 body.imm.kb .pad{max-height:calc(var(--vvh,100dvh) - 16px)}
 body.imm.kb .pad header{display:none}
 
@@ -414,7 +414,6 @@ grid-template-columns:repeat(auto-fill,minmax(64px,1fr));
   max-width:150px;
   max-height:150px;
   border-radius:12px;
-  cursor:zoom-in;
 }
 /* ===== chat: responder, digitando, ícones, rolagem das figurinhas, teclado na tela ampliada ===== */
 .sk{touch-action:pan-y}
@@ -430,8 +429,11 @@ grid-template-columns:repeat(auto-fill,minmax(64px,1fr));
 #replyBar button{background:none;border:0;font-size:16px;opacity:.7;padding:4px}
 .col{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
 .row.me .col{align-items:flex-end}
-.rb{background:none;border:0;padding:2px 6px;margin-top:2px;font:400 11px 'DM Sans',var(--ui);color:#d9c3ab;opacity:.55}
+.meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.rb{background:none;border:0;padding:2px 4px;font-size:14px;line-height:1;color:#d9c3ab;opacity:.55}
 .rb:hover{opacity:1}
+.tm{font-family:'DM Sans',var(--ui);font-size:10px;color:#cbb79e;opacity:0;max-width:0;overflow:hidden;white-space:nowrap;transition:opacity .2s,max-width .2s}
+.row.showtm .tm{opacity:.7;max-width:60px}
 .rq{display:block;margin:2px 0 4px;padding:4px 8px;border-left:3px solid #c0617f;border-radius:6px;background:rgba(0,0,0,.22);font:400 13px/1.3 'DM Sans',var(--ui);cursor:pointer}
 .rq b{display:block;font-size:12px;font-weight:600;color:#e8c9a8}
 .rq span{display:block;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
@@ -508,7 +510,7 @@ body.imm.typing #msgs{min-height:0}
   body:not(.imm) .row i{width:34px;height:34px;box-shadow:0 0 0 2px rgba(255,235,215,.12)}
 
   body:not(.imm) .m{padding:9px 14px;font-size:15px;line-height:1.4;border-radius:18px 18px 18px 6px;background:rgba(255,235,215,.11)}
-  body:not(.imm) .m.me{border-radius:18px 18px 6px 18px;background:linear-gradient(135deg,#a82b50,#7a1f3c);box-shadow:0 6px 18px rgba(120,25,55,.35)}
+   body:not(.imm) .m.me{border-radius:18px 18px 6px 18px;background:rgba(10,8,6,.55);box-shadow:0 6px 18px rgba(0,0,0,.3)}
   body:not(.imm) .m.pic,
   body:not(.imm) .m.me.pic{background:transparent;box-shadow:none;padding:2px}
 
