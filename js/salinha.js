@@ -91,6 +91,25 @@ function boost(sdp){
   });
   return sdp;
 }
+/* diagnóstico: mostra no console (F12) o motivo real de uma eventual
+   baixa qualidade — "bandwidth" (rede), "cpu" (processamento) ou "none" (tudo ok) */
+async function diagQualidade(c){
+  const pc = c && c.peerConnection; if (!pc) return;
+  for (const s of pc.getSenders()){
+    if (!s.track || s.track.kind !== 'video') continue;
+    const stats = await s.getStats();
+    stats.forEach(r => {
+      if (r.type === 'outbound-rtp' && r.kind === 'video'){
+        console.log('[qualidade]', {
+          resolucaoEnviada: r.frameWidth + 'x' + r.frameHeight,
+          fpsEnviado: r.framesPerSecond,
+          motivoLimitacao: r.qualityLimitationReason,
+          bitrateKbps: Math.round((r.bytesSent * 8) / 1000)
+        });
+      }
+    });
+  }
+}
 async function tune(c){
   const pc = c && c.peerConnection; if (!pc) return;
   for (const s of pc.getSenders()){
@@ -129,6 +148,7 @@ function startCall(){
   const c = peer.call(otherId, localStream, {sdpTransform: boost});
   setCall(c);
   [400, 2500, 7000].forEach(ms => setTimeout(() => { if (call === c) tune(c); }, ms));
+  setInterval(() => { if (call === c) diagQualidade(c); }, 5000);
   const pc = c.peerConnection;
   if (pc) pc.addEventListener('connectionstatechange', () => {
     if (pc.connectionState === 'failed' && call === c) setTimeout(startCall, 1500);
