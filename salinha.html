@@ -7,16 +7,35 @@
 <title>Nossa Salinha 💗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&family=DM+Sans:wght@400;500&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/salinha.css?v=5">
+<link rel="stylesheet" href="css/salinha.css?v=6">
 </head>
 <body>
 <div class="bg" aria-hidden="true"></div>
 <div class="lights"></div><div class="cap">✦ nossa salinha ✦</div><div class="moon"></div>
 
 <div class="who" id="who">
-  <h1>Quem está entrando?</h1>
-  <button class="pill" data-r="a">Sou o Allan</button>
-  <button class="pill" data-r="b">Sou a Jhennyfer</button>
+<h1>Quem está <span>entrando?</span></h1>
+  <p class="who-sub">Escolha como você vai entrar na Salinha</p>
+  <div class="who-grid">
+    <div class="who-group">
+      <button class="wcard" data-r="a" type="button">
+        <span class="av" id="wavA"></span>
+        <b>Allan</b>
+        <small>💻 Computador</small>
+      </button>
+      <button class="wcard" data-r="c" type="button">
+        <span class="av" id="wavC"></span>
+        <b>Allan</b>
+        <small>📱 Celular</small>
+      </button>
+    </div>
+    <span class="who-dash" aria-hidden="true"></span>
+    <button class="wcard wcard-ela" data-r="b" type="button">
+      <span class="av" id="wavB"></span>
+      <b>Jhennyfer</b>
+      <small>💗 Ela</small>
+    </button>
+  </div>
 </div>
 
 <div id="toast" role="status"></div>
@@ -81,6 +100,6 @@
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
-<script src="js/salinha.js?v=5"></script>
+<script src="js/salinha.js?v=6"></script>
 </body>
 </html>

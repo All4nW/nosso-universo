@@ -9,12 +9,20 @@ const store = {
 };
 const AVATARS = ['🐻','🐰','🐱','🦊','🐼','🐸','🐥','🌙','⭐','🍓'];
 
+/* Quem está na sala:
+   a = Allan (PC)       → o "Allan de verdade": transmite, fala com ela e serve de central
+   b = Jhennyfer
+   c = Allan (Celular)  → satélite do PC: assiste a transmissão e conversa, tudo passando pelo PC
+                          (pra ela continua sendo um Allan só) */
 let role = new URLSearchParams(location.search).get('eu');
-if (role === 'a' || role === 'b') store.set('role', role); else role = store.get('role', null);
+if (role === 'a' || role === 'b' || role === 'c') store.set('role', role); else role = store.get('role', null);
 
-let cfg, myId, otherId;
+let cfg, myId, otherId, satId;
 let peer = null, conn = null, call = null, localStream = null;
 let everSeen = false, meLost = false, leaving = false, lastSeen = 0, dialAt = 0, tt, lastErr = '';
+/* satélite (celular do Allan): no PC guarda a conexão com o celular; no celular guarda a presença dela */
+let sat = null, satCall = null, satStream = null, satSeen = 0, satOrigin = false, relayT = 0, otherOn = false, otherEver = false;
+const SAT_KBPS = 4000;   /* qualidade do vídeo que o PC manda pro celular (720p, 4 Mbps) */
 const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
 
 /* ---------- interface ---------- */
@@ -26,7 +34,7 @@ function setAv(el, img, emoji){
   else { el.style.backgroundImage = ''; el.textContent = emoji; }
 }
 function paintNames(){
-  $('nmMe').textContent = cfg.myName; setAv($('avMe'), cfg.myImg, cfg.myAv);
+  $('nmMe').textContent = cfg.myName + (role === 'c' ? ' 📱' : ''); setAv($('avMe'), cfg.myImg, cfg.myAv);
   $('nmO').textContent = cfg.otherName; setAv($('avO'), cfg.otherImg, cfg.otherAv);
 }
 function renderWait(){
@@ -35,7 +43,7 @@ function renderWait(){
   if (localStream) h = '<h2>Você está transmitindo ✨</h2><p>Preview escondido. Quem está na sala vê a sua tela.</p>';
   else if (!live){
     h = '<span class="led"></span><h2>desligado</h2>';
-    if (canShare) h += '<button class="pill" id="bShare">Transmitir minha tela</button>';
+    if (canShare && role !== 'c') h += '<button class="pill" id="bShare">Transmitir minha tela</button>';
   }
   $('wait').innerHTML = h;
   if ($('bStop')) $('bStop').onclick = stopShare;
@@ -74,15 +82,21 @@ function addSys(t){
   const d = document.createElement('div'); d.className = 'sys'; d.textContent = t;
   $('msgs').appendChild(d); $('msgs').scrollTop = 1e9;
 }
+/* pode mandar mensagem? (no celular, também precisa de ela estar na sala: o PC é quem entrega) */
+function canSend(){
+  if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return false; }
+  if (role === 'c' && !otherOn){ toast('Ela não está na sala agora'); return false; }
+  return true;
+}
 function sendMsg(){
   const x = $('txt').value.trim(); if (!x) return;
-  if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
+  if (!canSend()) return;
   conn.send({t:'chat', x}); addMsg('me', x); $('txt').value = ''; closeTrays();
 }
 
 /* ---------- qualidade ---------- */
-function boost(sdp){
-  const k = cfg.mbps * 1000;
+function boost(sdp, kbps){
+  const k = kbps || cfg.mbps * 1000;
   sdp = sdp.replace(/(m=video[^\r\n]*\r\nc=[^\r\n]*\r\n)(b=[^\r\n]*\r\n)?/, '$1b=AS:' + k + '\r\n');
   [...sdp.matchAll(/a=rtpmap:(\d+) (?:VP8|VP9|H264|AV1)\/90000/g)].forEach(m => {
     const id = m[1], add = 'x-google-min-bitrate=1500;x-google-start-bitrate=' + Math.round(k * .6) + ';x-google-max-bitrate=' + k;
@@ -126,6 +140,22 @@ async function tune(c){
     }catch(e){}
   }
 }
+/* o vídeo que vai pro celular fica em no máximo 720p / 30 fps / 4 Mbps (alivia o PC e a internet) */
+async function tuneSat(c){
+  const pc = c && c.peerConnection; if (!pc) return;
+  for (const s of pc.getSenders()){
+    if (!s.track || s.track.kind !== 'video') continue;
+    try{
+      const alt = (s.track.getSettings && s.track.getSettings().height) || 1080;
+      const p = s.getParameters();
+      if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+      p.encodings[0].maxBitrate = SAT_KBPS * 1000;
+      p.encodings[0].maxFramerate = 30;
+      p.encodings[0].scaleResolutionDownBy = Math.max(1, alt / 720);
+      await s.setParameters(p);
+    }catch(e){}
+  }
+}
 
 /* ---------- transmissão ---------- */
 async function share(){
@@ -136,11 +166,13 @@ async function share(){
     });
     const vt = s.getVideoTracks()[0]; vt.contentHint = cfg.quality; vt.onended = stopShare;
     localStream = s; renderWait(); startCall();
+    closeSatCall(); callSat(localStream);     /* o celular do Allan também recebe, mesmo sem ela na sala */
   }catch(e){ toast('Transmissão cancelada'); }
 }
 function stopShare(){
   if (localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
   if (call){ const c = call; call = null; try{ c.close(); }catch(e){} }
+  closeSatCall();
   renderWait();
 }
 function startCall(){
@@ -166,8 +198,13 @@ function showRemote(st){
   vid.srcObject = st; vid.muted = false;
   vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); updSnd(); });
   $('screen').classList.add('live'); renderWait(); updSnd();
+  /* no PC: o que ela transmite também vai pro celular do Allan (espera um pouquinho pra áudio e vídeo chegarem juntos) */
+  if (role === 'a'){ clearTimeout(relayT); relayT = setTimeout(() => { if (vid.srcObject === st) callSat(st); }, 700); }
 }
-function hideRemote(){ vid.srcObject = null; $('screen').classList.remove('live'); renderWait(); updSnd(); }
+function hideRemote(){
+  vid.srcObject = null; $('screen').classList.remove('live'); renderWait(); updSnd();
+  if (role === 'a' && !localStream){ clearTimeout(relayT); closeSatCall(); }
+}
 function updSnd(){ $('snd').hidden = !($('screen').classList.contains('live') && vid.muted); }
 vid.onvolumechange = updSnd;
 $('snd').onclick = () => { vid.muted = false; vid.play().catch(() => {}); updSnd(); };
@@ -194,22 +231,38 @@ function setConn(c){
     if (conn !== c) return;
     lastSeen = Date.now();
     const again = everSeen; everSeen = true;
+    if (role === 'c'){
+      /* celular: a conexão é com o PC; a presença dela chega do PC (mensagem "pres") */
+      toast(again ? 'Conectado novamente ao PC' : 'Conectado ao PC 📱');
+      addSys(again ? 'Reconectado ao PC' : 'Conectado ao PC 📱');
+      return;
+    }
     setSeat('O', 'on'); pop('O'); sendProfile();
     toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou na Salinha 💗');
         addSys(again ? cfg.otherName + ' reconectou' : cfg.otherName + ' entrou na Salinha 💗');
     if (localStream) startCall();
+    if (role === 'a') satSend({t:'pres', on:1});
   };
   c.on('open', opened);
   c.on('data', d => {
     lastSeen = Date.now(); if (!d) return;
-    if (d.t === 'chat' && d.x) addMsg('o', String(d.x).slice(0, 500));
-    else if (d.t === 'img' && typeof d.x === 'string' && d.x.length < 900000 && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.x)) addMsg('o', '', true, Date.now(), d.x);
-        else if (d.t === 'stk' && typeof d.x === 'string' && /^[A-Za-z0-9_-]{1,40}\.(jpg|jpeg|png|webp|gif)$/i.test(d.x)) addMsg('o', '', true, Date.now(), null, d.x);
+    if (role === 'a') mirrorToSat(d);                       /* PC repassa o que ela manda pro celular */
+    const who = (role === 'c' && d.me) ? 'me' : 'o';        /* no celular: o que o PC mandou como Allan aparece como "eu" */
+    if (d.t === 'chat' && d.x) addMsg(who, String(d.x).slice(0, 500));
+    else if (d.t === 'img' && typeof d.x === 'string' && d.x.length < 900000 && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.x)) addMsg(who, '', true, Date.now(), d.x);
+        else if (d.t === 'stk' && typeof d.x === 'string' && /^[A-Za-z0-9_-]{1,40}\.(jpg|jpeg|png|webp|gif)$/i.test(d.x)) addMsg(who, '', true, Date.now(), null, d.x);
         else if (d.t === 'prof'){
       cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
       cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
       store.set('cfg' + role, cfg); paintNames();
     }
+    else if (role === 'c' && d.t === 'self'){          /* o celular adota o nome e o avatar do Allan do PC */
+      cfg.myName = String(d.n || cfg.myName).slice(0, 20);
+      cfg.myImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
+      store.set('cfg' + role, cfg); paintNames();
+    }
+    else if (role === 'c' && d.t === 'pres') otherPres(!!d.on);
+    else if (role === 'c' && d.t === 'err') toast(String(d.x || '').slice(0, 80));
   });
   c.on('close', () => dropConn(c));
   c.on('error', () => dropConn(c));
@@ -219,24 +272,118 @@ function dropConn(c){
   try{ c.close(); }catch(e){}
   if (conn === c){
     conn = null;
+    if (role === 'a') satSend({t:'pres', on:0});
+    if (role === 'c'){
+      otherOn = false; setSeat('O', everSeen ? 're' : 'off');
+      if (everSeen){ toast('PC desconectado, reconectando...'); addSys('O PC saiu'); }
+      return;
+    }
     setSeat('O', everSeen ? 're' : 'off');
        if (everSeen){ toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
   }
 }
+
+/* ---------- satélite: o celular do Allan (PC = central) ---------- */
+function satSend(d){ if (sat && sat.open){ try{ sat.send(d); }catch(e){} } }
+
+/* PC → celular: tudo que ela manda (mensagens, "digitando…", perfil) também vai pro celular */
+function mirrorToSat(d){
+  if (role !== 'a' || !d) return;
+  if (d.t === 'chat' || d.t === 'img' || d.t === 'stk' || d.t === 'typ' || d.t === 'prof') satSend(d);
+}
+
+/* celular → PC → ela: o PC recebe o que o celular escreveu e entrega como se fosse o Allan */
+const okId = v => (typeof v === 'string' && /^[A-Za-z0-9]{1,24}$/.test(v)) ? v : undefined;
+function okR(r){ return (r && typeof r === 'object' && okId(r.id)) ? {id: r.id, n: String(r.n || '').slice(0, 20), s: String(r.s || '').slice(0, 80)} : undefined; }
+function onSatData(d){
+  if (!d) return;
+  satSeen = Date.now();
+  if (d.t === 'typ'){ if (conn && conn.open){ try{ conn.send({t:'typ', on: d.on ? 1 : 0}); }catch(e){} } return; }
+  let msg = null, show = null;
+  if (d.t === 'chat' && d.x){ const x = String(d.x).slice(0, 500); msg = {t:'chat', x}; show = () => addMsg('me', x); }
+  else if (d.t === 'img' && typeof d.x === 'string' && d.x.length < 900000 && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.x)){ msg = {t:'img', x:d.x}; show = () => addMsg('me', '', true, Date.now(), d.x); }
+  else if (d.t === 'stk' && typeof d.x === 'string' && /^[A-Za-z0-9_-]{1,40}\.(jpg|jpeg|png|webp|gif)$/i.test(d.x)){ msg = {t:'stk', x:d.x}; show = () => addMsg('me', '', true, Date.now(), null, d.x); }
+  if (!msg) return;
+  if (!conn || !conn.open){ satSend({t:'err', x:'Ela não está na sala agora'}); return; }
+  const id = okId(d.id); if (id) msg.id = id;
+  const r = okR(d.r); if (r) msg.r = r;
+  satOrigin = true;            /* evita devolver pro celular a mensagem que ele mesmo mandou */
+  try{ conn.send(msg); show(); }finally{ satOrigin = false; }
+}
+
+function setSat(c){
+  if (sat && sat !== c){ const o = sat; sat = null; try{ o.close(); }catch(e){} }
+  sat = c;
+  const opened = () => {
+    if (sat !== c) return;
+    satSeen = Date.now();
+    $('seatMe').classList.add('sat');
+    toast('Allan (Celular) entrou 📱'); addSys('Allan (Celular) entrou 📱');
+    satSend({t:'self', n:cfg.myName, i:cfg.myImg || null});
+    satSend({t:'prof', n:cfg.otherName, i:cfg.otherImg || null});
+    satSend({t:'pres', on:(conn && conn.open) ? 1 : 0});
+    const st = localStream || (($('screen').classList.contains('live') && vid.srcObject) || null);
+    if (st) callSat(st);       /* se já tem algo passando, o celular recebe na hora */
+  };
+  c.on('open', opened);
+  c.on('data', onSatData);
+  c.on('close', () => dropSat(c));
+  c.on('error', () => dropSat(c));
+  if (c.open) opened();
+}
+function dropSat(c){
+  try{ c.close(); }catch(e){}
+  if (sat === c){
+    sat = null; closeSatCall();
+    $('seatMe').classList.remove('sat');
+    toast('Allan (Celular) saiu'); addSys('Allan (Celular) saiu 📱');
+  }
+}
+function callSat(st){
+  if (role !== 'a' || !st || !sat || !sat.open || !peer || !peer.open) return;
+  if (satCall && satStream === st) return;
+  closeSatCall();
+  satStream = st;
+  const c = peer.call(satId, st, {sdpTransform: s => boost(s, SAT_KBPS)});
+  satCall = c;
+  c.on('close', () => { if (satCall === c){ satCall = null; satStream = null; } });
+  c.on('error', () => {});
+  [400, 2500, 7000].forEach(ms => setTimeout(() => { if (satCall === c) tuneSat(c); }, ms));
+}
+function closeSatCall(){
+  if (satCall){ const o = satCall; satCall = null; satStream = null; try{ o.close(); }catch(e){} }
+}
+
+/* celular: presença dela vem do PC */
+function otherPres(on){
+  const was = otherOn; otherOn = !!on;
+  setSeat('O', on ? 'on' : (otherEver ? 're' : 'off'));
+  if (on){
+    otherEver = true;
+    if (!was){ pop('O'); toast(cfg.otherName + ' entrou na Salinha 💗'); addSys(cfg.otherName + ' entrou na Salinha 💗'); }
+  }
+  else if (was){ toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
+}
+
 function start(){
   if (leaving) return;
   if (peer){ try{ peer.destroy(); }catch(e){} }
   peer = new Peer(myId, {config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
   peer.on('open', () => { lastErr = ''; refreshMe(); });
   peer.on('disconnected', refreshMe);
-  peer.on('connection', c => { if (c.peer !== otherId){ c.close(); return; } setConn(c); });
+  peer.on('connection', c => {
+    if (role === 'a' && c.peer === satId){ setSat(c); return; }   /* o celular do Allan entrando */
+    if (c.peer !== otherId){ c.close(); return; }
+    setConn(c);
+  });
   peer.on('call', c => { if (c.peer !== otherId) return; c.answer(undefined, {sdpTransform: boost}); setCall(c); });
   /* o supervisor abaixo refaz a conexão; aqui só avisa o motivo (uma vez por tipo de erro) */
   peer.on('error', e => {
     if (e.type !== lastErr){
       lastErr = e.type;
       if (e.type === 'unavailable-id') toast('Esse lugar já está ocupado: tem outra aba ou aparelho aberto como ' + cfg.myName);
-      else if (e.type !== 'peer-unavailable') toast('Erro de conexão: ' + e.type);
+      else if (e.type === 'peer-unavailable'){ if (role === 'c') toast('O PC ainda não está na sala. Abra a Salinha no computador.'); }
+      else toast('Erro de conexão: ' + e.type);
     }
     refreshMe();
   });
@@ -248,10 +395,14 @@ setInterval(() => {
   if (!peer || peer.destroyed){ start(); return; }
   if (peer.disconnected && navigator.onLine){ try{ peer.reconnect(); }catch(e){} }
   refreshMe();
+  if (role === 'a' && sat && sat.open){
+    try{ sat.send({t:'p'}); }catch(e){}
+    if (Date.now() - satSeen > 10000) dropSat(sat);
+  }
   if (conn && conn.open){
     try{ conn.send({t:'p'}); }catch(e){}
     if (Date.now() - lastSeen > 10000) dropConn(conn);
-  } else if (role === 'a' && peer.open && Date.now() - dialAt > 6000){
+  } else if ((role === 'a' || role === 'c') && peer.open && Date.now() - dialAt > 6000){
     dialAt = Date.now(); setConn(peer.connect(otherId, {reliable:true}));
   }
 }, 3000);
@@ -422,7 +573,7 @@ async function pickImg(e){
     const b = await createImageBitmap(f), sc = Math.min(1, 1280 / Math.max(b.width, b.height)), c = document.createElement('canvas');
     c.width = Math.round(b.width * sc); c.height = Math.round(b.height * sc); c.getContext('2d').drawImage(b, 0, 0, c.width, c.height);
     let q = .8, d = c.toDataURL('image/jpeg', q); while (d.length > 350000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
-    if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
+    if (!canSend()) return;
     conn.send({t:'img', x:d}); addMsg('me', '', true, Date.now(), d); closeTrays();
   }catch(err){ toast('Não consegui enviar essa imagem'); }
 }
@@ -431,7 +582,7 @@ $('lb').onclick = () => $('lb').classList.remove('on');
 
 /* ---------- perfil e configurações ---------- */
 let tmpImg = null;
-function sendProfile(){ if (conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null}); }catch(e){} } }
+function sendProfile(){ if (role !== 'c' && conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null}); }catch(e){} } }
 function paintPrev(){ setAv($('cPrev'), tmpImg, cfg.myAv); }
 $('bSet').onclick = () => {
   $('cMy').value = cfg.myName; $('cCount').textContent = cfg.myName.length + '/20'; tmpImg = cfg.myImg || null; paintPrev();
@@ -532,7 +683,7 @@ function stkBind(btn, nome){
 }
 
 function sendSticker(nome){
-  if (!conn || !conn.open){ toast('Sem conexão agora, tenta de novo já já'); return; }
+  if (!canSend()) return;
   conn.send({t:'stk', x:nome});
   addMsg('me', '', true, Date.now(), null, nome);
   const u = stkUso(); u[nome] = (u[nome] || 0) + 1; store.set('stkuse' + role, u);
@@ -551,9 +702,13 @@ function stkAbrir(){
 
 /* ---------- entrada ---------- */
 function boot(){
-  myId = SALA + '-' + role; otherId = SALA + '-' + (role === 'a' ? 'b' : 'a');
-  cfg = Object.assign({myName: role === 'a' ? 'Allan' : 'Jhennyfer', otherName: role === 'a' ? 'Jhennyfer' : 'Allan', myAv: role === 'a' ? '🐻' : '🐰', otherAv: role === 'a' ? '🐰' : '🐻',
+  const allan = role !== 'b';    /* a e c são o Allan */
+  myId = SALA + '-' + role;
+  otherId = SALA + '-' + (role === 'b' ? 'a' : role === 'a' ? 'b' : 'a');   /* o celular (c) fala com o PC (a) */
+  satId = SALA + '-c';
+  cfg = Object.assign({myName: allan ? 'Allan' : 'Jhennyfer', otherName: allan ? 'Jhennyfer' : 'Allan', myAv: allan ? '🐻' : '🐰', otherAv: allan ? '🐰' : '🐻',
                        quality:'motion', mbps:10, fps:30}, store.get('cfg' + role, {}));
+  document.body.dataset.role = role;
   paintNames(); setSeat('O', 'off'); renderWait();
     store.get('chat' + role, []).forEach(m => addMsg(m.from, m.text, false, m.ts || Date.now(), null, m.stk || null)); msgs = store.get('chat' + role, []);
   $('dot').classList.remove('on');
@@ -632,15 +787,21 @@ function boot(){
     const send = c.send.bind(c);
     c.send = d => {
       if (d && (d.t === 'chat' || d.t === 'img' || d.t === 'stk')){
-        d.id = nid(); lastSent = {id: d.id, r: reply};
-        if (reply){ d.r = reply; setReply(null); }
+        if (!d.id) d.id = nid();                                  /* mensagem do celular já chega com id */
+        if (!d.r && reply){ d.r = reply; setReply(null); }
+        lastSent = {id: d.id, r: d.r || null};
+        if (role === 'a' && !satOrigin) satSend(Object.assign({}, d, {me: 1}));   /* PC: o que o Allan escreve aqui também aparece no celular */
       }
       return send(d);
     };
     c.on('data', d => {                       /* roda antes do tratamento original */
       if (!d) return;
       if (d.t === 'typ'){ showTyping(!!d.on); return; }
-      if (d.t === 'chat' || d.t === 'img' || d.t === 'stk'){ showTyping(false); lastRecv = d; }
+      if (d.t === 'chat' || d.t === 'img' || d.t === 'stk'){
+        showTyping(false);
+        if (role === 'c' && d.me) lastSent = {id: d.id, r: d.r || null};   /* mensagem do Allan (PC) espelhada no celular */
+        else lastRecv = d;
+      }
     });
     return _setConn(c);
   };
@@ -734,8 +895,19 @@ document.addEventListener('keydown', e => {
   e.preventDefault();
   txt.focus();
 });
+
+/* ---------- tela "Quem está entrando?" ---------- */
+/* mostra o avatar que cada um já escolheu neste aparelho (ou o bichinho padrão) */
+function paintWho(){
+  const padrao = {a:'🐻', b:'🐰', c:'🐻'};
+  ['a', 'b', 'c'].forEach(r => {
+    const c = store.get('cfg' + r, null) || (r === 'c' ? store.get('cfga', null) : null) || {};
+    setAv($('wav' + r.toUpperCase()), c.myImg || null, c.myAv || padrao[r]);
+  });
+}
 if (role) boot();
 else{
+  paintWho();
   $('who').classList.add('on');
   $('who').querySelectorAll('button').forEach(b => b.onclick = () => { role = b.dataset.r; store.set('role', role); $('who').classList.remove('on'); boot(); });
 }

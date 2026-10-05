@@ -671,5 +671,22 @@
         "notaEu": null,
         "notaEla": null,
         "memoria": ""
+    },
+    {
+        "id": "a-noiva-cadaver",
+        "categoria": "filmes",
+        "titulo": "A Noiva Cadáver",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1791235426549.png",
+        "cor": {
+            "r": 103,
+            "g": 121,
+            "b": 141
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
     }
 ]
