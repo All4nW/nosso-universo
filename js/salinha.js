@@ -205,9 +205,41 @@ function hideRemote(){
   vid.srcObject = null; $('screen').classList.remove('live'); renderWait(); updSnd();
   if (role === 'a' && !localStream){ clearTimeout(relayT); closeSatCall(); }
 }
-function updSnd(){ $('snd').hidden = !($('screen').classList.contains('live') && vid.muted); }
+function updVolBtn(){
+  $('bVol').classList.toggle('off', vid.muted || vid.volume === 0);
+  const r = $('volRange'); if (r) r.value = Math.round((vid.muted ? 0 : vid.volume) * 100);
+}
+function updSnd(){ $('snd').hidden = !($('screen').classList.contains('live') && vid.muted); updVolBtn(); }
 vid.onvolumechange = updSnd;
-$('snd').onclick = () => { vid.muted = false; vid.play().catch(() => {}); updSnd(); };
+$('snd').onclick = () => { vid.muted = false; if (vid.volume === 0) vid.volume = 1; vid.play().catch(() => {}); updSnd(); };
+
+/* desktop (tem mouse): clicar no ícone alterna mudo
+   celular (sem hover): clicar no ícone só abre/fecha o controle */
+$('bVol').onclick = () => {
+  if (matchMedia('(hover:hover)').matches){
+    vid.muted = !vid.muted;
+    if (!vid.muted && vid.volume === 0) vid.volume = 1;
+    if (!vid.muted) vid.play().catch(() => {});
+    updSnd();
+  } else {
+    $('volWrap').classList.toggle('expanded');
+  }
+};
+
+$('volRange').addEventListener('input', () => {
+  const v = Number($('volRange').value) / 100;
+  vid.volume = v;
+  vid.muted = v === 0;
+  if (v > 0) vid.play().catch(() => {});
+  updVolBtn();
+});
+
+/* no celular, toca fora do controle pra fechar ele */
+document.addEventListener('click', e => {
+  const w = $('volWrap');
+  if (!w || !w.classList.contains('expanded')) return;
+  if (!w.contains(e.target)) w.classList.remove('expanded');
+});
 $('screen').ondblclick = () => {
   const f = $('screen');
   if (document.fullscreenElement) document.exitFullscreen();
@@ -900,10 +932,25 @@ document.addEventListener('keydown', e => {
 /* mostra o avatar que cada um já escolheu neste aparelho (ou o bichinho padrão) */
 function paintWho(){
   const padrao = {a:'🐻', b:'🐰', c:'🐻'};
-  ['a', 'b', 'c'].forEach(r => {
-    const c = store.get('cfg' + r, null) || (r === 'c' ? store.get('cfga', null) : null) || {};
-    setAv($('wav' + r.toUpperCase()), c.myImg || null, c.myAv || padrao[r]);
-  });
+
+  const cA = store.get('cfga', null);
+  const cB = store.get('cfgb', null);
+  const cC = store.get('cfgc', null);
+
+  /* Foto do Allan (vale pro card do PC e pro do Celular): primeiro a
+     que ele mesmo já escolheu neste aparelho; se não tiver aqui, a que
+     a Jhennyfer recebeu dele e guardou do lado dela. */
+  const allanImg = (cA && cA.myImg) || (cC && cC.myImg) || (cB && cB.otherImg) || null;
+  const allanAv  = (cA && cA.myAv)  || (cC && cC.myAv)  || (cB && cB.otherAv)  || padrao.a;
+
+  /* Foto da Jhennyfer: a que ela mesma escolheu no aparelho dela; se
+     não tiver aqui, a que o Allan recebeu dela e guardou do lado dele. */
+  const jhennyImg = (cB && cB.myImg) || (cA && cA.otherImg) || (cC && cC.otherImg) || null;
+  const jhennyAv  = (cB && cB.myAv)  || (cA && cA.otherAv)  || (cC && cC.otherAv)  || padrao.b;
+
+  setAv($('wavA'), allanImg, allanAv);
+  setAv($('wavC'), allanImg, allanAv);
+  setAv($('wavB'), jhennyImg, jhennyAv);
 }
 if (role) boot();
 else{
