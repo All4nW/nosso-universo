@@ -6,8 +6,8 @@
             <h2>Cartas Para Nós</h2>
 
             <p>
-                Gerencie as cartas e mensagens que vocês já
-                trocaram, e que aparecem na coleção do site.
+                Gerencie as cartas e os bilhetinhos que vocês
+                trocaram, e que aparecem no site.
             </p>
         </div>
 
@@ -18,7 +18,15 @@
                 class="botao-principal"
                 id="cartas-novo"
             >
-                + Adicionar
+                + Carta
+            </button>
+
+            <button
+                type="button"
+                class="botao-principal"
+                id="cartas-novo-bilhete"
+            >
+                + Bilhetinho
             </button>
 
             <button
@@ -96,9 +104,38 @@
                 >
 
 
-                <!-- FOTO (opcional) -->
+                <!-- TIPO -->
 
-                <div class="assistidos-form-capa">
+                <div class="campo">
+
+                    <label for="cartas-tipo">
+                        Tipo
+                    </label>
+
+                    <select
+                        id="cartas-tipo"
+                        required
+                    >
+
+                        <option value="carta">
+                            ✉ Carta (abre num envelope)
+                        </option>
+
+                        <option value="bilhete">
+                            📝 Bilhetinho (mensagem curta no mural)
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- FOTO (opcional, só cartas) -->
+
+                <div
+                    id="cartas-bloco-foto"
+                    class="assistidos-form-capa"
+                >
 
                     <div
                         id="cartas-preview"
@@ -120,9 +157,11 @@
                         >
 
                         <small>
-                            JPG, PNG ou WEBP. Aparece
-                            espiando atrás do envelope e
-                            dentro da carta quando aberta.
+                            JPG, PNG ou WEBP. Na carta, aparece
+                            espiando atrás do envelope e dentro
+                            dela quando aberta. No bilhetinho, vira
+                            a capa. Clicando na foto no site, ela
+                            abre inteira, sem corte.
                         </small>
 
                     </div>
@@ -130,9 +169,12 @@
                 </div>
 
 
-                <!-- TÍTULO -->
+                <!-- TÍTULO (só cartas) -->
 
-                <div class="campo">
+                <div
+                    id="cartas-bloco-titulo"
+                    class="campo"
+                >
 
                     <label for="cartas-titulo">
                         Título
@@ -187,12 +229,20 @@
                         id="cartas-data"
                     >
 
+                    <small>
+                        Num bilhetinho, se ficar vazia vale a
+                        data de hoje.
+                    </small>
+
                 </div>
 
 
-                <!-- CATEGORIA -->
+                <!-- CATEGORIA (só cartas) -->
 
-                <div class="campo">
+                <div
+                    id="cartas-bloco-categoria"
+                    class="campo"
+                >
 
                     <label for="cartas-categoria">
                         Categoria
@@ -207,10 +257,6 @@
                             ✦ Aniversário
                         </option>
 
-                        <option value="destaque">
-                            ★ Destaque
-                        </option>
-
                         <option value="relacionamento">
                             ❤ Relacionamento
                         </option>
@@ -222,10 +268,52 @@
                     </select>
 
                     <small class="cartas-form-aviso">
-                        "Destaque" aparece maior, no topo da
-                        página. Recomendamos no máximo 3 cartas
-                        nessa categoria.
+                        A categoria decide em qual seção a
+                        carta aparece no site.
                     </small>
+
+                </div>
+
+
+                <!-- COR (só bilhetinhos) -->
+
+                <div
+                    id="cartas-bloco-cor"
+                    class="campo"
+                    style="display: none;"
+                >
+
+                    <label for="cartas-cor">
+                        Cor do papel
+                    </label>
+
+                    <select id="cartas-cor">
+
+                        <option value="">
+                            ✨ Automática (o site escolhe)
+                        </option>
+
+                        <option value="rosa">
+                            🌸 Rosa
+                        </option>
+
+                        <option value="lilas">
+                            💜 Lilás
+                        </option>
+
+                        <option value="azul">
+                            💙 Azul
+                        </option>
+
+                        <option value="creme">
+                            🌼 Creme
+                        </option>
+
+                        <option value="menta">
+                            🌿 Menta
+                        </option>
+
+                    </select>
 
                 </div>
 

@@ -1,15 +1,40 @@
 // =====================================================
 // CARTAS — PAINEL ADMINISTRATIVO
+// Cartas + bilhetinhos (tipo: "bilhete")
 // =====================================================
 
 let cartasItensAdmin = [];
 
+// Categorias válidas pra cartas. "destaque" não existe mais
+// pra criar, mas cartas antigas com essa categoria continuam
+// aparecendo na lista (e no site, dentro de "Outros").
 const LABELS_CATEGORIA = {
     aniversario: "✦ Aniversário",
-    destaque: "★ Destaque",
     relacionamento: "❤ Relacionamento",
-    outros: "✉ Outros"
+    outros: "✉ Outros",
+    destaque: "★ Destaque (antigo — aparece em Outros)"
 };
+
+const CATEGORIAS_VALIDAS =
+    ["aniversario", "relacionamento", "outros"];
+
+// Cores dos bilhetinhos — as mesmas que o site aceita.
+const LABELS_COR_BILHETE = {
+    rosa: "🌸 Rosa",
+    lilas: "💜 Lilás",
+    azul: "💙 Azul",
+    creme: "🌼 Creme",
+    menta: "🌿 Menta"
+};
+
+const CORES_BILHETE_VALIDAS =
+    Object.keys(LABELS_COR_BILHETE);
+
+function ehBilheteAdmin(item) {
+
+    return item && item.tipo === "bilhete";
+
+}
 
 
 // =====================================================
@@ -51,7 +76,7 @@ async function carregarCartasAdmin() {
         renderizarCartasAdmin();
 
         mostrarStatusCartas(
-            `${cartasItensAdmin.length} carta(s) carregada(s).`,
+            textoContagemAdmin(),
             "sucesso"
         );
 
@@ -67,6 +92,25 @@ async function carregarCartasAdmin() {
         );
 
     }
+
+}
+
+
+function textoContagemAdmin() {
+
+    const bilhetes =
+        cartasItensAdmin.filter(ehBilheteAdmin).length;
+
+    const cartas =
+        cartasItensAdmin.length - bilhetes;
+
+    if (!bilhetes) {
+
+        return `${cartas} carta(s) carregada(s).`;
+
+    }
+
+    return `${cartas} carta(s) e ${bilhetes} bilhetinho(s) carregado(s).`;
 
 }
 
@@ -113,11 +157,11 @@ function renderizarCartasAdmin() {
             <div class="assistidos-admin-vazio">
                 <span>✉</span>
 
-                <h3>Nenhuma carta ainda</h3>
+                <h3>Nada por aqui ainda</h3>
 
                 <p>
-                    Adicione a primeira carta ou mensagem
-                    que vocês guardaram.
+                    Adicione a primeira carta ou o primeiro
+                    bilhetinho que vocês guardaram.
                 </p>
             </div>
         `;
@@ -140,11 +184,8 @@ function criarItemCartaAdmin(item) {
         "assistidos-admin-item";
 
 
-    const imagem =
-        item.foto
-            ? `<img src="${resolverImagemCartaAdmin(item.foto)}" alt="">`
-            : `<div class="assistidos-sem-capa">✉</div>`;
-
+    const ehBilhete =
+        ehBilheteAdmin(item);
 
     const nomeAutor =
         item.autor === "ela"
@@ -154,9 +195,41 @@ function criarItemCartaAdmin(item) {
     const dataFormatada =
         formatarDataCartaAdmin(item.data);
 
-    const rotuloCategoria =
-        LABELS_CATEGORIA[item.categoria] ||
-        "Sem categoria";
+
+    // Imagem: a foto, ou um ícone quando não tem
+
+    let imagem;
+
+    if (item.foto) {
+
+        imagem = `<img src="${resolverImagemCartaAdmin(item.foto)}" alt="">`;
+
+    } else if (ehBilhete) {
+
+        imagem = `<div class="assistidos-sem-capa">📝</div>`;
+
+    } else {
+
+        imagem = `<div class="assistidos-sem-capa">✉</div>`;
+
+    }
+
+
+    // Título: o da carta, ou o começo da mensagem no bilhetinho
+
+    const titulo =
+        ehBilhete
+            ? resumirTextoCartaAdmin(item.mensagem, 70)
+            : item.titulo;
+
+
+    const rotulo =
+        ehBilhete
+            ? `📝 Bilhetinho${item.cor && LABELS_COR_BILHETE[item.cor] ? " · " + LABELS_COR_BILHETE[item.cor] : ""}`
+            : (
+                LABELS_CATEGORIA[item.categoria] ||
+                "Sem categoria"
+            );
 
 
     elemento.innerHTML = `
@@ -169,7 +242,7 @@ function criarItemCartaAdmin(item) {
         <div class="assistidos-admin-info">
 
             <strong>
-                ${escaparHTMLCartaAdmin(item.titulo)}
+                ${escaparHTMLCartaAdmin(titulo)}
             </strong>
 
             <span>
@@ -179,7 +252,7 @@ function criarItemCartaAdmin(item) {
 
             <div class="assistidos-admin-notas">
 
-                <small>${rotuloCategoria}</small>
+                <small>${escaparHTMLCartaAdmin(rotulo)}</small>
 
             </div>
 
@@ -212,6 +285,21 @@ function criarItemCartaAdmin(item) {
 }
 
 
+function resumirTextoCartaAdmin(texto, limite) {
+
+    const limpo =
+        (texto || "")
+            .replace(/\*\*/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    return limpo.length > limite
+        ? limpo.slice(0, limite).trimEnd() + "…"
+        : limpo;
+
+}
+
+
 // =====================================================
 // RESOLVER IMAGEM (mesmo esquema do admin de Assistidos —
 // o admin fica dentro de Admin/, então sobe um nível)
@@ -235,6 +323,11 @@ function configurarEventosCartasAdmin() {
     const novo =
         document.getElementById(
             "cartas-novo"
+        );
+
+    const novoBilhete =
+        document.getElementById(
+            "cartas-novo-bilhete"
         );
 
     const sincronizar =
@@ -267,10 +360,25 @@ function configurarEventosCartasAdmin() {
             "cartas-negrito"
         );
 
+    const tipo =
+        document.getElementById(
+            "cartas-tipo"
+        );
+
+    const lista =
+        document.getElementById(
+            "cartas-lista"
+        );
+
 
     novo?.addEventListener(
         "click",
-        () => abrirModalCarta()
+        () => abrirModalCarta(null, "carta")
+    );
+
+    novoBilhete?.addEventListener(
+        "click",
+        () => abrirModalCarta(null, "bilhete")
     );
 
     negrito?.addEventListener(
@@ -309,9 +417,19 @@ function configurarEventosCartasAdmin() {
     );
 
 
-    document.addEventListener(
-        "click",
-        evento => {
+    tipo?.addEventListener(
+        "change",
+        atualizarCamposPorTipo
+    );
+
+
+    // Editar / excluir. Usa onclick (e não addEventListener no
+    // document) pra não duplicar o clique se o painel for
+    // inicializado mais de uma vez.
+
+    if (lista) {
+
+        lista.onclick = evento => {
 
             const editar =
                 evento.target.closest(
@@ -341,8 +459,117 @@ function configurarEventosCartasAdmin() {
 
             }
 
+        };
+
+    }
+
+}
+
+
+// =====================================================
+// MOSTRAR / ESCONDER (inline, pra não depender de CSS)
+// =====================================================
+
+function mostrarCampoCarta(id, visivel) {
+
+    const elemento =
+        document.getElementById(id);
+
+    if (!elemento) return;
+
+    elemento.style.display =
+        visivel ? "" : "none";
+
+}
+
+
+// =====================================================
+// CAMPOS QUE MUDAM CONFORME O TIPO
+// Carta: título, foto, categoria, mensagem livre.
+// Bilhetinho: cor, foto opcional e mensagem (sem limite de tamanho).
+// =====================================================
+
+function atualizarCamposPorTipo() {
+
+    const tipo =
+        document.getElementById(
+            "cartas-tipo"
+        )?.value || "carta";
+
+    const ehBilhete =
+        tipo === "bilhete";
+
+
+    // A foto vale pra cartas (espia atrás do envelope) e pra
+    // bilhetinhos (vira a capa), então o bloco fica sempre à vista.
+    mostrarCampoCarta("cartas-bloco-foto", true);
+    mostrarCampoCarta("cartas-bloco-titulo", !ehBilhete);
+    mostrarCampoCarta("cartas-bloco-categoria", !ehBilhete);
+    mostrarCampoCarta("cartas-bloco-cor", ehBilhete);
+
+
+    // Campo escondido não pode continuar "required",
+    // senão o navegador trava o envio do formulário.
+
+    const titulo =
+        document.getElementById(
+            "cartas-titulo"
+        );
+
+    if (titulo) {
+
+        titulo.required = !ehBilhete;
+
+    }
+
+
+    const mensagem =
+        document.getElementById(
+            "cartas-mensagem"
+        );
+
+    if (mensagem) {
+
+        if (ehBilhete) {
+
+            mensagem.rows = 5;
+
+            mensagem.placeholder =
+                "Escreva a mensagem do bilhetinho...";
+
+        } else {
+
+            mensagem.rows = 8;
+
+            mensagem.placeholder =
+                "Cole aqui o texto original da carta ou mensagem...";
+
         }
-    );
+
+    }
+
+
+    const titulosModal =
+        document.getElementById(
+            "cartas-modal-titulo"
+        );
+
+    if (titulosModal) {
+
+        const editando =
+            Boolean(
+                document.getElementById(
+                    "cartas-id"
+                )?.value
+            );
+
+        titulosModal.textContent =
+            ehBilhete
+                ? (editando ? "Editar bilhetinho" : "Adicionar bilhetinho")
+                : (editando ? "Editar carta" : "Adicionar carta");
+
+    }
+
 
 }
 
@@ -351,7 +578,7 @@ function configurarEventosCartasAdmin() {
 // MODAL
 // =====================================================
 
-function abrirModalCarta(item = null) {
+function abrirModalCarta(item = null, tipoInicial = "carta") {
 
     const modal =
         document.getElementById(
@@ -361,18 +588,22 @@ function abrirModalCarta(item = null) {
     if (!modal) return;
 
 
-    document.getElementById(
-        "cartas-modal-titulo"
-    ).textContent =
+    const tipo =
         item
-            ? "Editar carta"
-            : "Adicionar carta";
+            ? (ehBilheteAdmin(item) ? "bilhete" : "carta")
+            : tipoInicial;
 
 
     document.getElementById(
         "cartas-id"
     ).value =
         item?.id || "";
+
+
+    document.getElementById(
+        "cartas-tipo"
+    ).value =
+        tipo;
 
 
     document.getElementById(
@@ -393,10 +624,23 @@ function abrirModalCarta(item = null) {
         item?.data || "";
 
 
+    // Cartas antigas com categoria "destaque" (ou sem categoria)
+    // caem em "Outros", igual ao site.
+
     document.getElementById(
         "cartas-categoria"
     ).value =
-        item?.categoria || "aniversario";
+        CATEGORIAS_VALIDAS.includes(item?.categoria)
+            ? item.categoria
+            : (item ? "outros" : "aniversario");
+
+
+    document.getElementById(
+        "cartas-cor"
+    ).value =
+        CORES_BILHETE_VALIDAS.includes(item?.cor)
+            ? item.cor
+            : "";
 
 
     document.getElementById(
@@ -429,6 +673,9 @@ function abrirModalCarta(item = null) {
     document.getElementById(
         "cartas-imagem"
     ).value = "";
+
+
+    atualizarCamposPorTipo();
 
 
     modal.classList.remove(
@@ -483,6 +730,7 @@ function previewImagemCarta(evento) {
 // Envolve o trecho selecionado na textarea com **, que o
 // site depois converte em <strong>. Se nada estiver
 // selecionado, só insere ** ** com o cursor no meio.
+// (Funciona igual em cartas e bilhetinhos.)
 
 function aplicarNegritoCarta() {
 
@@ -538,6 +786,46 @@ function aplicarNegritoCarta() {
 
 
 // =====================================================
+// ID ÚNICO
+// =====================================================
+// Antes, duas cartas com o mesmo título gerariam o mesmo id
+// e a segunda sobrescreveria a primeira. Agora ganha -2, -3...
+
+function gerarIdUnicoCarta(base) {
+
+    const raiz =
+        base || `item-${Date.now()}`;
+
+    let candidato = raiz;
+
+    let contador = 2;
+
+    while (
+        cartasItensAdmin.some(
+            item => item.id === candidato
+        )
+    ) {
+
+        candidato = `${raiz}-${contador}`;
+
+        contador++;
+
+    }
+
+    return candidato;
+
+}
+
+
+function dataDeHojeCarta() {
+
+    // YYYY-MM-DD no fuso local
+    return new Date().toLocaleDateString("sv-SE");
+
+}
+
+
+// =====================================================
 // SALVAR
 // =====================================================
 
@@ -551,6 +839,14 @@ async function salvarCarta(evento) {
             "cartas-id"
         ).value.trim();
 
+    const tipo =
+        document.getElementById(
+            "cartas-tipo"
+        ).value;
+
+    const ehBilhete =
+        tipo === "bilhete";
+
     const titulo =
         document.getElementById(
             "cartas-titulo"
@@ -562,7 +858,19 @@ async function salvarCarta(evento) {
         ).value.trim();
 
 
-    if (!titulo || !mensagem) {
+    if (ehBilhete) {
+
+        if (!mensagem) {
+
+            alert(
+                "Escreva a mensagem do bilhetinho."
+            );
+
+            return;
+
+        }
+
+    } else if (!titulo || !mensagem) {
 
         alert(
             "Preencha ao menos o título e a mensagem."
@@ -579,13 +887,12 @@ async function salvarCarta(evento) {
         );
 
 
+    // =================================================
+    // UPLOAD DA IMAGEM (opcional — carta ou bilhetinho)
+    // =================================================
+
     let foto =
         existente?.foto || "";
-
-
-    // =================================================
-    // UPLOAD DA IMAGEM (opcional)
-    // =================================================
 
     const arquivo =
         document.getElementById(
@@ -625,66 +932,97 @@ async function salvarCarta(evento) {
     }
 
 
-    const categoriaSelecionada =
+    const autor =
         document.getElementById(
-            "cartas-categoria"
+            "cartas-autor"
+        ).value;
+
+    const dataCampo =
+        document.getElementById(
+            "cartas-data"
         ).value;
 
 
-    // =================================================
-    // LIMITE DE 3 CARTAS EM DESTAQUE
-    // =================================================
+    // Bilhetinho sem data ganha a de hoje, pra entrar
+    // na ordem certa (mais recentes primeiro) no site.
 
-    if (categoriaSelecionada === "destaque") {
+    const data =
+        dataCampo ||
+        (ehBilhete ? dataDeHojeCarta() : null);
 
-        const outrasEmDestaque =
-            cartasItensAdmin.filter(
-                item =>
-                    item.categoria === "destaque" &&
-                    item.id !== id
-            );
 
-        if (outrasEmDestaque.length >= 3) {
+    let novoItem;
 
-            alert(
-                "Já existem 3 cartas marcadas como " +
-                "\"Destaque\". Troque a categoria de " +
-                "alguma delas antes de adicionar outra."
-            );
+    if (ehBilhete) {
 
-            return;
+        const cor =
+            document.getElementById(
+                "cartas-cor"
+            ).value;
+
+        novoItem = {
+
+            id:
+                id ||
+                gerarIdUnicoCarta(
+                    "bilhete-" +
+                    criarSlugCarta(mensagem).slice(0, 30)
+                ),
+
+            tipo: "bilhete",
+
+            titulo: "",
+
+            autor,
+
+            data,
+
+            categoria: "outros",
+
+            mensagem,
+
+            foto
+
+        };
+
+        // Sem cor escolhida = o site escolhe uma (sempre a mesma)
+
+        if (CORES_BILHETE_VALIDAS.includes(cor)) {
+
+            novoItem.cor = cor;
 
         }
 
+    } else {
+
+        novoItem = {
+
+            id:
+                id ||
+                gerarIdUnicoCarta(
+                    criarSlugCarta(titulo)
+                ),
+
+            tipo: "carta",
+
+            titulo,
+
+            autor,
+
+            data,
+
+            categoria:
+                document.getElementById(
+                    "cartas-categoria"
+                ).value,
+
+            mensagem,
+
+            foto
+
+        };
+
     }
-
-
-    const novoItem = {
-
-        id:
-            id ||
-            criarSlugCarta(titulo),
-
-        titulo,
-
-        autor:
-            document.getElementById(
-                "cartas-autor"
-            ).value,
-
-        data:
-            document.getElementById(
-                "cartas-data"
-            ).value || null,
-
-        categoria:
-            categoriaSelecionada,
-
-        mensagem,
-
-        foto
-
-    };
 
 
     const indice =
@@ -717,7 +1055,9 @@ async function salvarCarta(evento) {
         renderizarCartasAdmin();
 
         mostrarStatusCartas(
-            "Carta salva com sucesso.",
+            ehBilhete
+                ? "Bilhetinho salvo com sucesso."
+                : "Carta salva com sucesso.",
             "sucesso"
         );
 
@@ -766,9 +1106,14 @@ async function excluirCarta(id) {
     if (!item) return;
 
 
+    const descricao =
+        ehBilheteAdmin(item)
+            ? `o bilhetinho "${resumirTextoCartaAdmin(item.mensagem, 50)}"`
+            : `a carta "${item.titulo}"`;
+
     const confirmar =
         confirm(
-            `Excluir a carta "${item.titulo}"?`
+            `Excluir ${descricao}?`
         );
 
     if (!confirmar) return;
@@ -789,7 +1134,9 @@ async function excluirCarta(id) {
         renderizarCartasAdmin();
 
         mostrarStatusCartas(
-            "Carta excluída.",
+            ehBilheteAdmin(item)
+                ? "Bilhetinho excluído."
+                : "Carta excluída.",
             "sucesso"
         );
 
@@ -831,7 +1178,7 @@ async function sincronizarCartas() {
         );
 
         mostrarStatusCartas(
-            "✓ Sincronizado! As cartas foram gravadas no site.",
+            "✓ Sincronizado! As cartas e os bilhetinhos foram gravados no site.",
             "sucesso"
         );
 

@@ -37,7 +37,8 @@
     },
     {
         "id": "mensagenzinha-das-23h59",
-        "titulo": "Mensagenzinha das 23h59 💕",
+        "tipo": "bilhete",
+        "titulo": "",
         "autor": "ela",
         "data": "2026-07-21",
         "categoria": "outros",
@@ -52,15 +53,6 @@
         "categoria": "aniversario",
         "mensagem": "**Feliz aniversário, meu amor!!! Feliz 16 aninhos**🥳🎉🎉🎈\nMe sinto tão feliz por fazer parte de mais um ano da sua vida, fazer parte dessa data tão especial e tão importante, e quero, com todo meu coração, estar presente nos próximos, mas não atrás de uma tela e sim bem pertinho de você. \nNão consigo nem achar palavras para descrever a garota incrível que você é. Você sempre foi uma pessoa maravilhosa desde o dia que te conheci, seu brilho é tão forte e lindo e tenho todo o orgulho do mundo por você. Continue sendo essa garota incrível que você é. Me sinto honrado por ver minha namorada se tornando essa mulher maravilhosa.\n\nEu te amo muito meu amor, eu te amo muito e conte comigo sempre, estarei aqui sempre ao seu lado, te apoiando e torcendo por você. Desejo toda felicidade e sucesso do mundo a você. Eu te amo e feliz aniversário, amor da minha vida ❤️",
         "foto": "assets/images/letters/carta-1788207582657.png"
-    },
-    {
-        "id": "uma-mensagem-linda-dela-expressando",
-        "titulo": "Uma mensagem linda dela expressando",
-        "autor": "ela",
-        "data": "2026-09-10",
-        "categoria": "outros",
-        "mensagem": "você me ajuda todos os dias com os meus problemas meu amor, vc sempre esta comigo quando eu mais preciso, e por isso você é meu parceiro de vida, eu te amo muito e so quero ser sua e q vc seja meu para o resto da vida",
-        "foto": "assets/images/letters/carta-1789084662029.png"
     },
     {
         "id": "me-expressando-para-ela",
@@ -97,5 +89,26 @@
         "categoria": "aniversario",
         "mensagem": "parabéns, amor da minha vida! 💘\n\nmais um aniversário seu q eu tenho a sorte de poder comemorar ao seu lado, e eu fico pensando em como é doido olhar pra trás e lembrar de quando a gente ainda estava se conhecendo e comparar com tudo que a gente vive hoje. no primeiro textinho de aniversário, eu falei que mesmo em pouco tempo, voce ja tinha conseguido conquistar um espaço enorme no meu coração, e hoje, você conquistou um espaço tao enorme q nem sei como te explicar meu amor. você se tornou a pessoa mais importante pra mim, alguém q eu quero construir uma vida boa ao lado, que quero sempre ter ao meu lado.\n\neu sou muito feliz e grata por te ter na minha vida, quando eu estava perdida, sem rumo, sem vontade nenhuma de viver, voce estava la, sempre me dando forças. obrigada por tornar meus dias mais leves e arrancar sorrisos meus até quando não estou mt bem. é incrível como uma pessoa pode se tornar tão importante mesmo estando longe, e espero que um dia a distância seja so uma lembrança para nos. 🥺\neu amo nossas conversas, brincadeiras, nossas implicâncias, nossos momentos fofinhos hihi, e até pequenas coisas do dia a dia que talvez pareçam bobas, mas se torna especial, so pq são com você. \n\nquero te desejar tudo de mais lindo e perfeito que a vida te puder dar, meu amor. quero q você tenha paz, saúde e felicidade (espero q ao meu lado) e que nos conseguimos realizar todos nossos planos e sonhos, hihi. quem diria que meu bebezinho fofo estaria tao velhinho, em? hihi 😊. queria te dizer o quanto tenho orgulho de você, meu amor. você é um homem, filho, irmão, namorado, amigo, muito incrível, neném. eu te admiro tanto e tenho tanto orgulho de ver que cada dia que passa voce esta se tornando alguem maravilhoso, o homem que vai ser meu marido. espero que você nunca deixe de ser esse homem perfeito q voce é meu amor, essa pessoa incrível que conheci e pela qual eu me apaixonei DEMAIS, com o seu jeitinho unico que você tem. \n\neu espero poder continuar comemorando muitos aniversários seus ao seu lado. e espero q nos próximos, a gente finalmente consiga estar juntinhos pessoalmente, sem uma tela entre nos, sem distância. quero poder te dar parabéns pessoalmente, te abraçando bem forte e te enchendo de beijinhos, falando o quão perfeito voce é. 🥺💕\n\nobrigada por ser você, por fazer parte da minha vida e por todos os nossos momentos q ja vivemos juntinhos. quero q você saiba o quanto é especial para mim, e o quanto quero te fazer feliz, não so hoje, mas todos os dias de nossas vidas, meu amor. eu tenho muito medo de perder você, perder seu bom dia, seu boa noite, seu jeito fofo, como sempre é carinhoso comigo, e por isso, irei lutar por nos sempre meu amor, para que fiquemos juntinhos pra sempre. \n\nfeliz aniversário, meu bebezinho! 💕\naproveita muito seu dia meu anjinho hihi, pq você merece tudo de melhor nesse mundo, meu amor. EU TE AMO COM TODA MINHA ALMA MEU BEBE GORDINHO, PARABÉNS AMOR DA MINHA VIDA 💘",
         "foto": "assets/images/letters/carta-1790130575706.png"
+    },
+    {
+        "id": "bilhete-ddwgfdgtestesfdsfasdfsdfsdfdsf",
+        "tipo": "bilhete",
+        "titulo": "",
+        "autor": "ela",
+        "data": "2026-09-10",
+        "categoria": "outros",
+        "mensagem": "Você me ajuda todos os dias com os meus problemas meu amor, vc sempre esta comigo quando eu mais preciso, e por isso você é meu parceiro de vida, eu te amo muito e so quero ser sua",
+        "foto": "assets/images/letters/carta-1791328175309.png",
+        "cor": "lilas"
+    },
+    {
+        "id": "preciso-te-dizer-uma-coisa",
+        "tipo": "carta",
+        "titulo": "\"Preciso te dizer uma coisa\"",
+        "autor": "ela",
+        "data": "2026-10-06",
+        "categoria": "outros",
+        "mensagem": "eu sou completamente apaixonada por você, cada segundo que passa, eu fico mais apaixonada por vc. n existe um universo em que jhennyfer para de amar o allan, a jhennyfer ama o allan cada dia mais. quero te dizer que eu nao vou desistir da gente, do nosso relacionamento, vc é a pessoa mais importante da minha vida, chega ate ser engraçado q eu jamais imaginaria q namoraria virtualmente KAKKAKSKSKKAKAKSK, mas ca estou eu namorando a 1 ano com vc, e quer saber se eu me arrependo? nem um pouco, eu escolheria te conhecer e viver com vc em todas minhas vidas. eu so quero ter nossos filhos, construir nossa vida, conquistar nossas coisas, e morrer velhinhos juntinhos. enfim amor, oq eu queria dizer é que **eu te amo mais q tudo amor da minha vida**. Obrigada por. tudo oq vc fez e faz por nós, vc é um homem incrível meu bebezinho 💕",
+        "foto": "assets/images/letters/carta-1791328763788.png"
     }
 ]

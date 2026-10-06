@@ -1,11 +1,38 @@
 /* =========================================================
    NOSSO UNIVERSO — CARTAS PARA NÓS
-   Iteração 3: uma caixa de correspondência, não uma timeline
+   Iteração 5: fundo ilustrado, carrosséis, cartões rosa,
+   bilhetinhos. ESTE ARQUIVO SUBSTITUI O CSS ANTIGO INTEIRO.
    ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Caveat+Brush&family=Patrick+Hand&display=swap");
+
+
+/* =========================================================
+   PALETA E FONTES — tudo num lugar só
+   ========================================================= */
+
+.view[data-view="cartas"],
+.carta-aberta-overlay,
+.bilhete-aberto-overlay {
+    --c-rosa: #f08bbd;
+    --c-rosa-claro: #f9c4dc;
+    --c-rosa-forte: #c22a7a;
+    --c-lilas: #b79af2;
+    --c-indigo: #4a4fb8;
+    --c-texto: #fdeef6;
+    --c-texto-suave: rgba(250, 214, 232, 0.72);
+
+    --f-titulo: "Caveat Brush", "Caveat", cursive;
+    --f-escrita: "Caveat", "Patrick Hand", cursive;
+    --f-mao: "Patrick Hand", "Caveat", cursive;
+    --f-corpo: var(--font-body, "Quicksand", "Segoe UI", sans-serif);
+}
 
 
 /* =========================================================
    PÁGINA — ROLAGEM VERTICAL CONTÍNUA
+   O caminho da imagem de fundo é aplicado pelo JS
+   (aplicarFundoCartas), pra ser relativo ao HTML.
    ========================================================= */
 
 .view[data-view="cartas"] {
@@ -19,24 +46,16 @@
 
     box-sizing: border-box;
 
-    padding-top: 90px;
+    padding-top: 64px;
     padding-bottom: 120px;
 
-    /* Um único degradê radial: centro mais claro e quente,
-       bordas bem escuras — simples e com contraste real. */
-
-    background:
-        radial-gradient(
-            ellipse 75% 65% at 50% 38%,
-            #3d1329 0%,
-            #260e1d 45%,
-            #170a13 72%,
-            #0a0508 100%
-        );
+    background-color: #12050f;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-
-/* Halo central suave — atrás do conteúdo, "respirando" */
+/* Halo central bem suave, "respirando" por cima da imagem */
 
 .view[data-view="cartas"]::before {
     content: "";
@@ -50,46 +69,20 @@
 
     background:
         radial-gradient(
-            ellipse 55% 42% at 50% 24%,
-            rgba(214, 140, 170, 0.08),
-            transparent 68%
+            ellipse 50% 40% at 50% 22%,
+            rgba(240, 139, 189, 0.07),
+            transparent 70%
         );
 
-    animation:
-        cartas-halo-respirar 15s ease-in-out infinite;
+    animation: cartas-halo-respirar 15s ease-in-out infinite;
 }
-
-
-/* Textura de papel — quase imperceptível */
-
-.view[data-view="cartas"]::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    z-index: 0;
-
-    pointer-events: none;
-
-    opacity: 0.5;
-
-    mix-blend-mode: overlay;
-
-    background-image:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
-
-    background-size: 160px 160px;
-}
-
 
 @keyframes cartas-halo-respirar {
 
-    0%, 100% { opacity: 0.75; }
+    0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
 
 }
-
 
 .view[data-view="cartas"] > * {
     position: relative;
@@ -109,7 +102,6 @@
 
 /* =========================================================
    ATMOSFERA FIXA — direto no HTML, não depende de JS
-   Garantida de aparecer, igual às estrelas de Estrelas.
    ========================================================= */
 
 .cartas-atmosfera-fixa {
@@ -123,11 +115,6 @@
     pointer-events: none;
 }
 
-
-
-
-/* Estrelinhas sutis — pontinhos de luz discretos */
-
 .cartas-estrela-sutil {
     position: absolute;
 
@@ -139,9 +126,9 @@
 
     border-radius: 50%;
 
-    background: #f8ecf2;
+    background: #fdeef6;
 
-    box-shadow: 0 0 6px 1px rgba(247, 214, 227, 0.85);
+    box-shadow: 0 0 6px 1px rgba(249, 196, 220, 0.8);
 
     animation:
         cartas-estrela-piscar
@@ -159,9 +146,6 @@
 
 }
 
-
-/* Corações — espalhados com carinho, visíveis mas suaves */
-
 .cartas-coracao-sutil {
     position: absolute;
 
@@ -170,9 +154,9 @@
 
     font-size: var(--co-tam, 0.6rem);
 
-    color: #e89ab8;
+    color: var(--c-rosa);
 
-    text-shadow: 0 0 6px rgba(232, 154, 184, 0.5);
+    text-shadow: 0 0 6px rgba(240, 139, 189, 0.5);
 
     opacity: var(--co-opacidade, 0.16);
 
@@ -187,13 +171,8 @@
 
 @keyframes cartas-coracao-flutuar {
 
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(calc(var(--co-dy, 16px) * -1));
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(calc(var(--co-dy, 16px) * -1)); }
 
 }
 
@@ -212,11 +191,11 @@
 .cartas-intro-simbolo {
     display: block;
 
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 
-    color: var(--color-lilac);
+    color: var(--c-rosa);
 
     opacity: 0.85;
 
@@ -224,55 +203,80 @@
 }
 
 .cartas-intro-titulo {
-    margin: 0 0 16px;
+    margin: 0 0 6px;
 
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 1.9rem;
+    font-family: var(--f-titulo);
+    font-weight: 400;
+    font-size: 3.2rem;
+    line-height: 1.05;
 
-    color: var(--color-text-light);
+    color: #fff;
+
+    text-shadow:
+        0 0 18px rgba(240, 139, 189, 0.45),
+        0 2px 0 rgba(120, 30, 80, 0.6);
 }
 
 .cartas-intro-frase {
-    margin: 0 0 16px;
+    margin: 0 0 14px;
 
-    font-family: var(--font-body);
+    font-family: var(--f-corpo);
     font-size: 0.86rem;
     font-weight: 300;
     font-style: italic;
     line-height: 1.75;
 
-    color: var(--color-text-muted);
+    color: var(--c-texto-suave);
 }
 
+/* Ornamento: linha — coração — linha.
+   As duas linhas são desenhadas pelo próprio elemento. */
+
 .cartas-intro-linha-curta {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    margin: -8px 0 18px;
+    height: 26px;
 
-    font-family: var(--font-heading);
-    font-size: 0.85rem;
-    font-style: italic;
+    margin: 0 0 6px;
 
-    color: rgba(232, 190, 205, 0.8);
+    font-size: 1.1rem;
+
+    color: var(--c-rosa);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(240, 139, 189, 0.85)
+        )
+        calc(50% - 66px) 50% / 96px 1px no-repeat,
+
+        linear-gradient(
+            90deg,
+            rgba(183, 154, 242, 0.85),
+            transparent
+        )
+        calc(50% + 66px) 50% / 96px 1px no-repeat;
 }
 
 .cartas-intro-linha-curta::after {
     content: " ♡";
 
-    opacity: 0.75;
+    opacity: 1;
+
+    text-shadow: 0 0 10px rgba(240, 139, 189, 0.7);
 }
 
 .cartas-intro-contagem {
     display: inline-block;
 
-    font-family: var(--font-body);
-    font-size: 0.66rem;
-    letter-spacing: 0.5px;
+    font-family: var(--f-corpo);
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
 
-    color: var(--color-lilac);
-
-    opacity: 0.75;
+    color: var(--c-texto-suave);
 }
 
 @keyframes cartas-simbolo-pulso {
@@ -291,12 +295,65 @@
 
 
 /* =========================================================
-   BUSCA — DISCRETA
+   BUSCA — pílula com borda degradê rosa → lilás
+   A borda é desenhada pelo ::before do wrapper (máscara) e
+   a lupa pelo ::after.
    ========================================================= */
 
 .cartas-busca-wrapper {
-    width: min(300px, 80%);
-    margin: 26px auto 0;
+    position: relative;
+
+    width: min(540px, 88%);
+    margin: 20px auto 0;
+}
+
+.cartas-busca-wrapper::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    padding: 1px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(240, 139, 189, 0.85),
+            rgba(183, 154, 242, 0.75)
+        );
+
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+
+    mask:
+        linear-gradient(#000 0 0) content-box exclude,
+        linear-gradient(#000 0 0);
+
+    pointer-events: none;
+}
+
+.cartas-busca-wrapper::after {
+    content: "";
+
+    position: absolute;
+
+    left: 20px;
+    top: 50%;
+
+    width: 18px;
+    height: 18px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+
+    background:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f08bbd' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.6-3.6'/></svg>")
+        center / contain no-repeat;
 }
 
 .cartas-busca {
@@ -304,38 +361,38 @@
 
     box-sizing: border-box;
 
-    padding: 8px 16px;
+    padding: 13px 20px 13px 52px;
 
+    border: none;
     border-radius: 999px;
 
-    border: 1px solid rgba(201, 167, 245, 0.14);
+    background: rgba(32, 10, 36, 0.55);
 
-    background: rgba(15, 14, 25, 0.4);
+    color: var(--c-texto);
 
-    color: var(--color-text-light);
-
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    text-align: center;
+    font-family: var(--f-corpo);
+    font-size: 0.9rem;
+    text-align: left;
 
     outline: none;
 
-    transition: border-color 0.3s ease, background 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cartas-busca::placeholder {
-    color: var(--color-text-muted);
-    opacity: 0.7;
+    color: var(--c-texto-suave);
+    opacity: 0.85;
 }
 
 .cartas-busca:focus {
-    border-color: rgba(201, 167, 245, 0.4);
-    background: rgba(15, 14, 25, 0.65);
+    background: rgba(44, 14, 48, 0.75);
+
+    box-shadow: 0 0 22px rgba(240, 139, 189, 0.18);
 }
 
 
 /* =========================================================
-   FILTROS — TEXTO CORRIDO, NÃO BOTÕES DE DASHBOARD
+   FILTROS — PÍLULAS
    ========================================================= */
 
 .cartas-filtros {
@@ -344,44 +401,72 @@
     align-items: center;
     flex-wrap: wrap;
 
-    gap: 10px;
+    gap: 8px;
 
-    margin: 16px auto 12px;
+    margin: 18px auto 22px;
 
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    letter-spacing: 0.3px;
+    font-family: var(--f-corpo);
+    font-size: 0.92rem;
 }
 
 .cartas-filtro-btn {
-    padding: 2px;
+    padding: 9px 22px;
 
-    border: none;
+    border: 1px solid transparent;
+    border-radius: 999px;
+
     background: transparent;
 
-    color: var(--color-text-muted);
+    color: var(--c-texto);
+
+    font-family: inherit;
+    font-size: inherit;
 
     cursor: pointer;
 
-    opacity: 0.55;
+    opacity: 0.85;
 
-    transition: color 0.3s ease, opacity 0.3s ease;
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.3s ease;
 }
 
 .cartas-filtro-btn:hover {
-    opacity: 0.85;
-    color: var(--color-text-light);
+    opacity: 1;
+
+    background: rgba(240, 139, 189, 0.1);
 }
 
 .cartas-filtro-btn.ativo {
     opacity: 1;
-    color: var(--color-lilac);
+
+    font-weight: 600;
+
+    color: #fff;
+
+    border-color: rgba(249, 196, 220, 0.55);
+
+    background:
+        linear-gradient(
+            180deg,
+            #b32a77,
+            #6f1a58
+        );
+
+    box-shadow:
+        0 0 18px rgba(240, 139, 189, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.cartas-filtro-btn:focus-visible {
+    outline: 2px solid rgba(183, 154, 242, 0.8);
+    outline-offset: 2px;
 }
 
 .cartas-filtro-separador {
-    color: var(--color-text-muted);
-    opacity: 0.3;
-    font-size: 0.7rem;
+    display: none;
 }
 
 
@@ -393,82 +478,106 @@
     width: 100%;
     max-width: 1000px;
 
-    margin: 20px auto 0;
+    margin: 10px auto 0;
 
     display: flex;
     flex-direction: column;
 
-    gap: 70px;
+    gap: 46px;
+}
+
+.cartas-secao,
+.bilhetes-bloco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
 }
 
 
 /* =========================================================
-   SEÇÃO
+   CABEÇALHO DE SEÇÃO — linha · ícone · título · ♡ · linha
+   (serve para as cartas e para os bilhetinhos)
    ========================================================= */
-
-.cartas-secao {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
 .cartas-secao-cabecalho {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
 
-    margin-bottom: 34px;
+    gap: 14px;
 
-    text-align: center;
+    width: 100%;
+
+    margin-bottom: 14px;
 }
 
-.cartas-secao-titulo {
-    margin: 0 0 6px;
+.cartas-secao-linha {
+    flex: 1;
 
-    font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-style: italic;
-
-    color: var(--color-text-light);
-
-    opacity: 0.92;
-}
-
-.cartas-secao-subtitulo {
-    margin: 0 0 16px;
-
-    font-family: var(--font-heading);
-    font-size: 0.72rem;
-    font-style: italic;
-
-    color: rgba(232, 190, 205, 0.6);
-}
-
-.cartas-secao-divisor {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-}
-
-.cartas-secao-divisor-linha {
-    width: 32px;
+    max-width: 250px;
     height: 1px;
+}
 
+.cartas-secao-linha-esq {
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(232, 190, 205, 0.45),
+        rgba(240, 139, 189, 0.75)
+    );
+}
+
+.cartas-secao-linha-dir {
+    background: linear-gradient(
+        90deg,
+        rgba(183, 154, 242, 0.75),
         transparent
     );
 }
 
-.cartas-secao-divisor-coracao {
-    font-size: 0.62rem;
+.cartas-secao-icone {
+    display: flex;
 
-    color: rgba(232, 190, 205, 0.55);
+    flex-shrink: 0;
+}
 
-    transform: translateY(-1px);
+.cartas-secao-icone svg {
+    width: 32px;
+    height: 32px;
+
+    fill: none;
+    stroke: var(--c-rosa);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    filter: drop-shadow(0 0 6px rgba(240, 139, 189, 0.5));
+}
+
+.cartas-secao-titulo {
+    margin: 0;
+
+    font-family: var(--f-escrita);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+
+    text-align: center;
+
+    color: var(--c-texto);
+
+    text-shadow: 0 0 14px rgba(240, 139, 189, 0.35);
+}
+
+.cartas-secao-coracao {
+    flex-shrink: 0;
+
+    font-size: 1rem;
+
+    color: var(--c-lilas);
+
+    text-shadow: 0 0 8px rgba(183, 154, 242, 0.6);
 }
 
 .cartas-secao.secao-fechamento .cartas-secao-cabecalho {
@@ -477,37 +586,149 @@
 
 
 /* =========================================================
-   COLEÇÃO — ENVELOPES ESPALHADOS ORGANICAMENTE
+   CARROSSEL — fileira rolável com setas
    ========================================================= */
 
-.cartas-colecao {
+.cartas-carrossel {
+    position: relative;
+
     width: 100%;
 
+    padding: 0 68px;
+
+    box-sizing: border-box;
+}
+
+.cartas-colecao {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     align-items: flex-start;
 
-    row-gap: 34px;
-    column-gap: 26px;
+    gap: 30px;
 
-    padding: 10px 6px 20px;
+    /* respiro pra inclinação, hover e foto não serem cortados */
+    padding: 30px 14px 38px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x proximity;
+
+    scrollbar-width: none;
+}
+
+.cartas-colecao::-webkit-scrollbar {
+    display: none;
+}
+
+/* centraliza quando cabe; quando não cabe, começa na esquerda */
+
+.cartas-colecao > :first-child {
+    margin-left: auto;
+}
+
+.cartas-colecao > :last-child {
+    margin-right: auto;
+}
+
+.cartas-colecao > * {
+    scroll-snap-align: center;
+}
+
+.cartas-seta {
+    position: absolute;
+
+    top: 50%;
+
+    z-index: 3;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 54px;
+    height: 54px;
+
+    padding: 0;
+
+    transform: translateY(-50%);
+
+    border: 1px solid rgba(240, 139, 189, 0.4);
+    border-radius: 50%;
+
+    background: rgba(40, 12, 46, 0.6);
+
+    backdrop-filter: blur(4px);
+
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.cartas-seta svg {
+    width: 22px;
+    height: 22px;
+
+    fill: none;
+    stroke: var(--c-texto);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cartas-seta-anterior {
+    left: 0;
+}
+
+.cartas-seta-proxima {
+    right: 0;
+}
+
+.cartas-carrossel.tem-rolagem .cartas-seta {
+    display: flex;
+}
+
+.cartas-seta:hover:not(:disabled) {
+    background: rgba(179, 42, 119, 0.5);
+
+    border-color: rgba(249, 196, 220, 0.7);
+
+    transform: translateY(-50%) scale(1.06);
+}
+
+.cartas-seta:disabled {
+    opacity: 0.3;
+
+    cursor: default;
+}
+
+.cartas-seta:focus-visible {
+    outline: 2px solid rgba(183, 154, 242, 0.8);
+    outline-offset: 3px;
 }
 
 
 /* =========================================================
-   ENVELOPE
+   ENVELOPE — cartão rosa com folha lilás empilhada atrás
    ========================================================= */
 
 .carta-envelope {
     position: relative;
 
-    width: 148px;
-    height: 104px;
+    width: 176px;
+    height: 124px;
 
     flex-shrink: 0;
 
+    padding: 0;
+
     border: none;
+    background: none;
+
     cursor: pointer;
 
     transform: rotate(var(--rot, 0deg));
@@ -534,20 +755,80 @@
     animation-play-state: paused;
 }
 
+.carta-envelope:focus-visible {
+    outline: 2px solid rgba(183, 154, 242, 0.8);
+    outline-offset: 8px;
+}
+
 @keyframes envelope-flutuar {
 
-    0%, 100% {
-        translate: 0 0;
-    }
-
-    50% {
-        translate: 0 -6px;
-    }
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -6px; }
 
 }
 
 
-/* Corpo do envelope */
+/* Folha lilás empilhada atrás, deslocada */
+
+.carta-envelope-pilha {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    border-radius: 8px;
+
+    background: linear-gradient(
+        160deg,
+        #c9a0e6,
+        #9a68c8
+    );
+
+    opacity: 0.85;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.35),
+        0 0 22px rgba(183, 154, 242, 0.18);
+
+    transform: translate(7px, 6px) rotate(1.4deg);
+}
+
+
+/* Folha pautada que espia e sobe no hover */
+
+.carta-envelope-papel {
+    position: absolute;
+
+    top: 8px;
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+
+    z-index: 0;
+
+    border-radius: 3px;
+
+    background:
+        repeating-linear-gradient(
+            180deg,
+            #fff8f6 0,
+            #fff8f6 12px,
+            rgba(200, 120, 150, 0.2) 12px,
+            rgba(200, 120, 150, 0.2) 13px
+        );
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carta-envelope:hover .carta-envelope-papel,
+.carta-envelope:focus-visible .carta-envelope-papel {
+    transform: translateY(-22px);
+}
+
+
+/* Corpo do cartão */
 
 .carta-envelope-corpo {
     position: absolute;
@@ -555,22 +836,23 @@
 
     z-index: 1;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
     background: linear-gradient(
-        165deg,
-        #efe6da,
-        #ddd0c4
+        160deg,
+        #fadcd9,
+        #efc3cf
     );
 
     box-shadow:
-        0 12px 26px rgba(0, 0, 0, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        0 14px 28px rgba(0, 0, 0, 0.38),
+        0 0 24px rgba(240, 139, 189, 0.14),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
 
     overflow: hidden;
 }
 
-/* Textura de papel — bem sutil, dá vida ao "material" */
+/* Textura de papel — sutil */
 
 .carta-envelope-corpo::after {
     content: "";
@@ -588,27 +870,25 @@
     background-size: 100px 100px;
 }
 
-
-/* Formas levemente irregulares — cantos "artesanais",
-   diferentes por carta (determinístico, via hash do id) */
+/* Cantos levemente irregulares, diferentes por carta */
 
 .envelope-forma-1 .carta-envelope-corpo,
 .envelope-forma-1 .carta-envelope-aba {
-    border-radius: 5px 7px 6px 8px;
+    border-radius: 6px 8px 7px 9px;
 }
 
 .envelope-forma-2 .carta-envelope-corpo,
 .envelope-forma-2 .carta-envelope-aba {
-    border-radius: 8px 5px 7px 5px;
+    border-radius: 9px 6px 8px 6px;
 }
 
 .envelope-forma-3 .carta-envelope-corpo,
 .envelope-forma-3 .carta-envelope-aba {
-    border-radius: 6px 8px 5px 7px;
+    border-radius: 7px 9px 6px 8px;
 }
 
 
-/* Aba do envelope (triângulo) */
+/* Aba (triângulo) */
 
 .carta-envelope-aba {
     position: absolute;
@@ -617,12 +897,14 @@
     left: 0;
     right: 0;
 
-    height: 58px;
+    z-index: 2;
+
+    height: 74px;
 
     background: linear-gradient(
         165deg,
-        #e4d8c8,
-        #cfc0ae
+        #f3cdd2,
+        #e4b2c2
     );
 
     clip-path: polygon(0 0, 100% 0, 50% 68%);
@@ -637,20 +919,20 @@
 }
 
 
-/* Selo */
+/* Selo — rosa com coração (ela) / índigo com estrela (ele) */
 
 .carta-envelope-selo {
     position: absolute;
 
-    top: 50%;
+    top: 40%;
     left: 50%;
 
-    transform: translate(-50%, -46%);
+    transform: translate(-50%, -50%);
 
     z-index: 3;
 
-    width: 30px;
-    height: 30px;
+    width: 42px;
+    height: 42px;
 
     display: flex;
     align-items: center;
@@ -659,96 +941,116 @@
     border-radius: 50%;
 
     box-shadow:
-        0 3px 8px rgba(0, 0, 0, 0.35),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+        0 3px 10px rgba(0, 0, 0, 0.35),
+        0 0 0 3px rgba(255, 255, 255, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
 
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.05rem;
+    line-height: 1;
+    color: #fff;
 
     transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
 .carta-envelope:hover .carta-envelope-selo {
-    transform: translate(-50%, -46%) scale(1.12);
+    transform: translate(-50%, -50%) scale(1.1);
 }
 
 .carta-envelope.abrindo .carta-envelope-selo {
     opacity: 0;
-    transform: translate(-50%, -46%) scale(0.4);
+    transform: translate(-50%, -50%) scale(0.4);
 }
-
-
-/* Selo azul — cartas do Allan */
 
 .carta-envelope-selo-allan {
     background: radial-gradient(
         circle at 35% 30%,
-        #9ec3e8,
-        #4d7fae 70%
+        #8a90ee,
+        #4a4fb8 72%
     );
 }
-
-
-/* Selo rosa — cartas da Jhennyfer */
 
 .carta-envelope-selo-jhennyfer {
     background: radial-gradient(
         circle at 35% 30%,
-        #f0a8c4,
-        #b8567f 70%
+        #ff80b9,
+        #c22a7a 72%
     );
 }
 
 
-/* Frente do envelope — texto */
+/* Frente — texto à mão */
 
 .carta-envelope-frente {
     position: absolute;
 
     left: 0;
     right: 0;
-    bottom: 8px;
+    bottom: 9px;
 
-    z-index: 2;
+    z-index: 3;
 
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    gap: 2px;
+    gap: 0;
 
     padding: 0 12px;
 }
 
 .carta-envelope-para {
-    font-family: var(--font-heading);
-    font-size: 0.68rem;
-    font-style: italic;
+    font-family: var(--f-mao);
+    font-size: 0.98rem;
 
-    color: #4a3f36;
+    color: #5a2b3c;
 }
 
 .carta-envelope-data {
-    font-family: var(--font-body);
-    font-size: 0.56rem;
-    letter-spacing: 0.5px;
+    font-family: var(--f-mao);
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
 
-    color: #7a6d5f;
+    color: #8a5a6b;
 }
 
 
-/* Foto espiando atrás do envelope, tipo polaroid */
+/* Coração de contorno no canto — cor de quem escreveu */
+
+.carta-envelope-coracao-canto {
+    position: absolute;
+
+    right: 11px;
+    bottom: 9px;
+
+    z-index: 3;
+
+    font-size: 1.1rem;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+.autor-ela .carta-envelope-coracao-canto {
+    color: #dc4f98;
+}
+
+.autor-eu .carta-envelope-coracao-canto {
+    color: #7468de;
+}
+
+
+/* Foto espiando, tipo polaroid */
 
 .carta-envelope-foto {
     position: absolute;
 
-    top: -14px;
-    left: -10px;
+    top: -16px;
+    left: -12px;
 
     z-index: 0;
 
-    width: 46px;
-    height: 46px;
+    width: 52px;
+    height: 52px;
 
     padding: 3px;
 
@@ -773,8 +1075,7 @@
 }
 
 
-/* Fita decorativa (washi tape) — em todo envelope, como se
-   estivesse colado numa página de álbum */
+/* Fita decorativa (washi tape) */
 
 .carta-envelope-fita-decorativa {
     position: absolute;
@@ -782,158 +1083,295 @@
     top: -9px;
     left: 50%;
 
-    z-index: 2;
+    z-index: 4;
 
-    width: 46px;
+    width: 50px;
     height: 18px;
 
     background: linear-gradient(
         180deg,
-        rgba(230, 190, 205, 0.55),
-        rgba(210, 165, 185, 0.4)
+        rgba(214, 150, 190, 0.7),
+        rgba(190, 125, 170, 0.5)
     );
 
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 
     transform: translateX(-50%) rotate(-3deg);
 
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 
-/* Coraçõezinhos discretos nos cantos do envelope */
+/* =========================================================
+   BILHETINHOS — mural de post-its
+   ========================================================= */
 
-.carta-envelope-coracao-canto {
+.bilhetes-mural {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+
+    gap: 34px 28px;
+
+    width: 100%;
+    max-width: 860px;
+
+    padding: 22px 10px 18px;
+
+    box-sizing: border-box;
+}
+
+.bilhetes-mais {
+    margin-top: 18px;
+    padding: 4px 8px;
+
+    border: none;
+    background: transparent;
+
+    font-family: var(--f-escrita);
+    font-size: 1.15rem;
+
+    color: var(--c-rosa-claro);
+
+    opacity: 0.85;
+
+    cursor: pointer;
+
+    transition: opacity 0.3s ease;
+}
+
+.bilhetes-mais:hover,
+.bilhetes-mais:focus-visible {
+    opacity: 1;
+}
+
+.bilhete {
+    --b-fundo: #f8ebbd;
+    --b-tinta: #5a4720;
+    --b-fita: rgba(230, 190, 205, 0.6);
+    --b-dobra: rgba(0, 0, 0, 0.16);
+
+    position: relative;
+
+    width: 172px;
+    min-height: 150px;
+
+    box-sizing: border-box;
+
+    color: var(--b-tinta);
+
+    transform:
+        translateY(var(--dy, 0))
+        rotate(var(--rot, 0deg));
+
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38));
+
+    outline: none;
+
+    transition:
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.4s ease;
+}
+
+.bilhete.bilhete-longo {
+    width: 224px;
+}
+
+.bilhete:hover,
+.bilhete:focus-visible {
+    z-index: 5;
+
+    transform:
+        translateY(calc(var(--dy, 0px) - 6px))
+        rotate(0deg)
+        scale(1.04);
+
+    filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.45));
+}
+
+.bilhete:focus-visible {
+    outline: 2px solid rgba(183, 154, 242, 0.8);
+    outline-offset: 6px;
+}
+
+.bilhete-papel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    min-height: 150px;
+
+    padding: 28px 18px 14px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.34),
+            transparent 46%
+        ),
+        var(--b-fundo);
+
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 22px),
+        calc(100% - 22px) 100%,
+        0 100%
+    );
+}
+
+/* Canto dobrado */
+
+.bilhete::after {
+    content: "";
+
     position: absolute;
 
-    bottom: 7px;
+    right: 0;
+    bottom: 0;
 
-    z-index: 2;
+    width: 22px;
+    height: 22px;
 
-    font-size: 0.6rem;
+    background:
+        linear-gradient(
+            45deg,
+            var(--b-dobra),
+            rgba(255, 255, 255, 0.45)
+        ),
+        var(--b-fundo);
 
-    color: rgba(122, 56, 78, 0.4);
+    clip-path: polygon(100% 0, 0 100%, 0 0);
 
     pointer-events: none;
 }
 
-.carta-envelope-coracao-canto.canto-esquerdo {
-    left: 9px;
+.bilhete-texto {
+    margin: 0;
+
+    font-family: var(--f-mao);
+    font-size: 1.1rem;
+    line-height: 1.38;
+
+    text-wrap: pretty;
+    white-space: pre-line;
+
+    color: var(--b-tinta);
 }
 
-.carta-envelope-coracao-canto.canto-direito {
-    right: 9px;
+.bilhete-texto strong {
+    font-weight: 700;
 }
 
+.bilhete-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 
-/* Fitinha — só na carta em destaque */
+    gap: 10px;
 
-.carta-envelope-fita {
+    padding-right: 14px;
+}
+
+.bilhete-assinatura {
+    font-family: var(--f-mao);
+    font-size: 0.95rem;
+
+    color: var(--b-tinta);
+
+    opacity: 0.85;
+}
+
+.bilhete-assinatura::after {
+    content: " ♡";
+}
+
+.bilhete-data {
+    font-family: var(--f-corpo);
+    font-size: 0.56rem;
+    letter-spacing: 0.4px;
+
+    color: var(--b-tinta);
+
+    opacity: 0.55;
+}
+
+/* Fita adesiva — três posições, escolhidas pelo id */
+
+.bilhete-fita {
     position: absolute;
 
-    top: -6px;
-    right: 14px;
+    z-index: 2;
 
-    z-index: 4;
+    width: 54px;
+    height: 18px;
 
-    width: 14px;
-    height: 34px;
+    background:
+        linear-gradient(
+            180deg,
+            var(--b-fita),
+            rgba(255, 255, 255, 0.25)
+        );
 
-    background: linear-gradient(
-        180deg,
-        #c9a7f5,
-        #9a6fd4
-    );
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
 
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
-
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
 }
 
+.bilhete-fita-1 .bilhete-fita {
+    top: -9px;
+    left: 50%;
 
-/* =========================================================
-   BLOCO DE DESTAQUE — SOZINHO NO TOPO DA COLEÇÃO
-   ========================================================= */
-
-.cartas-destaque-bloco {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    margin-bottom: 8px;
+    transform: translateX(-50%) rotate(-3deg);
 }
 
-.cartas-destaque-legenda {
-    display: block;
+.bilhete-fita-2 .bilhete-fita {
+    top: -4px;
+    left: -14px;
 
-    margin-bottom: 28px;
-
-    font-family: var(--font-heading);
-    font-size: 0.82rem;
-    font-style: italic;
-
-    color: var(--color-text-muted);
-
-    opacity: 0.75;
+    transform: rotate(-38deg);
 }
 
-.cartas-destaque-bloco .carta-envelope {
-    width: 210px;
-    height: 148px;
-}
-/* Envelope de destaque tem seu próprio material — dourado suave,
-   diferenciando das cartas comuns (que são cor de papel neutro) */
-.cartas-destaque-bloco .carta-envelope-corpo {
-    background: linear-gradient(165deg, #f7ecd3, #e8d3a8);
+.bilhete-fita-3 .bilhete-fita {
+    top: -4px;
+    right: -14px;
 
-    box-shadow:
-        0 14px 30px rgba(0, 0, 0, 0.4),
-        0 0 26px rgba(245, 217, 122, 0.18),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    transform: rotate(38deg);
 }
 
-.cartas-destaque-bloco .carta-envelope-aba {
-    background: linear-gradient(165deg, #efe0bd, #ddc48c);
-}
-.cartas-destaque-bloco .carta-envelope-aba {
-    height: 82px;
-}
-
-.cartas-destaque-bloco .carta-envelope-selo {
-    width: 40px;
-    height: 40px;
-
-    font-size: 1.05rem;
+.bilhete-cor-rosa {
+    --b-fundo: #f7cbd9;
+    --b-tinta: #5b2a3f;
+    --b-fita: rgba(255, 244, 190, 0.7);
 }
 
-.cartas-destaque-bloco .carta-envelope-para {
-    font-size: 0.85rem;
+.bilhete-cor-lilas {
+    --b-fundo: #dccbf4;
+    --b-tinta: #3f2b63;
+    --b-fita: rgba(247, 203, 217, 0.7);
 }
 
-.cartas-destaque-bloco .carta-envelope-data {
-    font-size: 0.64rem;
+.bilhete-cor-azul {
+    --b-fundo: #c9def4;
+    --b-tinta: #23415f;
+    --b-fita: rgba(247, 203, 217, 0.7);
 }
 
-.cartas-colecao-destaque {
-    row-gap: 30px;
-    column-gap: 34px;
+.bilhete-cor-creme {
+    --b-fundo: #f8ebbd;
+    --b-tinta: #5a4720;
+    --b-fita: rgba(220, 203, 244, 0.7);
 }
 
-
-
-
-
-/* =========================================================
-   COLEÇÃO GERAL — SEM TÍTULO DE SEÇÃO
-   ========================================================= */
-
-.cartas-colecao-geral {
-    max-width: 900px;
-
-    margin: 0 auto;
-
-    row-gap: 40px;
-    column-gap: 30px;
+.bilhete-cor-menta {
+    --b-fundo: #cfeedd;
+    --b-tinta: #24503a;
+    --b-fita: rgba(247, 203, 217, 0.7);
 }
 
 
@@ -946,10 +1384,10 @@
 
     margin: 60px auto;
 
-    color: var(--color-text-muted);
+    color: var(--c-texto-suave);
 
-    font-family: var(--font-heading);
-    font-style: italic;
+    font-family: var(--f-escrita);
+    font-size: 1.5rem;
 }
 
 
@@ -968,7 +1406,7 @@
 
     padding: 28px;
 
-    background: rgba(4, 4, 10, 0);
+    background: rgba(10, 3, 12, 0);
 
     backdrop-filter: blur(0px);
 
@@ -984,7 +1422,7 @@
 }
 
 .carta-aberta-overlay.aberta {
-    background: rgba(4, 4, 10, 0.88);
+    background: rgba(10, 3, 12, 0.86);
     backdrop-filter: blur(8px);
 
     pointer-events: auto;
@@ -1004,12 +1442,13 @@
     background:
         linear-gradient(
             172deg,
-            #f7f1e6,
-            #ece2d1
+            #fcf3ee,
+            #f2e1da
         );
 
     box-shadow:
         0 50px 120px rgba(0, 0, 0, 0.65),
+        0 0 40px rgba(240, 139, 189, 0.12),
         0 0 0 1px rgba(0, 0, 0, 0.04);
 
     opacity: 0;
@@ -1060,12 +1499,12 @@
 
     margin-bottom: 22px;
 
-    font-family: var(--font-body);
+    font-family: var(--f-corpo);
     font-size: 0.68rem;
     letter-spacing: 1px;
     text-transform: uppercase;
 
-    color: #9a8a76;
+    color: #a0838c;
 
     opacity: 0;
 
@@ -1075,12 +1514,12 @@
 .carta-aberta-titulo {
     margin: 0 0 26px;
 
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 1.4rem;
-    line-height: 1.4;
+    font-family: var(--f-escrita);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.2;
 
-    color: #2c2620;
+    color: #4a1f36;
 
     opacity: 0;
     transform: translateY(6px);
@@ -1093,12 +1532,12 @@
 .carta-aberta-texto {
     margin: 0 0 30px;
 
-    font-family: "Patrick Hand", var(--font-heading), cursive;
+    font-family: var(--f-mao);
     font-style: normal;
     font-size: 1.15rem;
     line-height: 1.85;
 
-    color: #362f27;
+    color: #3b2a30;
 
     white-space: pre-line;
 
@@ -1112,7 +1551,7 @@
 
 .carta-aberta-texto strong {
     font-weight: 700;
-    color: #241f19;
+    color: #2a1a20;
 }
 
 .carta-aberta-rodape {
@@ -1126,11 +1565,10 @@
 
     border-top: 1px solid rgba(0, 0, 0, 0.08);
 
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 0.92rem;
+    font-family: var(--f-escrita);
+    font-size: 1.35rem;
 
-    color: #4a3f36;
+    color: #6a2c48;
 
     opacity: 0;
 
@@ -1138,8 +1576,8 @@
 }
 
 .carta-aberta-despedida {
-    color: #7a6d5f;
-    font-size: 0.82rem;
+    color: #8a5a6b;
+    font-size: 1.1rem;
 }
 
 .carta-aberta-overlay.aberta .carta-aberta-data,
@@ -1159,7 +1597,6 @@
     display: block;
 
     width: 92px;
-
     height: 110px;
 
     object-fit: cover;
@@ -1214,7 +1651,7 @@
     filter:
         sepia(1)
         saturate(2.2)
-        hue-rotate(230deg)
+        hue-rotate(290deg)
         brightness(0.95);
 
     opacity: 0;
@@ -1262,12 +1699,702 @@
 
 @keyframes carta-coracao-flutuar {
 
-    0%, 100% {
-        transform: translateY(0) scale(1);
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.1); }
+
+}
+
+
+/* =========================================================
+   EFEITOS — camada criada pelo JS (iniciarEfeitosCartas)
+   Só usa transform/opacity, então é leve.
+   ========================================================= */
+
+.view[data-view="cartas"] > .cartas-efeitos {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+
+/* Corações subindo */
+
+.cartas-efeito-coracao {
+    position: absolute;
+
+    left: var(--x);
+    bottom: -40px;
+
+    font-size: var(--tam, 16px);
+    line-height: 1;
+
+    color: var(--cor, #f08bbd);
+
+    text-shadow: 0 0 8px currentColor;
+
+    opacity: 0;
+
+    will-change: transform, opacity;
+
+    animation: cartas-subir var(--dur, 12s) linear forwards;
+}
+
+@keyframes cartas-subir {
+
+    0% {
+        transform: translate(0, 0) scale(0.7);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: var(--op, 0.55);
     }
 
     50% {
-        transform: translateY(-10px) scale(1.1);
+        transform: translate(var(--deriva, 30px), -55vh) scale(1);
+    }
+
+    88% {
+        opacity: var(--op, 0.55);
+    }
+
+    100% {
+        transform: translate(calc(var(--deriva, 30px) * -0.5), -115vh) scale(1.1);
+        opacity: 0;
+    }
+
+}
+
+
+/* Brilhos que piscam */
+
+.cartas-efeito-brilho {
+    position: absolute;
+
+    left: var(--x);
+    top: var(--y);
+
+    font-size: var(--tam, 12px);
+    line-height: 1;
+
+    color: #ffe6f2;
+
+    text-shadow: 0 0 8px rgba(255, 200, 230, 0.9);
+
+    opacity: 0.2;
+
+    animation:
+        cartas-brilho var(--dur, 4s) ease-in-out infinite;
+
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes cartas-brilho {
+
+    0%, 100% {
+        opacity: 0.15;
+        transform: scale(0.6) rotate(0deg);
+    }
+
+    50% {
+        opacity: 0.95;
+        transform: scale(1.1) rotate(20deg);
+    }
+
+}
+
+
+/* Cometa — cabeça brilhante à esquerda, cauda se dissolvendo à direita */
+
+.cartas-cometa {
+    position: absolute;
+
+    left: var(--x0);
+    top: var(--y0);
+
+    width: var(--comp, 150px);
+    height: 2px;
+
+    border-radius: 2px;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        rgba(255, 200, 230, 0.55) 35%,
+        transparent
+    );
+
+    rotate: var(--ang, -32deg);
+
+    opacity: 0;
+
+    filter: drop-shadow(0 0 4px rgba(255, 210, 235, 0.9));
+
+    animation:
+        cartas-cometa var(--dur, 1.4s) cubic-bezier(0.25, 0.6, 0.4, 1) forwards;
+}
+
+.cartas-cometa::before {
+    content: "";
+
+    position: absolute;
+
+    left: -3px;
+    top: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    margin-top: -3px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow: 0 0 10px 3px rgba(255, 210, 235, 0.9);
+}
+
+@keyframes cartas-cometa {
+
+    0% {
+        translate: 0 0;
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    100% {
+        translate: var(--dx, -500px) var(--dy, 300px);
+        opacity: 0;
+    }
+
+}
+
+
+/* Estouro de corações ao clicar no fundo */
+
+.cartas-efeito-estouro {
+    position: absolute;
+
+    left: var(--x);
+    top: var(--y);
+
+    font-size: var(--tam, 14px);
+    line-height: 1;
+
+    color: var(--cor, #f08bbd);
+
+    text-shadow: 0 0 8px currentColor;
+
+    animation: cartas-estouro 0.95s ease-out forwards;
+}
+
+@keyframes cartas-estouro {
+
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(
+                calc(-50% + var(--dx, 0px)),
+                calc(-50% + var(--dy, -40px))
+            )
+            scale(1);
+        opacity: 0;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cartas-efeitos {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   SEM "Amor," AUTOMÁTICO + FOTO DA CARTA CLICÁVEL
+   ========================================================= */
+
+.carta-aberta-despedida {
+    display: none;
+}
+
+.carta-aberta-foto {
+    cursor: zoom-in;
+}
+
+
+/* =========================================================
+   BILHETINHO COM FOTO — a foto é a capa (polaroid colada)
+   ========================================================= */
+
+.bilhete {
+    cursor: pointer;
+}
+
+.bilhete.bilhete-com-foto {
+    width: 152px;
+    min-height: 0;
+}
+
+.bilhete-com-foto .bilhete-papel {
+    gap: 10px;
+
+    min-height: 0;
+
+    padding: 20px 11px 11px;
+}
+
+/* Sem limite de tamanho: texto muito longo é resumido no mural
+   (8 linhas) e aparece inteiro na tela expandida. */
+
+.bilhete-texto {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
+
+    overflow: hidden;
+}
+
+/* A foto é a capa; o texto fica só na tela expandida */
+
+.bilhete-com-foto .bilhete-texto {
+    display: none;
+}
+
+.bilhete-com-foto .bilhete-rodape {
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 0;
+
+    padding-right: 16px;
+}
+
+.bilhete-com-foto .bilhete-assinatura {
+    font-size: 0.9rem;
+}
+
+.bilhete-capa {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    box-sizing: border-box;
+
+    /* sem isso a altura da imagem estica a moldura */
+    overflow: hidden;
+
+    padding: 5px;
+
+    border-radius: 2px;
+
+    background: #fff;
+
+    box-shadow:
+        0 5px 12px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(0, 0, 0, 0.04);
+
+    transform: rotate(var(--capa-rot, -1.5deg));
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bilhete-capa img {
+    position: absolute;
+
+    inset: 5px;
+
+    display: block;
+
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+
+    object-fit: cover;
+
+    border-radius: 1px;
+}
+
+.bilhete:hover .bilhete-capa,
+.bilhete:focus-visible .bilhete-capa {
+    transform: rotate(0deg) scale(1.02);
+}
+
+/* =========================================================
+   BILHETE EXPANDIDO — tela de leitura
+   ========================================================= */
+
+.bilhete-aberto-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 6000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 28px;
+
+    box-sizing: border-box;
+
+    background: rgba(10, 3, 12, 0);
+
+    backdrop-filter: blur(0px);
+
+    transition:
+        background 0.6s ease,
+        backdrop-filter 0.6s ease;
+
+    pointer-events: none;
+}
+
+.bilhete-aberto-overlay.oculto {
+    display: none;
+}
+
+.bilhete-aberto-overlay.aberta {
+    background: rgba(10, 3, 12, 0.86);
+
+    backdrop-filter: blur(8px);
+
+    pointer-events: auto;
+}
+
+.bilhete-aberto-caixa {
+    /* as cores (--b-fundo, --b-tinta, --b-fita) vêm das classes
+       .bilhete-cor-*, as mesmas do bilhetinho no mural */
+
+    position: relative;
+
+    width: min(440px, 100%);
+
+    opacity: 0;
+
+    transform-origin: var(--origem-x, 50%) var(--origem-y, 50%);
+    transform: scale(0.3) rotate(-5deg);
+
+    transition:
+        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bilhete-aberto-overlay.aberta .bilhete-aberto-caixa {
+    opacity: 1;
+
+    transform: scale(1) rotate(-0.8deg);
+}
+
+.bilhete-aberto-fita {
+    position: absolute;
+
+    top: -12px;
+    left: 50%;
+
+    z-index: 2;
+
+    width: 82px;
+    height: 24px;
+
+    transform: translateX(-50%) rotate(-3deg);
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--b-fita, rgba(230, 190, 205, 0.6)),
+            rgba(255, 255, 255, 0.25)
+        );
+
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.22);
+
+    opacity: 0.92;
+}
+
+.bilhete-aberto-folha {
+    position: relative;
+
+    max-height: 86vh;
+    overflow-y: auto;
+
+    padding: 44px 34px 26px;
+
+    box-sizing: border-box;
+
+    border-radius: 3px;
+
+    color: var(--b-tinta, #5a4720);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.34),
+            transparent 40%
+        ),
+        var(--b-fundo, #f8ebbd);
+
+    box-shadow:
+        0 40px 100px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(240, 139, 189, 0.1);
+}
+
+.bilhete-aberto-fechar {
+    position: absolute;
+
+    top: 12px;
+    right: 14px;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 0, 0, 0.14);
+
+    background: transparent;
+
+    color: var(--b-tinta, #5a4720);
+
+    font-size: 1.15rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    opacity: 0.7;
+
+    transition: opacity 0.3s ease;
+}
+
+.bilhete-aberto-fechar:hover,
+.bilhete-aberto-fechar:focus-visible {
+    opacity: 1;
+}
+
+/* Foto: prévia cortada; clicar abre inteira */
+
+.bilhete-aberto-foto {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 4 / 3;
+
+    box-sizing: border-box;
+
+    margin: 0 0 22px;
+    padding: 7px;
+
+    overflow: hidden;
+
+    border: none;
+    border-radius: 2px;
+
+    background: #fff;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+
+    transform: rotate(-1.5deg);
+
+    cursor: zoom-in;
+
+    transition: transform 0.4s ease;
+}
+
+.bilhete-aberto-foto[hidden] {
+    display: none;
+}
+
+.bilhete-aberto-foto:hover,
+.bilhete-aberto-foto:focus-visible {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.bilhete-aberto-foto img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 1px;
+}
+
+.bilhete-aberto-texto {
+    margin: 0 0 24px;
+
+    font-family: var(--f-mao);
+    font-size: 1.45rem;
+    line-height: 1.5;
+
+    white-space: pre-line;
+
+    text-wrap: pretty;
+}
+
+.bilhete-aberto-texto strong {
+    font-weight: 700;
+}
+
+.bilhete-aberto-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    gap: 14px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bilhete-aberto-assinatura {
+    font-family: var(--f-mao);
+    font-size: 1.2rem;
+
+    opacity: 0.9;
+}
+
+.bilhete-aberto-data {
+    font-family: var(--f-corpo);
+    font-size: 0.66rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   LIGHTBOX — foto inteira, sem corte
+   ========================================================= */
+
+.cartas-lightbox {
+    position: fixed;
+    inset: 0;
+
+    z-index: 7000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    background: rgba(6, 2, 8, 0);
+
+    backdrop-filter: blur(0px);
+
+    cursor: zoom-out;
+
+    transition:
+        background 0.4s ease,
+        backdrop-filter 0.4s ease;
+
+    pointer-events: none;
+}
+
+.cartas-lightbox.oculto {
+    display: none;
+}
+
+.cartas-lightbox.aberta {
+    background: rgba(6, 2, 8, 0.92);
+
+    backdrop-filter: blur(10px);
+
+    pointer-events: auto;
+}
+
+.cartas-lightbox-img {
+    max-width: min(94vw, 1200px);
+    max-height: 88vh;
+
+    width: auto;
+    height: auto;
+
+    box-sizing: border-box;
+
+    padding: 8px;
+
+    object-fit: contain;
+
+    border-radius: 3px;
+
+    background: #fff;
+
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+
+    opacity: 0;
+    transform: scale(0.92);
+
+    transition:
+        opacity 0.4s ease,
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cartas-lightbox.aberta .cartas-lightbox-img {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.cartas-lightbox-fechar {
+    position: absolute;
+
+    top: 18px;
+    right: 20px;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    background: rgba(20, 8, 24, 0.6);
+
+    color: #fff;
+
+    font-size: 1.4rem;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+@media (max-width: 760px) {
+
+    .bilhete.bilhete-com-foto {
+        width: 138px;
+    }
+
+    .bilhete-aberto-overlay {
+        padding: 18px;
+    }
+
+    .bilhete-aberto-folha {
+        padding: 38px 22px 22px;
+    }
+
+    .bilhete-aberto-texto {
+        font-size: 1.25rem;
     }
 
 }
@@ -1288,17 +2415,18 @@
 
 /* =========================================================
    RESPONSIVO — MOBILE
+   Setas somem; a fileira é deslizada com o dedo.
    ========================================================= */
 
 @media (max-width: 760px) {
 
     .view[data-view="cartas"] {
-        padding-top: 80px;
+        padding-top: 76px;
         padding-bottom: 90px;
     }
 
     .cartas-intro-titulo {
-        font-size: 1.5rem;
+        font-size: 2.5rem;
     }
 
     .cartas-intro-frase {
@@ -1306,64 +2434,102 @@
     }
 
     .cartas-arquivo {
-        width: calc(100% - 26px);
-        gap: 54px;
+        width: calc(100% - 20px);
+        gap: 34px;
+    }
+
+    .cartas-secao-cabecalho {
+        gap: 10px;
+    }
+
+    .cartas-secao-linha {
+        max-width: 48px;
+    }
+
+    .cartas-secao-icone svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .cartas-secao-titulo {
+        font-size: 1.5rem;
+    }
+
+    .cartas-carrossel {
+        padding: 0;
+    }
+
+    .cartas-seta {
+        display: none !important;
     }
 
     .cartas-colecao {
-        column-gap: 16px;
-        row-gap: 26px;
+        gap: 22px;
+
+        padding-left: 18px;
+        padding-right: 18px;
     }
 
     .carta-envelope {
-        width: 128px;
-        height: 90px;
+        width: 142px;
+        height: 100px;
     }
 
     .carta-envelope-aba {
-        height: 50px;
+        height: 60px;
     }
 
     .carta-envelope-selo {
-        width: 26px;
-        height: 26px;
-        font-size: 0.7rem;
+        width: 34px;
+        height: 34px;
+
+        font-size: 0.9rem;
     }
 
     .carta-envelope-para {
-        font-size: 0.62rem;
+        font-size: 0.85rem;
     }
 
     .carta-envelope-data {
-        font-size: 0.52rem;
+        font-size: 0.72rem;
     }
 
-    .cartas-destaque-bloco .carta-envelope {
-        width: 140px;
-        height: 98px;
+    .carta-envelope-coracao-canto {
+        font-size: 0.95rem;
     }
 
-    .cartas-destaque-bloco .carta-envelope-aba {
-        height: 54px;
+    .carta-envelope-foto {
+        width: 42px;
+        height: 42px;
+
+        top: -12px;
+        left: -9px;
     }
 
-    .cartas-destaque-bloco .carta-envelope-selo {
-        width: 30px;
-        height: 30px;
-        font-size: 0.8rem;
+    .bilhetes-mural {
+        gap: 28px 16px;
+
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
-    .cartas-destaque-bloco .carta-envelope-para {
-        font-size: 0.7rem;
+    .bilhete {
+        width: 148px;
+        min-height: 130px;
     }
 
-    .cartas-destaque-bloco .carta-envelope-data {
-        font-size: 0.54rem;
+    .bilhete.bilhete-longo {
+        width: 148px;
     }
 
-    .cartas-colecao-destaque {
-        column-gap: 18px;
-        row-gap: 24px;
+    .bilhete-papel {
+        min-height: 130px;
+
+        padding: 24px 14px 12px;
+    }
+
+    .bilhete-texto {
+        font-size: 1rem;
     }
 
     .carta-aberta-folha {
@@ -1371,7 +2537,7 @@
     }
 
     .carta-aberta-titulo {
-        font-size: 1.15rem;
+        font-size: 1.6rem;
     }
 
     .carta-aberta-texto {
@@ -1388,34 +2554,30 @@
         height: 216px;
     }
 
-    .carta-envelope-foto {
-        width: 38px;
-        height: 38px;
+}
 
-        top: -11px;
-        left: -8px;
+@media (max-width: 380px) {
+
+    .bilhete,
+    .bilhete.bilhete-longo {
+        width: 138px;
     }
 
 }
-@media (max-width: 380px) {
 
-    .cartas-destaque-bloco .carta-envelope {
-        width: 122px;
-        height: 86px;
-    }
 
-    .cartas-destaque-bloco .carta-envelope-aba {
-        height: 47px;
-    }
+/* =========================================================
+   MOVIMENTO REDUZIDO
+   ========================================================= */
 
-    .cartas-destaque-bloco .carta-envelope-selo {
-        width: 26px;
-        height: 26px;
-        font-size: 0.7rem;
-    }
+@media (prefers-reduced-motion: reduce) {
 
-    .cartas-colecao-destaque {
-        column-gap: 12px;
+    .carta-envelope,
+    .cartas-estrela-sutil,
+    .cartas-coracao-sutil,
+    .cartas-intro-simbolo,
+    .view[data-view="cartas"]::before {
+        animation: none;
     }
 
 }
