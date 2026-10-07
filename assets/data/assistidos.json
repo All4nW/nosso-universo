@@ -42,8 +42,8 @@
         },
         "status": "assistindo",
         "progresso": {
-            "temporada": 1,
-            "episodio": 8,
+            "temporada": 2,
+            "episodio": 1,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -633,8 +633,8 @@
         },
         "status": "assistindo",
         "progresso": {
-            "temporada": 1,
-            "episodio": 6,
+            "temporada": 2,
+            "episodio": 1,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },

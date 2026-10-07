@@ -17,11 +17,69 @@ let carrosseisAtualizadores = [];
 // O caminho é relativo ao HTML (o mesmo do letters.json),
 // por isso é aplicado aqui e não no CSS.
 
-const CARTAS_FUNDO_DESKTOP = "assets/images/cartas/fundo_cartas.gif";
+// Cada fundo é procurado pela ordem das extensões abaixo; vale a
+// primeira que existir. Se quiser, deixe só a extensão real do
+// seu arquivo em cada lista (evita tentativas extras).
+// No GitHub Pages maiúsculas e minúsculas contam (.JPG ≠ .jpg).
+
+const CARTAS_FUNDO_DESKTOP = {
+    base: "assets/images/cartas/fundo_cartas",
+    extensoes: ["gif", "png", "webp", "jpg", "jpeg"]
+};
 
 // Versão vertical, usada no celular (mesma largura do
 // breakpoint mobile do CSS).
-const CARTAS_FUNDO_MOBILE = "assets/images/cartas/fundo_cartas_1.gif";
+const CARTAS_FUNDO_MOBILE = {
+    base: "assets/images/cartas/fundo_cartas_1",
+    extensoes: ["jpg", "jpeg", "webp", "avif", "JPG", "JPEG", "WEBP"]
+};
+
+const cartasFundosEncontrados = {};
+
+function descobrirFundoCartas(config) {
+
+    if (cartasFundosEncontrados[config.base]) {
+
+        return cartasFundosEncontrados[config.base];
+
+    }
+
+    cartasFundosEncontrados[config.base] =
+        (async () => {
+
+            for (const extensao of config.extensoes) {
+
+                const url =
+                    `${config.base}.${extensao}`;
+
+                const existe =
+                    await new Promise(resolver => {
+
+                        const imagem = new Image();
+
+                        imagem.onload = () => resolver(true);
+                        imagem.onerror = () => resolver(false);
+
+                        imagem.src = url;
+
+                    });
+
+                if (existe) return url;
+
+            }
+
+            console.warn(
+                "Fundo das cartas não encontrado:",
+                config.base
+            );
+
+            return null;
+
+        })();
+
+    return cartasFundosEncontrados[config.base];
+
+}
 
 function aplicarFundoCartas() {
 
@@ -33,10 +91,21 @@ function aplicarFundoCartas() {
     const mobile =
         window.matchMedia("(max-width: 760px)");
 
-    const aplicar = () => {
+    const aplicar = async () => {
 
-        pagina.style.backgroundImage =
-            `url("${mobile.matches ? CARTAS_FUNDO_MOBILE : CARTAS_FUNDO_DESKTOP}")`;
+        const url =
+            await descobrirFundoCartas(
+                mobile.matches
+                    ? CARTAS_FUNDO_MOBILE
+                    : CARTAS_FUNDO_DESKTOP
+            );
+
+        if (url) {
+
+            pagina.style.backgroundImage =
+                `url("${url}")`;
+
+        }
 
     };
 
@@ -117,13 +186,6 @@ const ICONES_CATEGORIA = {
 
 const BILHETES_CORES =
     ["rosa", "lilas", "azul", "creme", "menta"];
-
-// Quantos aparecem na visão "Todas". No filtro
-// "Bilhetinhos" (ou numa busca) aparecem todos.
-const BILHETES_LIMITE_INICIAL = 6;
-
-// Acima disso o bilhete ganha uma folha mais larga.
-const BILHETES_CARACTERES_LONGO = 90;
 
 function ehBilhete(item) {
 
@@ -631,12 +693,8 @@ function renderizarArquivo() {
 
     if (bilhetes.length) {
 
-        const mostrarTodos =
-            cartasFiltroAtivo !== "todas" ||
-            cartasBuscaAtual.trim() !== "";
-
         arquivo.appendChild(
-            criarBlocoBilhetes(bilhetes, mostrarTodos)
+            criarBlocoBilhetes(bilhetes)
         );
 
     }
@@ -666,7 +724,7 @@ function renderizarArquivo() {
 // BLOCO DE BILHETINHOS
 // =====================================================
 
-function criarBlocoBilhetes(bilhetes, mostrarTodos) {
+function criarBlocoBilhetes(bilhetes) {
 
     const wrapper =
         document.createElement("section");
@@ -682,67 +740,25 @@ function criarBlocoBilhetes(bilhetes, mostrarTodos) {
     );
 
 
-    const visiveis =
-        mostrarTodos
-            ? bilhetes
-            : bilhetes.slice(0, BILHETES_LIMITE_INICIAL);
+    // Mesma fileira deslizante das cartas.
 
-
-    const mural =
+    const colecao =
         document.createElement("div");
 
-    mural.className =
-        "bilhetes-mural";
+    colecao.className =
+        "cartas-colecao bilhetes-colecao";
 
-    visiveis.forEach(item => {
+    bilhetes.forEach(item => {
 
-        mural.appendChild(
+        colecao.appendChild(
             criarBilhete(item)
         );
 
     });
 
-    wrapper.appendChild(mural);
-
-
-    if (visiveis.length < bilhetes.length) {
-
-        const mais =
-            document.createElement("button");
-
-        mais.type = "button";
-
-        mais.className =
-            "bilhetes-mais";
-
-        mais.textContent =
-            `ver todos os ${bilhetes.length} bilhetinhos ♡`;
-
-        mais.addEventListener("click", () => {
-
-            const botaoFiltro =
-                document.querySelector(
-                    "#cartas-filtros [data-filtro='bilhetes']"
-                );
-
-            if (botaoFiltro) {
-
-                botaoFiltro.click();
-
-            } else {
-
-                cartasFiltroAtivo = "bilhetes";
-
-                renderizarArquivo();
-
-            }
-
-        });
-
-        wrapper.appendChild(mais);
-
-    }
-
+    wrapper.appendChild(
+        criarCarrossel(colecao)
+    );
 
     return wrapper;
 
@@ -801,13 +817,6 @@ function criarBilhete(item) {
     const temFoto =
         Boolean(item.foto);
 
-    // Com foto o texto é cortado em 3 linhas no mural
-    // (inteiro na tela expandida), então a folha larga não precisa.
-
-    const longo =
-        !temFoto &&
-        mensagem.length > BILHETES_CARACTERES_LONGO;
-
 
     const bilhete =
         document.createElement("article");
@@ -823,7 +832,6 @@ function criarBilhete(item) {
 
     bilhete.className =
         `bilhete bilhete-cor-${cor} bilhete-fita-${variacaoFita}` +
-        (longo ? " bilhete-longo" : "") +
         (temFoto ? " bilhete-com-foto" : "");
 
     bilhete.style.setProperty("--rot", `${(h1 - 0.5) * 8}deg`);
@@ -1576,16 +1584,14 @@ function configurarEventosCartas() {
     cartasEventosConfigurados = true;
 
 
-    const busca =
-        document.getElementById("cartas-busca");
+    // O campo de busca foi removido da página (o CSS também o
+    // esconde; dá pra apagar o bloco do index.html).
 
-    busca?.addEventListener("input", evento => {
+    document.querySelector(".cartas-busca-wrapper")?.remove();
 
-        cartasBuscaAtual = evento.target.value;
+    document.getElementById("cartas-busca")?.remove();
 
-        renderizarArquivo();
-
-    });
+    cartasBuscaAtual = "";
 
 
     const filtros =
