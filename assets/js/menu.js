@@ -194,7 +194,8 @@ function ativarComportamentoDoSom() {
     let mutado = false;
     let arrastandoProgresso = false;
 
-    let usuarioJaInteragiu = false;
+    // true quando foi a aba Preview que pausou a música
+    let pausadoPeloPreview = false;
 
     let volumeAtual =
         parseFloat(localStorage.getItem('nossoUniversoVolume')) || 0.25;
@@ -447,14 +448,14 @@ function ativarComportamentoDoSom() {
             aplicarCorDaMusica(playlist[indiceAtual]);
             renderizarListaMusicas();
         }
-
-        if (usuarioJaInteragiu && !tocando && playlist.length) {
-            alternarPlayPause();
-        }
     }
 
     function alternarPlayPause() {
         if (!playlist.length) return;
+
+        // Se a pessoa mexeu no play/pause, a pausa do Preview
+        // deixa de valer (não religa sozinho ao sair).
+        pausadoPeloPreview = false;
 
         if (tocando) {
             audio.pause();
@@ -509,22 +510,88 @@ function ativarComportamentoDoSom() {
         criarExplosaoCoracoes(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
 
-    const eventosDeInteracao = ['click', 'scroll', 'wheel', 'touchstart', 'keydown'];
 
-    function primeiraInteracao() {
+    // =================================================
+    // PREVIEW — pausa a música ao entrar e volta ao sair
+    // (a música NÃO começa mais sozinha ao clicar/tocar
+    // no site: só quando a pessoa aperta o play)
+    // =================================================
 
-        usuarioJaInteragiu = true;
+    function pausarPeloPreview() {
+        if (!tocando) return;
 
-        audio.play().catch(() => {});
+        audio.pause();
+        tocando = false;
+        pausadoPeloPreview = true;
 
-        if (!tocando && playlist.length) alternarPlayPause();
-
-        eventosDeInteracao.forEach(ev => window.removeEventListener(ev, primeiraInteracao));
+        atualizarBotaoPlayPause();
+        renderizarListaMusicas();
     }
 
-    eventosDeInteracao.forEach(ev => {
-        window.addEventListener(ev, primeiraInteracao, { once: true, passive: true });
-    });
+    function retomarDoPreview() {
+        if (!pausadoPeloPreview) return;
+
+        pausadoPeloPreview = false;
+
+        if (tocando) return;
+
+        tocando = true;
+
+        audio.play().catch(() => {
+            console.warn('Áudio bloqueado pelo navegador.');
+        });
+
+        atualizarBotaoPlayPause();
+        renderizarListaMusicas();
+    }
+
+    const secaoAssistidos = document.querySelector('[data-view="assistidos"]');
+    const painelPreview = document.querySelector('[data-painel="preview"]');
+
+    function previewEstaVisivel() {
+        return Boolean(
+            secaoAssistidos &&
+            painelPreview &&
+            secaoAssistidos.classList.contains('view-ativa') &&
+            !painelPreview.hidden
+        );
+    }
+
+    let previewEstavaVisivel = false;
+
+    function verificarPreview() {
+        const visivel = previewEstaVisivel();
+
+        if (visivel === previewEstavaVisivel) return;
+
+        previewEstavaVisivel = visivel;
+
+        if (visivel) {
+            pausarPeloPreview();
+        } else {
+            retomarDoPreview();
+        }
+    }
+
+    if (secaoAssistidos && painelPreview) {
+
+        const observador = new MutationObserver(verificarPreview);
+
+        // A página mudou (o router liga/desliga "view-ativa")
+        observador.observe(secaoAssistidos, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+        // A aba mudou (Assistidos <-> Preview)
+        observador.observe(painelPreview, {
+            attributes: true,
+            attributeFilter: ['hidden']
+        });
+
+        verificarPreview();
+    }
+
 
     botaoSom.classList.add('sound-toggle-glow');
     setTimeout(() => {
@@ -554,6 +621,7 @@ function ativarComportamentoDoSom() {
                 if (indice === indiceAtual) {
                     alternarPlayPause();
                 } else {
+                    pausadoPeloPreview = false;
                     indiceAtual = indice;
                     tocando = true;
                     tocarFaixaAtual();

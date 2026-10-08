@@ -1,0 +1,266 @@
+<section class="assistidos-admin">
+
+    <div class="pagina-cabecalho">
+
+        <div>
+            <h2>Preview</h2>
+
+            <p>
+                Gerencie os vídeos verticais que aparecem na página
+                Preview do site. A ordem aqui é a ordem no feed.
+            </p>
+        </div>
+
+        <div class="assistidos-acoes-topo">
+
+            <button
+                type="button"
+                class="botao-principal"
+                id="preview-novo"
+            >
+                + Vídeo
+            </button>
+
+            <button
+                type="button"
+                class="botao-sincronizar"
+                id="preview-sincronizar"
+            >
+                🔄 Sincronizar com o site
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STATUS -->
+    <!-- ================================================= -->
+
+    <div
+        id="preview-status"
+        class="assistidos-status"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- LISTA -->
+    <!-- ================================================= -->
+
+    <div
+        id="preview-lista"
+        class="assistidos-admin-lista"
+    ></div>
+
+
+    <!-- ================================================= -->
+    <!-- MODAL -->
+    <!-- ================================================= -->
+
+    <div
+        id="preview-modal"
+        class="assistidos-admin-modal oculto"
+    >
+
+        <div class="assistidos-modal-caixa">
+
+            <div class="assistidos-modal-cabecalho">
+
+                <div>
+                    <h3 id="preview-modal-titulo">
+                        Adicionar vídeo
+                    </h3>
+
+                    <p>
+                        Preencha as informações abaixo.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="preview-modal-fechar"
+                    class="assistidos-modal-fechar"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="preview-form">
+
+                <input
+                    type="hidden"
+                    id="preview-id"
+                >
+
+
+                <!-- VÍDEO -->
+
+                <div class="campo">
+
+                    <label for="preview-video">
+                        Vídeo (MP4 vertical)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="preview-video"
+                        accept="video/mp4,video/*"
+                    >
+
+                    <small id="preview-video-info">
+                        Ideal: MP4 (H.264), vertical, uns 720×1280,
+                        de 2 a 6 MB. Arquivos pesados deixam o site
+                        lento no celular.
+                    </small>
+
+                </div>
+
+
+                <!-- CAPA -->
+
+                <div class="assistidos-form-capa">
+
+                    <div
+                        id="preview-capa-preview"
+                        class="assistidos-preview"
+                    >
+                        ▶
+                    </div>
+
+                    <div>
+
+                        <label for="preview-capa">
+                            Capa (thumbnail)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="preview-capa"
+                            accept="image/*"
+                        >
+
+                        <small>
+                            Ao escolher o vídeo, a capa é gerada
+                            sozinha a partir de um quadro dele. Dá pra
+                            trocar o quadro abaixo ou enviar uma imagem.
+                        </small>
+
+                        <div
+                            id="preview-bloco-quadro"
+                            style="display: none; margin-top: 10px;"
+                        >
+
+                            <label for="preview-quadro">
+                                Quadro da capa
+                            </label>
+
+                            <input
+                                type="range"
+                                id="preview-quadro"
+                                min="0"
+                                max="100"
+                                value="10"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TÍTULO -->
+
+                <div class="campo">
+
+                    <label for="preview-titulo">
+                        Título (opcional)
+                    </label>
+
+                    <input
+                        type="text"
+                        id="preview-titulo"
+                        placeholder="Ex.: Abertura da 2ª temporada"
+                    >
+
+                </div>
+
+
+                <!-- ASSOCIAÇÃO COM ASSISTIDOS -->
+
+                <div class="campo">
+
+                    <label for="preview-assistido">
+                        Item de Assistidos (opcional)
+                    </label>
+
+                    <select id="preview-assistido">
+
+                        <option value="">
+                            — Nenhum —
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Aparece como uma etiqueta sob o vídeo; clicar
+                        nela abre os detalhes desse item no site.
+                    </small>
+
+                </div>
+
+
+                <!-- POSIÇÃO -->
+
+                <div class="campo">
+
+                    <label for="preview-posicao">
+                        Posição no feed
+                    </label>
+
+                    <input
+                        type="number"
+                        id="preview-posicao"
+                        min="1"
+                        step="1"
+                    >
+
+                    <small>
+                        1 = primeiro da página. Também dá pra reordenar
+                        com as setas ↑ ↓ na lista.
+                    </small>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="assistidos-form-acoes">
+
+                    <button
+                        type="button"
+                        id="preview-cancelar"
+                        class="botao-secundario"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="botao-principal"
+                    >
+                        Salvar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>

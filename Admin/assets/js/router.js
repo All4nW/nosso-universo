@@ -7,6 +7,7 @@ const routes = {
     musicas: "pages/songs.html",
     estrelas: "pages/stars.html",
     assistidos: "pages/assistidos.html",
+    preview: "pages/preview-admin.html",
     sobrenos: "pages/sobre-nos.html"
 };
 
@@ -142,6 +143,13 @@ async function loadPage(page) {
 
                 if (window.initAssistidos) {
                     await window.initAssistidos();
+                }
+
+                break;
+                            case "preview":
+
+                if (window.initPreviewAdmin) {
+                    await window.initPreviewAdmin();
                 }
 
                 break;

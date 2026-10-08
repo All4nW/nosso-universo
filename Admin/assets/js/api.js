@@ -246,6 +246,137 @@ const API = {
         }
 
         return await response.json();
+    },
+
+
+    // =====================================================
+    // PREVIEW (VÍDEOS VERTICAIS)
+    // =====================================================
+
+    async getPreview() {
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/preview`
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao buscar o Preview."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    async savePreview(data) {
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/preview`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+                }
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao salvar o Preview."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    async uploadImagemPreview(file) {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "imagem",
+            file
+        );
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/preview/upload-imagem`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao enviar a capa."
+            );
+        }
+
+        return await response.json();
+    },
+
+
+    async uploadVideoPreview(file) {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "video",
+            file
+        );
+
+        const response =
+            await fetch(
+                `${this.baseUrl}/preview/upload-video`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        if (!response.ok) {
+
+            const erro =
+                await response.json()
+                    .catch(() => ({}));
+
+            throw new Error(
+                erro.erro ||
+                "Erro ao enviar o vídeo."
+            );
+        }
+
+        return await response.json();
     }
 
 };

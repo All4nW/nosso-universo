@@ -1,0 +1,93 @@
+[
+    {
+        "id": "video-1791423527705",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791423922239.mp4",
+        "capa": "assets/images/preview/preview-capa-1791423922255.jpg",
+        "largura": 694,
+        "altura": 576,
+        "duracao": 27,
+        "assistidoId": "interestelar",
+        "assistidoTitulo": "Como Perder Um Homem Em 10 Dias",
+        "assistidoCategoria": "filmes",
+        "ordem": 1
+    },
+    {
+        "id": "teste",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791423375327.mp4",
+        "capa": "assets/images/preview/preview-capa-1791423375363.jpg",
+        "largura": 768,
+        "altura": 576,
+        "duracao": 19,
+        "assistidoId": "teste",
+        "assistidoTitulo": "10 Coisas Que Eu Odeio Em Você",
+        "assistidoCategoria": "filmes",
+        "ordem": 2
+    },
+    {
+        "id": "video-1791425255305",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791425255288.mp4",
+        "capa": "assets/images/preview/preview-capa-1791425255301.jpg",
+        "largura": 1066,
+        "altura": 576,
+        "duracao": 42,
+        "assistidoId": "diario-de-uma-paixao",
+        "assistidoTitulo": "Diário De Uma Paixão",
+        "assistidoCategoria": "filmes",
+        "ordem": 3
+    },
+    {
+        "id": "video-1791425018191",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791425018177.mp4",
+        "capa": "assets/images/preview/preview-capa-1791425018188.jpg",
+        "largura": 768,
+        "altura": 576,
+        "duracao": 22,
+        "assistidoId": "como-eu-era-antes-de-voce",
+        "assistidoTitulo": "Como Eu Era Antes De Você",
+        "assistidoCategoria": "filmes",
+        "ordem": 4
+    },
+    {
+        "id": "video-1791423839212",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791423839199.mp4",
+        "capa": "assets/images/preview/preview-capa-1791423839209.jpg",
+        "largura": 768,
+        "altura": 576,
+        "duracao": 33,
+        "assistidoId": "des-encantado",
+        "assistidoTitulo": "(Des)encanto",
+        "assistidoCategoria": "series",
+        "ordem": 5
+    },
+    {
+        "id": "video-1791424456152",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791424456119.mp4",
+        "capa": "assets/images/preview/preview-capa-1791424456149.jpg",
+        "largura": 1024,
+        "altura": 576,
+        "duracao": 25,
+        "assistidoId": "supernatural",
+        "assistidoTitulo": "Supernatural",
+        "assistidoCategoria": "series",
+        "ordem": 6
+    },
+    {
+        "id": "video-1791424445549",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791424445536.mp4",
+        "capa": "assets/images/preview/preview-capa-1791424445546.jpg",
+        "largura": 768,
+        "altura": 576,
+        "duracao": 41,
+        "assistidoId": "hotel-transilvania",
+        "assistidoTitulo": "Hotel Transilvânia",
+        "assistidoCategoria": "filmes",
+        "ordem": 7
+    }
+]

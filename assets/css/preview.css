@@ -1,0 +1,1219 @@
+/* =========================================================
+   NOSSO UNIVERSO — PREVIEW
+   Aba "Preview" da página de Assistidos: feed de edits em
+   zigue-zague. Cada vídeo tem o tamanho da própria proporção
+   (vertical, quadrado ou horizontal) e um cartão de informações
+   ao lado (no celular, embaixo).
+   Usa as mesmas variáveis e a mesma paleta lilás/rosa do
+   resto de Assistidos (--color-lilac, --color-pink, etc.).
+
+   Desempenho: sem backdrop-filter, sem sombras pesadas em
+   elementos que se repetem, animações só de transform/opacity.
+   ========================================================= */
+
+
+/* =========================================================
+   ABAS — Assistidos | Preview
+   ========================================================= */
+
+.assistidos-abas {
+    display: flex;
+    justify-content: center;
+
+    gap: 6px;
+
+    width: fit-content;
+
+    margin: -14px auto 48px;
+
+    padding: 5px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.22);
+
+    background: rgba(20, 16, 38, 0.55);
+}
+
+.assistidos-aba {
+    padding: 9px 26px;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.assistidos-aba:hover {
+    color: var(--color-text-light);
+}
+
+.assistidos-aba:focus-visible {
+    outline: 2px solid rgba(201, 167, 245, 0.7);
+    outline-offset: 2px;
+}
+
+.assistidos-aba.ativa {
+    color: #fff;
+
+    border-color: rgba(201, 167, 245, 0.45);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(145, 92, 220, 0.75),
+            rgba(201, 120, 190, 0.55)
+        );
+
+    box-shadow: 0 0 18px rgba(145, 92, 220, 0.25);
+}
+
+
+/* =========================================================
+   PAINÉIS — o conteúdo de cada aba
+   ========================================================= */
+
+.assistidos-painel[hidden] {
+    display: none;
+}
+
+/* O botão lateral "Continuar assistindo" é só da aba Assistidos */
+
+.view[data-view="assistidos"].aba-preview .continuar-lateral-btn,
+.view[data-view="assistidos"].aba-preview .continuar-lateral-overlay,
+.view[data-view="assistidos"].aba-preview .continuar-lateral-painel {
+    display: none !important;
+}
+
+
+/* =========================================================
+   CABEÇALHO DA ABA PREVIEW — título e abas centralizados,
+   com um fio fininho e um brilho embaixo do título
+   ========================================================= */
+
+.view[data-view="assistidos"].aba-preview .section-title::after {
+    content: "✦";
+
+    display: block;
+
+    width: 190px;
+
+    margin: 14px auto 0;
+
+    text-align: center;
+
+    font-size: 0.6rem;
+    line-height: 1;
+
+    color: rgba(214, 190, 250, 0.9);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0,
+            rgba(201, 167, 245, 0.55) 16%,
+            rgba(201, 167, 245, 0.55) 42%,
+            transparent 42%,
+            transparent 58%,
+            rgba(201, 167, 245, 0.55) 58%,
+            rgba(201, 167, 245, 0.55) 84%,
+            transparent 100%
+        )
+        center / 100% 1px no-repeat;
+}
+
+.view[data-view="assistidos"].aba-preview .assistidos-abas {
+    margin: 22px auto 40px;
+}
+
+/* =========================================================
+   PAINEL — coluna de filtros + feed
+   ========================================================= */
+
+.preview-painel {
+    display: grid;
+
+    grid-template-columns: 150px minmax(0, 1fr);
+    column-gap: 24px;
+
+    align-items: start;
+
+    width: min(100%, 1180px);
+
+    margin: 0 auto;
+}
+
+.preview-painel.sem-filtros {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.preview-painel .preview-feed {
+    grid-column: -2 / -1;
+}
+
+
+/* =========================================================
+   FILTROS — Todos | Filmes | Séries | Animes
+   ========================================================= */
+
+.preview-filtros {
+    grid-column: 1;
+
+    position: sticky;
+    top: 100px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    padding-top: 18px;
+}
+
+.preview-filtro {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 14px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.preview-filtro svg {
+    width: 19px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.preview-filtro:hover {
+    color: var(--color-text-light);
+}
+
+.preview-filtro:focus-visible {
+    outline: 2px solid rgba(201, 167, 245, 0.7);
+    outline-offset: 2px;
+}
+
+.preview-filtro.ativo {
+    color: #e6d6ff;
+
+    background: rgba(201, 167, 245, 0.09);
+
+    border-color: rgba(201, 167, 245, 0.2);
+}
+
+
+/* =========================================================
+   ATMOSFERA — pontinhos de luz, brilho de fundo e a frase
+   escrita à mão (tudo fixo, bem discreto)
+   ========================================================= */
+
+.preview-atmosfera {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+/* brilho lilás no canto de cima, à direita */
+
+.preview-atmosfera::before {
+    content: "";
+
+    position: absolute;
+
+    top: -12%;
+    right: -10%;
+
+    width: 58vw;
+    height: 58vh;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(160, 110, 220, 0.13),
+            transparent 65%
+        );
+}
+
+/* frase à mão (só em telas largas, pra não bater no feed).
+   Pra tirar: apague este bloco inteiro. */
+
+/* estrela solta no canto de cima, à direita */
+
+.preview-atmosfera::after {
+    content: "✧";
+
+    position: absolute;
+
+    top: 124px;
+    right: 7%;
+
+    font-size: 1.7rem;
+    line-height: 1;
+
+    color: rgba(214, 190, 250, 0.55);
+
+    text-shadow: 0 0 14px rgba(201, 167, 245, 0.35);
+}
+
+.preview-brilho {
+    position: absolute;
+
+    left: var(--x);
+    top: var(--y);
+
+    width: var(--tam, 3px);
+    height: var(--tam, 3px);
+
+    border-radius: 50%;
+
+    background: #efe3ff;
+
+    box-shadow: 0 0 6px 1px rgba(201, 167, 245, 0.7);
+
+    opacity: 0.2;
+
+    animation: preview-piscar var(--dur, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes preview-piscar {
+
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.85; }
+
+}
+
+
+/* =========================================================
+   FEED — a composição em zigue-zague
+   --larg   largura-base de um vídeo vertical (cada vídeo
+            cresce ou encolhe a partir daqui, conforme a
+            proporção dele: --fator)
+   --desl   deslocamento lateral (% da largura do feed)
+   --shift  quanto a composição inteira anda pra esquerda, pra
+            sobrar espaço pro cartão de informações
+   --vao    espaço (com o fio pontilhado) entre um vídeo e o próximo
+   (o JS tem os mesmos números em DESLOCAMENTO_*)
+   ========================================================= */
+
+.preview-feed {
+    --larg: 300px;
+    --desl: 15%;
+    --shift: 12%;
+    --vao: 120px;
+
+    position: relative;
+
+    width: min(100%, 960px);
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.preview-item {
+    position: relative;
+    z-index: 1;
+
+    width: min(calc(var(--larg) * var(--fator, 1)), 86vw);
+
+    /* esquerda (-1) ou direita (+1), com amplitude variável */
+    left: calc(var(--lado) * var(--desl) * var(--amp, 1) - var(--shift, 0%));
+}
+
+.preview-sentinela {
+    width: 100%;
+    height: 1px;
+}
+
+.preview-vazio {
+    margin: 60px auto;
+
+    text-align: center;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-heading);
+    font-style: italic;
+}
+
+
+/* =========================================================
+   FIO — linha pontilhada ligando um vídeo ao próximo
+   ========================================================= */
+
+.preview-fio {
+    position: relative;
+
+    width: 100%;
+    height: var(--vao);
+
+    pointer-events: none;
+}
+
+.preview-fio svg {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+}
+
+.preview-fio path {
+    fill: none;
+
+    stroke: rgba(201, 167, 245, 0.34);
+    stroke-width: 1.2;
+    stroke-dasharray: 2 7;
+    stroke-linecap: round;
+
+    vector-effect: non-scaling-stroke;
+}
+
+.fio-mobile {
+    display: none;
+}
+
+
+/* =========================================================
+   QUADRO — vídeo inclinado + fita adesiva
+   ========================================================= */
+
+.preview-quadro {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    transform: rotate(var(--rot, 0deg));
+
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.preview-item:hover .preview-quadro,
+.preview-item.tocando .preview-quadro {
+    transform: rotate(0deg);
+}
+
+/* Fita adesiva num canto */
+
+.preview-fita {
+    position: absolute;
+
+    z-index: 6;
+
+    width: 64px;
+    height: 22px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(201, 167, 245, 0.34) 0 6px,
+            rgba(201, 167, 245, 0.2) 6px 12px
+        );
+
+    border-left: 1px dashed rgba(255, 255, 255, 0.2);
+    border-right: 1px dashed rgba(255, 255, 255, 0.2);
+
+    pointer-events: none;
+}
+
+.preview-fita[data-cor="rosa"] {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(245, 194, 209, 0.3) 0 6px,
+            rgba(245, 194, 209, 0.17) 6px 12px
+        );
+}
+
+.preview-fita[data-canto="esq"] {
+    top: -9px;
+    left: -20px;
+
+    transform: rotate(-38deg);
+}
+
+.preview-fita[data-canto="dir"] {
+    top: -9px;
+    right: -20px;
+
+    transform: rotate(38deg);
+}
+
+
+/* =========================================================
+   MOLDURA DO VÍDEO — a proporção vem de cada vídeo (--razao)
+   ========================================================= */
+
+.preview-moldura {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: var(--razao, 0.5625);
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    isolation: isolate;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(111, 58, 173, 0.75),
+            rgba(25, 50, 100, 0.8)
+        );
+
+    border: 1px solid rgba(201, 167, 245, 0.28);
+
+    box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.48),
+        0 0 44px rgba(201, 167, 245, 0.1);
+
+    transition: border-color 0.5s ease;
+}
+
+.preview-item:hover .preview-moldura,
+.preview-item.tocando .preview-moldura {
+    border-color: rgba(201, 167, 245, 0.5);
+}
+
+/* Brilho suave por cima (igual às capas de Assistidos) */
+
+.preview-moldura::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            transparent 30%,
+            rgba(5, 5, 16, 0.3)
+        );
+}
+
+.preview-capa,
+.preview-video-el {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: transparent;
+}
+
+.preview-video-el {
+    z-index: 1;
+}
+
+
+/* =========================================================
+   CONTROLES SOBRE O VÍDEO
+   ========================================================= */
+
+.preview-area {
+    position: absolute;
+    inset: 0;
+
+    z-index: 3;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.preview-play {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 62px;
+    height: 62px;
+
+    margin: -31px 0 0 -31px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(201, 167, 245, 0.6);
+
+    background: rgba(20, 16, 38, 0.62);
+
+    box-shadow: 0 0 26px rgba(201, 167, 245, 0.28);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.preview-play svg {
+    width: 26px;
+    height: 26px;
+
+    margin-left: 3px;
+
+    fill: var(--color-text-light);
+}
+
+.preview-item:hover .preview-play {
+    transform: scale(1.06);
+}
+
+.preview-item.tocando .preview-play,
+.preview-item.carregando .preview-play {
+    opacity: 0;
+
+    transform: scale(0.8);
+}
+
+
+/* Duração */
+
+.preview-duracao {
+    position: absolute;
+
+    right: 12px;
+    bottom: 14px;
+
+    z-index: 4;
+
+    padding: 3px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(10, 8, 20, 0.62);
+
+    color: var(--color-text-light);
+
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    line-height: 1.3;
+    letter-spacing: 0.3px;
+
+    pointer-events: none;
+
+    transition: opacity 0.3s ease;
+}
+
+.preview-duracao[hidden] {
+    display: none;
+}
+
+.preview-item.tocando .preview-duracao {
+    opacity: 0;
+}
+
+
+/* Carregando */
+
+.preview-carregando {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 4;
+
+    width: 36px;
+    height: 36px;
+
+    margin: -18px 0 0 -18px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(201, 167, 245, 0.25);
+    border-top-color: var(--color-lilac);
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.preview-item.carregando .preview-carregando {
+    opacity: 1;
+
+    animation: preview-girar 0.8s linear infinite;
+}
+
+@keyframes preview-girar {
+
+    to { transform: rotate(360deg); }
+
+}
+
+
+/* Som */
+
+.preview-mudo {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(201, 167, 245, 0.35);
+
+    background: rgba(10, 8, 20, 0.58);
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: opacity 0.3s ease;
+}
+
+.preview-item.iniciado .preview-mudo {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.preview-mudo svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+    stroke: var(--color-text-light);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.preview-mudo .icone-som-ligado path:first-child,
+.preview-mudo .icone-som-desligado path:first-child {
+    fill: var(--color-text-light);
+}
+
+.preview-mudo .icone-som-desligado {
+    display: none;
+}
+
+.preview-sem-som .preview-mudo .icone-som-ligado {
+    display: none;
+}
+
+.preview-sem-som .preview-mudo .icone-som-desligado {
+    display: block;
+}
+
+
+/* Barra de progresso */
+
+.preview-barra {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 4;
+
+    height: 3px;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    opacity: 0;
+
+    transition: opacity 0.3s ease;
+}
+
+.preview-item.iniciado .preview-barra {
+    opacity: 1;
+}
+
+.preview-barra-fill {
+    height: 100%;
+
+    background: linear-gradient(90deg, #c9a7f5, #f5c2d1);
+
+    transform: scaleX(0);
+    transform-origin: left;
+
+    transition: transform 0.25s linear;
+}
+
+
+/* Erro */
+
+.preview-erro {
+    position: absolute;
+
+    left: 14px;
+    right: 14px;
+    bottom: 22px;
+
+    z-index: 4;
+
+    display: none;
+
+    text-align: center;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    line-height: 1.4;
+
+    color: var(--color-text-light);
+
+    pointer-events: none;
+}
+
+.preview-item.erro .preview-erro {
+    display: block;
+}
+
+
+/* =========================================================
+   CARTÃO DE INFORMAÇÕES — ao lado do vídeo
+   (pôster e título do item de Assistidos, a frase do vídeo
+   e o botão que abre os detalhes)
+   ========================================================= */
+
+.preview-info {
+    position: absolute;
+
+    top: 50%;
+    left: calc(100% - 16px);
+
+    z-index: 1;
+
+    width: 250px;
+
+    padding: 16px 18px 16px 32px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(201, 167, 245, 0.16);
+
+    background: rgba(16, 12, 30, 0.82);
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+
+    transform: translateY(-50%);
+
+    transition: border-color 0.4s ease;
+}
+
+.preview-item:hover .preview-info {
+    border-color: rgba(201, 167, 245, 0.34);
+}
+
+.preview-info-topo {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.preview-info-poster {
+    width: 42px;
+    height: 60px;
+
+    flex-shrink: 0;
+
+    border-radius: 6px;
+
+    object-fit: cover;
+
+    border: 1px solid rgba(201, 167, 245, 0.25);
+}
+
+.preview-info-texto {
+    min-width: 0;
+}
+
+.preview-info-titulo {
+    margin: 0;
+
+    font-family: var(--font-heading);
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.25;
+
+    color: var(--color-text-light);
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
+    overflow: hidden;
+}
+
+.preview-info-meta {
+    margin: 4px 0 0;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+
+    color: var(--color-text-muted);
+}
+
+.preview-info-frase {
+    margin: 12px 0 0;
+
+    padding-right: 26px;
+
+    font-family: var(--font-heading);
+    font-size: 0.86rem;
+    font-style: italic;
+    line-height: 1.45;
+
+    color: rgba(214, 190, 250, 0.82);
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+
+    overflow: hidden;
+}
+
+.preview-info-link {
+    position: absolute;
+
+    right: 12px;
+    bottom: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(201, 167, 245, 0.28);
+
+    background: rgba(201, 167, 245, 0.08);
+
+    color: var(--color-lilac);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.preview-info-link svg {
+    width: 14px;
+    height: 14px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.preview-info-link:hover,
+.preview-info-link:focus-visible {
+    background: rgba(201, 167, 245, 0.2);
+
+    border-color: rgba(201, 167, 245, 0.55);
+}
+
+/* Cartão só com título (sem item de Assistidos) */
+
+.preview-info > .preview-info-titulo {
+    font-size: 1.02rem;
+}
+
+
+/* =========================================================
+   ENFEITES — brilhos e corações soltos pela composição
+   ========================================================= */
+
+.preview-enfeite {
+    position: absolute;
+
+    top: var(--ey, 30%);
+
+    font-size: var(--tam, 14px);
+    line-height: 1;
+
+    color: var(--cor, #c9a7f5);
+
+    text-shadow: 0 0 8px currentColor;
+
+    opacity: 0.4;
+
+    pointer-events: none;
+
+    animation: preview-brilhar var(--dur, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+/* à esquerda do vídeo */
+
+.preview-enfeite.enfeite-esq {
+    right: calc(100% + var(--ed, 28px));
+}
+
+/* à direita do cartão de informações */
+
+.preview-enfeite.enfeite-dir {
+    left: calc(100% + 250px + var(--ed, 28px));
+}
+
+@keyframes preview-brilhar {
+
+    0%, 100% {
+        opacity: 0.18;
+        transform: translateY(0) scale(0.85);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: translateY(-8px) scale(1.1);
+    }
+
+}
+
+
+/* =========================================================
+   TELAS MENORES — vídeos largos, onda mais suave, o cartão
+   de informações vai pra baixo do vídeo e os filtros viram
+   uma fileira no topo
+   ========================================================= */
+
+@media (max-width: 960px) {
+
+    .view[data-view="assistidos"].aba-preview {
+        --preview-pad: 18px;
+    }
+
+    .view[data-view="assistidos"].aba-preview .section-title::before {
+        display: none;
+    }
+
+    .assistidos-abas {
+        margin-bottom: 38px;
+    }
+
+    .assistidos-aba {
+        padding: 8px 22px;
+
+        font-size: 0.8rem;
+    }
+
+    .preview-painel {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .preview-painel .preview-feed {
+        grid-column: 1;
+    }
+
+    .preview-filtros {
+        position: static;
+
+        flex-direction: row;
+
+        gap: 8px;
+
+        padding: 0 0 22px;
+
+        overflow-x: auto;
+
+        scrollbar-width: none;
+    }
+
+    .preview-filtros::-webkit-scrollbar {
+        display: none;
+    }
+
+    .preview-filtro {
+        flex-shrink: 0;
+
+        padding: 9px 14px;
+
+        font-size: 0.82rem;
+
+        white-space: nowrap;
+    }
+
+    .preview-feed {
+        --larg: min(74vw, 330px);
+        --desl: 7.5%;
+        --shift: 0%;
+        --vao: 76px;
+
+        width: min(100%, 560px);
+    }
+
+    .preview-moldura {
+        border-radius: 18px;
+    }
+
+    .preview-fio .fio-desktop {
+        display: none;
+    }
+
+    .preview-fio .fio-mobile {
+        display: inline;
+    }
+
+    /* cartão embaixo do vídeo */
+
+    .preview-info {
+        position: relative;
+
+        top: auto;
+        left: auto;
+
+        z-index: auto;
+
+        width: 100%;
+
+        margin-top: 14px;
+
+        padding: 14px 16px;
+
+        transform: none;
+    }
+
+    /* menos enfeites no celular: só um, no lado vazio da onda */
+
+    .preview-enfeite:nth-of-type(n + 2) {
+        display: none;
+    }
+
+    .preview-item[data-lado="esq"] .preview-enfeite.enfeite-esq {
+        right: auto;
+        left: calc(100% + var(--ed, 28px));
+    }
+
+    .preview-item[data-lado="dir"] .preview-enfeite.enfeite-esq {
+        left: auto;
+        right: calc(100% + var(--ed, 28px));
+    }
+
+    .preview-brilho:nth-child(n + 9) {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   MOVIMENTO REDUZIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .preview-brilho,
+    .preview-enfeite {
+        animation: none;
+    }
+
+    .preview-quadro,
+    .preview-play,
+    .preview-barra-fill {
+        transition: none;
+    }
+
+}
