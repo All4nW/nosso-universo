@@ -10,7 +10,23 @@
         "assistidoId": "interestelar",
         "assistidoTitulo": "Como Perder Um Homem Em 10 Dias",
         "assistidoCategoria": "filmes",
-        "ordem": 1
+        "ordem": 1,
+        "extras": [
+            {
+                "video": "assets/videos/preview/preview-video-1791431294556.mp4",
+                "capa": "assets/images/preview/preview-capa-1791431294566.jpg",
+                "largura": 1024,
+                "altura": 576,
+                "duracao": 39
+            },
+            {
+                "video": "assets/videos/preview/preview-video-1791431795549.mp4",
+                "capa": "assets/images/preview/preview-capa-1791431795573.jpg",
+                "largura": 1920,
+                "altura": 1080,
+                "duracao": 61
+            }
+        ]
     },
     {
         "id": "teste",
@@ -23,7 +39,23 @@
         "assistidoId": "teste",
         "assistidoTitulo": "10 Coisas Que Eu Odeio Em Você",
         "assistidoCategoria": "filmes",
-        "ordem": 2
+        "ordem": 2,
+        "extras": [
+            {
+                "video": "assets/videos/preview/preview-video-1791431538534.mp4",
+                "capa": "assets/images/preview/preview-capa-1791431538544.jpg",
+                "largura": 768,
+                "altura": 576,
+                "duracao": 20
+            },
+            {
+                "video": "assets/videos/preview/preview-video-1791431538549.mp4",
+                "capa": "assets/images/preview/preview-capa-1791431538555.jpg",
+                "largura": 768,
+                "altura": 576,
+                "duracao": 15
+            }
+        ]
     },
     {
         "id": "video-1791425255305",
@@ -41,41 +73,59 @@
     {
         "id": "video-1791425018191",
         "titulo": "",
-        "video": "assets/videos/preview/preview-video-1791425018177.mp4",
-        "capa": "assets/images/preview/preview-capa-1791425018188.jpg",
-        "largura": 768,
-        "altura": 576,
-        "duracao": 22,
+        "video": "assets/videos/preview/preview-video-1791431708445.mp4",
+        "capa": "assets/images/preview/preview-capa-1791431708475.jpg",
+        "largura": 1920,
+        "altura": 1080,
+        "duracao": 63,
         "assistidoId": "como-eu-era-antes-de-voce",
         "assistidoTitulo": "Como Eu Era Antes De Você",
         "assistidoCategoria": "filmes",
-        "ordem": 4
+        "ordem": 4,
+        "extras": [
+            {
+                "video": "assets/videos/preview/preview-video-1791425018177.mp4",
+                "capa": "assets/images/preview/preview-capa-1791425018188.jpg",
+                "largura": 768,
+                "altura": 576,
+                "duracao": 22
+            }
+        ]
     },
     {
-        "id": "video-1791423839212",
+        "id": "video-1791432965413",
         "titulo": "",
-        "video": "assets/videos/preview/preview-video-1791423839199.mp4",
-        "capa": "assets/images/preview/preview-capa-1791423839209.jpg",
-        "largura": 768,
+        "video": "assets/videos/preview/preview-video-1791432965390.mp4",
+        "capa": "assets/images/preview/preview-capa-1791432965409.jpg",
+        "largura": 912,
         "altura": 576,
-        "duracao": 33,
-        "assistidoId": "des-encantado",
-        "assistidoTitulo": "(Des)encanto",
+        "duracao": 31,
+        "assistidoId": "stranger-things",
+        "assistidoTitulo": "Stranger Things",
         "assistidoCategoria": "series",
         "ordem": 5
     },
     {
         "id": "video-1791424456152",
         "titulo": "",
-        "video": "assets/videos/preview/preview-video-1791424456119.mp4",
-        "capa": "assets/images/preview/preview-capa-1791424456149.jpg",
-        "largura": 1024,
-        "altura": 576,
-        "duracao": 25,
+        "video": "assets/videos/preview/preview-video-1791431851006.mp4",
+        "capa": "assets/images/preview/preview-capa-1791431851032.jpg",
+        "largura": 1920,
+        "altura": 1080,
+        "duracao": 21,
         "assistidoId": "supernatural",
         "assistidoTitulo": "Supernatural",
         "assistidoCategoria": "series",
-        "ordem": 6
+        "ordem": 6,
+        "extras": [
+            {
+                "video": "assets/videos/preview/preview-video-1791424456119.mp4",
+                "capa": "assets/images/preview/preview-capa-1791424456149.jpg",
+                "largura": 1024,
+                "altura": 576,
+                "duracao": 25
+            }
+        ]
     },
     {
         "id": "video-1791424445549",
@@ -89,5 +139,44 @@
         "assistidoTitulo": "Hotel Transilvânia",
         "assistidoCategoria": "filmes",
         "ordem": 7
+    },
+    {
+        "id": "video-1791423839212",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791423839199.mp4",
+        "capa": "assets/images/preview/preview-capa-1791423839209.jpg",
+        "largura": 768,
+        "altura": 576,
+        "duracao": 33,
+        "assistidoId": "des-encantado",
+        "assistidoTitulo": "(Des)encanto",
+        "assistidoCategoria": "series",
+        "ordem": 8
+    },
+    {
+        "id": "video-1791432806085",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791432806071.mp4",
+        "capa": "assets/images/preview/preview-capa-1791432806082.jpg",
+        "largura": 576,
+        "altura": 576,
+        "duracao": 25,
+        "assistidoId": "o-incrivel-mundo-de-gumball",
+        "assistidoTitulo": "O Incrível Mundo De Gumball",
+        "assistidoCategoria": "series",
+        "ordem": 9
+    },
+    {
+        "id": "video-1791432847865",
+        "titulo": "",
+        "video": "assets/videos/preview/preview-video-1791432847831.mp4",
+        "capa": "assets/images/preview/preview-capa-1791432847861.jpg",
+        "largura": 1920,
+        "altura": 1080,
+        "duracao": 21,
+        "assistidoId": "attack-on-titan",
+        "assistidoTitulo": "Attack On Titan",
+        "assistidoCategoria": "animes",
+        "ordem": 10
     }
 ]

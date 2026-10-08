@@ -34,21 +34,36 @@
     // Quantos itens entram na página por vez
     const TAMANHO_LOTE = 8;
 
-    // Deslocamentos, em % da largura do feed.
-    // PRECISAM ser iguais ao --desl e ao --shift do preview.css.
-    const DESLOCAMENTO_DESKTOP = 15;
-    const DESLOCAMENTO_MOBILE = 7.5;
-    const DESLOCAMENTO_INFO = 12;     // só no desktop (--shift)
-
-    // Proporção de referência (vídeo vertical 9:16) e quanto um
-    // vídeo pode crescer/encolher em relação ao tamanho-base.
+    // Proporção padrão (vídeo vertical 9:16), usada até o site descobrir
+    // a proporção real de cada vídeo.
     const RAZAO_BASE = 9 / 16;
-    const FATOR_MIN = 0.85;
-    const FATOR_MAX = 1.6;
+
+    // Ritmo do mural (grade de 12 colunas): a cada 7 vídeos a composição
+    // se repete, espelhada de um ciclo pro outro.
+    // [variante, coluna inicial, largura em colunas, desnível em px]
+    const RITMO = [
+        ["destaque", 1, 7, 0],
+        ["medio",    8, 5, 44],
+        ["compacto", 1, 6, 0],
+        ["compacto", 7, 6, 36],
+        ["pequeno",  1, 4, 0],
+        ["pequeno",  5, 4, 26],
+        ["pequeno",  9, 4, 8]
+    ];
+
+    const RITMO_ESPELHADO = [
+        ["destaque", 6, 7, 0],
+        ["medio",    1, 5, 44],
+        ["compacto", 7, 6, 0],
+        ["compacto", 1, 6, 36],
+        ["pequeno",  9, 4, 0],
+        ["pequeno",  5, 4, 26],
+        ["pequeno",  1, 4, 8]
+    ];
 
     // Quão antes de aparecer o item "monta" o vídeo / entra o próximo lote
-    const MARGEM_MONTAR = "700px 0px";
-    const MARGEM_PROXIMO_LOTE = "900px 0px";
+    const MARGEM_MONTAR = "500px 0px";
+    const MARGEM_PROXIMO_LOTE = "800px 0px";
 
     const ROTULOS_CATEGORIA = {
         filmes: "Filme",
@@ -57,8 +72,14 @@
         queremos: "Queremos ver"
     };
 
-    const GLIFOS_ENFEITE = ["✦", "✧", "♡", "✦", "♥"];
-    const CORES_ENFEITE = ["#c9a7f5", "#f5c2d1", "#b9a0f5"];
+    const GLIFOS_CORACAO = ["♡", "♡", "♥"];
+
+    // Fontes do mural (títulos serifados + textos): só são buscadas
+    // quando a pessoa chega na aba Preview.
+    const URL_FONTES =
+        "https://fonts.googleapis.com/css2" +
+        "?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500" +
+        "&family=DM+Sans:wght@400;500;600&display=swap";
 
     const FILTROS = [
         {
@@ -106,6 +127,7 @@
     let renderizados = 0;
     let ativo = null;             // entrada que está tocando (ou pausada por último)
     let somLigado = true;
+    let volumeVideo = 1;          // 0 a 1, vale pra todos os vídeos
     let sentinela = null;
 
     let observadorMontar = null;
@@ -173,17 +195,26 @@
 
     }
 
-    // Amplitude do deslocamento (0.72 a 1): deixa a onda menos mecânica
-    function amplitude(item) {
-
-        return 0.72 + hash(item.id + "-amp") * 0.28;
-
-    }
-
     function formatarDuracao(segundos) {
 
         const total =
             Math.max(0, Math.round(Number(segundos) || 0));
+
+        const minutos =
+            Math.floor(total / 60);
+
+        const resto =
+            String(total % 60).padStart(2, "0");
+
+        return `${minutos}:${resto}`;
+
+    }
+
+    // Tempo já assistido: não arredonda pra cima (10,6 s mostra 0:10)
+    function formatarTempoCorrido(segundos) {
+
+        const total =
+            Math.max(0, Math.floor(Number(segundos) || 0));
 
         const minutos =
             Math.floor(total / 60);
@@ -200,9 +231,8 @@
     // PROPORÇÃO — cada vídeo tem o tamanho da própria forma
     // =================================================
     // --razao  largura / altura do vídeo (a moldura usa isso)
-    // --fator  quanto o vídeo cresce em relação ao vertical:
-    //          mantém a "área" parecida (um horizontal fica
-    //          mais largo, mas não gigante).
+    // data-formato  vertical, quadrado ou horizontal (o destaque
+    //          muda a posição do texto conforme o formato).
 
     function razaoSalva(dados) {
 
@@ -220,14 +250,16 @@
         const limitada =
             Math.min(Math.max(razao, 0.4), 2.4);
 
-        const fator =
-            Math.min(
-                Math.max(Math.sqrt(limitada / RAZAO_BASE), FATOR_MIN),
-                FATOR_MAX
-            );
+        item.style.setProperty("--razao", limitada.toFixed(4));
 
-        item.style.setProperty("--razao", razao.toFixed(4));
-        item.style.setProperty("--fator", fator.toFixed(3));
+        // O destaque, por exemplo, põe o texto ao lado de um vídeo
+        // vertical e embaixo de um horizontal.
+        item.dataset.formato =
+            limitada >= 1.1
+                ? "horizontal"
+                : limitada <= 0.9
+                    ? "vertical"
+                    : "quadrado";
 
     }
 
@@ -341,6 +373,8 @@
         if (ativo?.video) ativo.video.pause();
 
         ativo = null;
+
+        recolher();
 
         entradas.forEach(entrada => desmontarVideo(entrada));
 
@@ -601,14 +635,6 @@
 
         for (let i = renderizados; i < fim; i++) {
 
-            if (i > 0) {
-
-                fragmento.appendChild(
-                    criarFio(itens[i - 1], itens[i], i)
-                );
-
-            }
-
             fragmento.appendChild(
                 criarItem(itens[i], i)
             );
@@ -649,53 +675,6 @@
 
 
     // =================================================
-    // FIO — linha pontilhada que liga um vídeo ao próximo
-    // =================================================
-    // Desenhada em SVG esticado (viewBox 100x100, sem manter
-    // proporção): x em % da largura do feed, igual ao CSS.
-
-    function criarFio(anterior, atual, indiceAtual) {
-
-        const posicaoX = (item, indice, deslocamento, deslocamentoInfo) =>
-            50 -
-            deslocamentoInfo +
-            (indice % 2 === 0 ? -1 : 1) *
-            deslocamento *
-            amplitude(item);
-
-        const caminho = (deslocamento, deslocamentoInfo) => {
-
-            const x1 =
-                posicaoX(anterior, indiceAtual - 1, deslocamento, deslocamentoInfo).toFixed(2);
-
-            const x2 =
-                posicaoX(atual, indiceAtual, deslocamento, deslocamentoInfo).toFixed(2);
-
-            return `M ${x1} 0 C ${x1} 58, ${x2} 42, ${x2} 100`;
-
-        };
-
-        const fio =
-            document.createElement("div");
-
-        fio.className =
-            "preview-fio";
-
-        fio.setAttribute("aria-hidden", "true");
-
-        fio.innerHTML = `
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path class="fio-desktop" d="${caminho(DESLOCAMENTO_DESKTOP, DESLOCAMENTO_INFO)}"/>
-                <path class="fio-mobile" d="${caminho(DESLOCAMENTO_MOBILE, 0)}"/>
-            </svg>
-        `;
-
-        return fio;
-
-    }
-
-
-    // =================================================
     // ITEM
     // =================================================
 
@@ -723,9 +702,10 @@
         </svg>`;
 
 
-    // Cartão de informações ao lado do vídeo (embaixo, no celular)
+    // Informações do vídeo: título, "categoria · ano", a frase do vídeo
+    // (como uma anotação à mão) e o pôster do filme em todas as variantes.
 
-    function criarInfo(dados) {
+    function criarInfo(dados, variante) {
 
         const frase =
             (dados.titulo || "").trim();
@@ -739,8 +719,8 @@
         if (!temAssociacao) {
 
             return `
-                <div class="preview-info">
-                    <p class="preview-info-titulo">${escaparHTML(frase)}</p>
+                <div class="pc-info">
+                    <h3 class="pc-titulo">${escaparHTML(frase)}</h3>
                 </div>
             `;
 
@@ -755,13 +735,13 @@
         const categoria =
             ROTULOS_CATEGORIA[dados.assistidoCategoria] || "";
 
-        const meta =
-            [categoria, alvo?.ano].filter(Boolean).join(" • ");
+        const ano =
+            alvo?.ano ? String(alvo.ano) : "";
 
         return `
-            <div class="preview-info">
+            <div class="pc-info">
 
-                <div class="preview-info-topo">
+                <div class="pc-topo">
 
                     ${
                         poster
@@ -775,13 +755,24 @@
                             : ""
                     }
 
-                    <div class="preview-info-texto">
+                    <div class="pc-texto">
 
-                        <p class="preview-info-titulo">${escaparHTML(dados.assistidoTitulo)}</p>
+                        <h3 class="pc-titulo" title="${escaparAtributo(dados.assistidoTitulo)}">${escaparHTML(dados.assistidoTitulo)}</h3>
 
                         ${
-                            meta
-                                ? `<p class="preview-info-meta">${escaparHTML(meta)}</p>`
+                            categoria || ano
+                                ? `<p class="pc-meta">
+                                        ${
+                                            categoria
+                                                ? `<span class="pc-cat" data-cat="${escaparAtributo(dados.assistidoCategoria)}">${escaparHTML(categoria)}</span>`
+                                                : ""
+                                        }
+                                        ${
+                                            ano
+                                                ? `<span class="pc-ano">${escaparHTML(ano)}</span>`
+                                                : ""
+                                        }
+                                   </p>`
                                 : ""
                         }
 
@@ -791,7 +782,7 @@
 
                 ${
                     frase
-                        ? `<p class="preview-info-frase">“${escaparHTML(frase)}”</p>`
+                        ? `<p class="pc-frase">“${escaparHTML(frase)}”</p>`
                         : ""
                 }
 
@@ -800,7 +791,7 @@
                     class="preview-info-link"
                     aria-label="Ver detalhes: ${escaparAtributo(dados.assistidoTitulo)}"
                 >
-                    ${ICONE_LINK}
+                    ver detalhes <span aria-hidden="true">↗</span>
                 </button>
 
             </div>
@@ -810,15 +801,22 @@
 
     function criarItem(dados, indice) {
 
-        const esquerda =
-            indice % 2 === 0;
+        // Variante e lugar no mural, pelo ritmo (espelhado a cada ciclo)
+        const ciclo =
+            Math.floor(indice / RITMO.length);
 
-        const lado =
-            esquerda ? -1 : 1;
+        const tabela =
+            ciclo % 2 === 0 ? RITMO : RITMO_ESPELHADO;
 
-        // Inclina o vídeo de leve pra dentro da diagonal
+        const [variante, coluna, largura, desnivel] =
+            tabela[indice % RITMO.length];
+
+        // Inclina o vídeo de leve (o compacto fica reto)
         const rotacao =
-            -lado * (0.5 + hash(dados.id + "-rot") * 1.1);
+            variante === "compacto"
+                ? 0
+                : (indice % 2 === 0 ? -1 : 1) *
+                  (0.4 + hash(dados.id + "-rot") * 0.9);
 
         const item =
             document.createElement("article");
@@ -826,12 +824,15 @@
         item.className =
             "preview-item";
 
-        item.dataset.lado =
-            esquerda ? "esq" : "dir";
+        item.dataset.variante = variante;
 
-        item.style.setProperty("--lado", lado);
-        item.style.setProperty("--amp", amplitude(dados).toFixed(3));
+        item.style.setProperty("--c", coluna);
+        item.style.setProperty("--s", largura);
+        item.style.setProperty("--dy", `${desnivel}px`);
         item.style.setProperty("--rot", `${rotacao.toFixed(2)}deg`);
+
+        // atraso da animação de entrada: os cartões "pousam" em sequência
+        item.style.setProperty("--atraso", `${(indice % 8) * 80 + 120}ms`);
 
 
         const titulo =
@@ -849,6 +850,12 @@
                 ? formatarDuracao(dados.duracao)
                 : "";
 
+        // Fita adesiva: no destaque, no médio e em alguns pequenos
+        const comFita =
+            variante === "destaque" ||
+            variante === "medio" ||
+            (variante === "pequeno" && hash(dados.id + "-ft") < 0.5);
+
         const cantoFita =
             hash(dados.id + "-fita") < 0.5 ? "esq" : "dir";
 
@@ -858,125 +865,112 @@
 
         item.innerHTML = `
 
-            <div class="preview-quadro">
+            <div class="pc-media">
 
-                <div class="preview-moldura">
+                <div class="preview-quadro">
 
-                    ${
-                        dados.capa
-                            ? `<img
-                                    class="preview-capa"
-                                    src="${escaparAtributo(dados.capa)}"
-                                    alt=""
-                                    ${razaoConhecida ? 'loading="lazy"' : ""}
-                                    decoding="async"
-                               >`
-                            : ""
-                    }
+                    <div class="preview-moldura">
 
-                    <button
-                        type="button"
-                        class="preview-area"
-                        aria-label="Reproduzir${titulo ? ": " + escaparAtributo(titulo) : " vídeo"}"
-                    ></button>
+                        ${
+                            dados.capa
+                                ? `<img
+                                        class="preview-capa"
+                                        src="${escaparAtributo(dados.capa)}"
+                                        alt=""
+                                        ${razaoConhecida ? 'loading="lazy"' : ""}
+                                        decoding="async"
+                                   >`
+                                : ""
+                        }
 
-                    <span class="preview-play" aria-hidden="true">
-                        ${ICONE_PLAY}
-                    </span>
+                        <button
+                            type="button"
+                            class="preview-area"
+                            aria-label="Reproduzir${titulo ? ": " + escaparAtributo(titulo) : " vídeo"}"
+                        ></button>
 
-                    <span class="preview-carregando" aria-hidden="true"></span>
+                        <span class="preview-play" aria-hidden="true">
+                            ${ICONE_PLAY}
+                        </span>
 
-                    <span
-                        class="preview-duracao"
-                        aria-hidden="true"
-                        ${duracaoTexto ? "" : "hidden"}
-                    >${duracaoTexto}</span>
+                        <span class="preview-carregando" aria-hidden="true"></span>
 
-                    <button
-                        type="button"
-                        class="preview-mudo"
-                        aria-label="Ligar ou desligar o som"
-                    >
-                        ${ICONE_SOM_LIGADO}
-                        ${ICONE_SOM_DESLIGADO}
-                    </button>
+                        <span
+                            class="preview-duracao"
+                            aria-hidden="true"
+                            ${duracaoTexto ? "" : "hidden"}
+                        >${duracaoTexto}</span>
 
-                    <span class="preview-erro" role="status">
-                        Não foi possível carregar. Toque para tentar de novo.
-                    </span>
+                        <div class="preview-som">
 
-                    <div class="preview-barra" aria-hidden="true">
-                        <div class="preview-barra-fill"></div>
+                            <input
+                                type="range"
+                                class="preview-volume"
+                                min="0"
+                                max="1"
+                                step="0.05"
+                                value="1"
+                                aria-label="Volume"
+                            >
+
+                            <button
+                                type="button"
+                                class="preview-mudo"
+                                aria-label="Ligar ou desligar o som"
+                            >
+                                ${ICONE_SOM_LIGADO}
+                                ${ICONE_SOM_DESLIGADO}
+                            </button>
+
+                        </div>
+
+                        <span class="preview-erro" role="status">
+                            Não foi possível carregar. Toque para tentar de novo.
+                        </span>
+
+                        <div class="preview-controles">
+
+                            <span class="preview-tempo preview-tempo-atual">0:00</span>
+
+                            <div
+                                class="preview-barra"
+                                role="slider"
+                                tabindex="0"
+                                aria-label="Progresso do vídeo"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0"
+                            >
+                                <div class="preview-trilho">
+                                    <div class="preview-barra-fill"></div>
+                                    <div class="preview-barra-bolinha"></div>
+                                </div>
+                            </div>
+
+                            <span class="preview-tempo preview-tempo-total">${duracaoTexto || "0:00"}</span>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-                <span
-                    class="preview-fita"
-                    data-canto="${cantoFita}"
-                    data-cor="${corFita}"
-                    aria-hidden="true"
-                ></span>
-
             </div>
 
-            ${criarInfo(dados)}
+            ${criarInfo(dados, variante)}
+
+            ${
+                comFita
+                    ? `<span
+                            class="preview-fita"
+                            data-canto="${cantoFita}"
+                            data-cor="${corFita}"
+                            aria-hidden="true"
+                       ></span>`
+                    : ""
+            }
 
         `;
-
-
-        // Enfeites: um à esquerda do vídeo, outro à direita do cartão
-
-        for (let n = 0; n < 2; n++) {
-
-            const enfeite =
-                document.createElement("span");
-
-            enfeite.className =
-                "preview-enfeite " + (n === 0 ? "enfeite-esq" : "enfeite-dir");
-
-            enfeite.setAttribute("aria-hidden", "true");
-
-            enfeite.textContent =
-                GLIFOS_ENFEITE[
-                    Math.floor(hash(dados.id + "-g" + n) * GLIFOS_ENFEITE.length)
-                ];
-
-            enfeite.style.setProperty(
-                "--ey",
-                `${n === 0 ? 8 + hash(dados.id + "-y0") * 22 : 58 + hash(dados.id + "-y1") * 28}%`
-            );
-
-            enfeite.style.setProperty(
-                "--ed",
-                `${22 + hash(dados.id + "-d" + n) * 46}px`
-            );
-
-            enfeite.style.setProperty(
-                "--tam",
-                `${12 + hash(dados.id + "-t" + n) * 12}px`
-            );
-
-            enfeite.style.setProperty(
-                "--cor",
-                CORES_ENFEITE[
-                    Math.floor(hash(dados.id + "-c" + n) * CORES_ENFEITE.length)
-                ]
-            );
-
-            enfeite.style.setProperty(
-                "--dur",
-                `${4.5 + hash(dados.id + "-u" + n) * 3}s`
-            );
-
-            enfeite.style.setProperty(
-                "--delay",
-                `-${(hash(dados.id + "-l" + n) * 5).toFixed(2)}s`
-            );
-
-            item.appendChild(enfeite);
-
-        }
 
 
         // Entrada
@@ -987,6 +981,15 @@
             moldura: item.querySelector(".preview-moldura"),
             area: item.querySelector(".preview-area"),
             barra: item.querySelector(".preview-barra-fill"),
+            bolinha: item.querySelector(".preview-barra-bolinha"),
+            barraEl: item.querySelector(".preview-barra"),
+            trilho: item.querySelector(".preview-trilho"),
+            tempoAtual: item.querySelector(".preview-tempo-atual"),
+            tempoTotal: item.querySelector(".preview-tempo-total"),
+            som: item.querySelector(".preview-som"),
+            slider: item.querySelector(".preview-volume"),
+            somTimer: null,
+            arrastando: false,
             duracao: item.querySelector(".preview-duracao"),
             razaoConhecida: razaoConhecida > 0,
             video: null
@@ -1000,15 +1003,7 @@
             () => alternar(entrada)
         );
 
-        item
-            .querySelector(".preview-mudo")
-            .addEventListener("click", evento => {
-
-                evento.stopPropagation();
-
-                alternarSom();
-
-            });
+        ligarControles(entrada);
 
         item
             .querySelector(".preview-info-link")
@@ -1103,6 +1098,7 @@
         video.playsInline = true;
         video.disablePictureInPicture = true;
         video.muted = !somLigado;
+        video.volume = volumeVideo;
 
         video.setAttribute("playsinline", "");
         video.setAttribute("webkit-playsinline", "");
@@ -1127,6 +1123,9 @@
                     formatarDuracao(video.duration);
 
                 entrada.duracao.hidden = false;
+
+                entrada.tempoTotal.textContent =
+                    formatarDuracao(video.duration);
 
             }
 
@@ -1178,10 +1177,12 @@
 
         video.addEventListener("timeupdate", () => {
 
-            if (video.duration) {
+            if (video.duration && !entrada.arrastando) {
 
-                entrada.barra.style.transform =
-                    `scaleX(${video.currentTime / video.duration})`;
+                mostrarProgresso(
+                    entrada,
+                    video.currentTime / video.duration
+                );
 
             }
 
@@ -1219,31 +1220,174 @@
         entrada.video = null;
 
         entrada.barra.style.transform = "scaleX(0)";
+        entrada.bolinha.style.left = "0%";
+        entrada.tempoAtual.textContent = "0:00";
+        entrada.arrastando = false;
 
         entrada.elemento.classList.remove(
             "tocando",
             "pausado",
             "carregando",
             "erro",
-            "iniciado"
+            "iniciado",
+            "em-foco",
+            "arrastando"
         );
+
+    }
+
+    // Vídeos pequenos (miniatura e bilhete) crescem quando você clica,
+    // pra dar pra assistir. Só o VÍDEO cresce: o papel e o texto ficam
+    // parados, e o vídeo mantém a própria proporção. É só um zoom
+    // (transform), então o layout em volta não muda e nada abre numa tela
+    // nova. Clicar fora ou Esc recolhe.
+
+    const VARIANTES_QUE_EXPANDEM = ["pequeno", "compacto"];
+
+    function expandirSePequeno(entrada) {
+
+        const item =
+            entrada.elemento;
+
+        if (!VARIANTES_QUE_EXPANDEM.includes(item.dataset.variante)) return;
+
+        if (item.classList.contains("expandido")) return;
+
+        const quadro =
+            entrada.moldura.parentElement;
+
+        const largura = entrada.moldura.offsetWidth;
+        const altura = entrada.moldura.offsetHeight;
+
+        if (!largura || !altura) return;
+
+        // O vídeo expande bem maior que os cards grandes: até 680 x 580 no
+        // computador (menos no celular), sempre mantendo a proporção dele e
+        // cabendo na tela. Só ele cresce; o vídeo em si é desenhado na
+        // resolução original, então não perde nitidez. Pra não "esticar"
+        // além do que o arquivo tem, o tamanho nunca passa da largura
+        // original do vídeo (quando a gente sabe qual é).
+        const estreito = window.innerWidth <= 760;
+
+        const larguraMaxima = estreito ? window.innerWidth - 40 : 680;
+        const alturaMaxima = estreito ? 480 : 580;
+
+        const razao = largura / altura;
+
+        const larguraOriginal =
+            entrada.video?.videoWidth ||
+            Number(entrada.dados.largura) ||
+            Infinity;
+
+        const alvoLargura =
+            Math.min(
+                larguraMaxima,
+                alturaMaxima * razao,
+                window.innerWidth - 32,
+                window.innerHeight * 0.85 * razao,
+                larguraOriginal
+            );
+
+        const zoom = alvoLargura / largura;
+
+        // Já é grande o bastante: não mexe
+        if (zoom < 1.12) return;
+
+        // Mantém o vídeo ampliado dentro da tela
+        const caixa =
+            quadro.getBoundingClientRect();
+
+        const centroX = caixa.left + caixa.width / 2;
+        const centroY = caixa.top + caixa.height / 2;
+
+        const larguraFinal = largura * zoom;
+        const alturaFinal = altura * zoom;
+
+        const margem = 16;
+        const topoMinimo = 84;       // não passa por baixo dos botões do topo
+
+        let deslocX = 0;
+        let deslocY = 0;
+
+        const esquerda = centroX - larguraFinal / 2;
+        const direita = centroX + larguraFinal / 2;
+
+        if (esquerda < margem) {
+
+            deslocX = margem - esquerda;
+
+        } else if (direita > window.innerWidth - margem) {
+
+            deslocX = window.innerWidth - margem - direita;
+
+        }
+
+        const topo = centroY - alturaFinal / 2;
+        const base = centroY + alturaFinal / 2;
+
+        if (topo < topoMinimo) {
+
+            deslocY = topoMinimo - topo;
+
+        } else if (base > window.innerHeight - margem) {
+
+            deslocY = window.innerHeight - margem - base;
+
+        }
+
+        item.style.setProperty("--zoom", zoom.toFixed(3));
+        item.style.setProperty("--zx", `${deslocX.toFixed(1)}px`);
+        item.style.setProperty("--zy", `${deslocY.toFixed(1)}px`);
+
+        item.classList.add("expandido");
+
+        feed.classList.add("tem-expandido");
+
+    }
+
+    function recolher() {
+
+        feed
+            .querySelectorAll(".preview-item.expandido")
+            .forEach(item => {
+
+                item.classList.remove("expandido");
+
+                // esconde os controles enquanto o vídeo volta ao tamanho normal
+                item.classList.add("recolhendo");
+
+                setTimeout(() => item.classList.remove("recolhendo"), 520);
+
+            });
+
+        feed.classList.remove("tem-expandido");
 
     }
 
     function pausarOutros(entrada) {
 
-        if (
-            ativo &&
-            ativo !== entrada &&
-            ativo.video &&
-            !ativo.video.paused
-        ) {
+        const expandido =
+            feed.querySelector(".preview-item.expandido");
 
-            ativo.video.pause();
+        if (expandido && expandido !== entrada.elemento) recolher();
+
+        if (ativo && ativo !== entrada) {
+
+            // O vídeo anterior perde o "foco" (volta ao tamanho normal)
+            ativo.elemento.classList.remove("em-foco");
+
+            if (ativo.video && !ativo.video.paused) {
+
+                ativo.video.pause();
+
+            }
 
         }
 
         ativo = entrada;
+
+        // O vídeo tocado ganha a leve expandidinha e os controles
+        entrada.elemento.classList.add("em-foco");
 
     }
 
@@ -1253,6 +1397,8 @@
     // =================================================
 
     function alternar(entrada) {
+
+        expandirSePequeno(entrada);
 
         const video =
             entrada.video;
@@ -1295,6 +1441,7 @@
             entrada.video;
 
         video.muted = !somLigado;
+        video.volume = volumeVideo;
 
         entrada.elemento.classList.add("carregando");
 
@@ -1333,13 +1480,223 @@
 
         somLigado = !somLigado;
 
+        atualizarSom();
+
+    }
+
+    // Põe o som (mudo + volume) igual em todos os vídeos e controles
+    function atualizarSom() {
+
         feed.classList.toggle("preview-sem-som", !somLigado);
 
-        if (ativo?.video) {
+        feed
+            .querySelectorAll(".preview-volume")
+            .forEach(sincronizarSlider);
 
-            ativo.video.muted = !somLigado;
+        entradas.forEach(entrada => {
+
+            if (entrada.video) {
+
+                entrada.video.muted = !somLigado;
+                entrada.video.volume = volumeVideo;
+
+            }
+
+        });
+
+    }
+
+    function sincronizarSlider(slider) {
+
+        const valor =
+            somLigado ? volumeVideo : 0;
+
+        slider.value = valor;
+
+        slider.style.setProperty("--v", `${valor * 100}%`);
+
+    }
+
+    // Mantém o controle de volume aberto por uns segundos (celular)
+    function abrirVolume(entrada) {
+
+        entrada.som.classList.add("aberto");
+
+        clearTimeout(entrada.somTimer);
+
+        entrada.somTimer =
+            setTimeout(
+                () => entrada.som.classList.remove("aberto"),
+                3500
+            );
+
+    }
+
+    // Barra de progresso + tempo
+    function mostrarProgresso(entrada, fracao) {
+
+        const f =
+            Math.min(Math.max(fracao, 0), 1);
+
+        entrada.barra.style.transform = `scaleX(${f})`;
+
+        entrada.bolinha.style.left = `${f * 100}%`;
+
+        entrada.tempoAtual.textContent =
+            formatarTempoCorrido(f * (entrada.video?.duration || 0));
+
+        entrada.barraEl.setAttribute(
+            "aria-valuenow",
+            String(Math.round(f * 100))
+        );
+
+    }
+
+    // Pula pra um ponto do vídeo (0 a 1 da duração)
+    function buscar(entrada, fracao) {
+
+        const video =
+            entrada.video;
+
+        if (!video || !isFinite(video.duration) || video.duration <= 0) {
+
+            return;
 
         }
+
+        const f =
+            Math.min(Math.max(fracao, 0), 1);
+
+        video.currentTime = f * video.duration;
+
+        mostrarProgresso(entrada, f);
+
+    }
+
+    function ligarControles(entrada) {
+
+        const { barraEl, trilho, slider, elemento } = entrada;
+
+        // ----- som: botão e volume -----
+
+        entrada.som
+            .querySelector(".preview-mudo")
+            .addEventListener("click", evento => {
+
+                evento.stopPropagation();
+
+                alternarSom();
+
+                abrirVolume(entrada);
+
+            });
+
+        sincronizarSlider(slider);
+
+        slider.addEventListener("input", () => {
+
+            const valor =
+                Number(slider.value);
+
+            if (valor > 0) {
+
+                volumeVideo = valor;
+
+                somLigado = true;
+
+            } else {
+
+                somLigado = false;
+
+            }
+
+            atualizarSom();
+
+            abrirVolume(entrada);
+
+        });
+
+        // ----- progresso: clicar ou arrastar pula pro ponto -----
+
+        const fracaoDoPonteiro = evento => {
+
+            const caixa =
+                trilho.getBoundingClientRect();
+
+            return (evento.clientX - caixa.left) / caixa.width;
+
+        };
+
+        barraEl.addEventListener("pointerdown", evento => {
+
+            if (!entrada.video) return;
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            entrada.arrastando = true;
+
+            elemento.classList.add("arrastando");
+
+            try {
+
+                barraEl.setPointerCapture(evento.pointerId);
+
+            } catch (_) {
+
+                // sem captura, o arrasto só segue enquanto o ponteiro estiver na barra
+
+            }
+
+            buscar(entrada, fracaoDoPonteiro(evento));
+
+        });
+
+        barraEl.addEventListener("pointermove", evento => {
+
+            if (entrada.arrastando) {
+
+                buscar(entrada, fracaoDoPonteiro(evento));
+
+            }
+
+        });
+
+        const soltar = () => {
+
+            entrada.arrastando = false;
+
+            elemento.classList.remove("arrastando");
+
+        };
+
+        barraEl.addEventListener("pointerup", soltar);
+        barraEl.addEventListener("pointercancel", soltar);
+
+        // Teclado: setas pulam 5 segundos
+        barraEl.addEventListener("keydown", evento => {
+
+            const video =
+                entrada.video;
+
+            if (!video || !video.duration) return;
+
+            if (evento.key === "ArrowRight" || evento.key === "ArrowLeft") {
+
+                evento.preventDefault();
+
+                const passo =
+                    evento.key === "ArrowRight" ? 5 : -5;
+
+                buscar(
+                    entrada,
+                    (video.currentTime + passo) / video.duration
+                );
+
+            }
+
+        });
 
     }
 
@@ -1412,7 +1769,8 @@
         const fragmento =
             document.createDocumentFragment();
 
-        for (let i = 0; i < 16; i++) {
+        // estrelinhas
+        for (let i = 0; i < 14; i++) {
 
             const ponto =
                 document.createElement("span");
@@ -1420,19 +1778,37 @@
             ponto.className =
                 "preview-brilho";
 
-            // No desktop, concentra nas laterais (o centro é do feed)
-            const lateral =
-                Math.random() < 0.5
-                    ? 2 + Math.random() * 20
-                    : 78 + Math.random() * 20;
-
-            ponto.style.setProperty("--x", `${lateral.toFixed(1)}%`);
+            ponto.style.setProperty("--x", `${(2 + Math.random() * 96).toFixed(1)}%`);
             ponto.style.setProperty("--y", `${(3 + Math.random() * 92).toFixed(1)}%`);
-            ponto.style.setProperty("--tam", `${(2 + Math.random() * 2.4).toFixed(1)}px`);
+            ponto.style.setProperty("--tam", `${(2 + Math.random() * 2.2).toFixed(1)}px`);
             ponto.style.setProperty("--dur", `${(4 + Math.random() * 4).toFixed(1)}s`);
             ponto.style.setProperty("--delay", `-${(Math.random() * 6).toFixed(1)}s`);
 
             fragmento.appendChild(ponto);
+
+        }
+
+        // corações pequenos, quase parados
+        for (let i = 0; i < 6; i++) {
+
+            const coracao =
+                document.createElement("span");
+
+            coracao.className =
+                "preview-coracao";
+
+            coracao.setAttribute("aria-hidden", "true");
+
+            coracao.textContent =
+                GLIFOS_CORACAO[Math.floor(Math.random() * GLIFOS_CORACAO.length)];
+
+            coracao.style.setProperty("--x", `${(3 + Math.random() * 94).toFixed(1)}%`);
+            coracao.style.setProperty("--y", `${(6 + Math.random() * 88).toFixed(1)}%`);
+            coracao.style.setProperty("--tam", `${(11 + Math.random() * 6).toFixed(0)}px`);
+            coracao.style.setProperty("--dur", `${(10 + Math.random() * 6).toFixed(1)}s`);
+            coracao.style.setProperty("--delay", `-${(Math.random() * 10).toFixed(1)}s`);
+
+            fragmento.appendChild(coracao);
 
         }
 
@@ -1447,13 +1823,81 @@
 
     let previewCarregado = false;
 
+    let fontesCarregadas = false;
+
+    function carregarFontes() {
+
+        if (fontesCarregadas) return;
+
+        fontesCarregadas = true;
+
+        const link =
+            document.createElement("link");
+
+        link.rel = "stylesheet";
+
+        link.href = URL_FONTES;
+
+        document.head.appendChild(link);
+
+    }
+
     function aoAbrirPreview() {
+
+        carregarFontes();
 
         if (previewCarregado) return;
 
         previewCarregado = true;
 
         carregar();
+
+    }
+
+    // Faíscas que saem do botão quando você abre o Preview
+    function faiscas(botao) {
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const caixa =
+            botao.getBoundingClientRect();
+
+        const centroX = caixa.left + caixa.width / 2;
+        const centroY = caixa.top + caixa.height / 2;
+
+        const glifos = ["✦", "♡", "✧", "✦", "♥", "✧", "✦", "♡", "✧", "✦"];
+
+        glifos.forEach((glifo, indice) => {
+
+            const faisca =
+                document.createElement("span");
+
+            faisca.className = "preview-faisca";
+
+            faisca.textContent = glifo;
+
+            const angulo =
+                (Math.PI * 2 * indice) / glifos.length +
+                Math.random() * 0.5;
+
+            const distancia =
+                44 + Math.random() * 56;
+
+            faisca.style.left = `${centroX}px`;
+            faisca.style.top = `${centroY}px`;
+
+            faisca.style.setProperty("--dx", `${(Math.cos(angulo) * distancia).toFixed(1)}px`);
+            faisca.style.setProperty("--dy", `${(Math.sin(angulo) * distancia).toFixed(1)}px`);
+            faisca.style.setProperty("--tam", `${(11 + Math.random() * 9).toFixed(0)}px`);
+
+            faisca.style.color =
+                indice % 3 === 0 ? "#f5c2d1" : "#dccbfa";
+
+            document.body.appendChild(faisca);
+
+            setTimeout(() => faisca.remove(), 1050);
+
+        });
 
     }
 
@@ -1464,6 +1908,13 @@
 
         if (!abas || !pagina) return;
 
+        // Começa a buscar as fontes assim que a pessoa chega perto das abas
+        ["pointerenter", "pointerdown", "focusin"].forEach(nome => {
+
+            abas.addEventListener(nome, carregarFontes, { once: true });
+
+        });
+
         const titulo =
             pagina.querySelector(".section-title");
 
@@ -1473,7 +1924,10 @@
         const paineis =
             pagina.querySelectorAll("[data-painel]");
 
-        const selecionar = nome => {
+        const selecionar = (nome, botaoClicado) => {
+
+            const jaEstava =
+                pagina.classList.contains("aba-preview");
 
             abas.querySelectorAll("[data-aba]").forEach(botao => {
 
@@ -1503,11 +1957,15 @@
 
             }
 
+            recolher();
+
             pagina.scrollTo({ top: 0 });
 
             if (nome === "preview") {
 
                 aoAbrirPreview();
+
+                if (!jaEstava && botaoClicado) faiscas(botaoClicado);
 
             } else if (ativo?.video) {
 
@@ -1522,7 +1980,7 @@
             const botao =
                 evento.target.closest("[data-aba]");
 
-            if (botao) selecionar(botao.dataset.aba);
+            if (botao) selecionar(botao.dataset.aba, botao);
 
         });
 
@@ -1547,6 +2005,25 @@
     // =================================================
     // INICIAR
     // =================================================
+
+    // Clicar fora do vídeo expandido, apertar Esc ou redimensionar a janela recolhe
+    document.addEventListener("pointerdown", evento => {
+
+        if (!feed.classList.contains("tem-expandido")) return;
+
+        if (evento.target.closest(".preview-item.expandido")) return;
+
+        recolher();
+
+    });
+
+    document.addEventListener("keydown", evento => {
+
+        if (evento.key === "Escape") recolher();
+
+    });
+
+    window.addEventListener("resize", recolher);
 
     criarAtmosfera();
 
