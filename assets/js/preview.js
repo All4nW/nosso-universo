@@ -79,7 +79,8 @@
     const URL_FONTES =
         "https://fonts.googleapis.com/css2" +
         "?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500" +
-        "&family=DM+Sans:wght@400;500;600&display=swap";
+        "&family=DM+Sans:wght@400;500;600" +
+        "&family=Caveat:wght@500;600;700&display=swap";
 
     const FILTROS = [
         {
@@ -106,6 +107,41 @@
 
 
     // =================================================
+    // DESENHINHOS DE FUNDO (cinema) e a lua
+    // =================================================
+
+    const DOODLES = [
+        {
+            classe: "doodle-claquete",
+            svg: `<svg viewBox="0 0 48 48"><path d="M6 21h36v20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M5 14.8 40 8.6l1.3 7.4L6.3 22z"/><path d="M12.2 13.6l3.4 7.3M21 12l3.4 7.3M29.8 10.5l3.4 7.3"/><path d="M6 29h36"/></svg>`
+        },
+        {
+            classe: "doodle-play",
+            svg: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M20 16.5v15l12.5-7.5z"/></svg>`
+        },
+        {
+            classe: "doodle-ingresso",
+            svg: `<svg viewBox="0 0 48 48"><path d="M5 14h38v7a3 3 0 0 0 0 6v7H5v-7a3 3 0 0 0 0-6z"/><path d="M31 14v20" stroke-dasharray="2 3"/><path d="M13 24h10"/></svg>`
+        },
+        {
+            classe: "doodle-rolo",
+            svg: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="3.2"/><circle cx="24" cy="14.8" r="3.6"/><circle cx="32.7" cy="21.2" r="3.6"/><circle cx="29.4" cy="31.4" r="3.6"/><circle cx="18.6" cy="31.4" r="3.6"/><circle cx="15.3" cy="21.2" r="3.6"/></svg>`
+        },
+        {
+            classe: "doodle-pipoca",
+            svg: `<svg viewBox="0 0 48 48"><path d="M13.5 22 17 43h14l3.5-21"/><path d="M21 22l1 21M27 22l-1 21"/><circle cx="17" cy="15" r="5"/><circle cx="24" cy="11.5" r="5.5"/><circle cx="31" cy="15" r="5"/><path d="M12.5 22h23"/></svg>`
+        },
+        {
+            classe: "doodle-camera",
+            svg: `<svg viewBox="0 0 48 48"><rect x="5" y="16" width="26" height="20" rx="3.5"/><path d="M31 23.5l12-6v17l-12-6z"/><circle cx="12" cy="10" r="3.6"/><circle cx="23" cy="10" r="3.6"/></svg>`
+        }
+    ];
+
+    const LUA_SVG =
+        `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M33 8a17 17 0 1 0 7 25 14 14 0 0 1-7-25z"/></svg>`;
+
+
+    // =================================================
     // ESTADO
     // =================================================
 
@@ -124,6 +160,7 @@
     let todosItens = [];          // tudo que está no preview.json
     let itens = [];               // o que está na tela (depois do filtro)
     let filtroAtual = "todos";
+    let termoBusca = "";          // o que foi digitado na busca
     let renderizados = 0;
     let ativo = null;             // entrada que está tocando (ou pausada por último)
     let somLigado = true;
@@ -331,7 +368,7 @@
 
                 });
 
-        criarFiltros();
+        criarLateral();
 
         mostrarItens(todosItens);
 
@@ -345,7 +382,7 @@
 
             feed.innerHTML = `
                 <p class="preview-vazio">
-                    Ainda não há nada por aqui.
+                    ${termoBusca.trim() ? "nada encontrado por aqui…" : "ainda não há nada por aqui…"}
                 </p>
             `;
 
@@ -415,13 +452,7 @@
                 filtro => filtro.chave === "todos" || presentes.has(filtro.chave)
             );
 
-        if (disponiveis.length < 2 || !painel) {
-
-            painel?.classList.add("sem-filtros");
-
-            return;
-
-        }
+        if (disponiveis.length < 2 || !painel) return null;
 
         const nav =
             document.createElement("nav");
@@ -455,7 +486,54 @@
 
         });
 
-        painel.insertBefore(nav, feed);
+        return nav;
+
+    }
+
+    function normalizar(texto) {
+
+        return String(texto || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+    }
+
+    // O que aparece no mural: a categoria escolhida + o que foi buscado
+    function itensFiltrados() {
+
+        const termo =
+            normalizar(termoBusca);
+
+        return todosItens.filter(item => {
+
+            if (
+                filtroAtual !== "todos" &&
+                item.assistidoCategoria !== filtroAtual
+            ) {
+
+                return false;
+
+            }
+
+            if (!termo) return true;
+
+            return normalizar(
+                `${item.assistidoTitulo || ""} ${item.titulo || ""}`
+            ).includes(termo);
+
+        });
+
+    }
+
+    function atualizarMural() {
+
+        limparFeed();
+
+        mostrarItens(itensFiltrados());
+
+        pagina?.scrollTo({ top: 0 });
 
     }
 
@@ -476,17 +554,90 @@
 
             });
 
-        limparFeed();
+        atualizarMural();
 
-        mostrarItens(
-            chave === "todos"
-                ? todosItens
-                : todosItens.filter(
-                    item => item.assistidoCategoria === chave
-                )
-        );
+    }
 
-        pagina?.scrollTo({ top: 0 });
+    // Busca: filtra os vídeos pelo nome do filme/série/anime (ou pela frase)
+    function criarBusca() {
+
+        document.getElementById("preview-busca")?.remove();
+
+        termoBusca = "";
+
+        if (!painel) return null;
+
+        const caixa =
+            document.createElement("label");
+
+        caixa.id = "preview-busca";
+
+        caixa.className = "preview-busca";
+
+        caixa.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5"/>
+                <path d="m16 16 4.5 4.5"/>
+            </svg>
+
+            <input
+                type="search"
+                placeholder="buscar filme, série…"
+                aria-label="Buscar no Preview"
+                autocomplete="off"
+            >
+        `;
+
+        const campo =
+            caixa.querySelector("input");
+
+        let espera = null;
+
+        campo.addEventListener("input", () => {
+
+            clearTimeout(espera);
+
+            espera = setTimeout(() => {
+
+                termoBusca = campo.value;
+
+                atualizarMural();
+
+            }, 220);
+
+        });
+
+        return caixa;
+
+    }
+
+    // Barra lateral: a busca em cima e os filtros embaixo
+    function criarLateral() {
+
+        document.getElementById("preview-lateral")?.remove();
+
+        if (!painel) return;
+
+        const lateral =
+            document.createElement("aside");
+
+        lateral.id = "preview-lateral";
+
+        lateral.className = "preview-lateral";
+
+        lateral.setAttribute("aria-label", "Busca e filtros");
+
+        const busca =
+            criarBusca();
+
+        const filtros =
+            criarFiltros();
+
+        if (busca) lateral.appendChild(busca);
+
+        if (filtros) lateral.appendChild(filtros);
+
+        painel.insertBefore(lateral, feed);
 
     }
 
@@ -702,8 +853,94 @@
         </svg>`;
 
 
-    // Informações do vídeo: título, "categoria · ano", a frase do vídeo
-    // (como uma anotação à mão) e o pôster do filme em todas as variantes.
+    function posterDe(dados) {
+
+        const alvo =
+            acharAssistido(dados.assistidoId);
+
+        return alvo?.capa || alvo?.imagem || alvo?.poster || "";
+
+    }
+
+    function iconeDaCategoria(chave) {
+
+        return (
+            FILTROS.find(filtro => filtro.chave === chave) || FILTROS[0]
+        ).icone;
+
+    }
+
+    // O contorno "rasgado" do papel: uma borda levemente irregular, igual
+    // pra um mesmo cartão (vem do id), diferente de um cartão pro outro.
+    function rasgoDoPapel(id) {
+
+        const horizontal = 14;
+        const vertical = 8;
+
+        // sorteio com semente (o mesmo cartão sempre sai com o mesmo rasgo)
+        let semente = 2166136261;
+
+        for (const letra of String(id)) {
+
+            semente ^= letra.charCodeAt(0);
+
+            semente = Math.imul(semente, 16777619);
+
+        }
+
+        const sortear = () => {
+
+            semente = (semente + 0x6D2B79F5) | 0;
+
+            let t = Math.imul(semente ^ (semente >>> 15), 1 | semente);
+
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+
+        };
+
+        const falha = () =>
+            (sortear() * 4).toFixed(1);
+
+        const pontos = [];
+
+        // topo, da esquerda pra direita
+        for (let i = 0; i <= horizontal; i++) {
+
+            pontos.push(`${(i / horizontal * 100).toFixed(1)}% ${falha()}px`);
+
+        }
+
+        // lado direito, de cima pra baixo
+        for (let i = 1; i <= vertical; i++) {
+
+            pontos.push(`calc(100% - ${falha()}px) ${(i / vertical * 100).toFixed(1)}%`);
+
+        }
+
+        // base, da direita pra esquerda
+        for (let i = horizontal - 1; i >= 0; i--) {
+
+            pontos.push(`${(i / horizontal * 100).toFixed(1)}% calc(100% - ${falha()}px)`);
+
+        }
+
+        // lado esquerdo, de baixo pra cima
+        for (let i = vertical - 1; i >= 1; i--) {
+
+            pontos.push(`${falha()}px ${(i / vertical * 100).toFixed(1)}%`);
+
+        }
+
+        return pontos.join(", ");
+
+    }
+
+
+    // Informações do vídeo: título manuscrito com coraçãozinho, categoria
+    // (com ícone), ano, nota em corações e a frase do vídeo. A capa do filme
+    // fica por cima do vídeo no destaque e no médio; nos outros, ao lado.
 
     function criarInfo(dados, variante) {
 
@@ -720,7 +957,7 @@
 
             return `
                 <div class="pc-info">
-                    <h3 class="pc-titulo">${escaparHTML(frase)}</h3>
+                    <h3 class="pc-titulo">${escaparHTML(frase)} <span class="pc-coracao" aria-hidden="true">♡</span></h3>
                 </div>
             `;
 
@@ -730,13 +967,19 @@
             acharAssistido(dados.assistidoId);
 
         const poster =
-            alvo?.capa || alvo?.imagem || alvo?.poster || "";
+            variante === "compacto" || variante === "pequeno"
+                ? posterDe(dados)
+                : "";
 
         const categoria =
             ROTULOS_CATEGORIA[dados.assistidoCategoria] || "";
 
         const ano =
             alvo?.ano ? String(alvo.ano) : "";
+
+        // No destaque a frase vira o bilhetinho colado no vídeo
+        const fraseNoCartao =
+            frase && (variante === "medio" || variante === "compacto");
 
         return `
             <div class="pc-info">
@@ -757,22 +1000,19 @@
 
                     <div class="pc-texto">
 
-                        <h3 class="pc-titulo" title="${escaparAtributo(dados.assistidoTitulo)}">${escaparHTML(dados.assistidoTitulo)}</h3>
+                        <h3 class="pc-titulo" title="${escaparAtributo(dados.assistidoTitulo)}">${escaparHTML(dados.assistidoTitulo)} <span class="pc-coracao" aria-hidden="true">♡</span></h3>
 
                         ${
                             categoria || ano
-                                ? `<p class="pc-meta">
-                                        ${
-                                            categoria
-                                                ? `<span class="pc-cat" data-cat="${escaparAtributo(dados.assistidoCategoria)}">${escaparHTML(categoria)}</span>`
-                                                : ""
-                                        }
-                                        ${
-                                            ano
-                                                ? `<span class="pc-ano">${escaparHTML(ano)}</span>`
-                                                : ""
-                                        }
-                                   </p>`
+                                ? `<p class="pc-meta">${
+                                        categoria
+                                            ? `<span class="pc-cat" data-cat="${escaparAtributo(dados.assistidoCategoria)}">${iconeDaCategoria(dados.assistidoCategoria)}${escaparHTML(categoria)}</span>`
+                                            : ""
+                                    }${
+                                        ano
+                                            ? `<span class="pc-ano">${escaparHTML(ano)}</span>`
+                                            : ""
+                                    }</p>`
                                 : ""
                         }
 
@@ -781,7 +1021,7 @@
                 </div>
 
                 ${
-                    frase
+                    fraseNoCartao
                         ? `<p class="pc-frase">“${escaparHTML(frase)}”</p>`
                         : ""
                 }
@@ -834,6 +1074,9 @@
         // atraso da animação de entrada: os cartões "pousam" em sequência
         item.style.setProperty("--atraso", `${(indice % 8) * 80 + 120}ms`);
 
+        // o contorno rasgado do papel
+        item.style.setProperty("--rasgo", rasgoDoPapel(dados.id));
+
 
         const titulo =
             (dados.titulo || "").trim();
@@ -850,17 +1093,33 @@
                 ? formatarDuracao(dados.duracao)
                 : "";
 
-        // Fita adesiva: no destaque, no médio e em alguns pequenos
-        const comFita =
-            variante === "destaque" ||
-            variante === "medio" ||
-            (variante === "pequeno" && hash(dados.id + "-ft") < 0.5);
+        // A capa do filme fica por cima do canto do vídeo (destaque e médio)
+        const posterUrl =
+            dados.assistidoId && dados.assistidoTitulo
+                ? posterDe(dados)
+                : "";
 
-        const cantoFita =
-            hash(dados.id + "-fita") < 0.5 ? "esq" : "dir";
+        const posterSobre =
+            posterUrl && (variante === "destaque" || variante === "medio");
 
-        const corFita =
-            hash(dados.id + "-fitacor") < 0.5 ? "lilas" : "rosa";
+        if (posterSobre) item.dataset.poster = "sim";
+
+        const posterSobreHTML =
+            posterSobre
+                ? `<img
+                        class="preview-info-poster preview-info-poster--sobre"
+                        src="${escaparAtributo(posterUrl)}"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                   >`
+                : "";
+
+        // A frase do vídeo vira um bilhetinho colado no destaque
+        const notaAdesivaHTML =
+            variante === "destaque" && titulo
+                ? `<div class="pc-nota-adesiva" aria-hidden="true"><span class="pc-nota-texto">${escaparHTML(titulo)}</span></div>`
+                : "";
 
 
         item.innerHTML = `
@@ -955,20 +1214,14 @@
 
                 </div>
 
+                ${posterSobreHTML}
+
+                ${notaAdesivaHTML}
+
             </div>
 
             ${criarInfo(dados, variante)}
 
-            ${
-                comFita
-                    ? `<span
-                            class="preview-fita"
-                            data-canto="${cantoFita}"
-                            data-cor="${corFita}"
-                            aria-hidden="true"
-                       ></span>`
-                    : ""
-            }
 
         `;
 
@@ -1014,10 +1267,10 @@
 
         // Se o pôster não existir, some sem deixar ícone quebrado
         item
-            .querySelector(".preview-info-poster")
-            ?.addEventListener("error", evento => {
+            .querySelectorAll(".preview-info-poster")
+            .forEach(poster => {
 
-                evento.target.remove();
+                poster.addEventListener("error", () => poster.remove());
 
             });
 
@@ -1249,7 +1502,13 @@
         const item =
             entrada.elemento;
 
-        if (!VARIANTES_QUE_EXPANDEM.includes(item.dataset.variante)) return;
+        // No computador só os pequenos crescem (os grandes já são grandes);
+        // no celular todos podem crescer, porque lá todos são pequenos.
+        const podeExpandir =
+            VARIANTES_QUE_EXPANDEM.includes(item.dataset.variante) ||
+            window.innerWidth <= 760;
+
+        if (!podeExpandir) return;
 
         if (item.classList.contains("expandido")) return;
 
@@ -1811,6 +2070,85 @@
             fragmento.appendChild(coracao);
 
         }
+
+        // desenhinhos de cinema (claquete, rolo de filme, pipoca, câmera...)
+        DOODLES.forEach(doodle => {
+
+            const desenho =
+                document.createElement("span");
+
+            desenho.className =
+                `preview-doodle ${doodle.classe}`;
+
+            desenho.setAttribute("aria-hidden", "true");
+
+            desenho.innerHTML = doodle.svg;
+
+            fragmento.appendChild(desenho);
+
+        });
+
+        // cometas que cruzam o céu de vez em quando
+        for (let i = 0; i < 5; i++) {
+
+            const cometa =
+                document.createElement("span");
+
+            cometa.className = "preview-cometa";
+
+            cometa.setAttribute("aria-hidden", "true");
+
+            const angulo = 18 + Math.random() * 22;      // desce pra direita
+            const distancia = 38 + Math.random() * 22;   // em vw
+
+            const radianos = angulo * Math.PI / 180;
+
+            cometa.style.setProperty("--x", `${(Math.random() * 60).toFixed(0)}%`);
+            cometa.style.setProperty("--y", `${(4 + Math.random() * 40).toFixed(0)}%`);
+            cometa.style.setProperty("--ang", `${angulo.toFixed(0)}deg`);
+            cometa.style.setProperty("--dx", `${(Math.cos(radianos) * distancia).toFixed(1)}vw`);
+            cometa.style.setProperty("--dy", `${(Math.sin(radianos) * distancia).toFixed(1)}vw`);
+            cometa.style.setProperty("--dur", `${(9 + Math.random() * 9).toFixed(1)}s`);
+            cometa.style.setProperty("--delay", `-${(Math.random() * 14).toFixed(1)}s`);
+            cometa.style.setProperty("--cauda", `${(110 + Math.random() * 90).toFixed(0)}px`);
+
+            fragmento.appendChild(cometa);
+
+        }
+
+        // brilhos grandes, de quatro pontas
+        for (let i = 0; i < 7; i++) {
+
+            const brilho =
+                document.createElement("span");
+
+            brilho.className = "preview-brilho-grande";
+
+            brilho.setAttribute("aria-hidden", "true");
+
+            brilho.textContent = "✦";
+
+            brilho.style.setProperty("--x", `${(3 + Math.random() * 94).toFixed(1)}%`);
+            brilho.style.setProperty("--y", `${(4 + Math.random() * 90).toFixed(1)}%`);
+            brilho.style.setProperty("--tam", `${(10 + Math.random() * 10).toFixed(0)}px`);
+            brilho.style.setProperty("--dur", `${(5 + Math.random() * 4).toFixed(1)}s`);
+            brilho.style.setProperty("--delay", `-${(Math.random() * 8).toFixed(1)}s`);
+
+            fragmento.appendChild(brilho);
+
+        }
+
+        // a lua
+        const lua =
+            document.createElement("span");
+
+        lua.className = "preview-lua";
+
+        lua.setAttribute("aria-hidden", "true");
+
+        lua.innerHTML = LUA_SVG;
+
+        fragmento.appendChild(lua);
 
         camada.appendChild(fragmento);
 
