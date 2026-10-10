@@ -2160,6 +2160,14 @@
     bottom: -40px;
 }
 
+/* no compacto e no pequeno a capa fica ao lado do texto (no celular
+   é o contrário: aparece por cima do vídeo, igual ao médio) */
+
+.preview-item[data-variante="compacto"] .preview-info-poster--sobre,
+.preview-item[data-variante="pequeno"] .preview-info-poster--sobre {
+    display: none;
+}
+
 /* A frase do vídeo, à mão */
 
 .pc-frase {
@@ -2309,44 +2317,48 @@
 
 
 /* =========================================================
-   TELAS MÉDIAS — duas colunas
+   TELAS MÉDIAS (tablet) — grade de 6 colunas: o destaque ocupa a
+   largura toda; os outros ficam 2 ou 3 lado a lado.
+   Cada cartão diz quantas colunas ocupa (--sm, e --sm2 nas telas
+   bem estreitas); o JS escolhe a composição.
    ========================================================= */
 
 @media (max-width: 1100px) {
 
     .preview-feed {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
 
-        column-gap: 26px;
-        row-gap: 64px;
+        column-gap: 22px;
+        row-gap: 56px;
     }
 
     .preview-item {
-        grid-column: auto / span var(--s2, 1);
+        grid-column: auto / span var(--sm, 3);
 
         margin-top: 0;
-    }
-
-    .preview-item[data-variante="destaque"],
-    .preview-item[data-variante="compacto"] {
-        --s2: 2;
     }
 
     .preview-item[data-variante="destaque"] {
         justify-self: center;
     }
 
-    .preview-item[data-variante="medio"],
-    .preview-item[data-variante="pequeno"] {
-        --s2: 1;
+    /* o cartão horizontal cabe em meia largura */
+
+    .preview-item[data-variante="compacto"] {
+        --w: min(140px, calc(150px * var(--razao, 0.5625)));
+
+        gap: 16px;
+
+        padding: 14px 16px 14px 14px;
     }
 
 }
 
 
 /* =========================================================
-   CELULAR — tudo em coluna: o vídeo em cima, o texto embaixo; só
-   as miniaturas pequenas ficam lado a lado. Nada sobrepõe nem corta.
+   CELULAR — o destaque ocupa a largura toda e os outros ficam 2 (ou 3,
+   os menores) lado a lado, como polaroids em pé, sempre com a capa do
+   filme por cima do vídeo. Nada empilha à toa, sobrepõe ou corta.
    ========================================================= */
 
 @media (max-width: 760px) {
@@ -2362,20 +2374,15 @@
     }
 
     .preview-painel {
-        padding: 0 16px 90px;
+        padding: 0 14px 90px;
     }
 
     .preview-feed {
-        column-gap: 14px;
-        row-gap: 56px;
+        column-gap: 12px;
+        row-gap: 46px;
     }
 
-    /* destaque e médio ocupam a largura toda */
-
-    .preview-item[data-variante="destaque"],
-    .preview-item[data-variante="medio"] {
-        --s2: 2;
-    }
+    /* destaque: ocupa a largura toda, vídeo em cima e texto embaixo */
 
     .preview-item[data-variante="destaque"] {
         --maxh: 400px;
@@ -2410,13 +2417,6 @@
         padding-left: 98px;
     }
 
-    .preview-item[data-variante="medio"] {
-        --maxh: 360px;
-        --maxw: calc(100vw - 100px);
-
-        width: min(100%, max(calc(var(--w) + 44px), 280px));
-    }
-
     .pc-nota-adesiva {
         top: -22px;
         left: -20px;
@@ -2428,42 +2428,158 @@
         font-size: 1.2rem;
     }
 
-    /* cartão compacto: vídeo menor ao lado do texto */
+    /* os outros: polaroids em pé, 2 por linha (os pequenos, 3 nas telas
+       um pouco maiores) */
 
-    .preview-item[data-variante="compacto"] {
-        --w: min(34vw, calc(160px * var(--razao, 0.5625)), 140px);
+    .preview-item[data-variante="medio"],
+    .preview-item[data-variante="compacto"],
+    .preview-item[data-variante="pequeno"] {
+        --pw: 52px;
+        --ph: 74px;
 
-        gap: 14px;
+        display: block;
 
-        padding: 14px;
+        justify-self: stretch;
+
+        width: 100%;
+        max-width: 100%;
+
+        padding: 12px 12px 16px;
+
+        box-sizing: border-box;
     }
 
-    .preview-item[data-variante="compacto"] .preview-info-poster {
-        display: none;
+    .preview-item[data-variante="medio"] {
+        --maxh: 300px;
+        --maxw: calc(50vw - 44px);
+    }
+
+    .preview-item[data-variante="compacto"] {
+        --maxh: 280px;
+        --maxw: calc(50vw - 44px);
     }
 
     .preview-item[data-variante="pequeno"] {
-        --maxh: 210px;
-        --maxw: calc(50vw - 56px);
-
-        width: max(calc(var(--w) + 30px), 100%);
-
-        padding: 14px 14px 18px;
+        --maxh: 230px;
+        --maxw: calc(33.3vw - 42px);
+        --pw: 44px;
+        --ph: 62px;
     }
 
-    .preview-item[data-variante="pequeno"] .pc-topo {
-        flex-direction: column;
+    .preview-item[data-variante="medio"] .pc-media,
+    .preview-item[data-variante="compacto"] .pc-media,
+    .preview-item[data-variante="pequeno"] .pc-media {
+        flex: none;
+
+        width: min(var(--w), 100%);
+
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* a capa fica por cima do canto do vídeo e "escorrega" pra fora um pouco */
+
+    .preview-item[data-variante="medio"] .preview-info-poster--sobre,
+    .preview-item[data-variante="compacto"] .preview-info-poster--sobre,
+    .preview-item[data-variante="pequeno"] .preview-info-poster--sobre {
+        display: block;
+
+        width: var(--pw);
+        height: var(--ph);
+
+        left: -8px;
+        bottom: calc(var(--ph) * -0.38);
+    }
+
+    .preview-item[data-poster][data-variante="medio"] .pc-media,
+    .preview-item[data-poster][data-variante="compacto"] .pc-media,
+    .preview-item[data-poster][data-variante="pequeno"] .pc-media {
+        margin-bottom: calc(var(--ph) * 0.38 + 8px);
+    }
+
+    /* (a capa ao lado do texto some, porque agora ela já está por cima do vídeo) */
+
+    .preview-item[data-variante="compacto"] .pc-info .preview-info-poster,
+    .preview-item[data-variante="pequeno"] .pc-info .preview-info-poster {
+        display: none;
+    }
+
+    /* texto centralizado embaixo, em tamanhos que cabem */
+
+    .preview-item[data-variante="medio"] .pc-info,
+    .preview-item[data-variante="compacto"] .pc-info,
+    .preview-item[data-variante="pequeno"] .pc-info,
+    .preview-item[data-variante="medio"][data-poster] .pc-info {
+        align-items: center;
 
         gap: 8px;
+
+        padding: 10px 2px 0;
+
+        text-align: center;
     }
 
-    .preview-item[data-variante="pequeno"] .preview-info-poster {
-        width: 46px;
-        height: 66px;
+    .preview-item[data-variante="medio"] .pc-topo,
+    .preview-item[data-variante="compacto"] .pc-topo,
+    .preview-item[data-variante="pequeno"] .pc-topo {
+        justify-content: center;
+    }
+
+    .preview-item[data-variante="medio"] .pc-meta,
+    .preview-item[data-variante="compacto"] .pc-meta,
+    .preview-item[data-variante="pequeno"] .pc-meta {
+        justify-content: center;
+
+        font-size: 0.74rem;
+    }
+
+    .preview-item[data-variante="medio"] .pc-titulo {
+        font-size: 1.7rem;
+    }
+
+    .preview-item[data-variante="compacto"] .pc-titulo {
+        font-size: 1.55rem;
+    }
+
+    .preview-item[data-variante="pequeno"] .pc-titulo {
+        font-size: 1.4rem;
+    }
+
+    .preview-item[data-variante="medio"] .pc-frase,
+    .preview-item[data-variante="compacto"] .pc-frase {
+        font-size: 1.2rem;
+
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .preview-item[data-variante="medio"] .preview-info-link,
+    .preview-item[data-variante="compacto"] .preview-info-link,
+    .preview-item[data-variante="pequeno"] .preview-info-link {
+        align-self: center;
+
+        font-size: 1.08rem;
     }
 
     .preview-brilho:nth-child(n + 9) {
         display: none;
+    }
+
+}
+
+/* telas bem estreitas: os pequenos também ficam 2 por linha */
+
+@media (max-width: 520px) {
+
+    .preview-item {
+        grid-column: auto / span var(--sm2, var(--sm, 3));
+    }
+
+    .preview-item[data-variante="pequeno"] {
+        --maxh: 250px;
+        --maxw: calc(50vw - 44px);
+        --pw: 50px;
+        --ph: 70px;
     }
 
 }

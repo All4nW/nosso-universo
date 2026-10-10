@@ -51,6 +51,21 @@
         ["pequeno",  9, 4, 8]
     ];
 
+    // Composição pra tablet e celular (grade de 6 colunas), em ciclos de 8:
+    // [variante, colunas ocupadas, colunas ocupadas nas telas bem estreitas]
+    // O destaque ocupa a linha toda; os outros ficam 2 por linha e os
+    // pequenos 3 (ou 2, nas telas bem estreitas).
+    const RITMO_COMPACTO = [
+        ["destaque", 6, 6],
+        ["medio",    3, 3],
+        ["compacto", 3, 3],
+        ["pequeno",  2, 3],
+        ["pequeno",  2, 3],
+        ["pequeno",  2, 3],
+        ["medio",    3, 3],
+        ["compacto", 3, 3]
+    ];
+
     const RITMO_ESPELHADO = [
         ["destaque", 6, 7, 0],
         ["medio",    1, 5, 44],
@@ -527,13 +542,13 @@
 
     }
 
-    function atualizarMural() {
+    function atualizarMural(rolarAoTopo = true) {
 
         limparFeed();
 
         mostrarItens(itensFiltrados());
 
-        pagina?.scrollTo({ top: 0 });
+        if (rolarAoTopo) pagina?.scrollTo({ top: 0 });
 
     }
 
@@ -1041,15 +1056,34 @@
 
     function criarItem(dados, indice) {
 
-        // Variante e lugar no mural, pelo ritmo (espelhado a cada ciclo)
-        const ciclo =
-            Math.floor(indice / RITMO.length);
+        // Variante e lugar no mural, pelo ritmo. Em telas largas é a grade de
+        // 12 colunas (espelhada a cada ciclo); no tablet e no celular, a de 6.
+        const compacta =
+            window.innerWidth <= 1100;
 
-        const tabela =
-            ciclo % 2 === 0 ? RITMO : RITMO_ESPELHADO;
+        let variante, coluna, largura, desnivel, colunasMaior, colunasMenor;
 
-        const [variante, coluna, largura, desnivel] =
-            tabela[indice % RITMO.length];
+        if (compacta) {
+
+            [variante, colunasMaior, colunasMenor] =
+                RITMO_COMPACTO[indice % RITMO_COMPACTO.length];
+
+            coluna = 1;
+            largura = 6;
+            desnivel = 0;
+
+        } else {
+
+            const ciclo =
+                Math.floor(indice / RITMO.length);
+
+            const tabela =
+                ciclo % 2 === 0 ? RITMO : RITMO_ESPELHADO;
+
+            [variante, coluna, largura, desnivel] =
+                tabela[indice % RITMO.length];
+
+        }
 
         // Inclina o vídeo de leve (o compacto fica reto)
         const rotacao =
@@ -1069,6 +1103,13 @@
         item.style.setProperty("--c", coluna);
         item.style.setProperty("--s", largura);
         item.style.setProperty("--dy", `${desnivel}px`);
+
+        if (compacta) {
+
+            item.style.setProperty("--sm", colunasMaior);
+            item.style.setProperty("--sm2", colunasMenor);
+
+        }
         item.style.setProperty("--rot", `${rotacao.toFixed(2)}deg`);
 
         // atraso da animação de entrada: os cartões "pousam" em sequência
@@ -1100,7 +1141,7 @@
                 : "";
 
         const posterSobre =
-            posterUrl && (variante === "destaque" || variante === "medio");
+            Boolean(posterUrl);
 
         if (posterSobre) item.dataset.poster = "sim";
 
@@ -2361,7 +2402,31 @@
 
     });
 
-    window.addEventListener("resize", recolher);
+    let larguraCompacta = window.innerWidth <= 1100;
+    let esperaRedimensionar = null;
+
+    window.addEventListener("resize", () => {
+
+        recolher();
+
+        // Cruzou a fronteira entre a grade larga e a de 6 colunas: refaz o mural
+        clearTimeout(esperaRedimensionar);
+
+        esperaRedimensionar = setTimeout(() => {
+
+            const agora = window.innerWidth <= 1100;
+
+            if (agora !== larguraCompacta) {
+
+                larguraCompacta = agora;
+
+                if (previewCarregado && todosItens.length) atualizarMural(false);
+
+            }
+
+        }, 250);
+
+    });
 
     criarAtmosfera();
 
