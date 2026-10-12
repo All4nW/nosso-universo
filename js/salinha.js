@@ -19,11 +19,13 @@ if (role === 'a' || role === 'b' || role === 'c') store.set('role', role); else 
 
 let cfg, myId, otherId, satId;
 let peer = null, conn = null, call = null, localStream = null;
+let connLostAt = 0;
 let everSeen = false, meLost = false, leaving = false, lastSeen = 0, dialAt = 0, tt, lastErr = '';
 /* satélite (celular do Allan): no PC guarda a conexão com o celular; no celular guarda a presença dela */
 let sat = null, satCall = null, satStream = null, satSeen = 0, satOrigin = false, relayT = 0, otherOn = false, otherEver = false;
 const SAT_KBPS = 4000;   /* qualidade do vídeo que o PC manda pro celular (720p, 4 Mbps) */
 const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+const SAT_OFF = new URLSearchParams(location.search).get('sat') === '0';   /* teste: ?sat=0 no PC desliga o vídeo pro celular */
 
 
 /* ---------- sons de conexão (sintetizados, sem arquivo nenhum) ---------- */
@@ -152,7 +154,8 @@ async function diagQualidade(c){
         console.log('[qualidade]', {
           resolucaoEnviada: r.frameWidth + 'x' + r.frameHeight,
           fpsEnviado: r.framesPerSecond,
-          motivoLimitacao: r.qualityLimitationReason,
+                    motivoLimitacao: r.qualityLimitationReason,
+          encoder: r.encoderImplementation,
           bitrateKbps: Math.round((r.bytesSent * 8) / 1000)
         });
       }
@@ -192,6 +195,25 @@ async function tuneSat(c){
   }
 }
 
+/* DIAGNÓSTICO (pode apagar depois): estado da conexão e tipo de caminho (host = rede local, srflx = internet) */
+function dbgPC(nome, c){
+  const pc = c && c.peerConnection; if (!pc || pc._dbg) return; pc._dbg = 1;
+  const t0 = Date.now();
+  const log = ev => console.log('[conexao]', nome, ev, '| conn:', pc.connectionState, '| ice:', pc.iceConnectionState, '| +' + Math.round((Date.now() - t0) / 1000) + 's');
+  pc.addEventListener('connectionstatechange', () => log('connectionState'));
+  pc.addEventListener('iceconnectionstatechange', () => log('iceConnectionState'));
+  setTimeout(async () => {
+    try{
+      const st = await pc.getStats(); let par = null;
+      st.forEach(r => { if (r.type === 'transport' && r.selectedCandidatePairId) par = st.get(r.selectedCandidatePairId); });
+      if (par){
+        const l = st.get(par.localCandidateId), r = st.get(par.remoteCandidateId);
+        console.log('[caminho]', nome, '| local:', l && l.candidateType, '| remoto:', r && r.candidateType, '| rtt(ms):', Math.round((par.currentRoundTripTime || 0) * 1000));
+      }
+    }catch(e){}
+  }, 4000);
+}
+
 /* ---------- transmissão ---------- */
 async function share(){
   try{
@@ -201,7 +223,9 @@ async function share(){
     });
     const vt = s.getVideoTracks()[0]; vt.contentHint = cfg.quality; vt.onended = stopShare;
     localStream = s; renderWait(); startCall();
-    closeSatCall(); callSat(localStream);     /* o celular do Allan também recebe, mesmo sem ela na sala */
+    closeSatCall();
+    const stShare = localStream;     /* o celular também recebe, mas 3s depois, pra chamada dela firmar primeiro */
+    setTimeout(() => { if (localStream === stShare) callSat(stShare); }, 3000);
   }catch(e){ toast('Transmissão cancelada'); }
 }
 function stopShare(){
@@ -212,10 +236,11 @@ function stopShare(){
 }
 function startCall(){
   if (!localStream || !conn || !conn.open || !peer || !peer.open) return;
+   console.log('[call] (re)iniciando chamada pra ela às', new Date().toLocaleTimeString());
   const c = peer.call(otherId, localStream, {sdpTransform: boost});
   setCall(c);
   [400, 2500, 7000].forEach(ms => setTimeout(() => { if (call === c) tune(c); }, ms));
-  setInterval(() => { if (call === c) diagQualidade(c); }, 5000);
+    const iv = setInterval(() => { if (call !== c){ clearInterval(iv); return; } diagQualidade(c); }, 5000);
   const pc = c.peerConnection;
   if (pc) pc.addEventListener('connectionstatechange', () => {
     if (pc.connectionState === 'failed' && call === c) setTimeout(startCall, 1500);
@@ -224,6 +249,7 @@ function startCall(){
 function setCall(c){
   if (call && call !== c){ const o = call; call = null; try{ o.close(); }catch(e){} }
   call = c;
+    dbgPC('chamada-principal', c);
   c.on('stream', showRemote);
   c.on('close', () => { if (call === c){ call = null; hideRemote(); } });
   c.on('error', () => {});
@@ -307,7 +333,11 @@ function setConn(c){
       setSeat('O', 'on'); pop('O'); sendProfile(); sfx(again ? 'reconecta' : 'conecta');
     toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou na Salinha 💗');
         addSys(again ? cfg.otherName + ' reconectou' : cfg.otherName + ' entrou na Salinha 💗');
-    if (localStream) startCall();
+      if (localStream){
+      const pc = call && call.peerConnection;
+      const saudavel = pc && pc.connectionState === 'connected' && (Date.now() - connLostAt < 8000);
+      if (!saudavel) startCall();     /* só refaz a chamada se ela caiu de verdade */
+    }
     if (role === 'a') satSend({t:'pres', on:1});
   };
   c.on('open', opened);
@@ -338,6 +368,8 @@ function setConn(c){
 function dropConn(c){
   try{ c.close(); }catch(e){}
   if (conn === c){
+    console.warn('[drop] conn caiu | silêncio:', Math.round((Date.now() - lastSeen) / 1000) + 's | aba oculta:', document.hidden, '|', new Date().toLocaleTimeString());
+    connLostAt = Date.now();
     conn = null;
     if (role === 'a') satSend({t:'pres', on:0});
     if (role === 'c'){
@@ -401,12 +433,14 @@ function setSat(c){
 function dropSat(c){
   try{ c.close(); }catch(e){}
   if (sat === c){
+    console.warn('[drop] celular caiu | silêncio:', Math.round((Date.now() - satSeen) / 1000) + 's | aba oculta:', document.hidden, '|', new Date().toLocaleTimeString());
     sat = null; closeSatCall();
     $('seatMe').classList.remove('sat');
     toast('Allan (Celular) saiu'); addSys('Allan (Celular) saiu 📱');
   }
 }
 function callSat(st){
+  if (SAT_OFF) return;
   if (role !== 'a' || !st || !sat || !sat.open || !peer || !peer.open) return;
   if (satCall && satStream === st) return;
   closeSatCall();
@@ -415,6 +449,13 @@ function callSat(st){
   satCall = c;
   c.on('close', () => { if (satCall === c){ satCall = null; satStream = null; } });
   c.on('error', () => {});
+    const spc = c.peerConnection;
+  if (spc) spc.addEventListener('connectionstatechange', () => {
+    if (spc.connectionState === 'failed' && satCall === c){
+      closeSatCall();     /* só o vídeo do celular; a chamada dela não é tocada */
+      setTimeout(() => { if (sat && sat.open && !satCall && (localStream === st || vid.srcObject === st)) callSat(st); }, 3000);
+    }
+  });
   [400, 2500, 7000].forEach(ms => setTimeout(() => { if (satCall === c) tuneSat(c); }, ms));
 }
 function closeSatCall(){
@@ -437,7 +478,8 @@ function start(){
   if (peer){ try{ peer.destroy(); }catch(e){} }
   peer = new Peer(myId, {config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
   peer.on('open', () => { lastErr = ''; refreshMe(); });
-  peer.on('disconnected', refreshMe);
+    peer.on('disconnected', () => { console.warn('[peer] perdeu o servidor de sinalização às', new Date().toLocaleTimeString()); refreshMe(); });
+  peer.on('close', () => console.warn('[peer] destruído/fechado às', new Date().toLocaleTimeString()));
   peer.on('connection', c => {
     if (role === 'a' && c.peer === satId){ setSat(c); return; }   /* o celular do Allan entrando */
     if (c.peer !== otherId){ c.close(); return; }
@@ -464,11 +506,11 @@ setInterval(() => {
   refreshMe();
   if (role === 'a' && sat && sat.open){
     try{ sat.send({t:'p'}); }catch(e){}
-    if (Date.now() - satSeen > 10000) dropSat(sat);
+    if (Date.now() - satSeen > 30000) dropSat(sat);
   }
   if (conn && conn.open){
     try{ conn.send({t:'p'}); }catch(e){}
-    if (Date.now() - lastSeen > 10000) dropConn(conn);
+    if (Date.now() - lastSeen > 30000) dropConn(conn);
   } else if ((role === 'a' || role === 'c') && peer.open && Date.now() - dialAt > 6000){
     dialAt = Date.now(); setConn(peer.connect(otherId, {reliable:true}));
   }

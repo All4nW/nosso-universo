@@ -415,17 +415,6 @@
         }
     },
     {
-        "id": "edward-maos-de-tesoura",
-        "categoria": "queremos",
-        "titulo": "Edward Mãos de Tesoura",
-        "ano": null,
-        "capa": "assets/images/assistidos/assistido-1788752121179.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
-        "cor": null
-    },
-    {
         "id": "caroline",
         "categoria": "filmes",
         "titulo": "Coraline",
@@ -683,6 +672,19 @@
             "g": 121,
             "b": 141
         },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "edward-maos-de-tesoura",
+        "categoria": "filmes",
+        "titulo": "Edward Mãos de Tesoura",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1788752121179.jpg",
+        "cor": null,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
