@@ -66,6 +66,27 @@
         ["compacto", 3, 3]
     ];
 
+    // Composição do celular: cada categoria é uma fileira que desliza de lado.
+    // O primeiro cartão de cada fileira é um destaque; os outros alternam
+    // entre médios e pequenos (assim cabem 2 ou 3 na tela de cada vez).
+    const RITMO_CARROSSEL = [
+        "destaque", "medio", "pequeno", "pequeno",
+        "medio", "pequeno", "pequeno", "pequeno"
+    ];
+
+    // As fileiras do celular, na ordem em que aparecem
+    const SECOES_CARROSSEL = [
+        { chave: "filmes", titulo: "Filmes" },
+        { chave: "series", titulo: "Séries" },
+        { chave: "animes", titulo: "Animes" },
+        { chave: "queremos", titulo: "Queremos ver" },
+        { chave: "outros", titulo: "Outros" }
+    ];
+
+    // Larguras (px) onde o layout muda
+    const LIMITE_CELULAR = 760;
+    const LIMITE_TABLET = 1100;
+
     const RITMO_ESPELHADO = [
         ["destaque", 6, 7, 0],
         ["medio",    1, 5, 44],
@@ -75,6 +96,21 @@
         ["pequeno",  5, 4, 26],
         ["pequeno",  1, 4, 8]
     ];
+
+    // "larga" (computador): grade de 12 colunas; "compacta" (tablet): grade de
+    // 6 colunas; "carrossel" (celular): fileiras que deslizam de lado.
+    function modoDeLayout() {
+
+        const largura =
+            window.innerWidth;
+
+        if (largura <= LIMITE_CELULAR) return "carrossel";
+
+        if (largura <= LIMITE_TABLET) return "compacta";
+
+        return "larga";
+
+    }
 
     // Quão antes de aparecer o item "monta" o vídeo / entra o próximo lote
     const MARGEM_MONTAR = "500px 0px";
@@ -405,6 +441,19 @@
 
         }
 
+        // Celular: fileiras por categoria, que deslizam de lado
+        if (modoDeLayout() === "carrossel") {
+
+            sentinela = null;
+
+            iniciarObservadores();
+
+            montarCarrosseis(itens);
+
+            return;
+
+        }
+
         sentinela =
             document.createElement("div");
 
@@ -416,6 +465,90 @@
         iniciarObservadores();
 
         renderizarLote();
+
+    }
+
+    // Cabeçalho de cada fileira: linha · ícone · título · ♡ · linha
+    function criarCabecalhoSecao(icone, titulo) {
+
+        const cabecalho =
+            document.createElement("div");
+
+        cabecalho.className = "preview-secao-cabecalho";
+
+        cabecalho.innerHTML = `
+            <span class="preview-secao-linha preview-secao-linha-esq"></span>
+            <span class="preview-secao-icone" aria-hidden="true">${icone}</span>
+            <h2 class="preview-secao-titulo">${escaparHTML(titulo)}</h2>
+            <span class="preview-secao-coracao" aria-hidden="true">♡</span>
+            <span class="preview-secao-linha preview-secao-linha-dir"></span>
+        `;
+
+        return cabecalho;
+
+    }
+
+    // Celular: uma fileira por categoria (Filmes, Séries, Animes...). Cada
+    // fileira desliza de lado com o dedo, e a borda do próximo cartão aparece
+    // esmaecida no canto da tela.
+    function montarCarrosseis(lista) {
+
+        const grupos =
+            new Map(SECOES_CARROSSEL.map(secao => [secao.chave, []]));
+
+        lista.forEach(item => {
+
+            const chave =
+                grupos.has(item.assistidoCategoria)
+                    ? item.assistidoCategoria
+                    : "outros";
+
+            grupos.get(chave).push(item);
+
+        });
+
+        const fragmento =
+            document.createDocumentFragment();
+
+        SECOES_CARROSSEL.forEach(secao => {
+
+            const doGrupo =
+                grupos.get(secao.chave);
+
+            if (!doGrupo.length) return;
+
+            const bloco =
+                document.createElement("section");
+
+            bloco.className = "preview-secao";
+
+            bloco.appendChild(
+                criarCabecalhoSecao(
+                    iconeDaCategoria(secao.chave),
+                    secao.titulo
+                )
+            );
+
+            const faixa =
+                document.createElement("div");
+
+            faixa.className = "preview-faixa";
+
+            doGrupo.forEach((dados, indice) => {
+
+                faixa.appendChild(
+                    criarItem(dados, indice, "carrossel")
+                );
+
+            });
+
+            bloco.appendChild(faixa);
+
+            fragmento.appendChild(bloco);
+
+        });
+
+        feed.appendChild(fragmento);
 
     }
 
@@ -780,7 +913,7 @@
                 threshold: 0
             });
 
-        observadorLote.observe(sentinela);
+        if (sentinela) observadorLote.observe(sentinela);
 
     }
 
@@ -885,17 +1018,13 @@
 
     }
 
-    // O contorno "rasgado" do papel: uma borda levemente irregular, igual
-    // pra um mesmo cartão (vem do id), diferente de um cartão pro outro.
-    function rasgoDoPapel(id) {
+    // Sorteio com semente: o mesmo cartão sempre sai igual, e cada cartão
+    // sai diferente do outro (rasgo, textura e fita).
+    function criarSorteio(texto) {
 
-        const horizontal = 14;
-        const vertical = 8;
-
-        // sorteio com semente (o mesmo cartão sempre sai com o mesmo rasgo)
         let semente = 2166136261;
 
-        for (const letra of String(id)) {
+        for (const letra of String(texto)) {
 
             semente ^= letra.charCodeAt(0);
 
@@ -903,7 +1032,7 @@
 
         }
 
-        const sortear = () => {
+        return () => {
 
             semente = (semente + 0x6D2B79F5) | 0;
 
@@ -915,40 +1044,126 @@
 
         };
 
-        const falha = () =>
-            (sortear() * 4).toFixed(1);
+    }
 
-        const pontos = [];
+    // O contorno "rasgado" do papel, em dois polígonos:
+    //  - papel: a borda do papel (um pouco mais rasgada embaixo e em alguns
+    //    cantos, que ficam "cortados");
+    //  - fibra: a camada clara que aparece um pouquinho pra fora, como a
+    //    fibra do papel rasgado (essa camada fica numa caixa 3px maior).
+    function contornoDoPapel(sortear) {
 
-        // topo, da esquerda pra direita
-        for (let i = 0; i <= horizontal; i++) {
+        const suavizar = lista =>
+            lista.map((valor, i) =>
+                (valor + (lista[i - 1] ?? valor) + (lista[i + 1] ?? valor)) / 3
+            );
 
-            pontos.push(`${(i / horizontal * 100).toFixed(1)}% ${falha()}px`);
+        const gerar = (quantidade, maximo) =>
+            suavizar(
+                Array.from({ length: quantidade }, () => sortear() * maximo)
+            );
+
+        const horizontais = 13;
+        const verticais = 7;
+
+        const topo = gerar(horizontais + 1, 3.4);
+        const base = gerar(horizontais + 1, 7.5);
+        const direita = gerar(verticais + 1, 3.4);
+        const esquerda = gerar(verticais + 1, 3.4);
+
+        // um ou dois "dentes" mais fundos, de rasgo de verdade
+        base[Math.floor(sortear() * base.length)] += 3 + sortear() * 4;
+
+        if (sortear() < 0.5) {
+
+            topo[Math.floor(sortear() * topo.length)] += 2 + sortear() * 2.5;
 
         }
 
-        // lado direito, de cima pra baixo
-        for (let i = 1; i <= vertical; i++) {
+        // cantos cortados (chanfro, em px): TL, TR, BR, BL
+        const cantos =
+            [0, 0, 0, 0].map(() => sortear() < 0.55 ? 2 + sortear() * 9 : 0);
 
-            pontos.push(`calc(100% - ${falha()}px) ${(i / vertical * 100).toFixed(1)}%`);
+        // quanto a fibra passa pra fora do papel (px)
+        const espessura = lista =>
+            lista.map(() => 1 + sortear() * 3.6);
 
-        }
+        const espTopo = espessura(topo);
+        const espBase = espessura(base);
+        const espDireita = espessura(direita);
+        const espEsquerda = espessura(esquerda);
 
-        // base, da direita pra esquerda
-        for (let i = horizontal - 1; i >= 0; i--) {
+        const menos = valor =>
+            valor >= 0
+                ? `calc(100% - ${valor.toFixed(1)}px)`
+                : `calc(100% + ${(-valor).toFixed(1)}px)`;
 
-            pontos.push(`${(i / horizontal * 100).toFixed(1)}% calc(100% - ${falha()}px)`);
+        const px = valor => `${valor.toFixed(1)}px`;
 
-        }
+        const poligono = fibra => {
 
-        // lado esquerdo, de baixo pra cima
-        for (let i = vertical - 1; i >= 1; i--) {
+            // distância até a borda; a fibra mora numa caixa 3px maior e sai
+            // pra fora pela "espessura"
+            const d = (lista, esp, i) =>
+                fibra ? lista[i] - esp[i] + 3 : lista[i];
 
-            pontos.push(`${falha()}px ${(i / vertical * 100).toFixed(1)}%`);
+            const c = i =>
+                cantos[i] > 0 ? cantos[i] + (fibra ? 2 : 0) : (fibra ? 2 : 0);
 
-        }
+            const pontos = [];
 
-        return pontos.join(", ");
+            // canto superior esquerdo
+            pontos.push(`${px(d(esquerda, espEsquerda, 0))} ${px(c(0))}`);
+            pontos.push(`${px(c(0))} ${px(d(topo, espTopo, 0))}`);
+
+            // topo
+            for (let i = 1; i < horizontais; i++) {
+
+                pontos.push(`${(i / horizontais * 100).toFixed(1)}% ${px(d(topo, espTopo, i))}`);
+
+            }
+
+            // canto superior direito
+            pontos.push(`${menos(c(1))} ${px(d(topo, espTopo, horizontais))}`);
+            pontos.push(`${menos(d(direita, espDireita, 0))} ${px(c(1))}`);
+
+            // lado direito
+            for (let j = 1; j < verticais; j++) {
+
+                pontos.push(`${menos(d(direita, espDireita, j))} ${(j / verticais * 100).toFixed(1)}%`);
+
+            }
+
+            // canto inferior direito
+            pontos.push(`${menos(d(direita, espDireita, verticais))} ${menos(c(2))}`);
+            pontos.push(`${menos(c(2))} ${menos(d(base, espBase, horizontais))}`);
+
+            // base (da direita pra esquerda)
+            for (let i = horizontais - 1; i >= 1; i--) {
+
+                pontos.push(`${(i / horizontais * 100).toFixed(1)}% ${menos(d(base, espBase, i))}`);
+
+            }
+
+            // canto inferior esquerdo
+            pontos.push(`${px(c(3))} ${menos(d(base, espBase, 0))}`);
+            pontos.push(`${px(d(esquerda, espEsquerda, verticais))} ${menos(c(3))}`);
+
+            // lado esquerdo (de baixo pra cima)
+            for (let j = verticais - 1; j >= 1; j--) {
+
+                pontos.push(`${px(d(esquerda, espEsquerda, j))} ${(j / verticais * 100).toFixed(1)}%`);
+
+            }
+
+            return pontos.join(", ");
+
+        };
+
+        return {
+            papel: poligono(false),
+            fibra: poligono(true)
+        };
 
     }
 
@@ -1054,23 +1269,27 @@
 
     }
 
-    function criarItem(dados, indice) {
+    function criarItem(dados, indice, modo = modoDeLayout()) {
 
-        // Variante e lugar no mural, pelo ritmo. Em telas largas é a grade de
-        // 12 colunas (espelhada a cada ciclo); no tablet e no celular, a de 6.
-        const compacta =
-            window.innerWidth <= 1100;
+        // Variante e lugar no mural, pelo ritmo. No computador é a grade de
+        // 12 colunas (espelhada a cada ciclo); no tablet, a de 6; no celular,
+        // as fileiras que deslizam de lado (aí o "indice" conta dentro da fileira).
+        let variante;
+        let coluna = 1;
+        let largura = 6;
+        let desnivel = 0;
+        let colunasMaior = 3;
+        let colunasMenor = 3;
 
-        let variante, coluna, largura, desnivel, colunasMaior, colunasMenor;
+        if (modo === "carrossel") {
 
-        if (compacta) {
+            variante =
+                RITMO_CARROSSEL[indice % RITMO_CARROSSEL.length];
+
+        } else if (modo === "compacta") {
 
             [variante, colunasMaior, colunasMenor] =
                 RITMO_COMPACTO[indice % RITMO_COMPACTO.length];
-
-            coluna = 1;
-            largura = 6;
-            desnivel = 0;
 
         } else {
 
@@ -1104,7 +1323,7 @@
         item.style.setProperty("--s", largura);
         item.style.setProperty("--dy", `${desnivel}px`);
 
-        if (compacta) {
+        if (modo === "compacta") {
 
             item.style.setProperty("--sm", colunasMaior);
             item.style.setProperty("--sm2", colunasMenor);
@@ -1115,8 +1334,23 @@
         // atraso da animação de entrada: os cartões "pousam" em sequência
         item.style.setProperty("--atraso", `${(indice % 8) * 80 + 120}ms`);
 
-        // o contorno rasgado do papel
-        item.style.setProperty("--rasgo", rasgoDoPapel(dados.id));
+        // O papel: contorno rasgado, qual das 3 texturas e o deslocamento dela.
+        // Tudo sorteado a partir do id, então cada cartão é diferente do outro
+        // mas sempre igual a si mesmo.
+        const sorteio =
+            criarSorteio(`${dados.id}-papel`);
+
+        const contorno =
+            contornoDoPapel(sorteio);
+
+        item.style.setProperty("--rasgo", contorno.papel);
+        item.style.setProperty("--rasgo-fibra", contorno.fibra);
+
+        item.dataset.papel =
+            String(1 + Math.floor(sorteio() * 3));
+
+        item.style.setProperty("--tx", `${Math.floor(sorteio() * 480)}px`);
+        item.style.setProperty("--ty", `${Math.floor(sorteio() * 480)}px`);
 
 
         const titulo =
@@ -1132,6 +1366,21 @@
         const duracaoTexto =
             Number(dados.duracao) > 0
                 ? formatarDuracao(dados.duracao)
+                : "";
+
+        // Fita adesiva translúcida num canto: no destaque, no médio e em
+        // alguns pequenos
+        const comFita =
+            variante === "destaque" ||
+            variante === "medio" ||
+            (variante === "pequeno" && sorteio() < 0.5);
+
+        const cantoFita =
+            sorteio() < 0.5 ? "esq" : "dir";
+
+        const fitaHTML =
+            comFita
+                ? `<span class="preview-fita" data-canto="${cantoFita}" aria-hidden="true"></span>`
                 : "";
 
         // A capa do filme fica por cima do canto do vídeo (destaque e médio)
@@ -1164,6 +1413,8 @@
 
 
         item.innerHTML = `
+
+            <i class="preview-papel-tex" aria-hidden="true"></i>
 
             <div class="pc-media">
 
@@ -1263,6 +1514,7 @@
 
             ${criarInfo(dados, variante)}
 
+            ${fitaHTML}
 
         `;
 
@@ -1530,11 +1782,12 @@
 
     }
 
-    // Vídeos pequenos (miniatura e bilhete) crescem quando você clica,
-    // pra dar pra assistir. Só o VÍDEO cresce: o papel e o texto ficam
-    // parados, e o vídeo mantém a própria proporção. É só um zoom
-    // (transform), então o layout em volta não muda e nada abre numa tela
-    // nova. Clicar fora ou Esc recolhe.
+    // Vídeos pequenos crescem quando você clica, pra dar pra assistir (no
+    // celular, todos). O VÍDEO sai do cartão e vai pra um lugar fixo na tela,
+    // já no tamanho final de verdade (então não perde nitidez e os controles
+    // têm o tamanho normal); o papel e o texto ficam parados e o lugar do
+    // vídeo no cartão fica reservado. A entrada e a volta são animadas com
+    // transform (FLIP). Clicar fora, rolar a tela ou apertar Esc recolhe.
 
     const VARIANTES_QUE_EXPANDEM = ["pequeno", "compacto"];
 
@@ -1547,7 +1800,7 @@
         // no celular todos podem crescer, porque lá todos são pequenos.
         const podeExpandir =
             VARIANTES_QUE_EXPANDEM.includes(item.dataset.variante) ||
-            window.innerWidth <= 760;
+            window.innerWidth <= LIMITE_CELULAR;
 
         if (!podeExpandir) return;
 
@@ -1556,18 +1809,18 @@
         const quadro =
             entrada.moldura.parentElement;
 
+        const media =
+            quadro.parentElement;
+
         const largura = entrada.moldura.offsetWidth;
         const altura = entrada.moldura.offsetHeight;
 
         if (!largura || !altura) return;
 
-        // O vídeo expande bem maior que os cards grandes: até 680 x 580 no
-        // computador (menos no celular), sempre mantendo a proporção dele e
-        // cabendo na tela. Só ele cresce; o vídeo em si é desenhado na
-        // resolução original, então não perde nitidez. Pra não "esticar"
-        // além do que o arquivo tem, o tamanho nunca passa da largura
-        // original do vídeo (quando a gente sabe qual é).
-        const estreito = window.innerWidth <= 760;
+        // Tamanho do vídeo aberto: até 680 x 580 no computador (menos no
+        // celular), mantendo a proporção e cabendo na tela. Nunca passa da
+        // largura original do vídeo (quando a gente sabe qual é).
+        const estreito = window.innerWidth <= LIMITE_CELULAR;
 
         const larguraMaxima = estreito ? window.innerWidth - 40 : 680;
         const alturaMaxima = estreito ? 480 : 580;
@@ -1588,79 +1841,123 @@
                 larguraOriginal
             );
 
-        const zoom = alvoLargura / largura;
-
         // Já é grande o bastante: não mexe
-        if (zoom < 1.12) return;
+        if (alvoLargura / largura < 1.12) return;
 
-        // Mantém o vídeo ampliado dentro da tela
-        const caixa =
+        const alvoAltura = alvoLargura / razao;
+
+        // Onde o vídeo está agora, e onde vai ficar (perto de onde estava,
+        // mas inteiro dentro da tela)
+        const origem =
             quadro.getBoundingClientRect();
-
-        const centroX = caixa.left + caixa.width / 2;
-        const centroY = caixa.top + caixa.height / 2;
-
-        const larguraFinal = largura * zoom;
-        const alturaFinal = altura * zoom;
 
         const margem = 16;
         const topoMinimo = 84;       // não passa por baixo dos botões do topo
 
-        let deslocX = 0;
-        let deslocY = 0;
+        const esquerda =
+            Math.min(
+                Math.max(origem.left + origem.width / 2 - alvoLargura / 2, margem),
+                window.innerWidth - margem - alvoLargura
+            );
 
-        const esquerda = centroX - larguraFinal / 2;
-        const direita = centroX + larguraFinal / 2;
+        const topo =
+            Math.min(
+                Math.max(origem.top + origem.height / 2 - alvoAltura / 2, topoMinimo),
+                window.innerHeight - margem - alvoAltura
+            );
 
-        if (esquerda < margem) {
-
-            deslocX = margem - esquerda;
-
-        } else if (direita > window.innerWidth - margem) {
-
-            deslocX = window.innerWidth - margem - direita;
-
-        }
-
-        const topo = centroY - alturaFinal / 2;
-        const base = centroY + alturaFinal / 2;
-
-        if (topo < topoMinimo) {
-
-            deslocY = topoMinimo - topo;
-
-        } else if (base > window.innerHeight - margem) {
-
-            deslocY = window.innerHeight - margem - base;
-
-        }
-
-        item.style.setProperty("--zoom", zoom.toFixed(3));
-        item.style.setProperty("--zx", `${deslocX.toFixed(1)}px`);
-        item.style.setProperty("--zy", `${deslocY.toFixed(1)}px`);
+        // o lugar do vídeo no cartão fica reservado
+        media.style.height = `${origem.height}px`;
 
         item.classList.add("expandido");
 
         feed.classList.add("tem-expandido");
 
+        quadro.closest(".preview-faixa")?.classList.add("faixa-com-expandido");
+
+        // 1) já no tamanho e no lugar finais, mas desenhado como estava (FLIP)
+        quadro.style.transition = "none";
+        quadro.style.position = "fixed";
+        quadro.style.left = `${esquerda}px`;
+        quadro.style.top = `${topo}px`;
+        quadro.style.width = `${alvoLargura}px`;
+        quadro.style.transformOrigin = "0 0";
+
+        quadro.style.transform =
+            `translate(${origem.left - esquerda}px, ${origem.top - topo}px) ` +
+            `scale(${origem.width / alvoLargura})`;
+
+        // força o navegador a aplicar o passo 1
+        void quadro.offsetWidth;
+
+        // 2) anima até o tamanho real
+        quadro.style.transition = "";
+        quadro.style.transform = "none";
+
+        entrada.expandido = {
+            esquerda,
+            topo,
+            largura: alvoLargura,
+            iniciadoEm: performance.now()
+        };
+
     }
 
     function recolher() {
 
+        feed.classList.remove("tem-expandido");
+
         feed
-            .querySelectorAll(".preview-item.expandido")
+            .querySelectorAll(".preview-item.expandido:not(.recolhendo)")
             .forEach(item => {
 
-                item.classList.remove("expandido");
+                const entrada =
+                    entradas.get(item);
 
-                // esconde os controles enquanto o vídeo volta ao tamanho normal
+                if (!entrada || !entrada.expandido) {
+
+                    item.classList.remove("expandido");
+
+                    return;
+
+                }
+
+                const quadro =
+                    entrada.moldura.parentElement;
+
+                const media =
+                    quadro.parentElement;
+
+                const { esquerda, topo, largura } =
+                    entrada.expandido;
+
+                // volta pro lugar reservado no cartão
+                const destino =
+                    media.getBoundingClientRect();
+
                 item.classList.add("recolhendo");
 
-                setTimeout(() => item.classList.remove("recolhendo"), 520);
+                quadro.style.transformOrigin = "0 0";
+
+                quadro.style.transform =
+                    `translate(${destino.left - esquerda}px, ${destino.top - topo}px) ` +
+                    `scale(${destino.width / largura})`;
+
+                setTimeout(() => {
+
+                    quadro.style.cssText = "";
+
+                    media.style.height = "";
+
+                    item.classList.remove("expandido", "recolhendo");
+
+                    quadro.closest(".preview-faixa")?.classList.remove("faixa-com-expandido");
+
+                    entrada.expandido = null;
+
+                }, 520);
 
             });
-
-        feed.classList.remove("tem-expandido");
 
     }
 
@@ -2390,7 +2687,8 @@
 
         if (!feed.classList.contains("tem-expandido")) return;
 
-        if (evento.target.closest(".preview-item.expandido")) return;
+        // tocar no vídeo aberto não recolhe; em qualquer outro lugar, sim
+        if (evento.target.closest(".preview-item.expandido .preview-quadro")) return;
 
         recolher();
 
@@ -2402,23 +2700,44 @@
 
     });
 
-    let larguraCompacta = window.innerWidth <= 1100;
+    // Rolar a página (ou deslizar uma fileira) recolhe o vídeo aberto, porque
+    // ele fica fixo na tela. (O "capture" pega a rolagem de qualquer elemento.)
+    document.addEventListener("scroll", () => {
+
+        if (!feed.classList.contains("tem-expandido")) return;
+
+        const aberto =
+            feed.querySelector(".preview-item.expandido");
+
+        const entrada =
+            aberto && entradas.get(aberto);
+
+        if (!entrada?.expandido) return;
+
+        // ignora a rolagem que sobra de antes do toque (inércia)
+        if (performance.now() - entrada.expandido.iniciadoEm < 500) return;
+
+        recolher();
+
+    }, true);
+
+    let modoAtual = modoDeLayout();
     let esperaRedimensionar = null;
 
     window.addEventListener("resize", () => {
 
         recolher();
 
-        // Cruzou a fronteira entre a grade larga e a de 6 colunas: refaz o mural
+        // Passou de computador pra tablet/celular (ou o contrário): refaz o mural
         clearTimeout(esperaRedimensionar);
 
         esperaRedimensionar = setTimeout(() => {
 
-            const agora = window.innerWidth <= 1100;
+            const agora = modoDeLayout();
 
-            if (agora !== larguraCompacta) {
+            if (agora !== modoAtual) {
 
-                larguraCompacta = agora;
+                modoAtual = agora;
 
                 if (previewCarregado && todosItens.length) atualizarMural(false);
 
