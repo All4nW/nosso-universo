@@ -683,15 +683,38 @@ $('aGal').onclick = () => $('fGal').click();
 $('aCam').onclick = () => $('fCam').click();
 $('aGal').onclick = () => $('fGal').click();
 $('aCam').onclick = () => $('fCam').click();
+
+async function imgToJpeg(f){
+  let src, w, h;
+  try{
+    src = await createImageBitmap(f, {imageOrientation:'from-image'});
+    w = src.width; h = src.height;
+  }catch(e1){
+    src = await new Promise((ok, no) => {
+      const u = URL.createObjectURL(f), im = new Image();
+      im.onload = () => { URL.revokeObjectURL(u); ok(im); };
+      im.onerror = () => { URL.revokeObjectURL(u); no(new Error('formato não suportado')); };
+      im.src = u;
+    });
+    w = src.naturalWidth; h = src.naturalHeight;
+  }
+  const sc = Math.min(1, 1280 / Math.max(w, h)), c = document.createElement('canvas');
+  c.width = Math.round(w * sc); c.height = Math.round(h * sc);
+  const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(src, 0, 0, c.width, c.height);
+  let q = .8, d = c.toDataURL('image/jpeg', q);
+  while (d.length > 350000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
+  return d;
+}
 async function pickImg(e){
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
-  try{
-    const b = await createImageBitmap(f), sc = Math.min(1, 1280 / Math.max(b.width, b.height)), c = document.createElement('canvas');
-    c.width = Math.round(b.width * sc); c.height = Math.round(b.height * sc); c.getContext('2d').drawImage(b, 0, 0, c.width, c.height);
-    let q = .8, d = c.toDataURL('image/jpeg', q); while (d.length > 350000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
-    if (!canSend()) return;
-    conn.send({t:'img', x:d}); addMsg('me', '', true, Date.now(), d); closeTrays();
-  }catch(err){ toast('Não consegui enviar essa imagem'); }
+  let d;
+  try{ d = await imgToJpeg(f); }
+  catch(err){ console.error('[img] ler', err); toast('Não consegui ler a imagem: ' + ((err && (err.message || err.name)) || 'erro')); return; }
+  for (let i = 0; i < 8 && !(conn && conn.open); i++) await new Promise(r => setTimeout(r, 500));   /* espera a conexão voltar da galeria */
+  if (!canSend()) return;
+  try{ conn.send({t:'img', x:d}); addMsg('me', '', true, Date.now(), d); closeTrays(); }
+  catch(err){ console.error('[img] enviar', err); toast('Não consegui enviar: ' + ((err && (err.message || err.name)) || 'erro')); }
 }
 $('fGal').onchange = $('fCam').onchange = pickImg;
 $('lb').onclick = () => $('lb').classList.remove('on');
@@ -959,16 +982,15 @@ function boot(){
     m.addEventListener('contextmenu', e => e.preventDefault());
   };
 
-  /* --- "fulano está digitando…" --- */
+  /* --- "fulano está digitando…": faixa fina com a foto pulando, logo acima do campo --- */
+  const typBar = document.createElement('div'); typBar.id = 'typBar';
+  typBar.innerHTML = '<i></i><span class="dots"><s></s><s></s><s></s></span>';
+  $('pad').insertBefore(typBar, $('emo'));
   function showTyping(on){
-    let el = $('typ'); clearTimeout(typHide);
-    if (!on){ if (el) el.remove(); return; }
-    if (!el){
-      el = document.createElement('div'); el.id = 'typ'; el.className = 'row';
-      el.innerHTML = '<i></i><div class="m"><b class="nm"></b><span class="dots"><s></s><s></s><s></s></span></div>';
-      setAv(el.querySelector('i'), cfg.otherImg, cfg.otherAv); el.querySelector('.nm').textContent = cfg.otherName + ' digitando';
-    }
-    $('msgs').appendChild(el); $('msgs').scrollTop = 1e9;
+    clearTimeout(typHide);
+    if (!on){ typBar.classList.remove('on'); return; }
+    setAv(typBar.querySelector('i'), cfg.otherImg, cfg.otherAv);
+    typBar.classList.add('on');
     typHide = setTimeout(() => showTyping(false), 4500);
   }
   const typOff = () => { typT = 0; if (conn && conn.open){ try{ conn.send({t:'typ', on:0}); }catch(e){} } };
@@ -1010,6 +1032,40 @@ document.addEventListener('keydown', e => {
   if (a && a !== document.body && a !== document.documentElement) return; // já está num campo ou botão
   e.preventDefault();
   txt.focus();
+});
+
+/* ---------- chat: mantém a mensagem que você está olhando quando o chat muda de tamanho (teclado) ---------- */
+(function(){
+  const box = $('msgs'); box.style.overflowAnchor = 'none';
+  let anchor = null, off = 0, atBottom = true, lock = false, lockT = 0;
+  function save(){
+    if (lock || !box.clientHeight) return;
+    atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 24;
+    const r = box.getBoundingClientRect(), mid = r.top + box.clientHeight / 2;
+    anchor = null;
+    for (const el of box.children){
+      const er = el.getBoundingClientRect();
+      if (er.bottom >= mid){ anchor = el; off = er.top + er.height / 2 - mid; break; }
+    }
+  }
+  box.addEventListener('scroll', save, {passive:true});
+  new ResizeObserver(() => {
+    if (!box.clientHeight) return;
+    lock = true; clearTimeout(lockT);
+    if (atBottom) box.scrollTop = box.scrollHeight;
+    else if (anchor && anchor.isConnected){
+      const r = box.getBoundingClientRect(), mid = r.top + box.clientHeight / 2, er = anchor.getBoundingClientRect();
+      box.scrollTop += (er.top + er.height / 2) - (mid + off);
+    }
+    lockT = setTimeout(() => { lock = false; save(); }, 150);
+  }).observe(box);
+  save();
+})();
+/* botão enviar: envia no toque (antes do teclado mexer no layout) e fecha o teclado */
+$('send').addEventListener('pointerdown', e => {
+  e.preventDefault();
+  sendMsg();
+  if (!$('txt').value && e.pointerType !== 'mouse') $('txt').blur();
 });
 
 /* ---------- tela "Quem está entrando?" ---------- */

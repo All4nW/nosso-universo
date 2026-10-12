@@ -579,3 +579,11 @@ body.imm.typing #msgs{min-height:0}
 .who::after{content:"──────  ♥  ──────";position:absolute;bottom:9vh;left:0;right:0;text-align:center;font-family:'Caveat',var(--hand);font-size:24px;color:#ff8fc7;opacity:.85;text-shadow:0 0 14px rgba(255,100,160,.35);pointer-events:none}
 @media (max-width:700px){.who::before,.who-sub::before{display:none}.who::after{bottom:5vh;font-size:20px}}
 @media (max-width:460px){.who-grid{gap:12px}.who-group{gap:12px}.wcard{width:128px;padding:18px 8px 14px}.wcard .av{width:60px;height:60px;font-size:30px}.wcard b{font-size:19px}}
+
+/* ===== "digitando…" estilo Rave: foto pulando + pontinhos, faixa fina acima do campo ===== */
+#typBar{flex:none;height:0;overflow:hidden;opacity:0;display:flex;align-items:center;gap:7px;padding:0 4px;transition:height .2s ease,opacity .2s ease}
+#typBar.on{height:26px;opacity:1}
+#typBar i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:12px;background:rgba(255,255,255,.1) center/cover;box-shadow:0 0 0 1.5px rgba(255,235,215,.18);animation:typhop 1s ease-in-out infinite}
+#typBar .dots{display:inline-flex;gap:3px;align-items:center}
+#typBar .dots s{width:4px;height:4px}
+@keyframes typhop{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}

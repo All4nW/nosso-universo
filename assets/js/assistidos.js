@@ -71,6 +71,23 @@ function calcularProgressoItem(item) {
     return Math.min(100, Math.round((minutoAtualEpisodio / duracaoEpisodio) * 100));
 
 }
+// Converte minutos (49.98333…) em "49:59" ou "1:16:41"
+function formatarTempoAssistido(minutosTotais) {
+
+    const totalSegundos =
+        Math.max(0, Math.round((Number(minutosTotais) || 0) * 60));
+
+    const horas = Math.floor(totalSegundos / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+    const segundos = totalSegundos % 60;
+
+    const dois = n => String(n).padStart(2, "0");
+
+    return horas > 0
+        ? `${horas}:${dois(minutos)}:${dois(segundos)}`
+        : `${minutos}:${dois(segundos)}`;
+
+}
 
 function selarInfoTopo(item) {
 
@@ -79,7 +96,7 @@ function selarInfoTopo(item) {
     if (item.categoria === "filmes") {
         const minutoAtual = Number(progresso.minutoAtual) || 0;
         const duracaoTotal = Number(progresso.duracaoTotal) || 0;
-        return `${minutoAtual}min / ${duracaoTotal}min`;
+        return `${formatarTempoAssistido(minutoAtual)} / ${formatarTempoAssistido(duracaoTotal)}`;
     }
 
     const { temporada, episodio } = progresso;
@@ -428,8 +445,8 @@ aplicarCorDoItem(item);
 
         const textoProgresso =
             item.categoria === "filmes"
-                ? `${progresso.minutoAtual || 0}min de ${progresso.duracaoTotal || 0}min`
-                : `Temporada ${progresso.temporada || "?"}, Episódio ${progresso.episodio || "?"} — ${progresso.minutoAtualEpisodio || 0}min de ${progresso.duracaoEpisodio || 0}min`;
+                ? `${formatarTempoAssistido(progresso.minutoAtual)} de ${formatarTempoAssistido(progresso.duracaoTotal)}`
+                : `Temporada ${progresso.temporada || "?"}, Episódio ${progresso.episodio || "?"} — ${formatarTempoAssistido(progresso.minutoAtualEpisodio)} de ${formatarTempoAssistido(progresso.duracaoEpisodio)}`;
 
         linhaProgresso = `
             <div class="assistido-modal-progresso">
