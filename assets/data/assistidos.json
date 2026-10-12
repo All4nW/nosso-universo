@@ -43,7 +43,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 2,
-            "episodio": 1,
+            "episodio": 3,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -690,5 +690,25 @@
         "notaEu": 10,
         "notaEla": 10,
         "memoria": ""
+    },
+    {
+        "id": "o-estranho-mundo-de-jack",
+        "categoria": "filmes",
+        "titulo": "O Estranho Mundo de Jack",
+        "ano": null,
+        "capa": "assets/images/assistidos/assistido-1791777974266.webp",
+        "cor": {
+            "r": 78,
+            "g": 73,
+            "b": 80
+        },
+        "status": "assistindo",
+        "progresso": {
+            "minutoAtual": 49.983333333333334,
+            "duracaoTotal": 76.68333333333334
+        },
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": "49:59 1:16:41"
     }
 ]
