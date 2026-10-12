@@ -26,40 +26,6 @@ const SAT_KBPS = 4000;   /* qualidade do vídeo que o PC manda pro celular (720p
 const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
 
 
-/* ---------- sons de conexão (sintetizados, sem arquivo nenhum) ---------- */
-let actx = null, sfxLast = {};
-function audioOk(){
-  try{
-    if (!actx){ const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; actx = new AC(); }
-    if (actx.state === 'suspended') actx.resume();
-    return actx;
-  }catch(e){ return null; }
-}
-/* o navegador só libera som depois do primeiro toque/clique na página */
-['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, audioOk, {passive:true}));
-
-const SFX = {
-  conecta:    [[660, 0, .13], [880, .11, .18]],
-  reconecta:  [[587, 0, .09], [740, .08, .09], [988, .16, .16]],
-  desconecta: [[740, 0, .13], [494, .11, .2]]
-};
-function sfx(nome){
-  const agora = Date.now();
-  if (agora - (sfxLast[nome] || 0) < 3000) return;      /* evita repetir se a conexão ficar oscilando */
-  sfxLast[nome] = agora;
-  const ctx = audioOk(); if (!ctx || ctx.state !== 'running') return;
-  const t0 = ctx.currentTime + .02;
-  (SFX[nome] || []).forEach(([freq, atraso, dur]) => {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'sine'; o.frequency.value = freq;
-    g.gain.setValueAtTime(0, t0 + atraso);
-    g.gain.linearRampToValueAtTime(.07, t0 + atraso + .02);                  /* .07 = volume */
-    g.gain.exponentialRampToValueAtTime(.0001, t0 + atraso + dur + .12);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(t0 + atraso); o.stop(t0 + atraso + dur + .15);
-  });
-}
-
 /* ---------- interface ---------- */
 function toast(t){ const d = $('toast'); d.textContent = t; d.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => d.classList.remove('show'), 3200); }
 function setSeat(w, s){ $('seat' + w).dataset.s = s; $('st' + w).textContent = {on:'aqui', off:'fora', re:'reconectando…'}[s]; }
@@ -287,8 +253,8 @@ function refreshMe(){
   const ok = !!(peer && peer.open && !peer.disconnected && navigator.onLine);
   setSeat('Me', ok ? 'on' : 're');
   if (!ok && lastErr === 'unavailable-id') $('stMe').textContent = 'lugar ocupado';
-  if (!ok && !meLost){ meLost = true; if (refreshMe.was) sfx('desconecta'); toast('Reconectando...'); if (refreshMe.was) addSys('Você ficou sem conexão'); }
-  if (ok && meLost){ meLost = false; if (refreshMe.was) sfx('reconecta'); toast('Conectado novamente'); if (refreshMe.was) addSys('Você reconectou'); }
+  if (!ok && !meLost){ meLost = true; toast('Reconectando...'); if (refreshMe.was) addSys('Você ficou sem conexão'); }
+  if (ok && meLost){ meLost = false; toast('Conectado novamente'); if (refreshMe.was) addSys('Você reconectou'); }
   if (ok) refreshMe.was = true;
 }
 function setConn(c){
@@ -304,7 +270,7 @@ function setConn(c){
       addSys(again ? 'Reconectado ao PC' : 'Conectado ao PC 📱');
       return;
     }
-      setSeat('O', 'on'); pop('O'); sendProfile(); sfx(again ? 'reconecta' : 'conecta');
+     setSeat('O', 'on'); pop('O'); sendProfile();
     toast(again ? 'Conectado novamente' : cfg.otherName + ' entrou na Salinha 💗');
         addSys(again ? cfg.otherName + ' reconectou' : cfg.otherName + ' entrou na Salinha 💗');
     if (localStream) startCall();
@@ -346,7 +312,7 @@ function dropConn(c){
       return;
     }
     setSeat('O', everSeen ? 're' : 'off');
-       if (everSeen){ sfx('desconecta'); toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
+       if (everSeen){ toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
   }
 }
 
@@ -426,10 +392,10 @@ function otherPres(on){
   const was = otherOn; otherOn = !!on;
   setSeat('O', on ? 'on' : (otherEver ? 're' : 'off'));
   if (on){
-    const again = otherEver; otherEver = true;
-    if (!was){ pop('O'); sfx(again ? 'reconecta' : 'conecta'); toast(cfg.otherName + ' entrou na Salinha 💗'); addSys(cfg.otherName + ' entrou na Salinha 💗'); }
+    otherEver = true;
+    if (!was){ pop('O'); toast(cfg.otherName + ' entrou na Salinha 💗'); addSys(cfg.otherName + ' entrou na Salinha 💗'); }
   }
-  else if (was){ sfx('desconecta'); toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
+  else if (was){ toast('Reconectando...'); addSys(cfg.otherName + ' saiu'); }
 }
 
 function start(){
