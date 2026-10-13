@@ -2316,7 +2316,10 @@
     }
 
     .preview-lateral {
-        position: static;
+        /* relative (e não static) pra ficar acima do fundo fixo */
+        position: relative;
+
+        z-index: 2;
 
         gap: 16px;
 
@@ -2407,6 +2410,10 @@
    ========================================================= */
 
 .preview-secao {
+    position: relative;
+
+    z-index: 1;
+
     display: flex;
     flex-direction: column;
 
@@ -2495,10 +2502,10 @@
 
     /* esmaece as bordas: sugere que tem mais pro lado (igual às Cartas) */
     -webkit-mask-image:
-        linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 30px), transparent 100%);
+        linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 22px), transparent 100%);
 
     mask-image:
-        linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 30px), transparent 100%);
+        linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 22px), transparent 100%);
 }
 
 .preview-faixa::-webkit-scrollbar {
@@ -2508,7 +2515,8 @@
 .preview-faixa > .preview-item {
     flex: 0 0 auto;
 
-    margin-top: 0;
+    /* cada cartão tem o seu desnível (--dy), pra fileira não ficar numa linha reta */
+    margin-top: var(--dy, 0px);
 
     scroll-snap-align: start;
 }
@@ -2523,6 +2531,170 @@
 
     -webkit-mask-image: none;
     mask-image: none;
+}
+
+
+/* ---------------------------------------------------------
+   Avisos de que a fileira desliza: uma setinha que dá uma balançadinha
+   (some assim que a pessoa desliza) e uma barrinha de progresso embaixo.
+   --------------------------------------------------------- */
+
+.preview-faixa-caixa {
+    position: relative;
+}
+
+.preview-faixa-seta {
+    position: absolute;
+
+    right: 10px;
+    top: 38%;
+
+    z-index: 3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(166, 107, 138, 0.5);
+
+    background: rgba(24, 14, 30, 0.72);
+
+    color: var(--tinta);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    animation: preview-seta-dica 1.7s ease-in-out infinite;
+
+    transition: opacity 0.4s ease;
+}
+
+.preview-faixa-seta svg {
+    width: 16px;
+    height: 16px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.preview-faixa-seta.some {
+    opacity: 0;
+
+    pointer-events: none;
+
+    animation: none;
+}
+
+.preview-faixa-seta[hidden],
+.preview-faixa-progresso[hidden] {
+    display: none;
+}
+
+@keyframes preview-seta-dica {
+
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+
+}
+
+.preview-faixa-progresso {
+    position: absolute;
+
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+
+    height: 3px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: rgba(166, 107, 138, 0.2);
+
+    pointer-events: none;
+}
+
+.preview-faixa-progresso > span {
+    display: block;
+
+    width: calc(var(--pl, 0.3) * 100%);
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: linear-gradient(90deg, #A66B8A, #B79AF2);
+
+    transform: translateX(calc(var(--p, 0) * var(--k, 0) * 100%));
+}
+
+/* ---------------------------------------------------------
+   Efeitos: quando a fileira aparece na tela, os cartões "pousam" um
+   depois do outro e as linhas do título se desenham. O cartão que está
+   no meio da fileira fica um pouquinho maior e reto.
+   --------------------------------------------------------- */
+
+.preview-secao .preview-item {
+    animation-play-state: paused;
+}
+
+.preview-secao.secao-visivel .preview-item {
+    animation-play-state: running;
+}
+
+.preview-secao-linha {
+    transform: scaleX(0);
+
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.preview-secao-linha-esq {
+    transform-origin: right center;
+}
+
+.preview-secao-linha-dir {
+    transform-origin: left center;
+}
+
+.preview-secao-icone,
+.preview-secao-titulo,
+.preview-secao-coracao {
+    opacity: 0;
+
+    transform: translateY(6px);
+
+    transition:
+        opacity 0.6s ease 0.1s,
+        transform 0.6s ease 0.1s;
+}
+
+.preview-secao.secao-visivel .preview-secao-linha {
+    transform: scaleX(1);
+}
+
+.preview-secao.secao-visivel .preview-secao-icone,
+.preview-secao.secao-visivel .preview-secao-titulo,
+.preview-secao.secao-visivel .preview-secao-coracao {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+.preview-faixa > .preview-item.centro {
+    z-index: 4;
+
+    transform: rotate(0deg) scale(1.045);
 }
 
 
@@ -2552,14 +2724,22 @@
         display: flex;
         flex-direction: column;
 
-        gap: 26px;
+        gap: 14px;
     }
 
-    /* o primeiro de cada fileira é o destaque: vídeo em cima, texto embaixo */
+    /* Cada cartão tem a sua largura (--lv, em vw) e o seu desnível (--dy):
+       a fileira mistura destaque, médios e pequenos de tamanhos diferentes,
+       uns mais altos e outros mais baixos. Os textos e a capa do filme
+       crescem junto com a largura do cartão. */
 
-    .preview-item[data-variante="destaque"] {
-        --maxh: 340px;
-        --maxw: calc(80vw - 44px);
+    .preview-faixa > .preview-item {
+        --pw: calc(30px + var(--lv, 40) * 0.55px);
+        --ph: calc(var(--pw) * 1.42);
+    }
+
+    .preview-faixa > .preview-item[data-variante="destaque"] {
+        --maxh: 250px;
+        --maxw: calc(var(--lv, 66) * 1vw - 44px);
 
         flex-direction: column;
 
@@ -2570,70 +2750,33 @@
         padding: 22px 22px 26px;
     }
 
-    .preview-item[data-variante="destaque"] .pc-media {
-        flex: none;
-
-        width: 100%;
-    }
-
-    .preview-item[data-variante="destaque"] .pc-info {
-        flex: none;
-
-        width: 100%;
-
-        min-width: 0;
-
-        padding-top: 0;
-    }
-
-    .preview-item[data-variante="destaque"][data-poster] .pc-info {
-        padding-left: 98px;
-    }
-
-    .pc-nota-adesiva {
-        top: -22px;
-        left: -20px;
-
-        width: 118px;
-
-        padding: 14px 11px 11px;
-
-        font-size: 1.2rem;
-    }
-
-    /* os outros: polaroids em pé, com a capa por cima do vídeo.
-       Cada um tem uma largura (em vw), então cabem 2 ou 3 na tela. */
-
-    .preview-item[data-variante="medio"],
-    .preview-item[data-variante="pequeno"] {
-        --pw: 52px;
-        --ph: 74px;
+    .preview-faixa > .preview-item[data-variante="medio"] {
+        --maxh: 260px;
+        --maxw: calc(var(--lv, 46) * 1vw - 24px);
 
         display: block;
+
+        width: calc(var(--lv, 46) * 1vw);
 
         padding: 12px 12px 16px;
 
         box-sizing: border-box;
     }
 
-    .preview-faixa > .preview-item[data-variante="medio"] {
-        --maxh: 300px;
-        --maxw: calc(46vw - 24px);
-
-        width: 46vw;
-    }
-
     .preview-faixa > .preview-item[data-variante="pequeno"] {
-        --maxh: 230px;
-        --maxw: calc(33vw - 24px);
-        --pw: 44px;
-        --ph: 62px;
+        --maxh: 200px;
+        --maxw: calc(var(--lv, 32) * 1vw - 22px);
 
-        width: 33vw;
+        display: block;
+
+        width: calc(var(--lv, 32) * 1vw);
+
+        padding: 10px 10px 14px;
+
+        box-sizing: border-box;
     }
 
-    .preview-item[data-variante="medio"] .pc-media,
-    .preview-item[data-variante="pequeno"] .pc-media {
+    .preview-faixa > .preview-item .pc-media {
         flex: none;
 
         width: min(var(--w), 100%);
@@ -2642,8 +2785,9 @@
         padding: 0;
     }
 
-    .preview-item[data-variante="medio"] .preview-info-poster--sobre,
-    .preview-item[data-variante="pequeno"] .preview-info-poster--sobre {
+    /* a capa do filme por cima do canto do vídeo, em todos */
+
+    .preview-faixa > .preview-item .preview-info-poster--sobre {
         display: block;
 
         width: var(--pw);
@@ -2653,8 +2797,7 @@
         bottom: calc(var(--ph) * -0.38);
     }
 
-    .preview-item[data-poster][data-variante="medio"] .pc-media,
-    .preview-item[data-poster][data-variante="pequeno"] .pc-media {
+    .preview-faixa > .preview-item[data-poster] .pc-media {
         margin-bottom: calc(var(--ph) * 0.38 + 8px);
     }
 
@@ -2662,52 +2805,75 @@
         display: none;
     }
 
-    /* texto centralizado embaixo, em tamanhos que cabem */
+    /* texto centralizado embaixo, com o tamanho acompanhando o cartão */
 
-    .preview-item[data-variante="medio"] .pc-info,
-    .preview-item[data-variante="pequeno"] .pc-info,
-    .preview-item[data-variante="medio"][data-poster] .pc-info {
+    .preview-faixa > .preview-item .pc-info,
+    .preview-faixa > .preview-item[data-variante="medio"][data-poster] .pc-info,
+    .preview-faixa > .preview-item[data-variante="destaque"][data-poster] .pc-info,
+    .preview-faixa > .preview-item[data-variante="destaque"][data-formato="horizontal"][data-poster] .pc-info {
+        flex: none;
+
         align-items: center;
 
-        gap: 8px;
+        gap: 7px;
+
+        width: 100%;
+        min-width: 0;
 
         padding: 10px 2px 0;
 
         text-align: center;
     }
 
-    .preview-item[data-variante="medio"] .pc-topo,
-    .preview-item[data-variante="pequeno"] .pc-topo {
+    .preview-faixa > .preview-item .pc-topo {
         justify-content: center;
     }
 
-    .preview-item[data-variante="medio"] .pc-meta,
-    .preview-item[data-variante="pequeno"] .pc-meta {
+    .preview-faixa > .preview-item .pc-titulo {
+        font-size: calc(0.9rem + var(--lv, 40) * 0.0165rem);
+
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+
+    .preview-faixa > .preview-item .pc-meta {
         justify-content: center;
 
-        font-size: 0.74rem;
+        font-size: 0.72rem;
     }
 
-    .preview-item[data-variante="medio"] .pc-titulo {
-        font-size: 1.7rem;
-    }
-
-    .preview-item[data-variante="pequeno"] .pc-titulo {
-        font-size: 1.4rem;
-    }
-
-    .preview-item[data-variante="medio"] .pc-frase {
-        font-size: 1.2rem;
+    .preview-faixa > .preview-item .pc-frase {
+        font-size: 1.15rem;
 
         -webkit-line-clamp: 2;
         line-clamp: 2;
     }
 
-    .preview-item[data-variante="medio"] .preview-info-link,
-    .preview-item[data-variante="pequeno"] .preview-info-link {
+    .preview-faixa > .preview-item .preview-info-link {
         align-self: center;
 
-        font-size: 1.08rem;
+        font-size: 1.02rem;
+    }
+
+    .pc-nota-adesiva {
+        top: -22px;
+        left: -18px;
+
+        width: 108px;
+
+        padding: 13px 10px 10px;
+
+        font-size: 1.12rem;
+    }
+
+    /* a lua fica menor */
+
+    .preview-lua {
+        top: 8%;
+        right: 5%;
+
+        width: 44px;
+        height: 44px;
     }
 
     .preview-brilho:nth-child(n + 9) {
@@ -2839,6 +3005,17 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
+    .preview-secao-linha,
+    .preview-secao-icone,
+    .preview-secao-titulo,
+    .preview-secao-coracao,
+    .preview-faixa-seta {
+        animation: none;
+        transition: none;
+        transform: none;
+        opacity: 1;
+    }
 
     .preview-brilho,
     .preview-coracao,

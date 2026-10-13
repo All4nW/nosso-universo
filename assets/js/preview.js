@@ -69,9 +69,16 @@
     // Composição do celular: cada categoria é uma fileira que desliza de lado.
     // O primeiro cartão de cada fileira é um destaque; os outros alternam
     // entre médios e pequenos (assim cabem 2 ou 3 na tela de cada vez).
+    // [variante, largura em vw, desnível em px]: tamanhos e alturas variados,
+    // pra fileira não virar "1 grandão e vários iguais".
     const RITMO_CARROSSEL = [
-        "destaque", "medio", "pequeno", "pequeno",
-        "medio", "pequeno", "pequeno", "pequeno"
+        ["destaque", 66, 0],
+        ["pequeno",  34, 28],
+        ["medio",    46, 8],
+        ["pequeno",  30, 36],
+        ["medio",    54, 0],
+        ["pequeno",  36, 22],
+        ["pequeno",  28, 40]
     ];
 
     // As fileiras do celular, na ordem em que aparecem
@@ -488,6 +495,98 @@
 
     }
 
+    // Liga uma fileira do celular: a setinha de aviso (some quando a pessoa
+    // desliza), a barra de progresso e o cartão que fica no meio.
+    function ligarFaixa(faixa, seta, trilho) {
+
+        const barra =
+            trilho.firstElementChild;
+
+        let jaDeslizou = false;
+        let quadro = 0;
+
+        const atualizar = () => {
+
+            quadro = 0;
+
+            const maximo =
+                faixa.scrollWidth - faixa.clientWidth;
+
+            const temRolagem =
+                maximo > 4;
+
+            trilho.hidden = !temRolagem;
+            seta.hidden = !temRolagem;
+
+            if (!temRolagem) return;
+
+            const visivel =
+                faixa.clientWidth / faixa.scrollWidth;
+
+            barra.style.setProperty("--pl", visivel.toFixed(3));
+            barra.style.setProperty("--k", (1 / visivel - 1).toFixed(3));
+
+            barra.style.setProperty(
+                "--p",
+                Math.min(1, faixa.scrollLeft / maximo).toFixed(3)
+            );
+
+            if (faixa.scrollLeft > 36) jaDeslizou = true;
+
+            seta.classList.toggle(
+                "some",
+                jaDeslizou || faixa.scrollLeft >= maximo - 6
+            );
+
+        };
+
+        faixa.addEventListener("scroll", () => {
+
+            if (!quadro) quadro = requestAnimationFrame(atualizar);
+
+        }, { passive: true });
+
+        // tocar na setinha também desliza
+        seta.addEventListener("click", () => {
+
+            faixa.scrollBy({
+                left: faixa.clientWidth * 0.7,
+                behavior: "smooth"
+            });
+
+        });
+
+        requestAnimationFrame(atualizar);
+
+        setTimeout(atualizar, 500);
+
+        // o cartão que passa pelo meio da fileira fica um pouquinho maior e reto
+        const observadorCentro =
+            new IntersectionObserver(registros => {
+
+                registros.forEach(registro => {
+
+                    registro.target.classList.toggle(
+                        "centro",
+                        registro.isIntersecting
+                    );
+
+                });
+
+            }, {
+                root: faixa,
+                rootMargin: "0px -45% 0px -45%",
+                threshold: 0
+            });
+
+        faixa
+            .querySelectorAll(".preview-item")
+            .forEach(item => observadorCentro.observe(item));
+
+        observadoresFaixas.push(observadorCentro);
+
+    }
+
     // Celular: uma fileira por categoria (Filmes, Séries, Animes...). Cada
     // fileira desliza de lado com o dedo, e a borda do próximo cartão aparece
     // esmaecida no canto da tela.
@@ -509,6 +608,25 @@
 
         const fragmento =
             document.createDocumentFragment();
+
+        // quando uma fileira aparece na tela, os cartões "pousam" e as linhas
+        // do título se desenham (uma vez só)
+        const observadorSecoes =
+            new IntersectionObserver(registros => {
+
+                registros.forEach(registro => {
+
+                    if (!registro.isIntersecting) return;
+
+                    registro.target.classList.add("secao-visivel");
+
+                    observadorSecoes.unobserve(registro.target);
+
+                });
+
+            }, { threshold: 0.12 });
+
+        observadoresFaixas.push(observadorSecoes);
 
         SECOES_CARROSSEL.forEach(secao => {
 
@@ -542,7 +660,46 @@
 
             });
 
-            bloco.appendChild(faixa);
+            const caixa =
+                document.createElement("div");
+
+            caixa.className = "preview-faixa-caixa";
+
+            caixa.appendChild(faixa);
+
+            // setinha que avisa que dá pra deslizar (some quando a pessoa desliza)
+            const seta =
+                document.createElement("button");
+
+            seta.type = "button";
+
+            seta.className = "preview-faixa-seta";
+
+            seta.setAttribute("aria-label", "Ver mais");
+
+            seta.innerHTML = `
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9.5 5.5 16 12l-6.5 6.5"/>
+                </svg>
+            `;
+
+            // barrinha de progresso embaixo da fileira
+            const trilho =
+                document.createElement("div");
+
+            trilho.className = "preview-faixa-progresso";
+
+            trilho.setAttribute("aria-hidden", "true");
+
+            trilho.innerHTML = "<span></span>";
+
+            caixa.append(seta, trilho);
+
+            bloco.appendChild(caixa);
+
+            ligarFaixa(faixa, seta, trilho);
+
+            observadorSecoes.observe(bloco);
 
             fragmento.appendChild(bloco);
 
@@ -809,7 +966,14 @@
 
     }
 
+    // observadores das fileiras do celular (aparecer na tela e "cartão do meio")
+    let observadoresFaixas = [];
+
     function desconectarObservadores() {
+
+        observadoresFaixas.forEach(observador => observador.disconnect());
+
+        observadoresFaixas = [];
 
         observadorMontar?.disconnect();
         observadorVisibilidade?.disconnect();
@@ -1280,10 +1444,11 @@
         let desnivel = 0;
         let colunasMaior = 3;
         let colunasMenor = 3;
+        let larguraVw = 40;
 
         if (modo === "carrossel") {
 
-            variante =
+            [variante, larguraVw, desnivel] =
                 RITMO_CARROSSEL[indice % RITMO_CARROSSEL.length];
 
         } else if (modo === "compacta") {
@@ -1327,6 +1492,12 @@
 
             item.style.setProperty("--sm", colunasMaior);
             item.style.setProperty("--sm2", colunasMenor);
+
+        }
+
+        if (modo === "carrossel") {
+
+            item.style.setProperty("--lv", larguraVw);
 
         }
         item.style.setProperty("--rot", `${rotacao.toFixed(2)}deg`);
