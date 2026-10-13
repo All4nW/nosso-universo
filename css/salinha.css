@@ -587,3 +587,25 @@ body.imm.typing #msgs{min-height:0}
 #typBar .dots{display:inline-flex;gap:3px;align-items:center}
 #typBar .dots s{width:4px;height:4px}
 @keyframes typhop{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
+
+/* ===== PC: chat normal com o mesmo visual do chat ampliado ===== */
+@media (min-width:701px){
+  body:not(.imm) .pad{
+    background:rgba(0,0,0,.5);
+    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:14px 14px 12px;
+    box-shadow:0 18px 48px rgba(0,0,0,.6);
+  }
+  body:not(.imm) .pad header{border-bottom:0;padding-bottom:0;margin-bottom:6px}
+  body:not(.imm) .m.me{box-shadow:none}
+}
+
+/* ===== prévia da foto antes de enviar ===== */
+#imgPrev{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;background:rgba(0,0,0,.85)}
+#imgPrev.on{display:flex}
+#imgPrev img{max-width:min(92vw,560px);max-height:calc(var(--vvh,100dvh) - 150px);object-fit:contain;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+#imgPrev .ipb{display:flex;gap:12px}
+#imgPrev button{padding:11px 24px;border-radius:99px;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#f6ece0}
+#imgPrev button.go{background:#8c2442;border-color:#8c2442;color:#fff}

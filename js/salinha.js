@@ -706,11 +706,25 @@ async function imgToJpeg(f){
   while (d.length > 350000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
   return d;
 }
+/* prévia com confirmação antes de enviar a foto */
+function confirmImg(d){
+  return new Promise(ok => {
+    const ov = document.createElement('div'); ov.id = 'imgPrev';
+    ov.innerHTML = '<img alt=""><div class="ipb"><button type="button" class="no">Cancelar</button><button type="button" class="go">Enviar ➤</button></div>';
+    ov.querySelector('img').src = d;
+    const fim = r => { ov.remove(); ok(r); };
+    ov.querySelector('.no').onclick = () => fim(false);
+    ov.querySelector('.go').onclick = () => fim(true);
+    ov.addEventListener('click', e => { if (e.target === ov) fim(false); });
+    document.body.appendChild(ov); ov.classList.add('on');
+  });
+}
 async function pickImg(e){
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   let d;
   try{ d = await imgToJpeg(f); }
   catch(err){ console.error('[img] ler', err); toast('Não consegui ler a imagem: ' + ((err && (err.message || err.name)) || 'erro')); return; }
+  if (!(await confirmImg(d))) return;     /* cancelou: não envia nada */
   for (let i = 0; i < 8 && !(conn && conn.open); i++) await new Promise(r => setTimeout(r, 500));   /* espera a conexão voltar da galeria */
   if (!canSend()) return;
   try{ conn.send({t:'img', x:d}); addMsg('me', '', true, Date.now(), d); closeTrays(); }
