@@ -924,14 +924,14 @@ function boot(){
   const _setConn = setConn;
   setConn = function(c){
     const send = c.send.bind(c);
-    c.send = d => {
+      c.send = (d, ...rest) => {
       if (d && (d.t === 'chat' || d.t === 'img' || d.t === 'stk')){
         if (!d.id) d.id = nid();                                  /* mensagem do celular já chega com id */
         if (!d.r && reply){ d.r = reply; setReply(null); }
         lastSent = {id: d.id, r: d.r || null};
         if (role === 'a' && !satOrigin) satSend(Object.assign({}, d, {me: 1}));   /* PC: o que o Allan escreve aqui também aparece no celular */
       }
-      return send(d);
+      return send(d, ...rest);
     };
     c.on('data', d => {                       /* roda antes do tratamento original */
       if (!d) return;
