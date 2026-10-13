@@ -3039,3 +3039,32 @@
     }
 
 }
+
+/* ===== vídeo aberto: fica acima de tudo e separado do resto ===== */
+
+/* o cartão aberto sempre ganha dos outros (inclusive do .centro) */
+.preview-feed .preview-item.expandido {
+    z-index: 30 !important;
+}
+
+/* a fileira com vídeo aberto sobe acima da busca e dos filtros */
+.preview-secao:has(.faixa-com-expandido) {
+    z-index: 50;
+}
+
+/* fundo escuro atrás do vídeo: separa dos cards e dos filtros */
+.preview-secao:has(.faixa-com-expandido)::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    background: rgba(8, 6, 20, 0.78);
+}
+
+/* os outros cartões da fileira não aparecem enquanto o vídeo está aberto */
+.preview-feed.tem-expandido .preview-item:not(.expandido) {
+    visibility: hidden;
+}
