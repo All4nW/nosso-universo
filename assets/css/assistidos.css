@@ -1796,3 +1796,698 @@
 body.modal-aberto {
     overflow: hidden;
 }
+
+/* =========================================================
+   GRADE — botão e níveis de densidade
+   ========================================================= */
+
+.assistidos-grade-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-left: auto;
+
+    height: 30px;
+    padding: 0 12px 0 10px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.35);
+    background: rgba(201, 167, 245, 0.08);
+
+    color: var(--color-text-light);
+
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.assistidos-grade-btn:hover,
+.assistidos-grade-btn:active {
+    background: rgba(201, 167, 245, 0.2);
+    border-color: rgba(201, 167, 245, 0.6);
+}
+
+.assistidos-grade-btn svg {
+    width: 16px;
+    height: 16px;
+
+    fill: none;
+    stroke: var(--color-lilac);
+    stroke-width: 1.8;
+}
+
+/* colunas vêm do JS (--cols) e vencem os @media de cima */
+
+.assistidos-grid[data-nivel] {
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+}
+
+.assistidos-grid[data-nivel="1"] { gap: 24px 16px; }
+.assistidos-grid[data-nivel="2"] { gap: 20px 12px; }
+.assistidos-grid[data-nivel="3"] { gap: 16px 8px; }
+
+.assistidos-grid[data-nivel="2"] .assistido-titulo,
+.assistidos-grid[data-nivel="3"] .assistido-titulo {
+    margin-top: 6px;
+    font-size: 0.64rem;
+}
+
+.assistidos-grid[data-nivel="2"] .assistido-capa,
+.assistidos-grid[data-nivel="3"] .assistido-capa {
+    border-radius: 8px;
+}
+
+.assistidos-grid[data-nivel="3"] .assistido-titulo {
+    font-size: 0.58rem;
+}
+
+/* celular: nos níveis densos some o que não cabe */
+
+@media (max-width: 760px) {
+
+    .assistidos-grid[data-nivel="2"] .assistido-notas-info {
+        display: none;
+    }
+
+    .assistidos-grid[data-nivel="3"] .assistido-info {
+        display: none;
+    }
+
+}
+
+/* =========================================================
+   VISÃO — seletor, divisor de ano e botão de sortear
+   ========================================================= */
+
+.assistidos-visao {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+
+    width: min(1000px, calc(100% - 34px));
+
+    margin: 0 auto 30px;
+}
+
+.assistidos-visao button {
+    padding: 8px 18px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+    background: rgba(201, 167, 245, 0.06);
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.assistidos-visao button.ativa {
+    background: rgba(168, 108, 178, 0.7);
+    border-color: rgba(228, 178, 228, 0.55);
+
+    color: #fff;
+}
+
+.assistidos-ano-divisor {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 10px;
+
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-style: italic;
+
+    color: var(--color-lilac);
+}
+
+.assistidos-ano-divisor:first-child {
+    margin-top: 0;
+}
+
+.assistidos-ano-divisor::before,
+.assistidos-ano-divisor::after {
+    content: "";
+
+    flex: 1;
+    height: 1px;
+
+    background: linear-gradient(90deg, transparent, rgba(201, 167, 245, 0.4), transparent);
+}
+
+.assistidos-ano-coracao {
+    font-size: 0.8rem;
+
+    color: var(--color-pink);
+}
+
+.sortear-btn {
+    margin-left: auto;
+
+    padding: 4px 12px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.4);
+    background: rgba(201, 167, 245, 0.1);
+
+    color: var(--color-text-light);
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sortear-btn[hidden] {
+    display: none;
+}
+
+.assistidos-anos {
+    flex-wrap: wrap;
+    row-gap: 8px;
+}
+
+@media (max-width: 520px) {
+
+    .assistidos-anos {
+        gap: 6px;
+    }
+
+    .assistidos-anos button {
+        padding: 7px 14px;
+        font-size: 0.76rem;
+    }
+
+}
+
+/* =========================================================
+   MENU DE CATEGORIA — três pontinhos ao lado da grade
+   ========================================================= */
+
+.assistidos-categoria-menu {
+    position: relative;
+
+    display: inline-flex;
+
+    margin-left: auto;
+}
+
+/* a grade passa a ficar logo depois do menu */
+.assistidos-categoria-menu + .assistidos-grade-btn {
+    margin-left: 8px;
+}
+
+.assistidos-categoria-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.35);
+    background: rgba(201, 167, 245, 0.08);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.assistidos-categoria-btn:hover,
+.assistidos-categoria-menu.aberto .assistidos-categoria-btn {
+    background: rgba(201, 167, 245, 0.2);
+    border-color: rgba(201, 167, 245, 0.6);
+}
+
+.assistidos-categoria-btn svg {
+    width: 18px;
+    height: 18px;
+
+    fill: var(--color-lilac);
+}
+
+.assistidos-categoria-lista {
+    position: absolute;
+
+    top: calc(100% + 8px);
+    left: 0;
+
+    z-index: 30;
+
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+
+    min-width: 150px;
+
+    padding: 6px;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: rgba(14, 11, 28, 0.97);
+
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+.assistidos-categoria-menu.aberto .assistidos-categoria-lista {
+    display: flex;
+}
+
+.assistidos-categoria-lista button {
+    padding: 10px 14px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.assistidos-categoria-lista button:hover {
+    background: rgba(201, 167, 245, 0.12);
+
+    color: var(--color-text-light);
+}
+
+.assistidos-categoria-lista button.ativa {
+    background: rgba(168, 108, 178, 0.7);
+
+    color: #fff;
+}
+
+/* =========================================================
+   HUDs SEPARADOS — categorias, ano e grade (cada um individual)
+   ========================================================= */
+
+/* ---------- Filmes · Séries · Animes: três botões soltos ---------- */
+
+#assistidos-cats.assistidos-cats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 12px;
+
+    width: min(520px, calc(100% - 34px));
+
+    margin: 0 auto 40px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+    box-shadow: none;
+}
+
+#assistidos-cats .assistidos-cats-marca {
+    display: none;
+}
+
+#assistidos-cats button {
+    position: relative;
+
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 0;
+
+    padding: 12px 16px;
+
+    border-radius: 16px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        color 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* sem enfeites nas laterais */
+
+#assistidos-cats button::before,
+#assistidos-cats button::after {
+    content: none !important;
+    display: none !important;
+}
+
+#assistidos-cats button svg {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    stroke-width: 1.6;
+}
+
+#assistidos-cats button:hover {
+    border-color: rgba(201, 167, 245, 0.6);
+
+    background: rgba(201, 167, 245, 0.1);
+
+    color: var(--color-text-light);
+
+    transform: translateY(-2px);
+}
+
+/* selecionado: preenchido */
+
+#assistidos-cats button[aria-selected="true"] {
+    border-color: rgba(228, 178, 228, 0.7);
+
+    background: linear-gradient(135deg, rgba(168, 108, 178, 0.9), rgba(204, 126, 176, 0.85));
+
+    color: #fff;
+
+    box-shadow: 0 8px 22px rgba(176, 112, 190, 0.35);
+
+    transform: none;
+}
+
+
+/* ---------- três pontinhos e grade: dois botões soltos ---------- */
+
+.assistidos-estante-titulo .assistidos-controles {
+    gap: 10px;
+
+    margin-left: auto;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+    box-shadow: none;
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu + .assistidos-grade-btn::before {
+    display: none;
+}
+
+.assistidos-estante-titulo .assistidos-ano-btn,
+.assistidos-estante-titulo .assistidos-grade-btn {
+    height: 36px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--color-text-light);
+
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 700;
+
+    transition:
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+.assistidos-estante-titulo .assistidos-ano-btn {
+    min-width: 40px;
+
+    padding: 0 12px;
+}
+
+.assistidos-estante-titulo .assistidos-grade-btn {
+    gap: 8px;
+
+    padding: 0 14px 0 11px;
+}
+
+.assistidos-estante-titulo .assistidos-ano-btn:hover,
+.assistidos-estante-titulo .assistidos-grade-btn:hover,
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .assistidos-ano-btn {
+    border-color: rgba(201, 167, 245, 0.6);
+
+    background: rgba(201, 167, 245, 0.14);
+}
+
+.assistidos-estante-titulo .assistidos-ano-btn svg,
+.assistidos-estante-titulo .assistidos-grade-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+.assistidos-ano-chip {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-style: normal;
+    font-weight: 800;
+}
+
+/* menu do ano com a fonte normal */
+
+.assistidos-ano-popover {
+    border-radius: 16px;
+}
+
+.assistidos-ano-titulo {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.assistidos-ano-popover button {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-style: normal;
+    font-weight: 600;
+}
+
+
+/* ---------- celular ---------- */
+
+@media (max-width: 520px) {
+
+    #assistidos-cats.assistidos-cats {
+        gap: 8px;
+
+        width: calc(100% - 28px);
+    }
+
+    #assistidos-cats button {
+        gap: 6px;
+
+        padding: 11px 6px;
+
+        border-radius: 14px;
+
+        font-size: 0.82rem;
+    }
+
+    #assistidos-cats button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    #assistidos-cats button svg {
+        display: none;
+    }
+
+}
+/* =========================================================
+   EDITS — selo ▶ na capa e botão no modal
+   ========================================================= */
+
+.assistido-edit-selo {
+    position: absolute;
+
+    top: 8px;
+    right: 8px;
+
+    z-index: 3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    background: rgba(14, 10, 28, 0.55);
+
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.assistido-edit-selo span {
+    margin-left: 2px;
+
+    font-size: 0.72rem;
+    line-height: 1;
+}
+
+.assistido-edit-selo:hover,
+.assistido-edit-selo:active {
+    background: rgba(168, 108, 178, 0.9);
+
+    transform: scale(1.1);
+}
+
+/* grades densas: selo menor */
+
+.assistidos-grid[data-nivel="2"] .assistido-edit-selo,
+.assistidos-grid[data-nivel="3"] .assistido-edit-selo {
+    top: 5px;
+    right: 5px;
+
+    width: 24px;
+    height: 24px;
+}
+
+.assistidos-grid[data-nivel="2"] .assistido-edit-selo span,
+.assistidos-grid[data-nivel="3"] .assistido-edit-selo span {
+    font-size: 0.58rem;
+}
+
+/* botão dentro do modal de detalhes */
+
+.assistido-modal-edit-btn {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+    padding: 10px 20px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.7);
+
+    background: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.22);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.assistido-modal-edit-btn span {
+    font-size: 0.7rem;
+}
+
+.assistido-modal-edit-btn:hover,
+.assistido-modal-edit-btn:active {
+    background: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.4);
+
+    transform: translateY(-2px);
+}
+/* três pontinhos sem a caixa, igual ao botão de grade */
+
+.assistidos-estante-titulo .assistidos-ano-btn,
+.assistidos-estante-titulo .assistidos-grade-btn {
+    border: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+}
+
+.assistidos-estante-titulo .assistidos-ano-btn:hover,
+.assistidos-estante-titulo .assistidos-grade-btn:hover,
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .assistidos-ano-btn {
+    border: 0;
+
+    background: rgba(201, 167, 245, 0.14);
+}

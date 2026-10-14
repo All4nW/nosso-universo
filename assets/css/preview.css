@@ -3040,31 +3040,109 @@
 
 }
 
-/* ===== vídeo aberto: fica acima de tudo e separado do resto ===== */
+/* VÍDEO ABERTO: fica acima de tudo; mais espaço entre cartões e filtros */
 
-/* o cartão aberto sempre ganha dos outros (inclusive do .centro) */
-.preview-feed .preview-item.expandido {
+.preview-feed .preview-faixa > .preview-item.expandido {
     z-index: 30 !important;
 }
 
-/* a fileira com vídeo aberto sobe acima da busca e dos filtros */
-.preview-secao:has(.faixa-com-expandido) {
-    z-index: 50;
+.preview-secao.secao-com-expandido {
+    z-index: 60;
 }
 
-/* fundo escuro atrás do vídeo: separa dos cards e dos filtros */
-.preview-secao:has(.faixa-com-expandido)::before {
-    content: "";
-
-    position: fixed;
-    inset: 0;
-
-    z-index: 0;
-
-    background: rgba(8, 6, 20, 0.78);
+.preview-faixa {
+    gap: 18px;
 }
 
-/* os outros cartões da fileira não aparecem enquanto o vídeo está aberto */
-.preview-feed.tem-expandido .preview-item:not(.expandido) {
-    visibility: hidden;
+@media (max-width: 760px) {
+
+    .preview-lateral {
+        margin-bottom: 56px;
+    }
+
+}
+
+/* etiqueta "edits de [filme] ✕" */
+
+.preview-chip-filme {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 8px 8px 8px 16px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(228, 178, 228, 0.45);
+
+    background: linear-gradient(135deg, rgba(168, 108, 178, 0.5), rgba(112, 68, 140, 0.4));
+
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+.preview-chip-texto {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    line-height: 1.2;
+}
+
+.preview-chip-texto small {
+    color: var(--pv-muted);
+
+    font-family: var(--pv-sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.preview-chip-texto b {
+    overflow: hidden;
+
+    color: #fff;
+
+    font-family: var(--pv-script);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.1;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.preview-chip-filme button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    color: #fff;
+
+    font-size: 0.85rem;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease;
+}
+
+.preview-chip-filme button:hover {
+    background: rgba(255, 255, 255, 0.28);
 }

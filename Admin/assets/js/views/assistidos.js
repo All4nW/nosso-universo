@@ -329,7 +329,7 @@ function criarItemAdmin(item) {
             </strong>
 
             <span>
-                ${item.ano || "Ano não informado"}
+                ${item.ano || "Ano não informado"}${item.anoAssistido ? ` · assistido em ${item.anoAssistido}` : ""}
             </span>
 
             ${
@@ -586,6 +586,13 @@ function abrirModalAssistido(item = null) {
     ).value =
         item?.ano || "";
 
+            document.getElementById(
+        "assistidos-ano-assistido"
+    ).value =
+        item
+            ? (item.anoAssistido ?? "")
+            : new Date().getFullYear();
+
 
     document.getElementById(
         "assistidos-nota-eu"
@@ -740,6 +747,19 @@ function atualizarCampoNotas() {
 
     }
 
+    const areaAno =
+        document.getElementById(
+            "assistidos-ano-assistido-area"
+        );
+
+    if (areaAno) {
+
+        areaAno.style.display =
+            categoria === "queremos"
+                ? "none"
+                : "block";
+
+    }
 
     atualizarCampoProgresso();
 
@@ -1072,6 +1092,15 @@ async function salvarAssistido(evento) {
                     "assistidos-ano"
                 ).value
             ) || null,
+
+                    anoAssistido:
+            categoria === "queremos"
+                ? null
+                : (Number(
+                    document.getElementById(
+                        "assistidos-ano-assistido"
+                    ).value
+                ) || null),
 
         capa,
 

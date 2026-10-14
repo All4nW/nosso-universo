@@ -2654,3 +2654,399 @@
     }
 
 }
+
+/* =========================================================
+   BARRA DE CATEGORIA — Filmes | Séries | Animes
+   ========================================================= */
+
+.assistidos-cats {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    width: min(440px, calc(100% - 34px));
+
+    margin: 0 auto 38px;
+    padding: 4px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.28);
+
+    background: linear-gradient(180deg, rgba(201, 167, 245, 0.12), rgba(201, 167, 245, 0.04));
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* a marca lilás que desliza até a categoria escolhida */
+
+.assistidos-cats-marca {
+    position: absolute;
+
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+
+    width: calc((100% - 8px) / 3);
+
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, rgba(168, 108, 178, 0.95), rgba(204, 126, 176, 0.9));
+
+    box-shadow:
+        0 0 20px rgba(176, 112, 190, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+    transform: translateX(calc(var(--i, 0) * 100%));
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.assistidos-cats button {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px 6px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: color 0.3s ease;
+}
+
+.assistidos-cats button svg {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.assistidos-cats button:hover {
+    color: var(--color-text-light);
+}
+
+.assistidos-cats button[aria-selected="true"] {
+    color: #fff;
+}
+
+@media (max-width: 380px) {
+
+    .assistidos-cats button {
+        gap: 5px;
+
+        font-size: 0.78rem;
+    }
+
+    .assistidos-cats button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   CONTROLES DO CANTO — três pontinhos (ano) + grade, num bloco só
+   ========================================================= */
+
+.assistidos-controles {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 2px;
+
+    margin-left: auto;
+    padding: 3px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: linear-gradient(180deg, rgba(201, 167, 245, 0.12), rgba(201, 167, 245, 0.04));
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.assistidos-controles .assistidos-grade-btn {
+    position: relative;
+
+    height: 32px;
+
+    margin-left: 0;
+    padding: 0 12px 0 10px;
+
+    gap: 7px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: transparent;
+}
+
+.assistidos-controles .assistidos-grade-btn:hover,
+.assistidos-controles .assistidos-grade-btn:active {
+    background: rgba(201, 167, 245, 0.2);
+}
+
+.assistidos-controles .assistidos-grade-btn svg {
+    width: 18px;
+    height: 18px;
+
+    fill: var(--color-lilac);
+    stroke: none;
+}
+
+.grade-icone {
+    display: inline-flex;
+}
+
+/* fiozinho separando os dois botões */
+
+.assistidos-ano-menu + .assistidos-grade-btn::before {
+    content: "";
+
+    position: absolute;
+
+    left: -2px;
+    top: 8px;
+    bottom: 8px;
+
+    width: 1px;
+
+    background: rgba(201, 167, 245, 0.25);
+}
+
+/* sem position aqui: o menu abre ancorado no bloco inteiro */
+
+.assistidos-ano-menu {
+    display: inline-flex;
+}
+
+.assistidos-ano-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    height: 32px;
+    min-width: 34px;
+
+    padding: 0 9px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: var(--color-lilac);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease;
+}
+
+.assistidos-ano-btn:hover,
+.assistidos-ano-menu.aberto .assistidos-ano-btn {
+    background: rgba(201, 167, 245, 0.2);
+}
+
+.assistidos-ano-btn svg {
+    width: 18px;
+    height: 18px;
+
+    fill: currentColor;
+}
+
+/* o ano escolhido aparece no botão */
+
+.assistidos-ano-chip {
+    padding: 2px 8px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, rgba(168, 108, 178, 0.9), rgba(204, 126, 176, 0.85));
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.assistidos-ano-popover {
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    z-index: 30;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+
+    min-width: 200px;
+
+    padding: 8px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: linear-gradient(170deg, rgba(26, 20, 48, 0.98), rgba(12, 10, 26, 0.98));
+
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.55),
+        0 0 40px rgba(176, 112, 190, 0.12);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top right;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0.25s;
+}
+
+.assistidos-ano-menu.aberto .assistidos-ano-popover {
+    opacity: 1;
+    visibility: visible;
+
+    transform: none;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s;
+}
+
+.assistidos-ano-titulo {
+    margin: 4px 10px 6px;
+
+    color: var(--color-lilac);
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+
+    opacity: 0.8;
+}
+
+.assistidos-ano-popover button {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.assistidos-ano-popover button:hover {
+    background: rgba(201, 167, 245, 0.12);
+
+    color: var(--color-text-light);
+}
+
+.assistidos-ano-rotulo {
+    flex: 1;
+}
+
+.assistidos-ano-qtd {
+    min-width: 24px;
+
+    padding: 1px 8px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.assistidos-ano-marca {
+    width: 12px;
+
+    color: var(--color-pink);
+
+    font-size: 0.8rem;
+
+    opacity: 0;
+
+    transform: scale(0.5);
+
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.assistidos-ano-popover button.ativa {
+    background: rgba(168, 108, 178, 0.28);
+
+    color: #fff;
+}
+
+.assistidos-ano-popover button.ativa .assistidos-ano-marca {
+    opacity: 1;
+
+    transform: none;
+}

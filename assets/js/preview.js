@@ -219,6 +219,8 @@
     let itens = [];               // o que está na tela (depois do filtro)
     let filtroAtual = "todos";
     let termoBusca = "";          // o que foi digitado na busca
+    let filtroAssistidoId = "";   // vem do selo ▶ da página de Assistidos
+let tituloFiltroFilme = "";
     let renderizados = 0;
     let ativo = null;             // entrada que está tocando (ou pausada por último)
     let somLigado = true;
@@ -428,7 +430,7 @@
 
         criarLateral();
 
-        mostrarItens(todosItens);
+        mostrarItens(itensFiltrados());
 
     }
 
@@ -821,6 +823,14 @@
                 return false;
 
             }
+                        if (
+                filtroAssistidoId &&
+                String(item.assistidoId) !== filtroAssistidoId
+            ) {
+
+                return false;
+
+            }
 
             if (!termo) return true;
 
@@ -915,7 +925,53 @@
         return caixa;
 
     }
+// etiqueta "edits de [filme] ✕" no topo da lateral
+function criarChipFilme() {
 
+    if (!filtroAssistidoId) return null;
+
+    const titulo =
+        tituloFiltroFilme ||
+        todosItens.find(item => String(item.assistidoId) === filtroAssistidoId)?.assistidoTitulo ||
+        "";
+
+    const chip =
+        document.createElement("div");
+
+    chip.className = "preview-chip-filme";
+
+    chip.innerHTML = `
+        <span class="preview-chip-texto">
+            <small>edits de</small>
+            <b>${escaparHTML(titulo)}</b>
+        </span>
+        <button type="button" aria-label="Mostrar todos os edits">✕</button>
+    `;
+
+    chip
+        .querySelector("button")
+        .addEventListener("click", () => limparFiltroFilme(true));
+
+    return chip;
+
+}
+
+function limparFiltroFilme(rolarAoTopo = true) {
+
+    if (!filtroAssistidoId) return;
+
+    filtroAssistidoId = "";
+    tituloFiltroFilme = "";
+
+    if (previewCarregado && todosItens.length) {
+
+        criarLateral();
+
+        atualizarMural(rolarAoTopo);
+
+    }
+
+}
     // Barra lateral: a busca em cima e os filtros embaixo
     function criarLateral() {
 
@@ -937,6 +993,10 @@
 
         const filtros =
             criarFiltros();
+
+            const chip = criarChipFilme();
+
+        if (chip) lateral.appendChild(chip);
 
         if (busca) lateral.appendChild(busca);
 
@@ -2003,12 +2063,35 @@
             Number(entrada.dados.largura) ||
             Infinity;
 
+        const margem = 16;
+
+        let topoMinimo = 84;       // não passa por baixo dos botões do topo
+
+        const lateral =
+            document.getElementById("preview-lateral");
+
+        if (estreito && lateral) {
+
+            const caixaLateral =
+                lateral.getBoundingClientRect();
+
+            if (caixaLateral.bottom > 0 && caixaLateral.top < window.innerHeight) {
+
+                topoMinimo = Math.max(topoMinimo, caixaLateral.bottom + 18);
+
+            }
+
+        }
+
+        const alturaDisponivel =
+            window.innerHeight - margem - topoMinimo;
+
         const alvoLargura =
             Math.min(
                 larguraMaxima,
                 alturaMaxima * razao,
                 window.innerWidth - 32,
-                window.innerHeight * 0.85 * razao,
+                alturaDisponivel * razao,
                 larguraOriginal
             );
 
@@ -2022,8 +2105,6 @@
         const origem =
             quadro.getBoundingClientRect();
 
-        const margem = 16;
-        const topoMinimo = 84;       // não passa por baixo dos botões do topo
 
         const esquerda =
             Math.min(
@@ -2045,6 +2126,7 @@
         feed.classList.add("tem-expandido");
 
         quadro.closest(".preview-faixa")?.classList.add("faixa-com-expandido");
+                quadro.closest(".preview-secao")?.classList.add("secao-com-expandido");
 
         // 1) já no tamanho e no lugar finais, mas desenhado como estava (FLIP)
         quadro.style.transition = "none";
@@ -2074,70 +2156,74 @@
 
     }
 
-    function recolher() {
+    // "exceto" é o cartão que está abrindo agora: ele não pode ser recolhido
+    // junto com o anterior.
+    function recolher(exceto = null) {
 
-        feed.classList.remove("tem-expandido");
+        const abertos =
+            [...feed.querySelectorAll(".preview-item.expandido:not(.recolhendo)")]
+                .filter(item => item !== exceto);
 
-        feed
-            .querySelectorAll(".preview-item.expandido:not(.recolhendo)")
-            .forEach(item => {
+        if (!exceto || !exceto.classList.contains("expandido")) {
 
-                const entrada =
-                    entradas.get(item);
+            feed.classList.remove("tem-expandido");
 
-                if (!entrada || !entrada.expandido) {
+        }
 
-                    item.classList.remove("expandido");
+        abertos.forEach(item => {
 
-                    return;
+            const entrada =
+                entradas.get(item);
 
-                }
+            if (!entrada || !entrada.expandido) {
 
-                const quadro =
-                    entrada.moldura.parentElement;
+                item.classList.remove("expandido");
 
-                const media =
-                    quadro.parentElement;
+                return;
 
-                const { esquerda, topo, largura } =
-                    entrada.expandido;
+            }
 
-                // volta pro lugar reservado no cartão
-                const destino =
-                    media.getBoundingClientRect();
+            const quadro =
+                entrada.moldura.parentElement;
 
-                item.classList.add("recolhendo");
+            const media =
+                quadro.parentElement;
 
-                quadro.style.transformOrigin = "0 0";
+            const { esquerda, topo, largura } =
+                entrada.expandido;
 
-                quadro.style.transform =
-                    `translate(${destino.left - esquerda}px, ${destino.top - topo}px) ` +
-                    `scale(${destino.width / largura})`;
+            const destino =
+                media.getBoundingClientRect();
 
-                setTimeout(() => {
+            item.classList.add("recolhendo");
 
-                    quadro.style.cssText = "";
+            quadro.style.transformOrigin = "0 0";
 
-                    media.style.height = "";
+            quadro.style.transform =
+                `translate(${destino.left - esquerda}px, ${destino.top - topo}px) ` +
+                `scale(${destino.width / largura})`;
 
-                    item.classList.remove("expandido", "recolhendo");
+            setTimeout(() => {
 
-                    quadro.closest(".preview-faixa")?.classList.remove("faixa-com-expandido");
+                quadro.style.cssText = "";
 
-                    entrada.expandido = null;
+                media.style.height = "";
 
-                }, 520);
+                item.classList.remove("expandido", "recolhendo");
 
-            });
+                quadro.closest(".preview-faixa")?.classList.remove("faixa-com-expandido");
+                quadro.closest(".preview-secao")?.classList.remove("secao-com-expandido");
+
+                entrada.expandido = null;
+
+            }, 520);
+
+        });
 
     }
-
     function pausarOutros(entrada) {
 
-        const expandido =
-            feed.querySelector(".preview-item.expandido");
-
-        if (expandido && expandido !== entrada.elemento) recolher();
+        recolher(entrada.elemento);
 
         if (ativo && ativo !== entrada) {
 
@@ -2814,9 +2900,12 @@
 
                 if (!jaEstava && botaoClicado) faiscas(botaoClicado);
 
-            } else if (ativo?.video) {
+            } else {
 
-                ativo.video.pause();
+                // saiu do Preview: limpa o filtro por filme
+                limparFiltroFilme(false);
+
+                if (ativo?.video) ativo.video.pause();
 
             }
 
@@ -2917,7 +3006,31 @@
         }, 250);
 
     });
+// chamado pela página de Assistidos (selo ▶ e botão "ver edit")
+window.abrirPreviewDoFilme = function (id, titulo) {
 
+    const aba =
+        document.querySelector('#assistidos-abas [data-aba="preview"]');
+
+    if (!aba) return;
+
+    filtroAssistidoId = String(id);
+    tituloFiltroFilme = titulo || "";
+    filtroAtual = "todos";
+
+    aba.click();
+
+    // se o Preview já tinha carregado, refaz a lateral e o mural já filtrados
+    // (na primeira vez, o próprio carregar() desenha tudo filtrado)
+    if (previewCarregado && todosItens.length) {
+
+        criarLateral();
+
+        atualizarMural();
+
+    }
+
+};
     criarAtmosfera();
 
     iniciarAbas();

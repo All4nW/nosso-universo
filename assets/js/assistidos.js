@@ -12,6 +12,549 @@ const CATEGORIA_QUEREMOS = "queremos";
 
 let painelLateralCriado = false;
 
+// =====================================================
+// EDITS — quais filmes têm vídeo no Preview
+// =====================================================
+
+let idsComEdit = new Set();
+
+async function carregarIdsComEdit() {
+
+    try {
+
+        const resposta = await fetch("assets/data/preview.json", { cache: "no-cache" });
+
+        if (!resposta.ok) return;
+
+        const lista = await resposta.json();
+
+        idsComEdit = new Set(
+            (Array.isArray(lista) ? lista : [])
+                .filter(v => v && v.video && v.assistidoId)
+                .map(v => String(v.assistidoId))
+        );
+
+    } catch (erro) {
+
+        idsComEdit = new Set();
+
+    }
+
+}
+
+function temEdit(item) {
+
+    return idsComEdit.has(String(item.id ?? item.titulo));
+
+}
+
+function irParaEdit(item) {
+
+    // fecha o modal de detalhes, se estiver aberto
+    const fechar = document.querySelector(".modal-fechar");
+
+    if (fechar) fechar.click();
+    else if (typeof fecharModal === "function") fecharModal();
+
+    if (typeof window.abrirPreviewDoFilme === "function") {
+
+        window.abrirPreviewDoFilme(item.id ?? item.titulo, item.titulo);
+
+    }
+
+}
+
+// =====================================================
+// GRADE — botão que muda quantas colunas aparecem
+// =====================================================
+
+const GRADE_CHAVE = "nu:grade:";
+
+let gradesAtivas = [];
+
+// 4 níveis por tamanho de tela (o primeiro é o padrão de hoje)
+function colunasDisponiveis() {
+
+    const w = window.innerWidth;
+
+    if (w <= 520) return [2, 3, 4, 5];
+    if (w <= 760) return [3, 4, 5, 6];
+    if (w <= 1050) return [4, 5, 6, 7];
+
+    return [5, 6, 7, 8];
+
+}
+
+function lerNivelGrade(chave) {
+
+    try {
+
+        const n = Number(localStorage.getItem(GRADE_CHAVE + chave));
+
+        return n >= 0 && n <= 3 ? n : 0;
+
+    } catch (e) {
+
+        return 0;
+
+    }
+
+}
+
+function salvarNivelGrade(chave, nivel) {
+
+    try {
+
+        localStorage.setItem(GRADE_CHAVE + chave, String(nivel));
+
+    } catch (e) { /* sem armazenamento: só não lembra */ }
+
+}
+// desenha as colunas que estão ativas (mais colunas = quadradinhos menores)
+function iconeGrade(cols) {
+
+    const gap = 1.6;
+    const lado = (20 - (cols - 1) * gap) / cols;
+    const linhas = cols <= 3 ? 2 : 3;
+    const alto = Math.min(lado * 1.4, (20 - (linhas - 1) * gap) / linhas);
+    const y0 = (24 - (linhas * alto + (linhas - 1) * gap)) / 2;
+
+    let retangulos = "";
+
+    for (let l = 0; l < linhas; l++) {
+        for (let c = 0; c < cols; c++) {
+            retangulos += `<rect x="${(2 + c * (lado + gap)).toFixed(2)}" y="${(y0 + l * (alto + gap)).toFixed(2)}" width="${lado.toFixed(2)}" height="${alto.toFixed(2)}" rx="${Math.min(1.2, lado / 3).toFixed(2)}"/>`;
+        }
+    }
+
+    return `<svg viewBox="0 0 24 24" aria-hidden="true">${retangulos}</svg>`;
+
+}
+function aplicarGrade(registro) {
+
+    const cols = colunasDisponiveis()[registro.nivel];
+
+    registro.grid.style.setProperty("--cols", cols);
+    registro.grid.dataset.nivel = registro.nivel;
+
+    registro.botao.querySelector(".grade-icone").innerHTML = iconeGrade(cols);
+    registro.botao.querySelector(".grade-num").textContent = cols;
+
+    registro.botao.setAttribute(
+        "aria-label",
+        `Mostrar ${cols} por linha. Toque para mudar.`
+    );
+
+}
+
+function criarBotaoGrade(chave, grid) {
+
+    const botao = document.createElement("button");
+
+    botao.type = "button";
+    botao.className = "assistidos-grade-btn";
+
+    botao.innerHTML = `
+        <span class="grade-icone" aria-hidden="true"></span>
+        <span class="grade-num"></span>
+    `;
+
+    const registro = { chave, grid, botao, nivel: lerNivelGrade("global") };
+
+    gradesAtivas.push(registro);
+
+    aplicarGrade(registro);
+
+    botao.addEventListener("click", () => {
+
+        const novo = (registro.nivel + 1) % 4;
+
+        salvarNivelGrade("global", novo);
+
+        // muda todas as categorias de uma vez
+        gradesAtivas.forEach(r => {
+            r.nivel = novo;
+            aplicarGrade(r);
+        });
+
+    });
+
+    return botao;
+
+}
+
+// girou o celular / mudou a janela: refaz as colunas do nível salvo
+window.addEventListener("resize", () => {
+
+    gradesAtivas.forEach(aplicarGrade);
+
+});
+
+// =====================================================
+// ANO ASSISTIDO (divisores, filtro por ano) E SORTEIO
+// =====================================================
+
+const LINHA_MAIS_RECENTE_PRIMEIRO = true;
+
+let itensCache = [];
+let queremosCache = [];
+let ultimoSorteado = null;
+let anoFiltro = "todos";   // "todos", um ano (ex.: "2025") ou "sem"
+
+function anoDe(item) {
+    return Number(item.anoAssistido) || 0;
+}
+
+function passaFiltroAno(item) {
+
+    if (anoFiltro === "todos") return true;
+    if (anoFiltro === "sem") return !anoDe(item);
+
+    return String(anoDe(item)) === anoFiltro;
+
+}
+
+function ordenarPorAno(itens) {
+
+    const dir = LINHA_MAIS_RECENTE_PRIMEIRO ? -1 : 1;
+
+    return itens
+        .map((item, i) => ({ item, i, ano: anoDe(item) }))
+        .sort((a, b) => {
+                       if (!a.ano && !b.ano) return b.i - a.i;
+            if (!a.ano) return 1;
+            if (!b.ano) return -1;
+                       return ((a.ano - b.ano) * dir) || (b.i - a.i);
+        })
+        .map(x => x.item);
+
+}
+
+function criarDivisorAno(ano) {
+
+    const div = document.createElement("div");
+
+    div.className = "assistidos-ano-divisor";
+
+    div.innerHTML = ano
+        ? `<span>${ano}</span><span class="assistidos-ano-coracao">♥</span>`
+        : `<span>Sem data</span>`;
+
+    return div;
+
+}
+
+function montarFiltroAno(container) {
+
+    document.getElementById("assistidos-anos")?.remove();
+
+    anoFiltro = "todos";
+
+    const assistidos = itensCache.filter(item =>
+        CATEGORIAS_ORDEM.some(c => c.chave === item.categoria) &&
+        item.status !== "assistindo"
+    );
+
+    const anos = [...new Set(assistidos.map(anoDe).filter(Boolean))]
+        .sort((a, b) => LINHA_MAIS_RECENTE_PRIMEIRO ? b - a : a - b);
+
+    const temSem = assistidos.some(item => !anoDe(item));
+
+    const opcoes = [["todos", "Todos"], ...anos.map(a => [String(a), String(a)])];
+
+    if (temSem && anos.length) opcoes.push(["sem", "Sem data"]);
+
+    // só aparece se tiver mais de um ano pra escolher
+    if (opcoes.length < 3) return;
+
+    const barra = document.createElement("div");
+
+    barra.id = "assistidos-anos";
+    barra.className = "assistidos-visao assistidos-anos";
+
+    barra.innerHTML = opcoes
+        .map(([valor, rotulo]) =>
+            `<button type="button" data-ano="${valor}">${rotulo}</button>`
+        )
+        .join("");
+
+    const marcar = () => {
+        barra.querySelectorAll("[data-ano]").forEach(b => {
+            const ativa = b.dataset.ano === anoFiltro;
+            b.classList.toggle("ativa", ativa);
+            b.setAttribute("aria-pressed", String(ativa));
+        });
+    };
+
+    barra.addEventListener("click", evento => {
+
+        const botao = evento.target.closest("[data-ano]");
+
+        if (!botao || botao.dataset.ano === anoFiltro) return;
+
+        anoFiltro = botao.dataset.ano;
+
+        marcar();
+
+        desenharAssistidos();
+
+    });
+
+    marcar();
+
+    container.parentNode.insertBefore(barra, container);
+
+}
+// =====================================================
+// CATEGORIA (barra) E ANO (menu dos três pontinhos)
+// =====================================================
+
+const NOMES_CATEGORIA = { filmes: "Filmes", series: "Séries", animes: "Animes" };
+
+const ICONES_CATEGORIA = {
+    filmes: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 5v14M16 5v14M4 9h4M4 15h4M16 9h4M16 15h4"/></svg>`,
+    series: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8M12 18v3"/></svg>`,
+    animes: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>`
+};
+
+let categoriaVisivel = "filmes";
+
+function montarBarraCategoria(container) {
+
+    document.getElementById("assistidos-cats")?.remove();
+
+    const barra = document.createElement("div");
+
+    barra.id = "assistidos-cats";
+    barra.className = "assistidos-cats";
+    barra.setAttribute("role", "tablist");
+
+    barra.innerHTML =
+        `<span class="assistidos-cats-marca" aria-hidden="true"></span>` +
+        CATEGORIAS_ORDEM.map(c => `
+            <button type="button" role="tab" data-cat="${c.chave}">
+                ${ICONES_CATEGORIA[c.chave] || ""}
+                <span>${NOMES_CATEGORIA[c.chave] || c.chave}</span>
+            </button>
+        `).join("");
+
+    const marcar = () => {
+
+        const indice = Math.max(
+            0,
+            CATEGORIAS_ORDEM.findIndex(c => c.chave === categoriaVisivel)
+        );
+
+        barra.style.setProperty("--i", indice);
+
+        barra.querySelectorAll("[data-cat]").forEach(b => {
+            b.setAttribute("aria-selected", String(b.dataset.cat === categoriaVisivel));
+        });
+
+    };
+
+    barra.addEventListener("click", evento => {
+
+        const botao = evento.target.closest("[data-cat]");
+
+        if (!botao || botao.dataset.cat === categoriaVisivel) return;
+
+        categoriaVisivel = botao.dataset.cat;
+
+        marcar();
+
+        desenharAssistidos();
+
+    });
+
+    marcar();
+
+    container.parentNode.insertBefore(barra, container);
+
+}
+
+// três pontinhos: filtro por ano
+function criarMenuAno() {
+
+    const assistidos = itensCache.filter(item =>
+        CATEGORIAS_ORDEM.some(c => c.chave === item.categoria) &&
+        item.status !== "assistindo"
+    );
+
+    const anos = [...new Set(assistidos.map(anoDe).filter(Boolean))]
+        .sort((a, b) => LINHA_MAIS_RECENTE_PRIMEIRO ? b - a : a - b);
+
+    if (!anos.length) return null;
+
+    const daCategoria = assistidos.filter(item => item.categoria === categoriaVisivel);
+
+    const opcoes = [
+        ["todos", "Todos os anos", daCategoria.length],
+        ...anos.map(a => [String(a), String(a), daCategoria.filter(i => anoDe(i) === a).length])
+    ];
+
+    if (assistidos.some(item => !anoDe(item))) {
+        opcoes.push(["sem", "Sem data", daCategoria.filter(i => !anoDe(i)).length]);
+    }
+
+    const filtrando = anoFiltro !== "todos";
+
+    const rotuloAtivo = anoFiltro === "sem" ? "Sem data" : anoFiltro;
+
+    const caixa = document.createElement("span");
+
+    caixa.className = "assistidos-ano-menu";
+
+    caixa.innerHTML = `
+        <button type="button" class="assistidos-ano-btn" aria-label="Filtrar por ano" aria-haspopup="menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.9"/>
+                <circle cx="12" cy="12" r="1.9"/>
+                <circle cx="19" cy="12" r="1.9"/>
+            </svg>
+            ${filtrando ? `<span class="assistidos-ano-chip">${rotuloAtivo}</span>` : ""}
+        </button>
+        <div class="assistidos-ano-popover" role="menu">
+            <p class="assistidos-ano-titulo">Ano em que assistimos</p>
+            ${opcoes.map(([valor, rotulo, qtd]) => `
+                <button type="button" role="menuitemradio"
+                        aria-checked="${valor === anoFiltro}"
+                        data-ano="${valor}"
+                        class="${valor === anoFiltro ? "ativa" : ""}">
+                    <span class="assistidos-ano-rotulo">${rotulo}</span>
+                    <span class="assistidos-ano-qtd">${qtd}</span>
+                    <span class="assistidos-ano-marca" aria-hidden="true">♥</span>
+                </button>
+            `).join("")}
+        </div>
+    `;
+
+    const botao = caixa.querySelector(".assistidos-ano-btn");
+
+    botao.addEventListener("click", () => {
+
+        const abrir = !caixa.classList.contains("aberto");
+
+        caixa.classList.toggle("aberto", abrir);
+
+        botao.setAttribute("aria-expanded", String(abrir));
+
+    });
+
+    caixa.querySelector(".assistidos-ano-popover").addEventListener("click", evento => {
+
+        const opcao = evento.target.closest("[data-ano]");
+
+        if (!opcao) return;
+
+        if (opcao.dataset.ano === anoFiltro) {
+
+            caixa.classList.remove("aberto");
+
+            return;
+
+        }
+
+        anoFiltro = opcao.dataset.ano;
+
+        desenharAssistidos();
+
+    });
+
+    return caixa;
+
+}
+
+// tocar fora do menu (ou Esc) fecha
+document.addEventListener("click", evento => {
+
+    if (evento.target.closest(".assistidos-ano-menu")) return;
+
+    document
+        .querySelectorAll(".assistidos-ano-menu.aberto")
+        .forEach(menu => menu.classList.remove("aberto"));
+
+});
+
+document.addEventListener("keydown", evento => {
+
+    if (evento.key !== "Escape") return;
+
+    document
+        .querySelectorAll(".assistidos-ano-menu.aberto")
+        .forEach(menu => menu.classList.remove("aberto"));
+
+});
+
+function desenharAssistidos() {
+
+    const container = document.getElementById("assistidos-categorias");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    gradesAtivas = [];
+
+    const categoria =
+        CATEGORIAS_ORDEM.find(c => c.chave === categoriaVisivel) ||
+        CATEGORIAS_ORDEM[0];
+
+    const doGrupo = itensCache.filter(item =>
+        item.categoria === categoria.chave &&
+        item.status !== "assistindo" &&
+        passaFiltroAno(item)
+    );
+
+    // a estante (e os botões do título) aparece sempre, pra dar pra limpar o filtro
+    container.appendChild(
+        criarEstante(categoria.titulo, doGrupo, categoria.chave, true)
+    );
+
+    if (!doGrupo.length) {
+
+        const vazio = document.createElement("p");
+
+        vazio.className = "galeria-vazio";
+
+        vazio.textContent =
+            anoFiltro === "todos"
+                ? "Ainda não há nada por aqui."
+                : "Nada desse ano por aqui ainda.";
+
+        container.appendChild(vazio);
+
+    }
+
+}
+
+// sorteia um da lista "Ainda queremos assistir" e abre os detalhes
+function sortearUm(fecharPainel) {
+
+    if (!queremosCache.length) return;
+
+    let opcoes = queremosCache.filter(item => item !== ultimoSorteado);
+
+    if (!opcoes.length) opcoes = queremosCache;
+
+    const item = opcoes[Math.floor(Math.random() * opcoes.length)];
+
+    ultimoSorteado = item;
+
+    if (fecharPainel) fecharPainel();
+
+    setTimeout(() => {
+
+        abrirDetalhesAssistido(item, {
+            notaEu: 0,
+            notaEla: 0,
+            notaMedia: 0,
+            ehListaFutura: true
+        });
+
+    }, 350);
+
+}
 
 // =====================================================
 // LER NOTAS DO ITEM
@@ -196,44 +739,22 @@ async function carregarAssistidos() {
 
     }
 
-    container.innerHTML = "";
+    itensCache = itens;
 
-
-    CATEGORIAS_ORDEM.forEach((categoria) => {
-
-        const itensDaCategoria = itens.filter(
-            item =>
-                item.categoria === categoria.chave &&
-                item.status !== "assistindo"
-        );
-
-        if (!itensDaCategoria.length) return;
-
-        container.appendChild(criarEstante(categoria.titulo, itensDaCategoria));
-
-    });
-
-
-    const queremos = itens.filter(item => item.categoria === CATEGORIA_QUEREMOS);
+    queremosCache = itens.filter(item => item.categoria === CATEGORIA_QUEREMOS);
 
     const assistindo = itens.filter(
         item =>
             item.status === "assistindo" &&
             item.categoria !== CATEGORIA_QUEREMOS
     );
+    await carregarIdsComEdit();
 
-    montarPainelLateral(assistindo, queremos);
+    montarBarraCategoria(container);
 
+    desenharAssistidos();
 
-    if (!container.children.length) {
-
-        container.innerHTML = `
-            <p class="galeria-vazio">
-                Ainda não há nada por aqui.
-            </p>
-        `;
-
-    }
+    montarPainelLateral(assistindo, queremosCache);
 
     ativarBotaoTopoAssistidos();
 
@@ -244,7 +765,7 @@ async function carregarAssistidos() {
 // ESTANTE NORMAL
 // =====================================================
 
-function criarEstante(tituloCategoria, itens) {
+function criarEstante(tituloCategoria, itens, chave, porAno = false) {
 
     const secao = document.createElement("section");
     secao.className = "assistidos-estante";
@@ -257,13 +778,47 @@ function criarEstante(tituloCategoria, itens) {
         <span class="assistidos-estante-contagem">${itens.length}</span>
     `;
 
-    secao.appendChild(titulo);
-
     const grid = document.createElement("div");
     grid.className = "assistidos-grid";
 
-    itens.forEach((item, indice) => {
-        grid.appendChild(criarCardAssistido(item, indice));
+    const controles = document.createElement("div");
+
+    controles.className = "assistidos-controles";
+
+    const menuAno = criarMenuAno();
+
+    if (menuAno) controles.appendChild(menuAno);
+
+    controles.appendChild(criarBotaoGrade(chave, grid));
+
+    titulo.appendChild(controles);
+
+    secao.appendChild(titulo);
+
+    const usarAno = porAno && itens.some(item => anoDe(item));
+
+    const lista = usarAno ? ordenarPorAno(itens) : itens;
+
+    let anoAnterior;
+    let indice = 0;
+
+    lista.forEach(item => {
+
+        if (usarAno) {
+
+            const ano = anoDe(item);
+
+            if (ano !== anoAnterior) {
+                grid.appendChild(criarDivisorAno(ano));
+                anoAnterior = ano;
+            }
+
+        }
+
+        grid.appendChild(criarCardAssistido(item, Math.min(indice, 14)));
+
+        indice++;
+
     });
 
     secao.appendChild(grid);
@@ -335,7 +890,29 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
         </div>
 
     `;
+    if (!ehListaFutura && temEdit(item)) {
 
+        const selo = document.createElement("button");
+
+        selo.type = "button";
+        selo.className = "assistido-edit-selo";
+        selo.title = "Ver o edit";
+
+        selo.setAttribute("aria-label", "Ver o edit de " + item.titulo);
+
+        selo.innerHTML = `<span aria-hidden="true">▶</span>`;
+
+        selo.addEventListener("click", evento => {
+
+            evento.stopPropagation();
+
+            irParaEdit(item);
+
+        });
+
+        card.querySelector(".assistido-capa").appendChild(selo);
+
+    }
     card.addEventListener("click", () =>
         abrirDetalhesAssistido(item, {
             notaEu,
@@ -501,7 +1078,9 @@ aplicarCorDoItem(item);
             </div>
         `
         : "";
-
+    const editHtml = temEdit(item)
+        ? `<button type="button" class="assistido-modal-edit-btn"><span aria-hidden="true">▶</span> ver edit</button>`
+        : "";
     const eyebrow =
         ehContinuar
             ? "Assistindo agora ♥"
@@ -510,13 +1089,15 @@ aplicarCorDoItem(item);
     abrirModal({
         titulo: item.titulo,
         dataExibicao: eyebrow,
-        descricao: linhaProgresso + notasHtml + citacaoHtml,
+          descricao: linhaProgresso + notasHtml + editHtml + citacaoHtml,
         fotos: item.capa ? [item.capa] : [],
         layoutModal: "assistido"
     });
 
 aplicarCorDoItem(item);
-
+    document
+        .querySelector("#modal-descricao .assistido-modal-edit-btn")
+        ?.addEventListener("click", () => irParaEdit(item));
 }
 
 
@@ -557,7 +1138,9 @@ function garantirPainelLateral() {
                 <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
             </div>
             <div class="continuar-lateral-secao">
-                <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir</div>
+                <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
+                    <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
+                </div>
                 <div class="continuar-lateral-grid" id="continuar-lateral-grid-queremos"></div>
             </div>
         </div>
@@ -580,6 +1163,10 @@ function garantirPainelLateral() {
     botao.addEventListener("click", abrirPainel);
     overlay.addEventListener("click", fecharPainel);
     painel.querySelector("#continuar-lateral-fechar").addEventListener("click", fecharPainel);
+
+        painel.querySelector("#continuar-lateral-sortear").addEventListener("click", () => {
+        sortearUm(fecharPainel);
+    });
 
     document.addEventListener("keydown", (evento) => {
         if (evento.key === "Escape") fecharPainel();
@@ -627,6 +1214,8 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
     } else {
         gridQueremos.innerHTML = `<p class="continuar-lateral-vazio">Lista vazia por enquanto.</p>`;
     }
+
+        document.getElementById("continuar-lateral-sortear").hidden = !itensQueremos.length;
 
 }
 
