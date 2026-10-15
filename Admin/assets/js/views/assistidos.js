@@ -144,7 +144,9 @@ async function initAssistidos() {
         );
 
     if (!lista) return;
-
+    document
+        .getElementById("assistidos-aura")
+        ?.addEventListener("change", atualizarCampoAura);
     configurarEventosAssistidos();
 
     await carregarAssistidosAdmin();
@@ -500,6 +502,11 @@ function configurarEventosAssistidos() {
         previewImagemAssistido
     );
 
+        imagem?.addEventListener("change", () => {
+        if (document.getElementById("assistidos-aura").value === "cor") {
+            sugerirCoresDaCapa();
+        }
+    });
 
     document.addEventListener(
         "click",
@@ -678,6 +685,21 @@ function abrirModalAssistido(item = null) {
 
     atualizarCampoNotas();
 
+    const aura = String(item?.aura || "").toLowerCase();
+
+    const seletorAura = document.getElementById("assistidos-aura");
+    const corAura = document.getElementById("assistidos-aura-cor");
+
+    if (/^#[0-9a-f]{6}$/.test(aura)) {
+        seletorAura.value = "cor";
+        corAura.value = aura;
+    } else if (aura === "branca") {
+        seletorAura.value = "branca";
+    } else {
+        seletorAura.value = "auto";
+    }
+
+    atualizarCampoAura();
 
     modal.classList.remove(
         "oculto"
@@ -873,7 +895,159 @@ function formatarMinutosParaDuracao(minutosTotais) {
 
 }
 
+function atualizarCampoAura() {
 
+    const modo = document.getElementById("assistidos-aura").value;
+
+    document.getElementById("assistidos-aura-cor").style.display =
+        modo === "cor" ? "block" : "none";
+
+    const caixa = document.getElementById("assistidos-aura-sugestoes");
+
+    if (modo === "cor") {
+        caixa.style.display = "flex";
+        sugerirCoresDaCapa();
+    } else {
+        caixa.style.display = "none";
+    }
+
+}
+
+// lê a capa (a nova escolhida ou a já salva) e mostra as cores mais marcantes
+async function sugerirCoresDaCapa() {
+
+    const caixa = document.getElementById("assistidos-aura-sugestoes");
+
+    const arquivo = document.getElementById("assistidos-imagem").files[0];
+
+    const id = document.getElementById("assistidos-id").value.trim();
+    const existente = assistidosItens.find(i => i.id === id);
+
+    const src = arquivo
+        ? URL.createObjectURL(arquivo)
+        : (existente?.capa ? resolverCapaAdmin(existente.capa) : "");
+
+    if (!src) {
+        caixa.innerHTML = `<small>Escolha uma capa para ver as cores sugeridas.</small>`;
+        return;
+    }
+
+    caixa.innerHTML = `<small>Lendo as cores da capa…</small>`;
+
+    const cores = await extrairPaletaAdmin(src);
+
+    if (arquivo) URL.revokeObjectURL(src);
+
+    if (!cores.length) {
+        caixa.innerHTML = `<small>Não consegui ler cores dessa capa. Use o seletor.</small>`;
+        return;
+    }
+
+    caixa.innerHTML =
+        `<small style="width:100%">Cores da capa (toque numa):</small>` +
+        cores.map(hex => `
+            <button type="button" data-cor="${hex}" title="${hex}"
+                style="width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:${hex};cursor:pointer;"></button>
+        `).join("");
+
+    caixa.querySelectorAll("[data-cor]").forEach(b =>
+        b.addEventListener("click", () => {
+            document.getElementById("assistidos-aura-cor").value = b.dataset.cor;
+        })
+    );
+
+}
+
+// pega até 5 cores bem diferentes entre si, as que mais aparecem na capa
+function extrairPaletaAdmin(src) {
+
+    return new Promise(resolve => {
+
+        const img = new Image();
+
+        img.onload = () => {
+
+            try {
+
+                const W = 40, H = 60;
+
+                const canvas = document.createElement("canvas");
+                canvas.width = W;
+                canvas.height = H;
+
+                const ctx = canvas.getContext("2d", { willReadFrequently: true });
+                ctx.drawImage(img, 0, 0, W, H);
+
+                const dados = ctx.getImageData(0, 0, W, H).data;
+
+                // agrupa em caixinhas de cor (16 níveis por canal)
+                const caixas = new Map();
+
+                for (let i = 0; i < dados.length; i += 4) {
+
+                    const r = dados[i], g = dados[i + 1], b = dados[i + 2];
+
+                    const max = Math.max(r, g, b);
+                    const min = Math.min(r, g, b);
+
+                    // ignora quase-preto e quase-branco
+                    if (max < 28 || min > 235) continue;
+
+                    const chave = (r >> 4) + "," + (g >> 4) + "," + (b >> 4);
+
+                    const c = caixas.get(chave) || { n: 0, r: 0, g: 0, b: 0 };
+
+                    c.n++;
+                    c.r += r;
+                    c.g += g;
+                    c.b += b;
+
+                    caixas.set(chave, c);
+
+                }
+
+                const ordenadas = [...caixas.values()]
+                    .sort((a, b) => b.n - a.n)
+                    .map(c => ({
+                        r: Math.round(c.r / c.n),
+                        g: Math.round(c.g / c.n),
+                        b: Math.round(c.b / c.n)
+                    }));
+
+                // escolhe cores que não sejam parecidas entre si
+                const escolhidas = [];
+
+                for (const c of ordenadas) {
+
+                    const parecida = escolhidas.some(e =>
+                        Math.abs(e.r - c.r) + Math.abs(e.g - c.g) + Math.abs(e.b - c.b) < 70
+                    );
+
+                    if (!parecida) escolhidas.push(c);
+
+                    if (escolhidas.length === 5) break;
+
+                }
+
+                const hex = n => n.toString(16).padStart(2, "0");
+
+                resolve(escolhidas.map(c => "#" + hex(c.r) + hex(c.g) + hex(c.b)));
+
+            } catch (erro) {
+
+                resolve([]);
+
+            }
+
+        };
+
+        img.onerror = () => resolve([]);
+
+        img.src = src;
+
+    });
+
+}
 // =====================================================
 // PREVIEW
 // =====================================================
@@ -1074,7 +1248,14 @@ async function salvarAssistido(evento) {
         }
 
     }
+    const modoAura = document.getElementById("assistidos-aura").value;
 
+    const aura =
+        modoAura === "branca"
+            ? "branca"
+            : modoAura === "cor"
+                ? document.getElementById("assistidos-aura-cor").value
+                : undefined;
 
     const novoItem = {
 
@@ -1106,6 +1287,7 @@ async function salvarAssistido(evento) {
 
         cor,
 
+        aura,
         status,
 
         progresso,

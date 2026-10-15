@@ -40,10 +40,13 @@
         "ano": null,
         "anoAssistido": 2025,
         "capa": "assets/images/assistidos/assistido-1786914286025.jpg",
+        "cor": null,
+        "aura": "branca",
+        "status": "assistido",
+        "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
-        "memoria": "",
-        "cor": null
+        "memoria": ""
     },
     {
         "id": "a-casa-de-cera",
@@ -52,14 +55,17 @@
         "ano": null,
         "anoAssistido": 2025,
         "capa": "assets/images/assistidos/assistido-1786910287157.jpg",
-        "notaEu": 7,
-        "notaEla": 9,
-        "memoria": "",
         "cor": {
             "r": 40,
             "g": 76,
             "b": 73
-        }
+        },
+        "aura": "#042f2c",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 7,
+        "notaEla": 9,
+        "memoria": ""
     },
     {
         "id": "harry-potter",
@@ -255,14 +261,17 @@
         "ano": null,
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786911355787.jpg",
-        "notaEu": 9,
-        "notaEla": 5,
-        "memoria": "",
         "cor": {
             "r": 63,
             "g": 48,
             "b": 32
-        }
+        },
+        "aura": "#262718",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 9,
+        "notaEla": 5,
+        "memoria": ""
     },
     {
         "id": "solo-leveling",
@@ -606,14 +615,17 @@
         "ano": null,
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1789359596027.jpg",
-        "notaEu": 10,
-        "notaEla": 10,
-        "memoria": "",
         "cor": {
             "r": 166,
             "g": 132,
             "b": 101
-        }
+        },
+        "aura": "branca",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
     },
     {
         "id": "hotel-transilvania",
@@ -729,6 +741,7 @@
             "g": 73,
             "b": 80
         },
+        "aura": "#0a143d",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,

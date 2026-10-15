@@ -1,7 +1,7 @@
 // =====================================================
 // NOSSO UNIVERSO — EDITS
-// Botão lateral + gaveta com os filmes que têm edit, e um
-// player único (usado pela gaveta e pelo modal de cada filme).
+// Lista dos filmes que têm edit (aba do painel lateral) e um
+// player único (usado pela lista e pelo modal de cada filme).
 //
 // Dados: assets/data/preview.json (o mesmo de antes).
 // Cada entrada tem um vídeo principal e, às vezes, "extras";
@@ -89,7 +89,7 @@
                                     : 16 / 9,
                                 duracao: Number(v.duracao) || 0,
                                 assistidoId: d.assistidoId ? String(d.assistidoId) : "",
-                                titulo: d.assistidoTitulo || d.titulo || "Edit",
+                                titulo: d.assistidoTitulo || d.titulo || "Preview",
                                 categoria: d.assistidoCategoria || "",
                                 numero: n + 1,
                                 total: videos.length
@@ -122,14 +122,12 @@
 
 
     // =================================================
-    // GAVETA LATERAL — um botão na lateral abre a lista de
-    // filmes que têm edit: capa do filme ao lado dos vídeos,
-    // nome, detalhes e as miniaturas de cada edit.
+    // LISTA DE EDITS (aba "Edits" do painel lateral): um cartão
+    // por filme, com a capa ao lado dos vídeos, nome, detalhes
+    // e as miniaturas de cada edit.
     // =================================================
 
     const ROTULO_CATEGORIA = { filmes: "Filme", series: "Série", animes: "Anime" };
-
-    let gaveta = null;
 
     function agrupar(lista) {
 
@@ -157,119 +155,21 @@
 
     }
 
-    function iniciarLateral() {
+    // monta a lista de filmes com edit dentro de um container
+    // (o painel lateral do assistidos.js chama isso na aba "Edits")
+    async function montarLista(container) {
 
-        const view = document.querySelector('.view[data-view="assistidos"]');
+        if (!container || container.dataset.pronto) return;
 
-        if (!view || gaveta) return;
-
-        const overlay = document.createElement("div");
-
-        overlay.className = "edits-overlay";
-
-        const botao = document.createElement("button");
-
-        botao.type = "button";
-        botao.className = "edits-lateral-btn";
-        botao.hidden = true;
-
-        botao.innerHTML = `
-            <span class="edits-lateral-icone" aria-hidden="true">▶</span>
-            <span class="edits-lateral-texto">Edits</span>
-            <span class="edits-lateral-contagem">0</span>
-        `;
-
-        const painel = document.createElement("aside");
-
-        painel.className = "edits-painel";
-
-        painel.setAttribute("aria-label", "Edits");
-
-        painel.innerHTML = `
-            <div class="edits-painel-topo">
-                <span class="edits-painel-titulo">Edits ✦</span>
-                <button type="button" class="edits-painel-fechar" aria-label="Fechar">✕</button>
-            </div>
-            <div class="edits-painel-corpo"></div>
-        `;
-
-        view.append(overlay, botao, painel);
-
-        gaveta = {
-            overlay,
-            botao,
-            painel,
-            corpo: painel.querySelector(".edits-painel-corpo"),
-            pronta: false
-        };
-
-        botao.addEventListener("click", abrirGaveta);
-
-        overlay.addEventListener("click", fecharGaveta);
-
-        painel.querySelector(".edits-painel-fechar").addEventListener("click", fecharGaveta);
-
-        document.addEventListener("keydown", e => {
-
-            // com o player aberto, o Esc é dele
-            if (e.key === "Escape" && !document.body.classList.contains("edit-aberto")) {
-
-                fecharGaveta();
-
-            }
-
-        });
-
-        // o botão só aparece se existir algum edit
-        carregar().then(lista => {
-
-            if (!lista.length) return;
-
-            botao.querySelector(".edits-lateral-contagem").textContent = lista.length;
-
-            botao.hidden = false;
-
-        });
-
-    }
-
-    async function abrirGaveta() {
-
-        if (!gaveta) return;
-
-        gaveta.painel.classList.add("aberta");
-
-        gaveta.overlay.classList.add("visivel");
-
-        if (!gaveta.pronta) {
-
-            gaveta.pronta = true;
-
-            await montarLista();
-
-        }
-
-    }
-
-    function fecharGaveta() {
-
-        if (!gaveta) return;
-
-        gaveta.painel.classList.remove("aberta");
-
-        gaveta.overlay.classList.remove("visivel");
-
-    }
-
-    async function montarLista() {
+        container.dataset.pronto = "1";
 
         const lista = await carregar();
 
-        gaveta.corpo.innerHTML = "";
+        container.innerHTML = "";
 
         if (!lista.length) {
 
-            gaveta.corpo.innerHTML = `<p class="edits-vazio">Ainda não há edits por aqui.</p>`;
+            container.innerHTML = `<p class="edits-vazio">Ainda não há previews por aqui.</p>`;
 
             return;
 
@@ -277,7 +177,7 @@
 
         agrupar(lista).forEach((grupo, indice) => {
 
-            gaveta.corpo.appendChild(criarCartaoFilme(grupo, lista, indice));
+            container.appendChild(criarCartaoFilme(grupo, lista, indice));
 
         });
 
@@ -295,7 +195,7 @@
 
         cartao.style.setProperty("--atraso", `${Math.min(indice, 8) * 0.05}s`);
 
-        // capa do filme (ao lado dos vídeos)
+        // capa do filme
         const poster = document.createElement("button");
 
         poster.type = "button";
@@ -320,7 +220,7 @@
 
         poster.addEventListener("click", () => detalhesDe(item));
 
-        // nome, categoria, notas e "ver detalhes"
+        // título, "Filme • 1999" e a pílula "3 vídeos"
         const info = document.createElement("div");
 
         info.className = "edits-filme-info";
@@ -335,90 +235,55 @@
 
         meta.className = "edits-filme-meta";
 
-        const partes = [];
-
         const rotulo = item ? ROTULO_CATEGORIA[item.categoria] : "";
 
-        if (rotulo) partes.push(`<span>${rotulo}</span>`);
+        const linha = [rotulo, item && item.ano].filter(Boolean).join(" • ");
 
-        if (item && Number(item.anoAssistido)) {
-
-            partes.push(`<span>assistido em ${Number(item.anoAssistido)}</span>`);
-
-        }
-
-        partes.push(`<span>${n} ${n === 1 ? "edit" : "edits"}</span>`);
-
-        if (item && typeof lerNotasDoItem === "function") {
-
-            const { notaEu, notaEla } = lerNotasDoItem(item);
-
-            const nota = v => (typeof formatarNota === "function" ? formatarNota(v) : v);
-
-            if (notaEu > 0) partes.push(`<span class="nota-chip nota-chip-eu nota-chip-mini">★ ${nota(notaEu)}</span>`);
-
-            if (notaEla > 0) partes.push(`<span class="nota-chip nota-chip-ela nota-chip-mini">★ ${nota(notaEla)}</span>`);
-
-        }
-
-        meta.innerHTML = partes.join("");
+        meta.innerHTML =
+            (linha ? `<span class="edits-filme-linha">${linha}</span>` : "") +
+            `<span class="edits-chip">${n} ${n === 1 ? "vídeo" : "vídeos"}</span>`;
 
         info.append(titulo, meta);
 
-        if (item) {
+        // UMA miniatura só; o player segue pros outros edits do filme
+        const primeiro = grupo.edits[0];
 
-            const detalhes = document.createElement("button");
-
-            detalhes.type = "button";
-            detalhes.className = "edits-filme-detalhes";
-            detalhes.innerHTML = `ver detalhes <span aria-hidden="true">↗</span>`;
-
-            detalhes.addEventListener("click", () => detalhesDe(item));
-
-            info.appendChild(detalhes);
-
-        }
-
-        // miniaturas dos edits (tocar abre o player, que segue pros próximos)
         const videos = document.createElement("div");
 
         videos.className = "edits-filme-videos";
 
-        grupo.edits.forEach(edit => {
+        const mini = document.createElement("button");
 
-            const mini = document.createElement("button");
+        mini.type = "button";
+        mini.className = "edits-video edits-video-unico";
 
-            mini.type = "button";
-            mini.className = "edits-video";
+        mini.setAttribute("aria-label", `Ver os previews de ${grupo.titulo}`);
 
-            mini.setAttribute("aria-label", `Ver edit ${edit.numero} de ${edit.total}: ${grupo.titulo}`);
+        if (primeiro.capa) {
 
-            if (edit.capa) {
+            const img = document.createElement("img");
 
-                const img = document.createElement("img");
+            img.src = primeiro.capa;
+            img.alt = "";
+            img.loading = "lazy";
+            img.decoding = "async";
 
-                img.src = edit.capa;
-                img.alt = "";
-                img.loading = "lazy";
-                img.decoding = "async";
+            img.addEventListener("error", () => img.remove());
 
-                img.addEventListener("error", () => img.remove());
+            mini.appendChild(img);
 
-                mini.appendChild(img);
+        }
 
-            }
+        mini.insertAdjacentHTML(
+            "beforeend",
+            `<span class="edits-video-play" aria-hidden="true">▶</span>` +
+            (primeiro.duracao ? `<span class="edits-video-dur">${formatar(primeiro.duracao)}</span>` : "") +
+            (n > 1 ? `<span class="edits-video-mais">+${n - 1}</span>` : "")
+        );
 
-            mini.insertAdjacentHTML(
-                "beforeend",
-                `<span class="edits-video-play" aria-hidden="true">▶</span>` +
-                (edit.duracao ? `<span class="edits-video-dur">${formatar(edit.duracao)}</span>` : "")
-            );
+        mini.addEventListener("click", () => abrir(grupo.edits, 0));
 
-            mini.addEventListener("click", () => abrir(todosEdits, todosEdits.indexOf(edit)));
-
-            videos.appendChild(mini);
-
-        });
+        videos.appendChild(mini);
 
         cartao.append(poster, info, videos);
 
@@ -450,7 +315,7 @@
 
         raiz.setAttribute("aria-modal", "true");
 
-        raiz.setAttribute("aria-label", "Edit");
+raiz.setAttribute("aria-label", "Preview");
 
         raiz.innerHTML = `
             <div class="ep-caixa">
@@ -470,8 +335,8 @@
                         <svg viewBox="0 0 24 24"><path d="M8.5 5.6v12.8c0 .8.9 1.3 1.6.8l9.6-6.4c.6-.4.6-1.2 0-1.6L10.1 4.8c-.7-.5-1.6 0-1.6.8z"/></svg>
                     </span>
                     <span class="ep-carregando" aria-hidden="true"></span>
-                    <button type="button" class="ep-nav ep-ant" aria-label="Edit anterior">‹</button>
-                    <button type="button" class="ep-nav ep-prox" aria-label="Próximo edit">›</button>
+                    <button type="button" class="ep-nav ep-ant" aria-label="Preview anterior">‹</button>
+                    <button type="button" class="ep-nav ep-prox" aria-label="Próximo preview">›</button>
                 </div>
 
                 <div class="ep-base">
@@ -952,10 +817,7 @@
         doFilme,
         abrir,
         fechar,
-        abrirGaveta,
-        fecharGaveta
+        montarLista
     };
-
-    iniciarLateral();
 
 })();

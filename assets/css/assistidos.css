@@ -1382,10 +1382,6 @@
    de .modal-content.
    ========================================================= */
 
-/* =========================================================
-   MODAL — LAYOUT ESPECIAL PARA ASSISTIDOS
-   ========================================================= */
-
 .modal-content-layout-assistido {
     max-width: 820px;
     border: 1px solid rgba(201, 167, 245, 0.3);
@@ -1733,54 +1729,7 @@
     }
 
 }
-/* =========================================================
-   COR AMBIENTE — a cor da capa "lava" o modal inteiro
-   ========================================================= */
 
-.modal-content-layout-assistido {
-    --cor-ambiente-r: 201;
-    --cor-ambiente-g: 167;
-    --cor-ambiente-b: 245;
-
-    position: relative;
-
-    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5);
-
-    background:
-        linear-gradient(
-            165deg,
-            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.65) 0%,
-            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.28) 32%,
-            rgba(12, 10, 24, 0.96) 68%
-        );
-
-    box-shadow:
-        0 0 0 1px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.25),
-        0 30px 80px rgba(0, 0, 0, 0.55),
-        0 0 100px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.3);
-
-    transition: background 0.7s ease, border-color 0.7s ease, box-shadow 0.7s ease;
-}
-
-.modal-content-layout-assistido #modal-data {
-    color: rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b));
-}
-
-.modal-content-layout-assistido .assistido-modal-divisor-icone {
-    color: rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b));
-}
-
-.modal-content-layout-assistido .assistido-modal-progresso-preenchimento {
-    background: linear-gradient(
-        90deg,
-        rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b)),
-        rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5)
-    );
-}
-
-.modal-content-layout-assistido .modal-decoracao-sparkle {
-    color: rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b));
-}
 /* =========================================================
    AJUSTE FINAL — SCROLL DO MODAL (fica por último de propósito,
    pra sempre vencer qualquer regra duplicada acima)
@@ -2517,4 +2466,1392 @@ body.modal-aberto {
         margin-top: 58px;
     }
 
+}
+
+/* ===== Filmes · Séries · Animes: texto solto com sublinhado brilhante ===== */
+
+#assistidos-cats.assistidos-cats {
+    gap: 34px;
+
+    width: min(560px, calc(100% - 34px));
+
+    margin-bottom: 34px;
+}
+
+#assistidos-cats button {
+    flex: 0 1 auto;
+
+    gap: 9px;
+
+    padding: 8px 6px 14px;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+    box-shadow: none;
+
+    color: rgba(228, 214, 250, 0.6);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.28rem;
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+#assistidos-cats button svg {
+    width: 22px;
+    height: 22px;
+
+    stroke-width: 1.4;
+}
+
+/* o sublinhado (a regra antiga escondia o ::after, por isso o !important) */
+
+#assistidos-cats button::after {
+    content: "" !important;
+    display: block !important;
+
+    position: absolute;
+
+    left: 6%;
+    right: 6%;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    box-shadow: 0 0 12px rgba(240, 140, 192, 0.75);
+
+    opacity: 0;
+
+    transform: scaleX(0);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+#assistidos-cats button:hover {
+    border: 0;
+
+    background: none;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    transform: none;
+}
+
+#assistidos-cats button:hover::after {
+    opacity: 0.6;
+
+    transform: scaleX(0.5);
+}
+
+#assistidos-cats button[aria-selected="true"] {
+    border: 0;
+
+    background: none;
+
+    box-shadow: none;
+
+    color: #fff;
+}
+
+#assistidos-cats button[aria-selected="true"] svg {
+    color: #f6b3d6;
+
+    filter: drop-shadow(0 0 6px rgba(240, 140, 192, 0.7));
+}
+
+#assistidos-cats button[aria-selected="true"]::after {
+    opacity: 1;
+
+    transform: scaleX(1);
+}
+
+@media (max-width: 520px) {
+
+    #assistidos-cats.assistidos-cats {
+        gap: 8px;
+
+        width: calc(100% - 20px);
+    }
+
+    #assistidos-cats button {
+        flex: 1 1 0;
+
+        gap: 6px;
+
+        padding: 8px 2px 14px;
+
+        border-radius: 0;
+
+        font-size: 1.12rem;
+    }
+
+    #assistidos-cats button svg {
+        width: 19px;
+        height: 19px;
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    /* a regra antiga escondia os ícones aqui; eles cabem, então voltam */
+    #assistidos-cats button svg {
+        display: block;
+
+        width: 17px;
+        height: 17px;
+    }
+
+    #assistidos-cats button {
+        font-size: 1.05rem;
+    }
+
+}
+
+    .edit-topo-icone::after {
+        animation: none;
+
+        opacity: 0;
+    }
+
+/* =========================================================
+   BOTÃO DE PREVIEW — canto esquerdo, sobre a capa
+   ========================================================= */
+
+.assistido-modal-edit-topo {
+    position: absolute;
+
+    top: 46px;
+    left: 46px;
+
+    z-index: 5;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 4px 16px 4px 4px;
+
+    overflow: hidden;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: rgba(10, 8, 20, 0.58);
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* só aparece no modal de assistidos */
+.modal-content:not(.modal-content-layout-assistido) .assistido-modal-edit-topo {
+    display: none;
+}
+
+/* brilho que passa pela pílula */
+.assistido-modal-edit-topo::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+
+    width: 40%;
+
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+
+    transform: skewX(-18deg);
+
+    transition: left 0.7s ease;
+
+    pointer-events: none;
+}
+
+.assistido-modal-edit-topo:hover,
+.assistido-modal-edit-topo:active {
+    transform: translateY(-2px);
+
+    background: rgba(10, 8, 20, 0.75);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.55),
+        0 0 22px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.35);
+}
+
+.assistido-modal-edit-topo:hover::before,
+.assistido-modal-edit-topo:active::before {
+    left: 120%;
+}
+
+.edit-topo-icone {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        rgb(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245)),
+        rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.65)
+    );
+
+    box-shadow: 0 0 14px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.55);
+}
+
+.edit-topo-icone svg {
+    width: 13px;
+    height: 13px;
+
+    margin-left: 1px;
+
+    fill: #1a1026;
+
+    /* pontas arredondadas no triângulo */
+    stroke: #1a1026;
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+}
+
+/* anel que pulsa devagar */
+.edit-topo-icone::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgb(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245));
+
+    animation: edit-topo-pulso 2.6s ease-out infinite;
+}
+
+@keyframes edit-topo-pulso {
+
+    0%   { transform: scale(1);   opacity: 0.8; }
+
+    70%, 100% { transform: scale(1.9); opacity: 0; }
+
+}
+
+.edit-topo-texto {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+
+    .assistido-modal-edit-topo {
+        top: 18px;
+        left: 18px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .edit-topo-icone::after {
+        animation: none;
+
+        opacity: 0;
+    }
+
+    .assistido-modal-edit-topo::before {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   SORTEIO
+   ========================================================= */
+
+body.sorteio-aberto { overflow: hidden; }
+
+.sorteio {
+    position: fixed;
+    inset: 0;
+    z-index: 9400;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px 16px;
+
+    background:
+        radial-gradient(circle at 50% 30%, rgba(240, 140, 192, 0.14), transparent 55%),
+        rgba(8, 5, 18, 0.94);
+
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+
+    animation: sorteio-entra 0.35s ease;
+}
+
+.sorteio[hidden] { display: none; }
+
+@keyframes sorteio-entra { from { opacity: 0; } }
+
+.sorteio-fechar {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+
+    width: 40px;
+    height: 40px;
+
+    border: 0;
+    background: none;
+
+    color: var(--color-text-muted);
+    font-size: 1.3rem;
+
+    cursor: pointer;
+
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.sorteio-fechar:hover { color: var(--color-lilac); transform: rotate(90deg); }
+
+.sorteio-caixa {
+    width: min(720px, 100%);
+    max-height: 100%;
+
+    overflow-y: auto;
+
+    padding: 8px;
+
+    text-align: center;
+}
+
+.sorteio-eyebrow {
+    margin: 0 0 6px;
+
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    color: #f6b3d6;
+}
+
+.sorteio-titulo {
+    margin: 0 0 28px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: 600;
+
+    color: #fff;
+}
+
+.sorteio-grupo { margin-bottom: 24px; }
+
+.sorteio-rotulo {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    color: var(--color-text-muted);
+}
+
+.sorteio-opcoes {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 8px 26px;
+}
+
+/* texto solto, marcadinho embaixo quando selecionado */
+.sorteio-opcoes button {
+    position: relative;
+
+    padding: 6px 4px 11px;
+
+    border: 0;
+    background: none;
+
+    color: rgba(228, 214, 250, 0.55);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: color 0.3s ease;
+}
+
+.sorteio-opcoes button small {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-style: normal;
+    opacity: 0.6;
+}
+
+.sorteio-opcoes button:disabled { opacity: 0.3; cursor: default; }
+
+.sorteio-opcoes button::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    box-shadow: 0 0 10px rgba(240, 140, 192, 0.7);
+
+    opacity: 0;
+    transform: scaleX(0);
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.sorteio-opcoes button:hover:not(:disabled) { color: #fff; }
+
+.sorteio-opcoes button.ativa { color: #fff; }
+
+.sorteio-opcoes button.ativa::after { opacity: 1; transform: scaleX(1); }
+
+.sorteio-go {
+    margin-top: 10px;
+    padding: 13px 34px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #a86cb2, #cc7eb0);
+
+    box-shadow: 0 10px 28px rgba(176, 112, 190, 0.4);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sorteio-go:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(176, 112, 190, 0.55);
+}
+
+.sorteio-link {
+    display: block;
+
+    margin: 14px auto 0;
+    padding: 4px;
+
+    border: 0;
+    background: none;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+
+    cursor: pointer;
+}
+
+.sorteio-link:hover { color: var(--color-lilac); }
+
+/* suspense */
+
+.sorteio-girando {
+    display: grid;
+    place-items: center;
+
+    width: 90px;
+    height: 90px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(201, 167, 245, 0.2);
+    border-top-color: #f08cc0;
+
+    animation: sorteio-gira 0.9s linear infinite;
+}
+
+.sorteio-girando span {
+    font-size: 1.6rem;
+    color: #f6b3d6;
+
+    animation: sorteio-gira 0.9s linear infinite reverse;
+}
+
+@keyframes sorteio-gira { to { transform: rotate(360deg); } }
+
+/* resultado */
+
+.sorteio-cartas {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 22px 18px;
+
+    margin: 14px 0 18px;
+}
+
+.sorteio-carta {
+    width: 138px;
+
+    padding: 0;
+
+    border: 0;
+    background: none;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    animation: carta-pula 0.8s cubic-bezier(0.22, 1.4, 0.36, 1) forwards;
+    animation-delay: var(--d, 0s);
+}
+
+.sorteio-um .sorteio-carta { width: min(230px, 60vw); }
+
+@keyframes carta-pula {
+
+    from { opacity: 0; transform: translateY(40px) scale(0.6) rotate(-6deg); }
+
+    to   { opacity: 1; transform: none; }
+
+}
+
+.sorteio-capa {
+    display: block;
+
+    aspect-ratio: 2 / 3;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.75), rgba(25, 50, 100, 0.8));
+
+    border: 1px solid rgba(246, 179, 214, 0.5);
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 0 34px rgba(240, 140, 192, 0.35);
+
+    transition: transform 0.35s ease;
+}
+
+.sorteio-carta:hover .sorteio-capa { transform: translateY(-5px) scale(1.03); }
+
+.sorteio-capa img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.sorteio-nome {
+    display: block;
+
+    margin-top: 12px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.2;
+
+    color: #fff;
+}
+
+.sorteio-um .sorteio-nome { font-size: 1.5rem; }
+
+.sorteio-dica {
+    margin: 0 0 6px;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+
+    color: var(--color-text-muted);
+    opacity: 0.8;
+}
+
+/* confete */
+
+.confete {
+    position: absolute;
+    top: -20px;
+
+    width: 9px;
+    height: 14px;
+
+    border-radius: 2px;
+
+    background: var(--cor);
+
+    pointer-events: none;
+
+    animation: confete-cai var(--dur) ease-in var(--atraso) forwards;
+}
+
+.confete-simbolo {
+    width: auto;
+    height: auto;
+
+    background: none;
+
+    color: var(--cor);
+    font-size: 1rem;
+}
+
+@keyframes confete-cai {
+
+    to {
+        transform: translate(var(--vai), 105vh) rotate(var(--giro));
+        opacity: 0.9;
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .sorteio-carta { width: 28%; min-width: 100px; }
+
+    .sorteio-titulo { font-size: 1.6rem; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .confete { display: none; }
+
+    .sorteio-carta { animation: none; opacity: 1; }
+
+}
+
+/* =========================================================
+   SORTEIO — visual refeito: fundo preto, fonte elegante
+   ========================================================= */
+
+.sorteio {
+    background: #050308;
+
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+.sorteio-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    margin: 0 0 10px;
+
+    font-family: var(--font-body);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    color: rgba(246, 179, 214, 0.85);
+}
+
+.sorteio-eyebrow i {
+    font-style: normal;
+    color: #f08cc0;
+}
+
+.sorteio-titulo {
+    margin: 0 0 14px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: clamp(2.3rem, 6vw, 3.2rem);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: 0.3px;
+
+    color: #fff;
+}
+
+/* fio fino com coraçãozinho */
+
+.sorteio-ornamento {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    width: min(220px, 60%);
+
+    margin: 0 auto 34px;
+}
+
+.sorteio-ornamento::before,
+.sorteio-ornamento::after {
+    content: "";
+
+    flex: 1;
+    height: 1px;
+
+    background: linear-gradient(90deg, transparent, rgba(240, 140, 192, 0.55), transparent);
+}
+
+.sorteio-ornamento span {
+    font-size: 0.7rem;
+    color: #f08cc0;
+}
+
+.sorteio-rotulo {
+    display: block;
+
+    margin-bottom: 14px;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    color: rgba(228, 214, 250, 0.5);
+}
+
+/* contador editável  − 3 + */
+
+.sorteio-contador {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.sorteio-mais-menos {
+    display: grid;
+    place-items: center;
+
+    width: 38px;
+    height: 38px;
+
+    padding: 0 0 3px;
+
+    border: 1px solid rgba(240, 140, 192, 0.4);
+    border-radius: 50%;
+
+    background: none;
+
+    color: #f6b3d6;
+
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.sorteio-mais-menos:hover {
+    background: rgba(240, 140, 192, 0.14);
+    border-color: rgba(240, 140, 192, 0.8);
+}
+
+.sorteio-mais-menos:active {
+    transform: scale(0.9);
+}
+
+.sorteio-numero {
+    width: 84px;
+
+    padding: 0 0 6px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(240, 140, 192, 0.5);
+    border-radius: 0;
+
+    background: none;
+
+    color: #fff;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 3.4rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+
+    outline: none;
+
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sorteio-numero:focus {
+    border-bottom-color: #f08cc0;
+    box-shadow: 0 8px 14px -10px rgba(240, 140, 192, 0.9);
+}
+
+.sorteio-numero::-webkit-outer-spin-button,
+.sorteio-numero::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sorteio-max {
+    display: block;
+
+    margin-top: 10px;
+
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.4px;
+
+    color: rgba(228, 214, 250, 0.4);
+}
+
+/* o botão Sortear */
+
+.sorteio-go {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 18px;
+    padding: 16px 44px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 214, 236, 0.45);
+    border-radius: 999px;
+
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 55%),
+        linear-gradient(135deg, #c15f9d, #8e4fb8);
+
+    box-shadow:
+        0 10px 30px rgba(193, 95, 157, 0.45),
+        0 0 0 6px rgba(193, 95, 157, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+    color: #fff;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* brilho que atravessa o botão */
+
+.sorteio-go::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+
+    width: 40%;
+
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+
+    transform: skewX(-20deg);
+
+    animation: sorteio-brilho 3.6s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes sorteio-brilho {
+
+    0%, 55% { left: -70%; }
+
+    100% { left: 140%; }
+
+}
+
+.sorteio-go:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 16px 38px rgba(193, 95, 157, 0.6),
+        0 0 0 8px rgba(193, 95, 157, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.sorteio-go:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.sorteio-go-dado {
+    font-style: normal;
+    font-size: 1.5rem;
+    line-height: 1;
+
+    transition: transform 0.5s ease;
+}
+
+.sorteio-go:hover .sorteio-go-dado {
+    transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sorteio-go::before { animation: none; }
+
+}
+
+/* =========================================================
+   DIVISOR DE ANO — sem linhas, número grande com degradê
+   ========================================================= */
+
+.assistidos-ano-divisor {
+    justify-content: flex-start;
+    gap: 10px;
+
+    margin-top: 18px;
+    margin-bottom: 2px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 2.3rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.5px;
+}
+
+.assistidos-ano-divisor:first-child {
+    margin-top: 4px;
+}
+
+/* tira as linhas dos dois lados */
+.assistidos-ano-divisor::before,
+.assistidos-ano-divisor::after {
+    content: none;
+    display: none;
+}
+
+.assistidos-ano-divisor span:first-child {
+    background: linear-gradient(135deg, #f6b3d6 10%, #c9a7f5 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    filter: drop-shadow(0 0 14px rgba(240, 140, 192, 0.25));
+}
+
+.assistidos-ano-coracao {
+    align-self: flex-start;
+
+    margin-top: 4px;
+
+    font-size: 0.75rem;
+    font-style: normal;
+
+    color: #f08cc0;
+
+    -webkit-text-fill-color: #f08cc0;
+}
+
+@media (max-width: 520px) {
+
+    .assistidos-ano-divisor {
+        font-size: 1.9rem;
+    }
+
+}
+
+
+/* =========================================================
+   NOME EMBAIXO DAS CAPAS — fonte elegante
+   ========================================================= */
+
+.assistido-titulo {
+    margin-top: 13px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.06rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.25px;
+
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.assistido-card:hover .assistido-titulo {
+    color: #f6b3d6;
+}
+
+/* grades mais densas: o nome acompanha o tamanho das capas */
+
+.assistidos-grid[data-nivel="2"] .assistido-titulo {
+    margin-top: 8px;
+
+    font-size: 0.92rem;
+}
+
+.assistidos-grid[data-nivel="3"] .assistido-titulo {
+    margin-top: 7px;
+
+    font-size: 0.82rem;
+}
+
+@media (max-width: 760px) {
+
+    .assistido-titulo {
+        font-size: 1rem;
+    }
+
+    .assistidos-grid[data-nivel="2"] .assistido-titulo {
+        font-size: 0.88rem;
+    }
+
+    .assistidos-grid[data-nivel="3"] .assistido-titulo {
+        font-size: 0.78rem;
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .assistido-titulo {
+        font-size: 0.98rem;
+    }
+
+}
+/* =========================================================
+   DIVISOR DE ANO — centralizado, dourado rosado com brilho
+   ========================================================= */
+
+.assistidos-ano-divisor {
+    justify-content: center;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 26px;
+    margin-bottom: 6px;
+
+    font-size: 2.5rem;
+}
+
+.assistidos-ano-divisor:first-child {
+    margin-top: 8px;
+}
+
+/* o número: degradê champagne → rosa → lilás que passeia devagar */
+.assistidos-ano-divisor span:first-child {
+    background: linear-gradient(
+        100deg,
+        #ffe6c2 0%,
+        #f6b3d6 28%,
+        #e3a6ff 52%,
+        #f6b3d6 76%,
+        #ffe6c2 100%
+    );
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    filter: drop-shadow(0 0 16px rgba(246, 179, 214, 0.35));
+
+    animation: ano-brilho 7s ease-in-out infinite;
+}
+
+@keyframes ano-brilho {
+
+    0%, 100% { background-position: 0% 50%; }
+
+    50% { background-position: 100% 50%; }
+
+}
+
+/* estrelinhas piscando dos dois lados */
+.assistidos-ano-divisor::before,
+.assistidos-ano-divisor::after {
+    content: "✦";
+    display: inline-block;
+
+    flex: none;
+    height: auto;
+
+    background: none;
+    box-shadow: none;
+
+    font-size: 0.8rem;
+    font-style: normal;
+
+    color: #f6b3d6;
+
+    text-shadow: 0 0 10px rgba(246, 179, 214, 0.8);
+
+    animation: ano-pisca 2.8s ease-in-out infinite;
+}
+
+.assistidos-ano-divisor::after {
+    animation-delay: 1.4s;
+}
+
+@keyframes ano-pisca {
+
+    0%, 100% { opacity: 0.25; transform: scale(0.7) rotate(0deg); }
+
+    50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+
+}
+
+/* coraçãozinho batendo devagar, ao lado do número */
+.assistidos-ano-coracao {
+    align-self: center;
+
+    margin-top: 0;
+
+    font-size: 0.8rem;
+
+    color: #f08cc0;
+    -webkit-text-fill-color: #f08cc0;
+
+    text-shadow: 0 0 12px rgba(240, 140, 192, 0.8);
+
+    animation: ano-bate 2.4s ease-in-out infinite;
+}
+
+@keyframes ano-bate {
+
+    0%, 100% { transform: scale(1); }
+
+    15% { transform: scale(1.3); }
+
+    30% { transform: scale(1); }
+
+    45% { transform: scale(1.18); }
+
+}
+
+@media (max-width: 520px) {
+
+    .assistidos-ano-divisor {
+        gap: 10px;
+
+        font-size: 2rem;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .assistidos-ano-divisor span:first-child,
+    .assistidos-ano-divisor::before,
+    .assistidos-ano-divisor::after,
+    .assistidos-ano-coracao {
+        animation: none;
+    }
+
+}
+
+/* =========================================================
+   COR AMBIENTE — a cor da capa lava o modal (uma cor só)
+   ========================================================= */
+
+.modal-content-layout-assistido {
+    --cor-ambiente-r: 236;
+    --cor-ambiente-g: 232;
+    --cor-ambiente-b: 244;
+
+    position: relative;
+
+    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5);
+
+    background:
+        linear-gradient(
+            165deg,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.6) 0%,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.26) 32%,
+            rgba(12, 10, 24, 0.96) 68%
+        );
+
+    box-shadow:
+        0 0 0 1px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.25),
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        0 0 100px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.28);
+
+    transition: background 0.7s ease, border-color 0.7s ease, box-shadow 0.7s ease;
+}
+
+/* capa branca / preta / cinza: branco prateado, mais suave */
+.modal-content-layout-assistido[data-aura="neutra"] {
+    background:
+        linear-gradient(
+            165deg,
+            rgba(236, 232, 244, 0.42) 0%,
+            rgba(236, 232, 244, 0.16) 32%,
+            rgba(12, 10, 24, 0.96) 68%
+        );
+}
+
+/* brilho leve da cor atrás da capa */
+.modal-content-layout-assistido #modal-fotos img {
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 50px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.35);
+}
+
+.modal-content-layout-assistido #modal-data,
+.modal-content-layout-assistido .assistido-modal-divisor-icone,
+.modal-content-layout-assistido .modal-decoracao-sparkle {
+    color: rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b));
+}
+
+.modal-content-layout-assistido .assistido-modal-progresso-preenchimento {
+    background: linear-gradient(
+        90deg,
+        rgb(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b)),
+        rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5)
+    );
+}
+
+/* botão de preview: cor sólida da capa */
+.edit-topo-icone {
+    background: rgb(var(--cor-ambiente-r, 236), var(--cor-ambiente-g, 232), var(--cor-ambiente-b, 244));
+}
+/* =========================================================
+   AURA — capa escura: fundo quase preto, a cor é só um toque
+   ========================================================= */
+
+.modal-content-layout-assistido[data-aura~="escura"] {
+    background:
+        radial-gradient(
+            ellipse 60% 55% at 12% 0%,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.3),
+            transparent 70%
+        ),
+        linear-gradient(165deg, rgba(14, 11, 22, 0.97), rgba(6, 5, 12, 0.98));
+
+    box-shadow:
+        0 0 0 1px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.22),
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.16);
+}
+
+.modal-content-layout-assistido[data-aura~="escura"] {
+    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.4);
+}
+
+/* capas claras/coloridas: lavado um pouco mais suave */
+.modal-content-layout-assistido[data-aura="cor"] {
+    background:
+        linear-gradient(
+            165deg,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5) 0%,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.2) 30%,
+            rgba(12, 10, 24, 0.96) 66%
+        );
+}
+
+/* =========================================================
+   AURA — um pouco mais de cor, mesmo formato de antes
+   ========================================================= */
+
+/* capa escura: o mesmo canto de antes, só mais forte */
+.modal-content-layout-assistido[data-aura~="escura"] {
+    background:
+        radial-gradient(
+            ellipse 65% 60% at 12% 0%,
+            rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.48),
+            transparent 72%
+        ),
+        linear-gradient(165deg, rgba(14, 11, 22, 0.97), rgba(6, 5, 12, 0.98));
+
+    border-color: rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.55);
+}
+
+/* brilho suave atrás da capa */
+.modal-content-layout-assistido #modal-fotos img {
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 50px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.4);
+}
+
+/* detalhes pequenos pegam a cor (sem as bolinhas nas notas) */
+.modal-content-layout-assistido #modal-data {
+    text-shadow: 0 0 14px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.5);
+}
+
+.modal-content-layout-assistido .assistido-modal-divisor-icone {
+    text-shadow: 0 0 10px rgba(var(--cor-ambiente-r), var(--cor-ambiente-g), var(--cor-ambiente-b), 0.8);
 }

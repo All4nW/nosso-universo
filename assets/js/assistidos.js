@@ -59,17 +59,6 @@ async function irParaEdit(item) {
 
     if (lista.length) window.Edits.abrir(lista, 0);
 
-}async function irParaEdit(item) {
-
-    // fecha o modal de detalhes, se estiver aberto
-    if (typeof fecharModal === "function") fecharModal();
-
-    if (!window.Edits) return;
-
-    const lista = await window.Edits.doFilme(item.id ?? item.titulo);
-
-    if (lista.length) window.Edits.abrir(lista, 0);
-
 }
 
 // =====================================================
@@ -664,22 +653,226 @@ function selarInfoTopo(item) {
 // sem canvas e sem esperar imagem carregar
 // =====================================================
 
+// =====================================================
+// COR AMBIENTE — usa a cor pronta do JSON (item.cor, salva pelo admin)
+// =====================================================
+
+const COR_NEUTRA = { r: 236, g: 232, b: 244 };
+
+function rgbParaHsl(r, g, b) {
+
+    r /= 255; g /= 255; b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const d = max - min;
+    const l = (max + min) / 2;
+
+    let h = 0;
+    let s = 0;
+
+    if (d) {
+
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+
+        h *= 60;
+
+    }
+
+    return { h, s, l };
+
+}
+
+function hslParaRgb(h, s, l) {
+
+    h = (((h % 360) + 360) % 360) / 360;
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    const f = t => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    };
+
+    return {
+        r: Math.round(f(h + 1 / 3) * 255),
+        g: Math.round(f(h) * 255),
+        b: Math.round(f(h - 1 / 3) * 255)
+    };
+
+}
+
 function resetarCorAmbienteModal() {
 
     const conteudo = document.getElementById("modal-content");
     if (!conteudo) return;
 
-    conteudo.style.removeProperty("--cor-ambiente-r");
-    conteudo.style.removeProperty("--cor-ambiente-g");
-    conteudo.style.removeProperty("--cor-ambiente-b");
+    ["r", "g", "b"].forEach(c => {
+        conteudo.style.removeProperty("--cor-ambiente-" + c);
+        conteudo.style.removeProperty("--cor-ambiente2-" + c);
+    });
+
+    delete conteudo.dataset.aura;
+
+}
+
+// pega a cor que mais aparece (e mais "colorida") na capa, em vez da média
+const cacheCorCapa = new Map();
+let tokenCor = 0;
+
+function extrairCorDominante(src) {
+
+    if (!src) return Promise.resolve(null);
+
+    if (cacheCorCapa.has(src)) return Promise.resolve(cacheCorCapa.get(src));
+
+    return new Promise(resolve => {
+
+        const img = new Image();
+
+        img.crossOrigin = "anonymous";
+
+        img.onload = () => {
+
+            try {
+
+                const W = 40, H = 60;
+
+                const canvas = document.createElement("canvas");
+                canvas.width = W;
+                canvas.height = H;
+
+                const ctx = canvas.getContext("2d", { willReadFrequently: true });
+                ctx.drawImage(img, 0, 0, W, H);
+
+                const dados = ctx.getImageData(0, 0, W, H).data;
+
+                const grupos = Array.from({ length: 12 }, () => ({ n: 0, r: 0, g: 0, b: 0 }));
+
+                const total = W * H;
+
+                let somaLuz = 0;
+                let escuros = 0;
+
+                for (let i = 0; i < dados.length; i += 4) {
+
+                    const r = dados[i], g = dados[i + 1], b = dados[i + 2];
+
+                    const { h, s, l } = rgbParaHsl(r, g, b);
+
+                    somaLuz += l;
+
+                    if (l < 0.2) escuros++;
+
+                    // preto, branco e cinza não contam como cor
+                    if (s < 0.2 || l < 0.14 || l > 0.9) continue;
+
+                    const grupo = grupos[Math.floor(h / 30) % 12];
+
+                    grupo.n++;
+                    grupo.r += r;
+                    grupo.g += g;
+                    grupo.b += b;
+
+                }
+
+                const melhor = grupos.reduce((a, b) => (b.n > a.n ? b : a));
+
+                const escura = somaLuz / total < 0.32 || escuros / total > 0.5;
+
+                if (!melhor.n) {
+
+                    const vazio = { neutra: true, escura };
+
+                    cacheCorCapa.set(src, vazio);
+
+                    return resolve(vazio);
+
+                }
+
+                const r = Math.round(melhor.r / melhor.n);
+                const g = Math.round(melhor.g / melhor.n);
+                const b = Math.round(melhor.b / melhor.n);
+
+                // força da cor (0 a 1): cresce com a área que ela ocupa e com o quanto é viva
+                const area = Math.min(1, (melhor.n / total) * 3);
+                const viva = Math.min(1, rgbParaHsl(r, g, b).s * 2);
+
+                const resultado = { r, g, b, escura, forca: area * viva };
+
+                cacheCorCapa.set(src, resultado);
+
+                resolve(resultado);
+
+            } catch (erro) {
+
+                resolve(null);
+
+            }
+
+        };
+
+        img.onerror = () => resolve(null);
+
+        img.src = src;
+
+    });
 
 }
 
 function aplicarCorDoItem(item) {
 
-    // Sem cor no JSON (capa clara ou item ainda não sincronizado):
-    // fica no lilás neutro padrão.
-    aplicarCorAmbienteModal(item && item.cor ? item.cor : null);
+    const meu = ++tokenCor;
+
+    // escolha manual no JSON: "aura": "branca"  ou  "aura": "#c0392b"
+    const manual = item && typeof item.aura === "string" ? item.aura.trim().toLowerCase() : "";
+
+    if (manual) {
+
+        if (manual === "branca" || manual === "neutra") {
+
+            aplicarCorAmbienteModal({ neutra: true });
+
+            return;
+
+        }
+
+        const m = manual.match(/^#?([0-9a-f]{6})$/);
+
+        if (m) {
+
+            const n = parseInt(m[1], 16);
+
+            aplicarCorAmbienteModal({ r: n >> 16, g: (n >> 8) & 255, b: n & 255, forca: 1 });
+
+            return;
+
+        }
+
+    }
+
+    // na hora: usa o que já tiver (cache, cor do admin ou prateado)
+    const pronta = item && item.capa && cacheCorCapa.get(item.capa);
+
+    aplicarCorAmbienteModal(pronta || (item && item.cor) || { neutra: true });
+
+    if (pronta || !item || !item.capa) return;
+
+    // depois: lê a cor da capa e refina
+    extrairCorDominante(item.capa).then(cor => {
+
+        if (cor && meu === tokenCor) aplicarCorAmbienteModal(cor);
+
+    });
 
 }
 
@@ -693,30 +886,43 @@ function aplicarCorAmbienteModal(cor) {
         return;
     }
 
-    let { r, g, b } = cor;
+    let principal = COR_NEUTRA;
+    let aura = "neutra";
 
-    const media = (r + g + b) / 3;
-    const fatorSaturacao = 1.4;
+    if (!cor.neutra) {
 
-    r = media + (r - media) * fatorSaturacao;
-    g = media + (g - media) * fatorSaturacao;
-    b = media + (b - media) * fatorSaturacao;
+        const { h, s, l } = rgbParaHsl(cor.r, cor.g, cor.b);
 
-    const max = Math.max(r, g, b);
-    if (max < 150) {
-        const fator = 150 / (max || 1);
-        r *= fator;
-        g *= fator;
-        b *= fator;
+        // cor vinda do admin não tem "forca": usa um valor médio
+        const forca = typeof cor.forca === "number" ? cor.forca : 0.7;
+
+        if (s >= 0.14 && forca >= 0.12) {
+
+            const luz = cor.escura ? 0.42 : Math.min(0.58, Math.max(0.48, l));
+            const sat = Math.min(0.8, Math.max(0.5, s));
+
+            const viva = hslParaRgb(h, sat, luz);
+
+            // mistura gradual: quanto mais fraca a cor, mais perto do branco prateado
+            principal = {
+                r: Math.round(COR_NEUTRA.r + (viva.r - COR_NEUTRA.r) * forca),
+                g: Math.round(COR_NEUTRA.g + (viva.g - COR_NEUTRA.g) * forca),
+                b: Math.round(COR_NEUTRA.b + (viva.b - COR_NEUTRA.b) * forca)
+            };
+
+            aura = forca > 0.45 ? "cor" : "neutra";
+
+        }
+
     }
 
-    r = Math.round(Math.min(255, Math.max(0, r)));
-    g = Math.round(Math.min(255, Math.max(0, g)));
-    b = Math.round(Math.min(255, Math.max(0, b)));
+    if (cor.escura) aura += " escura";
 
-    conteudo.style.setProperty("--cor-ambiente-r", r);
-    conteudo.style.setProperty("--cor-ambiente-g", g);
-    conteudo.style.setProperty("--cor-ambiente-b", b);
+    conteudo.dataset.aura = aura;
+
+    conteudo.style.setProperty("--cor-ambiente-r", principal.r);
+    conteudo.style.setProperty("--cor-ambiente-g", principal.g);
+    conteudo.style.setProperty("--cor-ambiente-b", principal.b);
 
 }
 // =====================================================
@@ -904,9 +1110,9 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
 
         selo.type = "button";
         selo.className = "assistido-edit-selo";
-        selo.title = "Ver o edit";
+        selo.title = "Ver o preview";
 
-        selo.setAttribute("aria-label", "Ver o edit de " + item.titulo);
+        selo.setAttribute("aria-label", "Ver o preview de " + item.titulo);
 
         selo.innerHTML = `<span aria-hidden="true">▶</span>`;
 
@@ -1000,6 +1206,9 @@ function abrirDetalhesAssistido(item, dados) {
 
     const { notaEu, notaEla, ehListaFutura, ehContinuar = false } = dados;
 
+    // tira o botão de edit do modal anterior
+    document.querySelector("#modal-content .assistido-modal-edit-topo")?.remove();
+
     if (typeof abrirModal !== "function") {
         console.warn("abrirModal() não foi encontrado.");
         return;
@@ -1015,7 +1224,7 @@ function abrirDetalhesAssistido(item, dados) {
             layoutModal: "assistido"
         });
 
-aplicarCorDoItem(item);
+        aplicarCorDoItem(item);
 
         return;
 
@@ -1086,9 +1295,7 @@ aplicarCorDoItem(item);
             </div>
         `
         : "";
-    const editHtml = temEdit(item)
-        ? `<button type="button" class="assistido-modal-edit-btn"><span aria-hidden="true">▶</span> ver edit</button>`
-        : "";
+
     const eyebrow =
         ehContinuar
             ? "Assistindo agora ♥"
@@ -1097,15 +1304,35 @@ aplicarCorDoItem(item);
     abrirModal({
         titulo: item.titulo,
         dataExibicao: eyebrow,
-          descricao: linhaProgresso + notasHtml + editHtml + citacaoHtml,
+        descricao: linhaProgresso + notasHtml + citacaoHtml,
         fotos: item.capa ? [item.capa] : [],
         layoutModal: "assistido"
     });
 
-aplicarCorDoItem(item);
-    document
-        .querySelector("#modal-descricao .assistido-modal-edit-btn")
-        ?.addEventListener("click", () => irParaEdit(item));
+    aplicarCorDoItem(item);
+
+    // botão de edit no canto de cima, ao lado do ✕
+    if (temEdit(item)) {
+
+        const botaoEdit = document.createElement("button");
+
+        botaoEdit.type = "button";
+        botaoEdit.className = "assistido-modal-edit-topo";
+        botaoEdit.setAttribute("aria-label", "Ver o preview de " + item.titulo);
+
+        botaoEdit.innerHTML = `
+            <span class="edit-topo-icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>
+            </span>
+            <span class="edit-topo-texto">Preview</span>
+        `;
+
+        botaoEdit.addEventListener("click", () => irParaEdit(item));
+
+        document.getElementById("modal-content")?.appendChild(botaoEdit);
+
+    }
+
 }
 
 
@@ -1129,7 +1356,7 @@ function garantirPainelLateral() {
     botao.id = "continuar-lateral-btn";
     botao.innerHTML = `
         <span class="continuar-lateral-btn-icone">▶</span>
-        <span class="continuar-lateral-btn-texto">Continuar assistindo</span>
+        <span class="continuar-lateral-btn-texto">Pra ver</span>
         <span class="continuar-lateral-btn-contagem" id="continuar-lateral-contagem">0</span>
     `;
 
@@ -1137,20 +1364,51 @@ function garantirPainelLateral() {
     painel.className = "continuar-lateral-painel";
     painel.innerHTML = `
         <div class="continuar-lateral-cabecalho">
-            <span class="continuar-lateral-titulo">Pra depois ✦</span>
+            <span class="continuar-lateral-titulo">Pra ver ✦</span>
             <button type="button" class="continuar-lateral-fechar" id="continuar-lateral-fechar">✕</button>
         </div>
+
+        <div class="continuar-lateral-abas" role="tablist">
+            <button type="button" class="continuar-lateral-aba" role="tab" data-aba="lista" aria-selected="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>
+                <span>Pra assistir</span>
+                <small id="aba-n-lista">0</small>
+            </button>
+            <button type="button" class="continuar-lateral-aba" role="tab" data-aba="edits" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10h17v9.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="m3.6 10-.9-4.2 16.2-3.3.9 4.2zM7.6 6.8l2.4 3M12 5.9l2.4 3.1M16.4 5l2.4 3"/></svg>
+                <span>Edits</span>
+                <small id="aba-n-edits">0</small>
+            </button>
+        </div>
+
         <div class="continuar-lateral-corpo">
-            <div class="continuar-lateral-secao">
-                <div class="continuar-lateral-secao-titulo">▶ Continuar assistindo</div>
-                <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
-            </div>
-            <div class="continuar-lateral-secao">
-                <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
-                    <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
+
+            <div data-secao="lista">
+
+                <div class="continuar-lateral-secao">
+                    <div class="continuar-lateral-secao-titulo">▶ Continuar assistindo</div>
+                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
                 </div>
-                <div class="continuar-lateral-grid" id="continuar-lateral-grid-queremos"></div>
+
+                <div class="continuar-lateral-secao">
+                    <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
+                        <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
+                    </div>
+                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-queremos"></div>
+                </div>
+
             </div>
+
+            <div class="continuar-lateral-secao" data-secao="edits" hidden>
+                <div class="edits-folha">
+                    <h3 class="edits-folha-titulo">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10h17v9.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="m3.6 10-.9-4.2 16.2-3.3.9 4.2zM7.6 6.8l2.4 3M12 5.9l2.4 3.1M16.4 5l2.4 3"/></svg>
+                        <span>Edits</span>
+                    </h3>
+                    <div class="continuar-lateral-edits" id="continuar-lateral-edits"></div>
+                </div>
+            </div>
+
         </div>
     `;
 
@@ -1163,6 +1421,30 @@ function garantirPainelLateral() {
         overlay.classList.add("overlay-visivel");
     };
 
+    // abas: o fundo "de papel" só aparece na aba Edits
+    const trocarAba = nome => {
+
+        painel.querySelectorAll("[data-aba]").forEach(a =>
+            a.setAttribute("aria-selected", String(a.dataset.aba === nome))
+        );
+
+        painel.querySelectorAll("[data-secao]").forEach(s => {
+            s.hidden = s.dataset.secao !== nome;
+        });
+
+        painel.querySelector(".continuar-lateral-corpo").scrollTop = 0;
+
+        // os edits só são montados na primeira vez que a aba abre
+        if (nome === "edits" && window.Edits) {
+            window.Edits.montarLista(painel.querySelector("#continuar-lateral-edits"));
+        }
+
+    };
+
+    painel.querySelectorAll("[data-aba]").forEach(a =>
+        a.addEventListener("click", () => trocarAba(a.dataset.aba))
+    );
+
     const fecharPainel = () => {
         painel.classList.remove("painel-aberto");
         overlay.classList.remove("overlay-visivel");
@@ -1172,12 +1454,15 @@ function garantirPainelLateral() {
     overlay.addEventListener("click", fecharPainel);
     painel.querySelector("#continuar-lateral-fechar").addEventListener("click", fecharPainel);
 
-        painel.querySelector("#continuar-lateral-sortear").addEventListener("click", () => {
-        sortearUm(fecharPainel);
+    painel.querySelector("#continuar-lateral-sortear").addEventListener("click", () => {
+        abrirSorteio(fecharPainel);
     });
 
     document.addEventListener("keydown", (evento) => {
-        if (evento.key === "Escape") fecharPainel();
+        // com o player de edit aberto, o Esc é dele
+        if (evento.key === "Escape" && !document.body.classList.contains("edit-aberto")) {
+            fecharPainel();
+        }
     });
 
     painelLateralCriado = true;
@@ -1192,16 +1477,6 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
     const contagem = document.getElementById("continuar-lateral-contagem");
     const gridAssistindo = document.getElementById("continuar-lateral-grid-assistindo");
     const gridQueremos = document.getElementById("continuar-lateral-grid-queremos");
-
-    const total = itensAssistindo.length + itensQueremos.length;
-
-    if (!total) {
-        botao.style.display = "none";
-        return;
-    }
-
-    botao.style.display = "flex";
-    contagem.textContent = total;
 
     gridAssistindo.innerHTML = "";
 
@@ -1223,7 +1498,27 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
         gridQueremos.innerHTML = `<p class="continuar-lateral-vazio">Lista vazia por enquanto.</p>`;
     }
 
-        document.getElementById("continuar-lateral-sortear").hidden = !itensQueremos.length;
+    document.getElementById("continuar-lateral-sortear").hidden = !itensQueremos.length;
+
+    // o número do botão soma as três listas (os edits chegam um instante depois)
+    const atualizar = qtdEdits => {
+        const total = itensAssistindo.length + itensQueremos.length + qtdEdits;
+        botao.style.display = total ? "flex" : "none";
+        contagem.textContent = total;
+    };
+
+    atualizar(0);
+
+    document.getElementById("aba-n-lista").textContent =
+        itensAssistindo.length + itensQueremos.length;
+
+    if (window.Edits) {
+        window.Edits.carregar().then(lista => {
+            atualizar(lista.length);
+            document.getElementById("aba-n-edits").textContent =
+                new Set(lista.map(e => e.assistidoId || e.chave)).size;
+        });
+    }
 
 }
 
@@ -1250,5 +1545,296 @@ function ativarBotaoTopoAssistidos() {
 // =====================================================
 // INICIAR
 // =====================================================
+// =====================================================
+// SORTEIO — tela própria, com opções e confete
+// =====================================================
 
+let sorteioConfig = { qtd: 1, tipo: "todos" };
+let sorteioJaSaiu = new Set();
+let sorteioEl = null;
+let sorteioTimer = null;
+
+// lê o tipo (filmes / series / animes) do item da lista "queremos"
+function tipoDoQueremos(item) {
+    return String(item.tipo ?? item.tipoMidia ?? item.categoriaOriginal ?? "").toLowerCase();
+}
+
+function abrirSorteio(fecharPainel) {
+
+    if (!queremosCache.length) return;
+
+    if (fecharPainel) fecharPainel();
+
+    if (!sorteioEl) criarSorteio();
+
+    sorteioEl.hidden = false;
+    document.body.classList.add("sorteio-aberto");
+
+    sorteioTelaOpcoes();
+
+}
+
+function fecharSorteio() {
+
+    if (!sorteioEl) return;
+
+    clearTimeout(sorteioTimer);
+
+    sorteioEl.hidden = true;
+    document.body.classList.remove("sorteio-aberto");
+
+    sorteioEl.querySelectorAll(".confete").forEach(c => c.remove());
+
+}
+
+function criarSorteio() {
+
+    sorteioEl = document.createElement("div");
+
+    sorteioEl.className = "sorteio";
+    sorteioEl.hidden = true;
+
+    sorteioEl.setAttribute("role", "dialog");
+    sorteioEl.setAttribute("aria-modal", "true");
+    sorteioEl.setAttribute("aria-label", "Sorteio");
+
+    sorteioEl.innerHTML = `
+        <button type="button" class="sorteio-fechar" aria-label="Fechar">✕</button>
+        <div class="sorteio-caixa"></div>
+    `;
+
+    document.body.appendChild(sorteioEl);
+
+    sorteioEl.querySelector(".sorteio-fechar").addEventListener("click", fecharSorteio);
+
+    sorteioEl.addEventListener("click", evento => {
+
+        // tocar no fundo escuro fecha
+        if (evento.target === sorteioEl) return fecharSorteio();
+
+        const passo = evento.target.closest("[data-passo]");
+        const tipo = evento.target.closest("[data-tipo]");
+        const acao = evento.target.closest("[data-acao]");
+        const carta = evento.target.closest("[data-carta]");
+
+        if (passo) {
+            const campo = sorteioEl.querySelector(".sorteio-numero");
+            const maximo = Number(campo.max) || 1;
+            const novo = Math.min(Math.max(1, (Number(campo.value) || 1) + Number(passo.dataset.passo)), maximo);
+            sorteioConfig.qtd = novo;
+            campo.value = novo;
+        } else if (tipo) {
+            sorteioConfig.tipo = tipo.dataset.tipo;
+            sorteioTelaOpcoes();
+        } else if (acao) {
+            if (acao.dataset.acao === "sortear") fazerSorteio();
+            if (acao.dataset.acao === "opcoes") sorteioTelaOpcoes();
+        } else if (carta) {
+            const item = sorteioUltimo[Number(carta.dataset.carta)];
+            fecharSorteio();
+            setTimeout(() => {
+                abrirDetalhesAssistido(item, { notaEu: 0, notaEla: 0, notaMedia: 0, ehListaFutura: true });
+            }, 250);
+        }
+
+    });
+
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape" && sorteioEl && !sorteioEl.hidden) fecharSorteio();
+    });
+
+}
+
+function sorteioFiltrados() {
+
+    return sorteioConfig.tipo === "todos"
+        ? queremosCache.slice()
+        : queremosCache.filter(i => tipoDoQueremos(i) === sorteioConfig.tipo);
+
+}
+
+function sorteioTelaOpcoes() {
+
+    const caixa = sorteioEl.querySelector(".sorteio-caixa");
+
+    const contar = t =>
+        t === "todos"
+            ? queremosCache.length
+            : queremosCache.filter(i => tipoDoQueremos(i) === t).length;
+
+    const temTipos = queremosCache.some(i => tipoDoQueremos(i));
+
+    const tipos = [["todos", "Tudo"], ["filmes", "Filmes"], ["series", "Séries"], ["animes", "Animes"]];
+
+    const maximo = Math.max(1, sorteioFiltrados().length);
+
+    sorteioConfig.qtd = Math.min(Math.max(1, sorteioConfig.qtd), maximo);
+
+    caixa.innerHTML = `
+        <p class="sorteio-eyebrow"><i>✦</i> nossa lista <i>✦</i></p>
+        <h2 class="sorteio-titulo">O que vamos ver?</h2>
+
+        <div class="sorteio-ornamento" aria-hidden="true"><span>♥</span></div>
+
+        <div class="sorteio-grupo">
+            <span class="sorteio-rotulo">Quantos?</span>
+
+            <div class="sorteio-contador">
+                <button type="button" class="sorteio-mais-menos" data-passo="-1" aria-label="Menos um">−</button>
+
+                <input type="number" class="sorteio-numero" inputmode="numeric"
+                       min="1" max="${maximo}" value="${sorteioConfig.qtd}"
+                       aria-label="Quantidade a sortear">
+
+                <button type="button" class="sorteio-mais-menos" data-passo="1" aria-label="Mais um">+</button>
+            </div>
+
+            <small class="sorteio-max">de ${maximo} na lista</small>
+        </div>
+
+        ${temTipos ? `
+            <div class="sorteio-grupo">
+                <span class="sorteio-rotulo">De quê?</span>
+                <div class="sorteio-opcoes">
+                    ${tipos.map(([valor, nome]) => `
+                        <button type="button" data-tipo="${valor}"
+                                class="${sorteioConfig.tipo === valor ? "ativa" : ""}"
+                                ${contar(valor) ? "" : "disabled"}>
+                            ${nome} <small>${contar(valor)}</small>
+                        </button>
+                    `).join("")}
+                </div>
+            </div>
+        ` : ""}
+
+        <button type="button" class="sorteio-go" data-acao="sortear">
+            <span class="sorteio-go-dado" aria-hidden="true">⚄</span>
+            <span>Sortear</span>
+        </button>
+    `;
+
+    const campo = caixa.querySelector(".sorteio-numero");
+
+    // digitar: aceita qualquer número enquanto digita, corrige ao sair do campo
+    campo.addEventListener("input", () => {
+        const v = Number(campo.value);
+        if (v >= 1) sorteioConfig.qtd = Math.min(v, maximo);
+    });
+
+    campo.addEventListener("change", () => {
+        const v = Math.min(Math.max(1, Math.round(Number(campo.value) || 1)), maximo);
+        sorteioConfig.qtd = v;
+        campo.value = v;
+    });
+
+    campo.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            campo.blur();
+            fazerSorteio();
+        }
+    });
+
+    campo.addEventListener("focus", () => campo.select());
+
+}
+
+let sorteioUltimo = [];
+
+function fazerSorteio() {
+
+    const caixa = sorteioEl.querySelector(".sorteio-caixa");
+
+    const filtrados = sorteioFiltrados();
+
+    if (!filtrados.length) return;
+
+    // não repete o que já saiu, até a lista acabar
+    let pool = filtrados.filter(i => !sorteioJaSaiu.has(i));
+
+    const qtd = Math.min(sorteioConfig.qtd, filtrados.length);
+
+    if (pool.length < qtd) {
+        sorteioJaSaiu = new Set();
+        pool = filtrados.slice();
+    }
+
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    sorteioUltimo = pool.slice(0, qtd);
+
+    sorteioUltimo.forEach(i => sorteioJaSaiu.add(i));
+
+    // suspense
+    caixa.innerHTML = `
+        <div class="sorteio-girando"><span>✦</span></div>
+        <p class="sorteio-titulo">sorteando…</p>
+    `;
+
+    clearTimeout(sorteioTimer);
+
+    sorteioTimer = setTimeout(() => {
+
+        caixa.innerHTML = `
+            <p class="sorteio-eyebrow">✦ hoje a gente vê ✦</p>
+
+            <div class="sorteio-cartas ${qtd === 1 ? "sorteio-um" : ""}">
+                ${sorteioUltimo.map((item, i) => `
+                    <button type="button" class="sorteio-carta" data-carta="${i}" style="--d:${i * 0.18}s">
+                        <span class="sorteio-capa">
+                            ${item.capa ? `<img src="${item.capa}" alt="">` : ""}
+                        </span>
+                        <span class="sorteio-nome">${escaparHTML(item.titulo)}</span>
+                    </button>
+                `).join("")}
+            </div>
+
+            <p class="sorteio-dica">toque numa capa pra ver os detalhes</p>
+
+            <div class="sorteio-acoes">
+                <button type="button" class="sorteio-go" data-acao="sortear">
+                    <span class="sorteio-go-dado" aria-hidden="true">⚄</span>
+                    <span>Sortear de novo</span>
+                </button>
+                <button type="button" class="sorteio-link" data-acao="opcoes">mudar opções</button>
+            </div>
+        `;
+
+        soltarConfete();
+
+    }, 1100);
+
+}
+
+function soltarConfete() {
+
+    const cores = ["#f08cc0", "#f6b3d6", "#c9a7f5", "#ffd98e", "#8fd3ff"];
+
+    for (let i = 0; i < 70; i++) {
+
+        const p = document.createElement("span");
+
+        const simbolo = i % 7 === 0;
+
+        p.className = "confete" + (simbolo ? " confete-simbolo" : "");
+
+        if (simbolo) p.textContent = i % 2 ? "♥" : "✦";
+
+        p.style.cssText =
+            `left:${Math.random() * 100}%;` +
+            `--cor:${cores[i % cores.length]};` +
+            `--atraso:${(Math.random() * 0.6).toFixed(2)}s;` +
+            `--dur:${(2.4 + Math.random() * 1.8).toFixed(2)}s;` +
+            `--giro:${Math.round(Math.random() * 720 - 360)}deg;` +
+            `--vai:${Math.round(Math.random() * 160 - 80)}px`;
+
+        sorteioEl.appendChild(p);
+
+        setTimeout(() => p.remove(), 5000);
+
+    }
+
+}
 carregarAssistidos();
