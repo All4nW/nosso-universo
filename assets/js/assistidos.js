@@ -48,19 +48,27 @@ function temEdit(item) {
 
 }
 
-function irParaEdit(item) {
+async function irParaEdit(item) {
 
     // fecha o modal de detalhes, se estiver aberto
-    const fechar = document.querySelector(".modal-fechar");
+    if (typeof fecharModal === "function") fecharModal();
 
-    if (fechar) fechar.click();
-    else if (typeof fecharModal === "function") fecharModal();
+    if (!window.Edits) return;
 
-    if (typeof window.abrirPreviewDoFilme === "function") {
+    const lista = await window.Edits.doFilme(item.id ?? item.titulo);
 
-        window.abrirPreviewDoFilme(item.id ?? item.titulo, item.titulo);
+    if (lista.length) window.Edits.abrir(lista, 0);
 
-    }
+}async function irParaEdit(item) {
+
+    // fecha o modal de detalhes, se estiver aberto
+    if (typeof fecharModal === "function") fecharModal();
+
+    if (!window.Edits) return;
+
+    const lista = await window.Edits.doFilme(item.id ?? item.titulo);
+
+    if (lista.length) window.Edits.abrir(lista, 0);
 
 }
 

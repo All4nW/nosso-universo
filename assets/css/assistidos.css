@@ -2491,3 +2491,30 @@ body.modal-aberto {
 
     background: rgba(201, 167, 245, 0.14);
 }
+
+/* os botões grandes Assistidos | Preview saem (o Preview antigo fica inacessível) */
+.assistidos-abas {
+    display: none;
+}
+
+#assistidos-cats.assistidos-cats {
+    margin-top: 18px;
+}
+
+.view[data-view="assistidos"] {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 167, 245, 0.32) transparent;
+}
+
+.view[data-view="assistidos"]::-webkit-scrollbar { width: 8px; }
+.view[data-view="assistidos"]::-webkit-scrollbar-track { background: transparent; }
+.view[data-view="assistidos"]::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(201, 167, 245, 0.28); }
+
+@media (max-width: 760px) {
+
+    /* os dois botões laterais (edits e continuar) ficam abaixo do título, sem cobrir */
+    .view[data-view="assistidos"] .section-title {
+        margin-top: 58px;
+    }
+
+}

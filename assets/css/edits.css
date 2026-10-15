@@ -1,0 +1,1288 @@
+/* =========================================================
+   NOSSO UNIVERSO — EDITS
+   Botão lateral + gaveta dos edits + player único.
+   Usa as mesmas variáveis e fontes do resto do site.
+   ========================================================= */
+
+
+/* =========================================================
+   BOTÃO LATERAL (esquerda) + GAVETA DOS EDITS
+   ========================================================= */
+
+.edits-lateral-btn {
+    position: fixed;
+
+    top: 50%;
+    left: 0;
+
+    z-index: 60;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 18px 10px;
+
+    border: 1px solid rgba(228, 178, 228, 0.35);
+    border-left: none;
+    border-radius: 0 14px 14px 0;
+
+    background: linear-gradient(200deg, rgba(168, 108, 178, 0.88), rgba(52, 36, 104, 0.92));
+
+    box-shadow: 6px 8px 24px rgba(0, 0, 0, 0.4);
+
+    color: var(--color-text-light);
+
+    font-family: var(--font-body);
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: padding 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edits-lateral-btn[hidden] {
+    display: none;
+}
+
+.edits-lateral-btn:hover {
+    padding-left: 16px;
+
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(176, 112, 190, 0.3);
+}
+
+.edits-lateral-icone {
+    font-size: 1rem;
+}
+
+.edits-lateral-texto {
+    writing-mode: vertical-rl;
+
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.edits-lateral-contagem {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+
+    padding: 0 6px;
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+
+    .edits-lateral-btn {
+        top: 100px;
+        left: 12px;
+
+        flex-direction: row;
+
+        gap: 6px;
+
+        padding: 8px 12px;
+
+        border: 1px solid rgba(228, 178, 228, 0.35);
+        border-radius: 999px;
+
+        transform: none;
+
+        box-shadow: 4px 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .edits-lateral-btn:hover {
+        padding-left: 12px;
+    }
+
+    .edits-lateral-texto {
+        display: none;
+    }
+
+    .edits-lateral-icone {
+        font-size: 0.85rem;
+    }
+
+    .edits-lateral-contagem {
+        min-width: 18px;
+        height: 18px;
+
+        font-size: 0.6rem;
+    }
+
+}
+
+.edits-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 65;
+
+    background: rgba(5, 5, 16, 0.55);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity 0.4s ease;
+}
+
+.edits-overlay.visivel {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.edits-painel {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 70;
+
+    display: flex;
+    flex-direction: column;
+
+    width: min(560px, 94vw);
+    height: 100vh;
+    height: 100dvh;
+
+    background: linear-gradient(160deg, rgba(12, 10, 26, 0.97), rgba(22, 16, 42, 0.98));
+
+    border-right: 1px solid rgba(201, 167, 245, 0.2);
+
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.55);
+
+    transform: translateX(-100%);
+
+    visibility: hidden;
+
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.5s;
+}
+
+.edits-painel.aberta {
+    transform: none;
+
+    visibility: visible;
+
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+}
+
+.edits-painel-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    flex-shrink: 0;
+
+    padding: 22px 24px;
+
+    border-bottom: 1px solid rgba(201, 167, 245, 0.12);
+}
+
+.edits-painel-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+
+    color: var(--color-text-light);
+}
+
+.edits-painel-fechar {
+    border: 0;
+
+    background: none;
+
+    color: var(--color-text-muted);
+
+    font-size: 1.3rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.edits-painel-fechar:hover {
+    color: var(--color-lilac);
+
+    transform: rotate(90deg);
+}
+
+.edits-painel-corpo {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+
+    gap: 16px;
+
+    padding: 18px 20px 40px;
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+}
+
+.edits-vazio {
+    margin: 40px auto;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-heading);
+    font-style: italic;
+}
+
+/* um cartão por filme: capa ao lado, nome, detalhes e as miniaturas dos edits */
+
+.edits-filme {
+    display: grid;
+
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-areas:
+        "poster info"
+        "poster videos";
+
+    gap: 10px 16px;
+
+    padding: 14px;
+
+    border-radius: 16px;
+
+    border: 1px solid rgba(201, 167, 245, 0.18);
+
+    background: rgba(255, 255, 255, 0.035);
+
+    opacity: 0;
+
+    animation: edits-entra 0.5s ease forwards;
+    animation-delay: var(--atraso, 0s);
+}
+
+@keyframes edits-entra {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: none;
+    }
+
+}
+
+.edits-filme-poster {
+    grid-area: poster;
+
+    align-self: start;
+
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(201, 167, 245, 0.28);
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.75), rgba(25, 50, 100, 0.8));
+
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.35s ease, border-color 0.35s ease;
+}
+
+.edits-filme-poster img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.edits-filme-poster:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(201, 167, 245, 0.6);
+}
+
+.edits-filme-info {
+    grid-area: info;
+
+    min-width: 0;
+}
+
+.edits-filme-titulo {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
+    margin: 0;
+
+    overflow: hidden;
+
+    font-family: var(--font-heading);
+    font-size: 1.02rem;
+    font-weight: 500;
+    line-height: 1.25;
+
+    color: var(--color-text-light);
+}
+
+.edits-filme-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 6px 10px;
+
+    margin: 7px 0 0;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+
+    color: var(--color-text-muted);
+}
+
+.edits-filme-detalhes {
+    margin-top: 9px;
+    padding: 0 0 1px;
+
+    border: 0;
+    border-bottom: 1px dashed rgba(201, 167, 245, 0.5);
+
+    background: none;
+
+    color: var(--color-lilac);
+
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.edits-filme-detalhes:hover {
+    color: #fff;
+
+    border-bottom-color: #fff;
+}
+
+.edits-filme-videos {
+    grid-area: videos;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+
+    gap: 8px;
+
+    align-self: end;
+}
+
+.edits-video {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 4 / 3;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: #1a1230;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.edits-video img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.edits-video:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(201, 167, 245, 0.7);
+}
+
+.edits-video-play {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    display: grid;
+    place-items: center;
+
+    width: 30px;
+    height: 30px;
+
+    margin: -15px 0 0 -15px;
+    padding-left: 1px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    background: rgba(14, 10, 28, 0.55);
+
+    color: #fff;
+
+    font-size: 0.62rem;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.edits-video:hover .edits-video-play {
+    background: rgba(168, 108, 178, 0.9);
+
+    transform: scale(1.1);
+}
+
+.edits-video-dur {
+    position: absolute;
+
+    right: 5px;
+    bottom: 5px;
+
+    padding: 1px 6px;
+
+    border-radius: 999px;
+
+    background: rgba(10, 8, 20, 0.7);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 520px) {
+
+    .edits-painel {
+        width: 100%;
+    }
+
+    .edits-painel-topo {
+        padding: 18px 16px;
+    }
+
+    .edits-painel-corpo {
+        padding: 16px 14px 32px;
+    }
+
+    .edits-filme {
+        grid-template-columns: 78px minmax(0, 1fr);
+        grid-template-areas:
+            "poster info"
+            "videos videos";
+
+        padding: 12px;
+    }
+
+    .edits-filme-videos {
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .edits-filme {
+        animation: none;
+
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+body.edit-aberto {
+    overflow: hidden;
+}
+
+.edit-player {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+
+    background: rgba(6, 4, 14, 0.94);
+
+    overscroll-behavior: contain;
+
+    animation: ep-entrar 0.3s ease;
+}
+
+.edit-player[hidden] {
+    display: none;
+}
+
+@keyframes ep-entrar {
+
+    from { opacity: 0; }
+
+}
+
+.ep-caixa {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: min(94vw, 900px);
+
+    padding: 14px 0;
+}
+
+.ep-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.ep-info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.ep-titulo {
+    overflow: hidden;
+
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 500;
+
+    color: var(--color-text-light);
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ep-pos {
+    margin-top: 2px;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+
+    color: var(--color-text-muted);
+}
+
+.ep-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(201, 167, 245, 0.35);
+
+    background: rgba(201, 167, 245, 0.08);
+
+    color: var(--color-text-light);
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.ep-btn:hover {
+    background: rgba(201, 167, 245, 0.2);
+
+    border-color: rgba(201, 167, 245, 0.6);
+}
+
+/* a tela se ajusta à proporção de cada vídeo (--r) e nunca passa da altura da janela */
+
+.ep-tela {
+    position: relative;
+
+    align-self: center;
+
+    width: min(100%, calc((100dvh - 215px) * var(--r, 1.7778)));
+
+    aspect-ratio: var(--r, 1.7778);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    background: #000;
+
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 167, 245, 0.15);
+}
+
+.ep-tela video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    background: #000;
+}
+
+.ep-area {
+    position: absolute;
+    inset: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ep-play-grande {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+
+    margin: -32px 0 0 -32px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    background: rgba(14, 10, 28, 0.55);
+
+    opacity: 0;
+
+    transform: scale(0.8);
+
+    pointer-events: none;
+
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.ep-play-grande svg {
+    width: 24px;
+    height: 24px;
+
+    margin-left: 3px;
+
+    fill: #fff;
+}
+
+.edit-player.pausado .ep-play-grande {
+    opacity: 1;
+
+    transform: none;
+}
+
+.ep-carregando {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 38px;
+    height: 38px;
+
+    margin: -19px 0 0 -19px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(201, 167, 245, 0.25);
+    border-top-color: var(--color-lilac);
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.edit-player.carregando .ep-carregando {
+    opacity: 1;
+
+    animation: ep-girar 0.8s linear infinite;
+}
+
+.edit-player.carregando .ep-play-grande {
+    opacity: 0;
+}
+
+@keyframes ep-girar {
+
+    to { transform: rotate(360deg); }
+
+}
+
+.ep-nav {
+    position: absolute;
+
+    top: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    margin-top: -21px;
+    padding: 0 0 3px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    background: rgba(14, 10, 28, 0.55);
+
+    color: #fff;
+
+    font-size: 1.6rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease;
+}
+
+.ep-nav:hover {
+    background: rgba(168, 108, 178, 0.85);
+}
+
+.ep-ant {
+    left: 10px;
+}
+
+.ep-prox {
+    right: 10px;
+}
+
+.edit-player.unico .ep-nav {
+    display: none;
+}
+
+.ep-base {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.ep-progresso {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+}
+
+.ep-tempo {
+    flex-shrink: 0;
+
+    min-width: 34px;
+
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+
+    color: var(--color-text-light);
+
+    text-align: center;
+}
+
+.ep-barra {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    height: 32px;
+
+    cursor: pointer;
+
+    outline: none;
+
+    touch-action: none;
+}
+
+.ep-trilho {
+    position: relative;
+
+    width: 100%;
+    height: 5px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.2);
+
+    transition: height 0.2s ease;
+}
+
+.ep-barra:hover .ep-trilho,
+.ep-barra:focus-visible .ep-trilho {
+    height: 7px;
+}
+
+.ep-barra:focus-visible .ep-trilho {
+    outline: 2px solid rgba(201, 167, 245, 0.7);
+    outline-offset: 4px;
+}
+
+.ep-fill {
+    height: 100%;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, #c9a7f5, #f5c2d1);
+
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.ep-bolinha {
+    position: absolute;
+
+    top: 50%;
+    left: 0;
+
+    width: 15px;
+    height: 15px;
+
+    margin: -7.5px 0 0 -7.5px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow: 0 0 10px rgba(201, 167, 245, 0.9);
+
+    pointer-events: none;
+}
+
+.ep-som svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ep-som .ep-ico-som path:first-child,
+.ep-som .ep-ico-mudo path:first-child {
+    fill: currentColor;
+}
+
+.ep-som .ep-ico-mudo {
+    display: none;
+}
+
+.edit-player.sem-som .ep-ico-som {
+    display: none;
+}
+
+.edit-player.sem-som .ep-ico-mudo {
+    display: block;
+}
+
+.ep-filme {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 24px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(228, 178, 228, 0.6);
+
+    background: linear-gradient(135deg, rgba(168, 108, 178, 0.55), rgba(112, 68, 140, 0.45));
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ep-filme[hidden] {
+    display: none;
+}
+
+.ep-filme:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 24px rgba(176, 112, 190, 0.35);
+}
+
+@media (max-width: 520px) {
+
+    .ep-caixa {
+        gap: 10px;
+
+        width: 100%;
+
+        padding: 12px 12px 10px;
+    }
+
+    .ep-tela {
+        width: min(100%, calc((100dvh - 200px) * var(--r, 1.7778)));
+    }
+
+    .ep-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+
+/* =========================================================
+   MODAL DO FILME — pílula "▶ 3 edits" e faixa de miniaturas
+   (usa a cor da capa, que o modal já define em --cor-ambiente-*)
+   ========================================================= */
+
+.assistido-edits-pilula {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    width: fit-content;
+
+    margin-top: 12px;
+    padding: 5px 16px 5px 5px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.7);
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.18);
+
+    color: #fff;
+
+    /* o eyebrow do modal é em caixa alta e espaçado; a pílula não */
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-transform: none;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* brilho que passa pela pílula ao tocar/passar o mouse */
+
+.assistido-edits-pilula::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+
+    width: 40%;
+
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+
+    transform: skewX(-18deg);
+
+    transition: left 0.7s ease;
+
+    pointer-events: none;
+}
+
+.assistido-edits-pilula:hover,
+.assistido-edits-pilula:active {
+    transform: translateY(-2px);
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.34);
+
+    box-shadow: 0 8px 22px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.35);
+}
+
+.assistido-edits-pilula:hover::before,
+.assistido-edits-pilula:active::before {
+    left: 120%;
+}
+
+.pilula-play {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    width: 26px;
+    height: 26px;
+
+    padding-left: 1px;
+
+    border-radius: 50%;
+
+    background: rgb(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245));
+
+    color: #1a1026;
+
+    font-size: 0.58rem;
+    line-height: 1;
+}
+
+/* anel que pulsa devagar no ícone */
+
+.pilula-play::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgb(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245));
+
+    animation: pilula-pulso 2.6s ease-out infinite;
+}
+
+@keyframes pilula-pulso {
+
+    0% { transform: scale(1); opacity: 0.8; }
+
+    70%, 100% { transform: scale(1.9); opacity: 0; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .pilula-play::after {
+        animation: none;
+
+        opacity: 0;
+    }
+
+    .assistido-edits-pilula::before {
+        transition: none;
+    }
+
+}
+
+/* faixa "Edits deste filme" no fim do modal */
+
+.assistido-edits-faixa {
+    margin-top: 22px;
+}
+
+.assistido-edits-titulo {
+    margin: 0 0 10px;
+
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-style: italic;
+
+    color: var(--color-text-muted);
+}
+
+.assistido-edits-lista {
+    display: flex;
+
+    gap: 10px;
+
+    padding-bottom: 6px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.assistido-edits-lista::-webkit-scrollbar {
+    display: none;
+}
+
+.assistido-edit-mini {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 118px;
+
+    aspect-ratio: 4 / 3;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.45);
+
+    background: #1a1230;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.assistido-edit-mini img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.assistido-edit-mini:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.9);
+}
+
+.mini-play {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    display: grid;
+    place-items: center;
+
+    width: 28px;
+    height: 28px;
+
+    margin: -14px 0 0 -14px;
+    padding-left: 1px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    background: rgba(14, 10, 28, 0.55);
+
+    color: #fff;
+
+    font-size: 0.6rem;
+}
+
+.mini-dur {
+    position: absolute;
+
+    right: 5px;
+    bottom: 5px;
+
+    padding: 1px 6px;
+
+    border-radius: 999px;
+
+    background: rgba(10, 8, 20, 0.7);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
