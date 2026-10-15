@@ -34,28 +34,6 @@
         "memoria": ""
     },
     {
-        "id": "filme-futuro",
-        "categoria": "series",
-        "titulo": "Arcane",
-        "ano": null,
-        "capa": "assets/images/assistidos/assistido-1786909282135.jpg",
-        "cor": {
-            "r": 48,
-            "g": 46,
-            "b": 64
-        },
-        "status": "assistindo",
-        "progresso": {
-            "temporada": 2,
-            "episodio": 3,
-            "minutoAtualEpisodio": 0,
-            "duracaoEpisodio": 0
-        },
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "teste",
         "categoria": "filmes",
         "titulo": "10 Coisas Que Eu Odeio Em Você",
@@ -658,6 +636,7 @@
         "categoria": "series",
         "titulo": "(Des)encanto",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1790015498492.png",
         "cor": {
             "r": 100,
@@ -667,7 +646,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 2,
-            "episodio": 1,
+            "episodio": 2,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -767,6 +746,24 @@
             "r": 93,
             "g": 58,
             "b": 27
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "filme-futuro",
+        "categoria": "series",
+        "titulo": "Arcane",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1786909282135.jpg",
+        "cor": {
+            "r": 48,
+            "g": 46,
+            "b": 64
         },
         "status": "assistido",
         "progresso": null,
