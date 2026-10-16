@@ -1,0 +1,1160 @@
+/* =========================================================
+   NOSSO UNIVERSO — GALERIA
+   Tudo da galeria num lugar só: pastas, fotos, álbuns,
+   perfis e visualizador. Carregar DEPOIS do components.css.
+   ========================================================= */
+
+
+/* =========================================================
+   PÁGINA
+   ========================================================= */
+
+.view[data-view="galeria"] {
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: 90px;
+    padding-bottom: 100px;
+}
+
+.galeria-pastas-wrapper {
+    position: relative;
+}
+
+/* decoração flutuante de fundo (usada no wrapper das pastas) */
+
+.hub-fundo-decoracoes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hub-fundo-decoracoes img {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    width: 30px;
+    height: auto;
+    opacity: 0.22;
+    animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+
+@keyframes flutuar-decoracao-perfil {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-16px) rotate(6deg); }
+}
+
+
+/* =========================================================
+   PASTAS (polaroids)
+   ========================================================= */
+
+.galeria-pastas-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    max-width: 1000px;
+    margin: 0 auto var(--spacing-lg);
+}
+
+.galeria-pasta-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 190px;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    cursor: pointer;
+
+    background: linear-gradient(155deg, #fcfcfc, #ede4d3);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 40px 70px rgba(0, 0, 0, 0.3);
+
+    transform: rotate(var(--rot, 0deg));
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* outra "folha" atrás, dá profundidade */
+.galeria-pasta-card::before {
+    content: '';
+    position: absolute;
+    inset: 6px 6px -6px 6px;
+    z-index: -1;
+    border-radius: 8px;
+    background: rgba(232, 227, 218, 0.9);
+    transform: rotate(3deg);
+}
+
+/* fita adesiva no topo */
+.galeria-pasta-card::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    z-index: 3;
+
+    width: 62px;
+    height: 20px;
+
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px),
+        rgba(240, 170, 205, 0.62);
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+
+    transform: translateX(-50%) rotate(-4deg);
+
+    pointer-events: none;
+
+    transition: transform 0.35s ease;
+}
+
+.galeria-pasta-card:nth-child(even)::after {
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px),
+        rgba(190, 170, 240, 0.62);
+
+    transform: translateX(-50%) rotate(3deg);
+}
+
+.galeria-pasta-card:hover {
+    transform: rotate(0deg) scale(1.06);
+    box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.4),
+        0 24px 50px rgba(0, 0, 0, 0.6),
+        0 50px 80px rgba(0, 0, 0, 0.35),
+        0 0 40px rgba(240, 140, 192, 0.18);
+    z-index: 2;
+}
+
+.galeria-pasta-card:hover::after {
+    transform: translateX(-50%) rotate(0deg) scale(1.08);
+}
+
+.galeria-pasta-capa {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+    background: #000;
+}
+
+.galeria-pasta-capa img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.galeria-pasta-card:hover .galeria-pasta-capa img {
+    transform: scale(1.06);
+}
+
+.galeria-pasta-emoji {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 2;
+
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.85rem;
+
+    background: rgba(5, 5, 16, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+}
+
+.galeria-pasta-nome {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-style: italic;
+    font-size: 1.22rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #2a1d28;
+    transition: font-size 0.4s ease;
+}
+
+.galeria-pasta-quantidade {
+    margin-top: 3px;
+
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    letter-spacing: 0.4px;
+    color: #6b4a5e;
+
+    transition: opacity 0.3s ease;
+}
+
+.galeria-pasta-quantidade::before {
+    content: "♡ ";
+
+    color: #d0608f;
+}
+
+/* pastas recolhidas (quando uma está aberta) */
+
+.galeria-pastas-recolhida .galeria-pasta-card {
+    width: 110px;
+    padding: var(--spacing-sm);
+    transform: rotate(0deg);
+}
+
+.galeria-pastas-recolhida .galeria-pasta-card::after {
+    width: 40px;
+    height: 14px;
+    top: -7px;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-nome {
+    font-size: 0.95rem;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-quantidade {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+}
+
+
+/* =========================================================
+   DIVISOR E ÁREA DE FOTOS
+   ========================================================= */
+
+.galeria-divisor {
+    border: none;
+    height: 1px;
+    max-width: 900px;
+    margin: var(--spacing-lg) auto;
+    background: linear-gradient(90deg, transparent, rgba(201, 167, 245, 0.4), transparent);
+}
+
+.galeria-fotos-container {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.galeria-fotos-container.oculto {
+    display: none;
+}
+
+.galeria-fotos-entrando {
+    animation: galeria-fotos-fade 0.6s ease;
+}
+
+@keyframes galeria-fotos-fade {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* título da pasta aberta */
+
+.galeria-pasta-titulo {
+    margin-bottom: var(--spacing-lg);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: clamp(2.3rem, 6vw, 3.2rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0.4px;
+    text-align: center;
+
+    color: #fff;
+
+    text-shadow: 0 0 34px rgba(240, 140, 192, 0.35);
+}
+
+/* fio fininho com ✦ ♥ ✦ embaixo do título */
+.galeria-pasta-titulo::after {
+    content: "✦  ♥  ✦";
+
+    display: block;
+
+    margin: 12px auto 0;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-style: normal;
+    letter-spacing: 4px;
+
+    color: #f08cc0;
+
+    text-shadow: 0 0 12px rgba(240, 140, 192, 0.8);
+}
+
+
+/* =========================================================
+   FILTRO DE ÁLBUNS — texto solto, marcadinho rosa
+   ========================================================= */
+
+.galeria-filtro-albuns {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 30px;
+    margin: 0 auto 28px;
+}
+
+.galeria-filtro-album {
+    position: relative;
+
+    padding: 6px 4px 12px;
+
+    border: 0;
+    border-radius: 0;
+    background: none;
+
+    color: rgba(228, 214, 250, 0.55);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: color 0.3s ease;
+}
+
+.galeria-filtro-album::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    box-shadow: 0 0 12px rgba(240, 140, 192, 0.75);
+
+    opacity: 0;
+    transform: scaleX(0);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.galeria-filtro-album:hover {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.galeria-filtro-album:hover::after {
+    opacity: 0.5;
+    transform: scaleX(0.5);
+}
+
+.galeria-filtro-album.ativo {
+    color: #fff;
+}
+
+.galeria-filtro-album.ativo::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+
+/* =========================================================
+   GRADE DE FOTOS
+   ========================================================= */
+
+.galeria-fotos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 26px 22px;
+}
+
+.galeria-foto-item {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+
+    opacity: 0;
+    animation: entrada-card 0.6s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.galeria-foto-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    overflow: hidden;
+
+    border: 1px solid rgba(201, 167, 245, 0.14);
+
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.45s ease,
+        border-color 0.45s ease;
+}
+
+.galeria-foto-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+}
+
+/* véu rosado que aparece no hover */
+.galeria-foto-thumb::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(180deg, transparent 55%, rgba(240, 140, 192, 0.28));
+
+    opacity: 0;
+
+    transition: opacity 0.4s ease;
+
+    pointer-events: none;
+}
+
+.galeria-foto-item:hover .galeria-foto-thumb {
+    transform: translateY(-6px);
+
+    border-color: rgba(246, 179, 214, 0.55);
+
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(240, 140, 192, 0.2);
+}
+
+.galeria-foto-item:hover .galeria-foto-thumb img {
+    transform: scale(1.07);
+}
+
+.galeria-foto-item:hover .galeria-foto-thumb::after {
+    opacity: 1;
+}
+
+.galeria-foto-data {
+    margin-top: 10px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 0.98rem;
+    font-style: italic;
+    font-weight: 600;
+    text-align: center;
+
+    color: rgba(228, 214, 250, 0.72);
+
+    transition: color 0.3s ease;
+}
+
+.galeria-foto-data::before {
+    content: "♡ ";
+
+    font-size: 0.7em;
+    font-style: normal;
+
+    color: #f08cc0;
+}
+
+.galeria-foto-item:hover .galeria-foto-data {
+    color: #f6b3d6;
+}
+
+.galeria-foto-album-selo {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 2;
+
+    padding: 2px 8px;
+    border-radius: 20px;
+
+    background: rgba(5, 5, 16, 0.7);
+    backdrop-filter: blur(3px);
+
+    font-family: var(--font-body);
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+    letter-spacing: 0.3px;
+}
+
+.galeria-vazio {
+    grid-column: 1 / -1;
+
+    text-align: center;
+    color: var(--color-text-muted);
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.15rem;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+
+    .galeria-fotos-lista {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 12px;
+    }
+
+    .galeria-filtro-albuns {
+        gap: 4px 22px;
+    }
+
+    .galeria-filtro-album {
+        font-size: 1.15rem;
+    }
+
+}
+
+
+/* =========================================================
+   VÍDEOS NA GRADE
+   ========================================================= */
+
+.galeria-video-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    pointer-events: none;
+}
+
+.galeria-video-play-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding-left: 3px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+
+    background: rgba(14, 10, 28, 0.55);
+    backdrop-filter: blur(4px);
+
+    box-shadow: 0 0 22px rgba(240, 140, 192, 0.35);
+
+    color: #fff;
+    font-size: 0.9rem;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.galeria-foto-item:hover .galeria-video-play-badge {
+    background: rgba(168, 108, 178, 0.9);
+
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.galeria-video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.35), rgba(25, 50, 100, 0.4));
+    color: var(--color-text-light);
+}
+
+.galeria-video-play {
+    font-size: 1.6rem;
+    opacity: 0.85;
+}
+
+.galeria-video-placeholder small {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   PERFIS — layout especial da pasta "Perfil"
+   ========================================================= */
+
+.galeria-perfis-vista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    grid-template-columns: none;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ---- Cabeçalho "Nossos Perfis" ---- */
+
+.perfil-titulo-icone {
+    display: block;
+    width: 34px;
+    height: auto;
+    margin: 0 auto 6px;
+    animation: coracao-pulsar 2.4s ease-in-out infinite;
+}
+
+.perfil-subtitulo {
+    display: block;
+    margin-top: 6px;
+
+    font-family: "Cormorant Garamond", var(--font-primary), Georgia, serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--color-text-muted);
+
+    text-shadow: none;
+}
+
+/* no título dos perfis a ornamentação fica só no ícone */
+.galeria-pasta-titulo:has(.perfil-titulo-icone)::after {
+    display: none;
+}
+
+/* ---- Título de cada plataforma ---- */
+
+.perfil-secao {
+    opacity: 0;
+    animation: entrada-card 0.7s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.perfil-secao-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.perfil-secao-cabecalho::before,
+.perfil-secao-cabecalho::after {
+    content: '';
+    flex: 1;
+    max-width: 70px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245, 194, 209, 0.4), transparent);
+}
+
+.perfil-secao-emoji {
+    font-size: 1rem;
+}
+
+.perfil-secao-titulo {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+/* ---- Fotos empilhadas na diagonal ---- */
+
+.perfil-secao-midia-wrapper {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+}
+
+.perfil-secao-midia {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 24px 0 34px;
+}
+
+/* TikTok: prints verticais precisam de mais altura */
+
+.perfil-secao-midia-tiktok {
+    min-height: 0;
+    padding: 24px 0 34px;
+}
+
+/* sombra de contato no "chão" */
+
+.perfil-secao-midia::before {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 24px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
+    filter: blur(4px);
+    z-index: 0;
+}
+
+.perfil-secao-foto {
+    position: relative;
+    width: auto;
+    max-width: 200px;
+    background: linear-gradient(155deg, #ffffff, #f2ece1);
+    padding: 8px 8px 22px;
+    border-radius: 6px;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 40px 70px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* toque de cor por plataforma, bem sutil */
+
+.perfil-secao-midia-discord .perfil-secao-foto {
+    background: linear-gradient(155deg, #f5f3ff, #e4e0f9);
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    background: linear-gradient(155deg, #fff2f6, #fbdde8);
+}
+
+.perfil-secao-midia-roblox .perfil-secao-foto {
+    background: linear-gradient(155deg, #f7ecfd, #e8d6f8);
+}
+
+.perfil-secao-midia-genshin .perfil-secao-foto {
+    background: linear-gradient(155deg, #f2edff, #e0d3fb);
+}
+
+.perfil-secao-foto > img:not(.perfil-decoracao-clipe-coracao) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 2px;
+    background: #000;
+}
+
+/* TikTok: fotos verticais maiores */
+
+.perfil-secao-midia-tiktok .perfil-secao-foto {
+    max-width: 240px;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto img {
+    max-height: 380px;
+}
+
+/* uma foto sozinha: tomba pra um lado */
+
+.perfil-secao-foto:only-of-type {
+    transform: rotate(-4deg);
+}
+
+/* duas fotos: empilhadas na mesa */
+
+.perfil-secao-foto:nth-of-type(1):not(:only-of-type) {
+    transform: rotate(-8deg);
+    z-index: 1;
+}
+
+.perfil-secao-foto:nth-of-type(2) {
+    transform: rotate(7deg) translate(4px, 6px);
+    margin-left: -70px;
+    z-index: 2;
+}
+
+.perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
+    margin-left: -90px;
+}
+
+.perfil-secao-foto:hover {
+    transform: rotate(0deg) scale(1.08) !important;
+    box-shadow:
+        0 6px 10px rgba(0, 0, 0, 0.4),
+        0 26px 50px rgba(0, 0, 0, 0.65),
+        0 50px 80px rgba(0, 0, 0, 0.35);
+    z-index: 5;
+}
+
+/* coraçãozinho-prendedor */
+
+.perfil-decoracao-clipe-coracao {
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%) rotate(-6deg);
+    width: 34px;
+    height: auto;
+    z-index: 6;
+    pointer-events: none;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+/* clipe de papel no topo */
+
+.perfil-decoracao-clipe {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 32px;
+    height: auto;
+    z-index: 3;
+    transform: translateX(-50%) rotate(-12deg);
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+
+/* o Rave é o único que precisa do clipe mais embaixo */
+
+.perfil-secao-midia-rave .perfil-decoracao-clipe {
+    top: 18px;
+}
+
+/* florzinha ou coração fino no canto de baixo */
+
+.perfil-decoracao-canto {
+    position: absolute;
+    bottom: 2px;
+    right: 6%;
+    width: 48px;
+    height: auto;
+    z-index: 3;
+    opacity: 0.95;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    pointer-events: none;
+}
+
+@media (max-width: 640px) {
+
+    .perfil-secao-midia {
+        min-height: 190px;
+        padding: 18px 0 26px;
+    }
+
+    .perfil-secao-midia-tiktok {
+        min-height: 260px;
+    }
+
+    .perfil-secao-foto {
+        max-width: 150px;
+    }
+
+    .perfil-secao-foto img {
+        max-height: 210px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto {
+        max-width: 180px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto img {
+        max-height: 280px;
+    }
+
+    .perfil-secao-foto:nth-of-type(2) {
+        margin-left: -50px;
+    }
+
+    .perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
+        margin-left: -65px;
+    }
+
+    .perfil-secao-cabecalho::before,
+    .perfil-secao-cabecalho::after {
+        max-width: 40px;
+    }
+
+    .perfil-decoracao-clipe-coracao {
+        width: 28px;
+    }
+
+    .perfil-decoracao-clipe {
+        width: 24px;
+    }
+
+    .perfil-decoracao-canto {
+        width: 36px;
+    }
+
+}
+
+/* ---- Decorações de fundo flutuantes (só na pasta Perfis) ---- */
+
+.perfil-fundo-decoracoes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.perfil-fundo-decoracoes img {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    width: 30px;
+    height: auto;
+    opacity: 0.22;
+    animation: flutuar-decoracao-perfil var(--pduracao, 9s) ease-in-out infinite;
+    animation-delay: var(--pdelay, 0s);
+}
+
+/* o conteúdo dos Perfis fica acima da decoração de fundo */
+
+.perfil-titulo-icone,
+.perfil-subtitulo,
+.galeria-pasta-titulo,
+.galeria-perfis-vista {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   VISUALIZADOR DE FOTO / VÍDEO
+   ========================================================= */
+
+.foto-visualizador {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(ellipse 70% 55% at 50% 40%, rgba(240, 140, 192, 0.1), transparent 70%),
+        rgba(5, 3, 12, 0.95);
+
+    backdrop-filter: blur(8px);
+    padding: var(--spacing-lg);
+
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.foto-visualizador.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.foto-visualizador-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+    max-height: 92vh;
+}
+
+.foto-visualizador-img {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 16px;
+    object-fit: contain;
+
+    border: 1px solid rgba(246, 179, 214, 0.25);
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(240, 140, 192, 0.14);
+}
+
+.foto-visualizador-img.oculto {
+    display: none;
+}
+
+.foto-visualizador-video {
+    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
+    background: #000;
+}
+
+/* legenda */
+
+.foto-visualizador-legenda {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.foto-visualizador-legenda::before {
+    content: "";
+
+    display: block;
+
+    width: 90px;
+    height: 1px;
+
+    margin: 0 auto 14px;
+
+    background: linear-gradient(90deg, transparent, rgba(240, 140, 192, 0.7), transparent);
+}
+
+.foto-visualizador-pasta {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.7rem;
+    font-style: italic;
+    font-weight: 700;
+    color: #fff;
+
+    text-shadow: 0 0 24px rgba(240, 140, 192, 0.35);
+}
+
+.foto-visualizador-data {
+    margin-top: 2px;
+
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+
+    color: #f6b3d6;
+}
+
+.foto-visualizador-descricao {
+    max-width: 520px;
+    margin-top: 10px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.4;
+
+    color: rgba(228, 214, 250, 0.8);
+}
+
+.foto-visualizador-contagem {
+    display: block;
+    margin-top: 10px;
+
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+
+    color: var(--color-text-muted);
+}
+
+/* botões em vidro */
+
+.foto-visualizador-fechar,
+.foto-visualizador-seta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(201, 167, 245, 0.28);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    backdrop-filter: blur(6px);
+
+    color: var(--color-text-light);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.foto-visualizador-fechar {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 42px;
+    height: 42px;
+    font-size: 1.05rem;
+}
+
+.foto-visualizador-fechar:hover {
+    background: rgba(240, 140, 192, 0.2);
+    border-color: rgba(240, 140, 192, 0.6);
+
+    transform: rotate(90deg);
+}
+
+.foto-visualizador-seta {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+}
+
+.foto-visualizador-seta:hover {
+    background: rgba(240, 140, 192, 0.2);
+    border-color: rgba(240, 140, 192, 0.6);
+}
+
+.foto-visualizador-seta-esquerda {
+    left: var(--spacing-lg);
+}
+
+.foto-visualizador-seta-direita {
+    right: var(--spacing-lg);
+}
+
+@media (max-width: 640px) {
+
+    /* no celular as setas descem pra não cobrir a foto */
+    .foto-visualizador-seta {
+        top: auto;
+        bottom: 22px;
+
+        width: 44px;
+        height: 44px;
+
+        transform: none;
+    }
+
+    .foto-visualizador-seta-esquerda { left: 22px; }
+    .foto-visualizador-seta-direita  { right: 22px; }
+
+    .foto-visualizador-img,
+    .foto-visualizador-video {
+        max-height: 62vh;
+    }
+
+    .foto-visualizador-pasta {
+        font-size: 1.45rem;
+    }
+
+}

@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 200 * 1024 * 1024 } });
 
 
 // EXPORTAR (antes das rotas dinâmicas)
@@ -48,7 +48,7 @@ router.use((err, req, res, next) => {
 
         if (err.code === "LIMIT_FILE_SIZE") {
             return res.status(413).json({
-                error: "Arquivo muito grande. O limite atual é de 50MB."
+                error: "Arquivo muito grande. O limite atual é de 200MB."
             });
         }
 

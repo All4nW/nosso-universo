@@ -27,7 +27,9 @@
             "g": 44,
             "b": 35
         },
-        "status": "assistido",
+        "aura": "#480304",
+        "tempAssistida": 5,
+        "status": "concluido",
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
@@ -351,6 +353,7 @@
             "g": 113,
             "b": 105
         },
+        "aura": "branca",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -369,7 +372,7 @@
             "g": 66,
             "b": 132
         },
-        "status": "assistido",
+        "status": "concluido",
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
@@ -419,21 +422,6 @@
             "r": 86,
             "g": 97,
             "b": 120
-        }
-    },
-    {
-        "id": "tokyo-ghoul",
-        "categoria": "queremos",
-        "titulo": "Tokyo Ghoul",
-        "ano": null,
-        "capa": "assets/images/assistidos/assistido-1786912738537.webp",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
-        "cor": {
-            "r": 66,
-            "g": 82,
-            "b": 85
         }
     },
     {
@@ -782,6 +770,29 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "tokyo-ghoul",
+        "categoria": "animes",
+        "titulo": "Tokyo Ghoul",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1786912738537.webp",
+        "cor": {
+            "r": 66,
+            "g": 82,
+            "b": 85
+        },
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 3,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]

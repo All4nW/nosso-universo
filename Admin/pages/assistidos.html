@@ -200,6 +200,10 @@
             ▶ Assistindo agora
         </option>
 
+                <option value="concluido">
+            ✔ Concluído (acabou, nada a mais)
+        </option>
+
     </select>
 
 </div>
@@ -359,7 +363,25 @@
                     </div>
 
                 </div>
+                <!-- TEMPORADAS (séries e animes) -->
 
+                <div id="assistidos-temporadas-area" class="assistidos-notas-area">
+
+                    <div class="campo">
+                        <label for="assistidos-temp-assistida">
+                            Última temporada que assistimos
+                        </label>
+                        <input type="number" id="assistidos-temp-assistida" min="1" placeholder="Ex.: 2">
+                    </div>
+
+                    <div class="campo">
+                        <label for="assistidos-temp-total">
+                            Temporadas lançadas (opcional)
+                        </label>
+                        <input type="number" id="assistidos-temp-total" min="1" placeholder="Ex.: 3">
+                    </div>
+
+                </div>
                 <!-- COR DO FUNDO DO CARD -->
 
                 <div class="campo" id="assistidos-aura-area">

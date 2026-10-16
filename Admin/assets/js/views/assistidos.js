@@ -684,7 +684,11 @@ function abrirModalAssistido(item = null) {
 
 
     atualizarCampoNotas();
+    document.getElementById("assistidos-temp-assistida").value =
+        item?.tempAssistida ?? "";
 
+    document.getElementById("assistidos-temp-total").value =
+        item?.tempTotal ?? "";
     const aura = String(item?.aura || "").toLowerCase();
 
     const seletorAura = document.getElementById("assistidos-aura");
@@ -782,7 +786,16 @@ function atualizarCampoNotas() {
                 : "block";
 
     }
+    const areaTemp = document.getElementById("assistidos-temporadas-area");
 
+    if (areaTemp) {
+
+        areaTemp.style.display =
+            (categoria === "series" || categoria === "animes")
+                ? "grid"
+                : "none";
+
+    }
     atualizarCampoProgresso();
 
 }
@@ -1256,7 +1269,15 @@ async function salvarAssistido(evento) {
             : modoAura === "cor"
                 ? document.getElementById("assistidos-aura-cor").value
                 : undefined;
+    const ehSerie = categoria === "series" || categoria === "animes";
 
+    const tempAssistida = ehSerie
+        ? (Number(document.getElementById("assistidos-temp-assistida").value) || undefined)
+        : undefined;
+
+    const tempTotal = ehSerie
+        ? (Number(document.getElementById("assistidos-temp-total").value) || undefined)
+        : undefined;
     const novoItem = {
 
         id:
@@ -1288,6 +1309,10 @@ async function salvarAssistido(evento) {
         cor,
 
         aura,
+
+                tempAssistida,
+        tempTotal,
+        
         status,
 
         progresso,

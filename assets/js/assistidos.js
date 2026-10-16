@@ -583,6 +583,15 @@ function formatarNota(nota) {
     return Number.isInteger(nota) ? nota : nota.toFixed(1);
 }
 
+// série/anime com temporada nova lançada (assistimos até a 2, já saiu a 3...)
+function temNovaTemporada(item) {
+
+    return (item.categoria === "series" || item.categoria === "animes") &&
+        item.status !== "assistindo" &&
+        Number(item.tempAssistida) > 0 &&
+        Number(item.tempTotal) > Number(item.tempAssistida);
+
+}
 
 // =====================================================
 // PROGRESSO — CÁLCULO E SELOS
@@ -1104,6 +1113,8 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
         </div>
 
     `;
+
+
     if (!ehListaFutura && temEdit(item)) {
 
         const selo = document.createElement("button");
@@ -1127,6 +1138,20 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
         card.querySelector(".assistido-capa").appendChild(selo);
 
     }
+
+        if (
+        !ehListaFutura &&
+        (item.categoria === "series" || item.categoria === "animes") &&
+        Number(item.tempAssistida) > 0
+    ) {
+
+        card.querySelector(".assistido-capa").insertAdjacentHTML(
+            "beforeend",
+            `<span class="assistido-temp-selo">Temp. ${Number(item.tempAssistida)}</span>`
+        );
+
+    }
+
     card.addEventListener("click", () =>
         abrirDetalhesAssistido(item, {
             notaEu,
@@ -1300,11 +1325,29 @@ function abrirDetalhesAssistido(item, dados) {
         ehContinuar
             ? "Assistindo agora ♥"
             : `Assistido juntos ♥ ${item.ano || ""}`;
+    let temporadaHtml = "";
+
+    const ehSerieOuAnime = item.categoria === "series" || item.categoria === "animes";
+
+    if (ehSerieOuAnime && (Number(item.tempAssistida) > 0 || item.status === "concluido")) {
+
+        temporadaHtml = `
+            <div class="assistido-modal-temporada">
+                ${Number(item.tempAssistida) > 0
+                    ? `<p>Última temporada assistida: <strong>Temp. ${Number(item.tempAssistida)}</strong></p>`
+                    : ""}
+                ${item.status === "concluido"
+                    ? `<div class="assistido-modal-concluido-pilula">✔ Concluído</div>`
+                    : ""}
+            </div>
+        `;
+
+    }
 
     abrirModal({
         titulo: item.titulo,
         dataExibicao: eyebrow,
-        descricao: linhaProgresso + notasHtml + citacaoHtml,
+                descricao: linhaProgresso + temporadaHtml + notasHtml + citacaoHtml,
         fotos: item.capa ? [item.capa] : [],
         layoutModal: "assistido"
     });
@@ -1389,7 +1432,10 @@ function garantirPainelLateral() {
                     <div class="continuar-lateral-secao-titulo">▶ Continuar assistindo</div>
                     <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
                 </div>
-
+                <div class="continuar-lateral-secao" id="continuar-lateral-secao-novas" hidden>
+                    <div class="continuar-lateral-secao-titulo">✦ Temporada nova disponível</div>
+                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-novas"></div>
+                </div>
                 <div class="continuar-lateral-secao">
                     <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
                         <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
@@ -1497,12 +1543,22 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
     } else {
         gridQueremos.innerHTML = `<p class="continuar-lateral-vazio">Lista vazia por enquanto.</p>`;
     }
+    const novas = itensCache.filter(temNovaTemporada);
 
+    const gridNovas = document.getElementById("continuar-lateral-grid-novas");
+
+    gridNovas.innerHTML = "";
+
+    novas.forEach((item, indice) => {
+        gridNovas.appendChild(criarCardAssistido(item, indice));
+    });
+
+    document.getElementById("continuar-lateral-secao-novas").hidden = !novas.length;
     document.getElementById("continuar-lateral-sortear").hidden = !itensQueremos.length;
 
     // o número do botão soma as três listas (os edits chegam um instante depois)
     const atualizar = qtdEdits => {
-        const total = itensAssistindo.length + itensQueremos.length + qtdEdits;
+          const total = itensAssistindo.length + itensQueremos.length + novas.length + qtdEdits;
         botao.style.display = total ? "flex" : "none";
         contagem.textContent = total;
     };
@@ -1510,7 +1566,7 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
     atualizar(0);
 
     document.getElementById("aba-n-lista").textContent =
-        itensAssistindo.length + itensQueremos.length;
+        itensAssistindo.length + itensQueremos.length + novas.length;
 
     if (window.Edits) {
         window.Edits.carregar().then(lista => {

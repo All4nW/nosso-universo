@@ -539,9 +539,9 @@ async function salvarFoto() {
 
         const resposta = await fetch(url, { method: metodo, body: formulario });
         if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-
         fecharFormularioFoto();
         await carregarFotosAdmin();
+        alert('✅ Foto salva! Clique em "Sincronizar com o site" pra publicar.');
     } catch (erro) {
         console.error('[GALERIA ADMIN] Erro ao salvar foto:', erro);
         alert('❌ Não foi possível salvar a foto.');
