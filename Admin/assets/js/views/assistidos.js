@@ -355,8 +355,12 @@ function criarItemAdmin(item) {
                         </div>
                     `
                     : `
-                        <span class="assistidos-admin-lista-futura">
-                            ⏳ Ainda queremos assistir
+                         <span class="assistidos-admin-lista-futura">
+                            ⏳ Ainda queremos assistir${
+                                item.tipo
+                                    ? " · " + ({ filmes: "Filme", series: "Série", animes: "Anime" }[item.tipo] || "")
+                                    : " · ⚠ sem tipo"
+                            }
                         </span>
                     `
             }
@@ -507,6 +511,7 @@ function configurarEventosAssistidos() {
             sugerirCoresDaCapa();
         }
     });
+
 
     document.addEventListener(
         "click",
@@ -682,6 +687,17 @@ function abrirModalAssistido(item = null) {
         "assistidos-imagem"
     ).value = "";
 
+    document.getElementById("assistidos-tipo").value =
+        item?.tipo || "";
+
+    document.getElementById("assistidos-preview-texto").value =
+        item?.previewTexto || "";
+
+    document.getElementById("assistidos-links-lista").innerHTML = "";
+
+    (Array.isArray(item?.links) ? item.links : [])
+        .forEach(link => adicionarLinhaLink(link.nome, link.url));
+
 
     atualizarCampoNotas();
     document.getElementById("assistidos-temp-assistida").value =
@@ -794,6 +810,15 @@ function atualizarCampoNotas() {
             (categoria === "series" || categoria === "animes")
                 ? "grid"
                 : "none";
+
+    }
+
+        const areaQueremos = document.getElementById("assistidos-queremos-area");
+
+    if (areaQueremos) {
+
+        areaQueremos.style.display =
+            categoria === "queremos" ? "block" : "none";
 
     }
     atualizarCampoProgresso();
@@ -1061,6 +1086,57 @@ function extrairPaletaAdmin(src) {
     });
 
 }
+
+function adicionarLinhaLink(nome = "", url = "") {
+
+    const lista = document.getElementById("assistidos-links-lista");
+
+    const linha = document.createElement("div");
+
+    linha.className = "assistidos-link-linha";
+
+    linha.style.cssText =
+        "display:grid;grid-template-columns:1fr 1.6fr auto;gap:8px;margin-bottom:8px;align-items:center;";
+
+    linha.innerHTML = `
+        <input type="text" class="assistidos-link-nome" placeholder="Nome (ex.: Trailer)">
+        <input type="text" class="assistidos-link-url" placeholder="https://...">
+        <button type="button" class="assistidos-link-remover" title="Remover" aria-label="Remover link">✕</button>
+    `;
+
+    linha.querySelector(".assistidos-link-nome").value = nome;
+    linha.querySelector(".assistidos-link-url").value = url;
+
+    linha
+        .querySelector(".assistidos-link-remover")
+        .addEventListener("click", () => linha.remove());
+
+    lista.appendChild(linha);
+
+}
+
+function lerLinksDoForm() {
+
+    return [...document.querySelectorAll("#assistidos-links-lista .assistidos-link-linha")]
+        .map(linha => {
+
+            let url = linha.querySelector(".assistidos-link-url").value.trim();
+
+            const nome = linha.querySelector(".assistidos-link-nome").value.trim();
+
+            if (!url) return null;
+
+            // aceita colar sem o https://
+            if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+
+            return { nome: nome || "Abrir link", url };
+
+        })
+        .filter(Boolean);
+
+}
+
+
 // =====================================================
 // PREVIEW
 // =====================================================
@@ -1278,6 +1354,22 @@ async function salvarAssistido(evento) {
     const tempTotal = ehSerie
         ? (Number(document.getElementById("assistidos-temp-total").value) || undefined)
         : undefined;
+
+            const ehQueremos = categoria === "queremos";
+
+    const tipo = ehQueremos
+        ? (document.getElementById("assistidos-tipo").value || undefined)
+        : undefined;
+
+    const previewTexto = ehQueremos
+        ? (document.getElementById("assistidos-preview-texto").value.trim() || undefined)
+        : undefined;
+
+    const linksLidos = ehQueremos ? lerLinksDoForm() : [];
+
+    const links = linksLidos.length ? linksLidos : undefined;
+
+
     const novoItem = {
 
         id:
@@ -1312,6 +1404,10 @@ async function salvarAssistido(evento) {
 
                 tempAssistida,
         tempTotal,
+
+                tipo,
+        previewTexto,
+        links,
         
         status,
 

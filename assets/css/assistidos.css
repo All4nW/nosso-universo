@@ -4343,3 +4343,131 @@ body.sorteio-aberto { overflow: hidden; }
     font-weight: 800;
     letter-spacing: 0.3px;
 }
+
+/* =========================================================
+   TÍTULOS DAS SEÇÕES DO PAINEL — sem ficar grudado na tela
+   ========================================================= */
+
+.continuar-lateral-secao[hidden] {
+    display: none;
+}
+
+.continuar-lateral-painel .continuar-lateral-secao-titulo {
+    position: static;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 0 0 16px;
+    padding: 0;
+
+    background: none;
+    backdrop-filter: none;
+
+    font-size: 0.85rem;
+    font-style: italic;
+    letter-spacing: 0.2px;
+
+    color: rgba(201, 167, 245, 0.9);
+}
+
+.continuar-lateral-painel .continuar-lateral-secao-titulo::after {
+    content: "";
+
+    order: 1;
+
+    flex: 1;
+
+    height: 1px;
+
+    background: linear-gradient(90deg, rgba(201, 167, 245, 0.3), transparent);
+}
+
+.continuar-lateral-painel .sortear-btn {
+    order: 2;
+
+    margin-left: 0;
+
+    padding: 3px 10px;
+
+    border: 0;
+
+    background: rgba(201, 167, 245, 0.1);
+
+    font-size: 0.68rem;
+}
+
+.continuar-lateral-painel .sortear-btn:hover {
+    background: rgba(201, 167, 245, 0.22);
+}
+
+/* =========================================================
+   AINDA QUEREMOS — preview em texto e links
+   ========================================================= */
+
+.assistido-queremos-bloco {
+    white-space: normal;
+}
+
+.assistido-queremos-texto {
+    margin: 10px 0 0;
+
+    white-space: pre-line;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.18rem;
+    font-style: italic;
+    line-height: 1.6;
+
+    color: rgba(236, 232, 244, 0.88);
+}
+
+.assistido-queremos-vazio {
+    opacity: 0.6;
+}
+
+.assistido-queremos-links {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.assistido-queremos-link {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 18px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.34),
+        rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.14)
+    );
+
+    box-shadow: 0 6px 18px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.22);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.assistido-queremos-link:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 24px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.4);
+}

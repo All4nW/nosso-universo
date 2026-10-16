@@ -363,6 +363,43 @@
                     </div>
 
                 </div>
+
+                                <!-- AINDA QUEREMOS: tipo, preview em texto e links -->
+
+                <div id="assistidos-queremos-area" style="display:none;">
+
+                    <div class="campo">
+                        <label for="assistidos-tipo">É um(a)...</label>
+                        <select id="assistidos-tipo">
+                            <option value="">Escolha...</option>
+                            <option value="filmes">🎬 Filme</option>
+                            <option value="series">📺 Série</option>
+                            <option value="animes">🍿 Anime</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="assistidos-preview-texto">
+                            Preview (resumo, sinopse, o que chamou a atenção)
+                        </label>
+                        <textarea
+                            id="assistidos-preview-texto"
+                            rows="6"
+                            placeholder="Cole aqui um resumo ou escreva um textinho..."
+                        ></textarea>
+                    </div>
+
+                    <div class="campo">
+                        <label>Links (trailer, onde assistir, etc.)</label>
+                        <div id="assistidos-links-lista"></div>
+                        <button type="button" id="assistidos-links-add" class="botao-secundario">
+                            + Adicionar link
+                        </button>
+                    </div>
+
+                </div>
+
+                
                 <!-- TEMPORADAS (séries e animes) -->
 
                 <div id="assistidos-temporadas-area" class="assistidos-notas-area">

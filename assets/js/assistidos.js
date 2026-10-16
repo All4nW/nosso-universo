@@ -13,55 +13,6 @@ const CATEGORIA_QUEREMOS = "queremos";
 let painelLateralCriado = false;
 
 // =====================================================
-// EDITS — quais filmes têm vídeo no Preview
-// =====================================================
-
-let idsComEdit = new Set();
-
-async function carregarIdsComEdit() {
-
-    try {
-
-        const resposta = await fetch("assets/data/preview.json", { cache: "no-cache" });
-
-        if (!resposta.ok) return;
-
-        const lista = await resposta.json();
-
-        idsComEdit = new Set(
-            (Array.isArray(lista) ? lista : [])
-                .filter(v => v && v.video && v.assistidoId)
-                .map(v => String(v.assistidoId))
-        );
-
-    } catch (erro) {
-
-        idsComEdit = new Set();
-
-    }
-
-}
-
-function temEdit(item) {
-
-    return idsComEdit.has(String(item.id ?? item.titulo));
-
-}
-
-async function irParaEdit(item) {
-
-    // fecha o modal de detalhes, se estiver aberto
-    if (typeof fecharModal === "function") fecharModal();
-
-    if (!window.Edits) return;
-
-    const lista = await window.Edits.doFilme(item.id ?? item.titulo);
-
-    if (lista.length) window.Edits.abrir(lista, 0);
-
-}
-
-// =====================================================
 // GRADE — botão que muda quantas colunas aparecem
 // =====================================================
 
@@ -971,7 +922,6 @@ async function carregarAssistidos() {
             item.status === "assistindo" &&
             item.categoria !== CATEGORIA_QUEREMOS
     );
-    await carregarIdsComEdit();
 
     montarBarraCategoria(container);
 
@@ -1115,30 +1065,6 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
     `;
 
 
-    if (!ehListaFutura && temEdit(item)) {
-
-        const selo = document.createElement("button");
-
-        selo.type = "button";
-        selo.className = "assistido-edit-selo";
-        selo.title = "Ver o preview";
-
-        selo.setAttribute("aria-label", "Ver o preview de " + item.titulo);
-
-        selo.innerHTML = `<span aria-hidden="true">▶</span>`;
-
-        selo.addEventListener("click", evento => {
-
-            evento.stopPropagation();
-
-            irParaEdit(item);
-
-        });
-
-        card.querySelector(".assistido-capa").appendChild(selo);
-
-    }
-
         if (
         !ehListaFutura &&
         (item.categoria === "series" || item.categoria === "animes") &&
@@ -1231,8 +1157,7 @@ function abrirDetalhesAssistido(item, dados) {
 
     const { notaEu, notaEla, ehListaFutura, ehContinuar = false } = dados;
 
-    // tira o botão de edit do modal anterior
-    document.querySelector("#modal-content .assistido-modal-edit-topo")?.remove();
+
 
     if (typeof abrirModal !== "function") {
         console.warn("abrirModal() não foi encontrado.");
@@ -1241,10 +1166,50 @@ function abrirDetalhesAssistido(item, dados) {
 
     if (ehListaFutura) {
 
+        const nomesTipo = { filmes: "Filme", series: "Série", animes: "Anime" };
+
+        const attr = texto => escaparHTML(texto).replace(/"/g, "&quot;");
+
+        const texto = String(item.previewTexto || "").trim();
+
+        // só links http/https (nada de javascript:)
+        const links = (Array.isArray(item.links) ? item.links : [])
+            .filter(l => l && /^https?:\/\//i.test(l.url || ""));
+
+        const previewHtml = `
+            <div class="assistido-queremos-bloco">
+
+                <div class="assistido-modal-divisor">
+                    <span class="assistido-modal-divisor-icone">✦</span>
+                </div>
+
+                ${
+                    texto
+                        ? `<p class="assistido-queremos-texto">${escaparHTML(texto)}</p>`
+                        : `<p class="assistido-queremos-texto assistido-queremos-vazio">Ainda sem resumo por aqui. ❤️</p>`
+                }
+
+                ${
+                    links.length
+                        ? `<div class="assistido-queremos-links">${
+                            links.map(l => `
+                                <a class="assistido-queremos-link" href="${attr(l.url)}" target="_blank" rel="noopener noreferrer">
+                                    <span aria-hidden="true">↗</span> ${escaparHTML(l.nome || "Abrir link")}
+                                </a>
+                            `).join("")
+                        }</div>`
+                        : ""
+                }
+
+            </div>
+        `.trim();
+
         abrirModal({
             titulo: item.titulo,
-            dataExibicao: "Ainda queremos assistir ✦",
-            descricao: "Está na nossa lista de coisas que ainda queremos assistir. ❤️",
+            dataExibicao: nomesTipo[item.tipo]
+                ? `Ainda queremos assistir ✦ ${nomesTipo[item.tipo]}`
+                : "Ainda queremos assistir ✦",
+            descricao: previewHtml,
             fotos: item.capa ? [item.capa] : [],
             layoutModal: "assistido"
         });
@@ -1354,27 +1319,8 @@ function abrirDetalhesAssistido(item, dados) {
 
     aplicarCorDoItem(item);
 
-    // botão de edit no canto de cima, ao lado do ✕
-    if (temEdit(item)) {
+ 
 
-        const botaoEdit = document.createElement("button");
-
-        botaoEdit.type = "button";
-        botaoEdit.className = "assistido-modal-edit-topo";
-        botaoEdit.setAttribute("aria-label", "Ver o preview de " + item.titulo);
-
-        botaoEdit.innerHTML = `
-            <span class="edit-topo-icone" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>
-            </span>
-            <span class="edit-topo-texto">Preview</span>
-        `;
-
-        botaoEdit.addEventListener("click", () => irParaEdit(item));
-
-        document.getElementById("modal-content")?.appendChild(botaoEdit);
-
-    }
 
 }
 
@@ -1411,48 +1357,23 @@ function garantirPainelLateral() {
             <button type="button" class="continuar-lateral-fechar" id="continuar-lateral-fechar">✕</button>
         </div>
 
-        <div class="continuar-lateral-abas" role="tablist">
-            <button type="button" class="continuar-lateral-aba" role="tab" data-aba="lista" aria-selected="true">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>
-                <span>Pra assistir</span>
-                <small id="aba-n-lista">0</small>
-            </button>
-            <button type="button" class="continuar-lateral-aba" role="tab" data-aba="edits" aria-selected="false">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10h17v9.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="m3.6 10-.9-4.2 16.2-3.3.9 4.2zM7.6 6.8l2.4 3M12 5.9l2.4 3.1M16.4 5l2.4 3"/></svg>
-                <span>Edits</span>
-                <small id="aba-n-edits">0</small>
-            </button>
-        </div>
-
         <div class="continuar-lateral-corpo">
 
-            <div data-secao="lista">
-
-                <div class="continuar-lateral-secao">
-                    <div class="continuar-lateral-secao-titulo">▶ Continuar assistindo</div>
-                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
-                </div>
-                <div class="continuar-lateral-secao" id="continuar-lateral-secao-novas" hidden>
-                    <div class="continuar-lateral-secao-titulo">✦ Temporada nova disponível</div>
-                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-novas"></div>
-                </div>
-                <div class="continuar-lateral-secao">
-                    <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
-                        <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
-                    </div>
-                    <div class="continuar-lateral-grid" id="continuar-lateral-grid-queremos"></div>
-                </div>
-
+            <div class="continuar-lateral-secao">
+                <div class="continuar-lateral-secao-titulo">▶ Continuar assistindo</div>
+                <div class="continuar-lateral-grid" id="continuar-lateral-grid-assistindo"></div>
             </div>
 
-            <div class="continuar-lateral-secao" data-secao="edits" hidden>
-                <div class="edits-folha">
-                    <h3 class="edits-folha-titulo">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10h17v9.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="m3.6 10-.9-4.2 16.2-3.3.9 4.2zM7.6 6.8l2.4 3M12 5.9l2.4 3.1M16.4 5l2.4 3"/></svg>
-                        <span>Edits</span>
-                    </h3>
-                    <div class="continuar-lateral-edits" id="continuar-lateral-edits"></div>
+            <div class="continuar-lateral-secao" id="continuar-lateral-secao-novas" hidden>
+                <div class="continuar-lateral-secao-titulo">✦ Temporada nova disponível</div>
+                <div class="continuar-lateral-grid" id="continuar-lateral-grid-novas"></div>
+            </div>
+
+            <div class="continuar-lateral-secao">
+                <div class="continuar-lateral-secao-titulo">✦ Ainda queremos assistir
+                    <button type="button" class="sortear-btn" id="continuar-lateral-sortear">🎲 Sortear</button>
                 </div>
+                <div class="continuar-lateral-grid" id="continuar-lateral-grid-queremos"></div>
             </div>
 
         </div>
@@ -1506,7 +1427,7 @@ function garantirPainelLateral() {
 
     document.addEventListener("keydown", (evento) => {
         // com o player de edit aberto, o Esc é dele
-        if (evento.key === "Escape" && !document.body.classList.contains("edit-aberto")) {
+             if (evento.key === "Escape") {
             fecharPainel();
         }
     });
@@ -1555,28 +1476,14 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
 
     document.getElementById("continuar-lateral-secao-novas").hidden = !novas.length;
     document.getElementById("continuar-lateral-sortear").hidden = !itensQueremos.length;
+    // o número do botão soma as listas
+    const total = itensAssistindo.length + itensQueremos.length + novas.length;
 
-    // o número do botão soma as três listas (os edits chegam um instante depois)
-    const atualizar = qtdEdits => {
-          const total = itensAssistindo.length + itensQueremos.length + novas.length + qtdEdits;
-        botao.style.display = total ? "flex" : "none";
-        contagem.textContent = total;
-    };
-
-    atualizar(0);
-
-    document.getElementById("aba-n-lista").textContent =
-        itensAssistindo.length + itensQueremos.length + novas.length;
-
-    if (window.Edits) {
-        window.Edits.carregar().then(lista => {
-            atualizar(lista.length);
-            document.getElementById("aba-n-edits").textContent =
-                new Set(lista.map(e => e.assistidoId || e.chave)).size;
-        });
-    }
+    botao.style.display = total ? "flex" : "none";
+    contagem.textContent = total;
 
 }
+
 
 
 // =====================================================

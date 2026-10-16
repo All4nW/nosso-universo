@@ -63,6 +63,7 @@ function urlImagemGaleria(caminho) {
 const PLATAFORMAS_PERFIL = {
     genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" },
     roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
+        wildrift: { label: "Wild Rift", emoji: "⚔️", frase: "Nossa batalha juntos", categoria: "jogos" },
     discord: { label: "Discord", emoji: "💬", frase: "Nosso cantinho", categoria: "redes" },
     tiktok: { label: "TikTok", emoji: "🎵", frase: "Onde a gente perde horas", categoria: "redes" },
     instagram: { label: "Instagram", emoji: "📸", frase: "Onde a gente compartilha", categoria: "redes" },
@@ -83,158 +84,151 @@ function renderizarPerfis(fotos, lista) {
     lista.classList.add("galeria-perfis-vista");
     lista.innerHTML = "";
 
-    // Agrupa as fotos por plataforma
+    const esc = (texto) =>
+        String(texto || "").replace(/[&<>"']/g, (c) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+
+    // agrupa as fotos por plataforma
     const grupos = {};
 
     fotos.forEach((foto) => {
-        const chave =
-            (foto.plataforma || "outro").toLowerCase();
+
+        const chave = (foto.plataforma || "outro").toLowerCase();
 
         if (!grupos[chave]) grupos[chave] = [];
 
         grupos[chave].push(foto);
+
     });
 
-    // Plataformas conhecidas primeiro (na ordem definida acima),
-    // qualquer outra plataforma não mapeada vem depois.
+    // plataformas conhecidas primeiro, na ordem da lista; o resto vem depois
     const ordemChaves = [
         ...Object.keys(PLATAFORMAS_PERFIL).filter((c) => grupos[c]),
         ...Object.keys(grupos).filter((c) => !PLATAFORMAS_PERFIL[c])
     ];
 
-
-    // ====================================
-    // TÍTULO SEPARADO (estilo Cartas) + FAIXA DE MÍDIA
-    // compacta com 1 ou 2 fotos lado a lado (a sua + a dela),
-    // separadas por uma linha fina no meio.
-    // ====================================
-
     ordemChaves.forEach((chave, indiceSecao) => {
 
-        const info =
-            PLATAFORMAS_PERFIL[chave] || {
-                label: chave === "outro" ? "Outros" : chave,
-                emoji: "📌",
-                categoria: "outros"
-            };
+        const info = PLATAFORMAS_PERFIL[chave] || {
+            label: chave === "outro" ? "Outros" : chave,
+            emoji: "📌",
+            frase: "",
+            categoria: "outros"
+        };
 
-        const fotosDoGrupo =
-            grupos[chave];
+        const fotosDoGrupo = grupos[chave];
+        const fotosVisiveis = fotosDoGrupo.slice(0, 2);
+        const extras = fotosDoGrupo.length - fotosVisiveis.length;
+        const qtd = fotosVisiveis.length;
 
-        const secao =
-            document.createElement("div");
+        const clipeTopo = indiceSecao % 2 === 0 ? "clipe-rosa.png" : "clipe-roxo.png";
+        const enfeiteCanto = indiceSecao % 2 === 0 ? "flor-galho.png" : "coracao-fino.png";
 
-        secao.className =
-            "perfil-secao";
+        const secao = document.createElement("section");
 
-        secao.style.setProperty(
-            "--delay",
-            `${indiceSecao * 0.15}s`
-        );
+        secao.className = `perfil-secao perfil-plat-${chave}`;
+        secao.style.setProperty("--delay", `${indiceSecao * 0.15}s`);
 
-        // Mostra até 2 fotos lado a lado (a sua + a dela). Se um
-        // dia tiver mais que 2 pra mesma plataforma, ainda dá pra
-        // ver todas clicando — o clique abre o carrossel completo.
-        const fotosVisiveis =
-            fotosDoGrupo.slice(0, 2);
+        const midiaHtml = fotosVisiveis
+            .map((foto, i) => {
 
-        const midiaHtml =
-            fotosVisiveis
-                .map((foto, indiceFoto) => {
+                const ultima = i === qtd - 1;
 
-                    // O coraçãozinho-prendedor só aparece na SEGUNDA foto
-                    // (quando existem 2), grudado na borda esquerda dela —
-                    // assim ele sempre cai exatamente na costura com a
-                    // primeira foto, não importa o tamanho do card.
-const clipeCoracaoHtml =
-    indiceFoto === 1 && chave !== "rave"
-        ? `
-            <img
-                class="perfil-decoracao-clipe-coracao"
-                src="assets/images/perfil-decoracoes/clipe-coracao.png"
-                alt=""
-            >
-        `
-        : "";
+                const clipe = i === 0
+                    ? `<img class="perfil-decoracao-clipe" src="assets/images/perfil-decoracoes/${clipeTopo}" alt="">`
+                    : "";
 
-                    return `
-                        <div class="perfil-secao-foto" data-indice="${indiceFoto}">
-                            <img
-                                src="${urlImagemGaleria(foto.imagem)}"
-                                alt=""
-                                onerror="this.closest('.perfil-secao-foto').remove()"
-                            >
-                            ${clipeCoracaoHtml}
-                        </div>
-                    `;
+                // o coraçãozinho-prendedor fica na costura, na segunda foto
+                const prendedor = (i === 1 && chave !== "rave")
+                    ? `<img class="perfil-decoracao-clipe-coracao" src="assets/images/perfil-decoracoes/clipe-coracao.png" alt="">`
+                    : "";
 
-                })
-                .join("");
+                const canto = ultima
+                    ? `<img class="perfil-decoracao-canto" src="assets/images/perfil-decoracoes/${enfeiteCanto}" alt="">`
+                    : "";
 
-        // Alterna os enfeites de canto pra não ficar tudo igual —
-        // clipe rosa/roxo no topo, flor/coração fino embaixo.
-        const clipeCanto =
-            indiceSecao % 2 === 0
-                ? "clipe-rosa.png"
-                : "clipe-roxo.png";
+                const mais = (ultima && extras > 0)
+                    ? `<span class="perfil-mais">+${extras}</span>`
+                    : "";
 
-        const enfeiteCanto =
-            indiceSecao % 2 === 0
-                ? "flor-galho.png"
-                : "coracao-fino.png";
+                const legenda = foto.descricao
+                    ? `<span class="perfil-foto-legenda">${esc(foto.descricao)}</span>`
+                    : "";
+
+                return `
+                    <div class="perfil-secao-foto perfil-foto-${i + 1}" data-indice="${i}">
+                        ${clipe}
+                        <img
+                            class="perfil-foto-img"
+                            src="${urlImagemGaleria(foto.imagem)}"
+                            alt=""
+                            onerror="this.closest('.perfil-secao-foto').remove()"
+                        >
+                        ${legenda}
+                        ${mais}
+                        ${prendedor}
+                        ${canto}
+                    </div>
+                `;
+
+            })
+            .join("");
 
         secao.innerHTML = `
 
-            <div class="perfil-secao-cabecalho">
-                <span class="perfil-secao-emoji">${info.emoji}</span>
-                <h3 class="perfil-secao-titulo">${info.label}</h3>
-            </div>
+            <header class="perfil-secao-cabecalho">
 
-            <div class="perfil-secao-midia-wrapper">
-
-                <div class="perfil-secao-midia perfil-secao-midia-${chave}">
-
-                    <img
-                        class="perfil-decoracao-clipe"
-                        src="assets/images/perfil-decoracoes/${clipeCanto}"
-                        alt=""
-                    >
-
-                    ${midiaHtml}
-
-                    <img
-                        class="perfil-decoracao-canto"
-                        src="assets/images/perfil-decoracoes/${enfeiteCanto}"
-                        alt=""
-                    >
-
+                <div class="perfil-secao-selo">
+                    <span class="perfil-secao-emoji">${info.emoji}</span>
                 </div>
 
+                <h3 class="perfil-secao-titulo">${info.label}</h3>
+
+                ${info.frase ? `<p class="perfil-secao-frase">${info.frase}</p>` : ""}
+
+            </header>
+
+            <div class="perfil-secao-midia perfil-secao-midia-${chave} perfil-qtd-${qtd}">
+                ${midiaHtml}
             </div>
 
         `;
 
-        // Clique em qualquer foto abre o carrossel completo daquela
-        // plataforma (mesmo que existam mais de 2 fotos no total).
-        secao
-            .querySelectorAll(".perfil-secao-foto")
-            .forEach((elemento) => {
+        // descobre se cada imagem é vertical ou horizontal e ajusta o tamanho
+        secao.querySelectorAll(".perfil-foto-img").forEach((img) => {
 
-                elemento.addEventListener(
-                    "click",
-                    () => {
+            const marcar = () => {
 
-                        fotosDaPastaAberta =
-                            fotosDoGrupo;
+                const moldura = img.closest(".perfil-secao-foto");
 
-                        abrirVisualizador(
-                            Number(elemento.dataset.indice)
-                        );
+                if (!moldura) return;
 
-                    }
+                moldura.classList.add(
+                    img.naturalHeight > img.naturalWidth * 1.1
+                        ? "perfil-vertical"
+                        : "perfil-horizontal"
                 );
 
+            };
+
+            if (img.complete && img.naturalWidth) marcar();
+            else img.addEventListener("load", marcar);
+
+        });
+
+        // clicar em qualquer foto abre o carrossel completo da plataforma
+        secao.querySelectorAll(".perfil-secao-foto").forEach((elemento) => {
+
+            elemento.addEventListener("click", () => {
+
+                fotosDaPastaAberta = fotosDoGrupo;
+
+                abrirVisualizador(Number(elemento.dataset.indice));
+
             });
+
+        });
 
         lista.appendChild(secao);
 
@@ -332,50 +326,69 @@ function criarCardPasta(pasta, indice) {
     card.className =
         "galeria-pasta-card";
 
-    const rotacoes = [-4, 3, -2, 5, -3, 2, -5];
+    const rotacoes = [-3, 2, -2, 3, -2, 2, -3];
+
     card.style.setProperty("--rot", `${rotacoes[indice % rotacoes.length]}deg`);
+    card.style.setProperty("--i", indice);
 
+    // fotos e vídeos contados separadamente
+    const midias =
+        pasta.fotos || [];
 
-    const quantidade =
-        pasta.fotos
-            ? pasta.fotos.length
-            : 0;
+    const qtdVideos =
+        midias.filter(m => ehVideoGaleria(m.imagem)).length;
 
+    const qtdFotos =
+        midias.length - qtdVideos;
+
+    const contaFotos =
+        (qtdFotos || !qtdVideos)
+            ? `<span class="pasta-conta pasta-conta-fotos">${qtdFotos} ${qtdFotos === 1 ? "foto" : "fotos"}</span>`
+            : "";
+
+    const contaVideos =
+        qtdVideos
+            ? `<span class="pasta-conta pasta-conta-videos">${qtdVideos} ${qtdVideos === 1 ? "vídeo" : "vídeos"}</span>`
+            : "";
 
     const chaveEmoji = (pasta.nome || "").trim().toLowerCase();
     const emoji = EMOJIS_PASTA[chaveEmoji] || "🗂️";
 
     card.innerHTML = `
 
-        <div class="galeria-pasta-capa">
-
+        <div class="galeria-pasta-aba">
             <span class="galeria-pasta-emoji">${emoji}</span>
-
-            <img
-                src="${urlImagemGaleria(pasta.capa)}"
-                alt="${pasta.nome || ""}"
-                onerror="this.remove()"
-            >
-
         </div>
 
-        <span class="galeria-pasta-nome">
-            ${pasta.nome || ""}
-        </span>
+        <div class="galeria-pasta-papeis">
+            <div class="galeria-pasta-capa">
+                <img
+                    src="${urlImagemGaleria(pasta.capa)}"
+                    alt="${pasta.nome || ""}"
+                    onerror="this.remove()"
+                >
+            </div>
+        </div>
 
-        <span class="galeria-pasta-quantidade">
-            ${quantidade}
-            ${quantidade === 1 ? "foto" : "fotos"}
-        </span>
+        <div class="galeria-pasta-frente">
+            <span class="galeria-pasta-nome">${pasta.nome || ""}</span>
+            <span class="galeria-pasta-quantidade">${contaFotos}${contaVideos}</span>
+        </div>
 
     `;
 
+    card.addEventListener("click", () => {
 
-    card.addEventListener(
-        "click",
-        () => abrirPasta(pasta)
-    );
+        // marca a pasta que está aberta
+        document
+            .querySelectorAll(".galeria-pasta-aberta")
+            .forEach(c => c.classList.remove("galeria-pasta-aberta"));
 
+        card.classList.add("galeria-pasta-aberta");
+
+        abrirPasta(pasta);
+
+    });
 
     return card;
 
@@ -1066,6 +1079,8 @@ function garantirVisualizador() {
 
     document.body.appendChild(div);
 
+        ativarGestosVisualizador();
+
 
     document
         .getElementById("foto-viz-fechar")
@@ -1255,6 +1270,8 @@ function atualizarVisualizador() {
 
     if (!foto) return;
 
+        resetarZoom();
+
 
     const imagem =
         document.getElementById("foto-viz-img");
@@ -1423,11 +1440,13 @@ function resetarGaleria() {
     const pastas = document.getElementById("galeria-pastas");
     const containerFotos = document.getElementById("galeria-fotos");
 
+        document.querySelectorAll(".galeria-pasta-aberta").forEach(c => c.classList.remove("galeria-pasta-aberta"));
+
     pastas?.classList.remove("galeria-pastas-recolhida");
     containerFotos?.classList.add("oculto");
     containerFotos?.classList.remove("galeria-fotos-entrando");
 }
-
+    document.querySelectorAll(".galeria-pasta-aberta").forEach(c => c.classList.remove("galeria-pasta-aberta"));
 window.addEventListener("hashchange", () => {
     if (window.location.hash !== "#galeria") {
         resetarGaleria();
@@ -1437,7 +1456,321 @@ window.addEventListener("hashchange", () => {
 // =====================================================
 // INICIALIZAÇÃO
 // =====================================================
+// =====================================================
+// ZOOM E GESTOS NO VISUALIZADOR
+// =====================================================
 
+const ZOOM_MAX = 5;
+
+const zoomEstado = { escala: 1, x: 0, y: 0 };
+
+function imagemDoVisualizador() {
+    return document.getElementById("foto-viz-img");
+}
+
+function aplicarZoom() {
+
+    const img = imagemDoVisualizador();
+
+    if (!img) return;
+
+    img.style.transform =
+        `translate(${zoomEstado.x}px, ${zoomEstado.y}px) scale(${zoomEstado.escala})`;
+
+    img.classList.toggle("com-zoom", zoomEstado.escala > 1);
+
+    document
+        .getElementById("foto-visualizador")
+        ?.classList.toggle("viz-zoom", zoomEstado.escala > 1);
+
+}
+
+function resetarZoom() {
+
+    zoomEstado.escala = 1;
+    zoomEstado.x = 0;
+    zoomEstado.y = 0;
+
+    aplicarZoom();
+
+}
+
+// não deixa a foto sair da tela nem o zoom passar do limite
+function limitarZoom() {
+
+    const img = imagemDoVisualizador();
+
+    zoomEstado.escala = Math.min(ZOOM_MAX, Math.max(1, zoomEstado.escala));
+
+    if (!img || zoomEstado.escala === 1) {
+        zoomEstado.x = 0;
+        zoomEstado.y = 0;
+        return;
+    }
+
+    const maxX = (img.clientWidth * (zoomEstado.escala - 1)) / 2;
+    const maxY = (img.clientHeight * (zoomEstado.escala - 1)) / 2;
+
+    zoomEstado.x = Math.min(maxX, Math.max(-maxX, zoomEstado.x));
+    zoomEstado.y = Math.min(maxY, Math.max(-maxY, zoomEstado.y));
+
+}
+
+// muda o zoom mantendo o ponto tocado parado debaixo do dedo/mouse
+function zoomarEm(novaEscala, clientX, clientY) {
+
+    const img = imagemDoVisualizador();
+
+    if (!img) return;
+
+    novaEscala = Math.min(ZOOM_MAX, Math.max(1, novaEscala));
+
+    const caixa = img.getBoundingClientRect();
+
+    const centroX = caixa.left + caixa.width / 2 - zoomEstado.x;
+    const centroY = caixa.top + caixa.height / 2 - zoomEstado.y;
+
+    const dx = clientX - centroX;
+    const dy = clientY - centroY;
+
+    const razao = novaEscala / zoomEstado.escala;
+
+    zoomEstado.x = dx - razao * (dx - zoomEstado.x);
+    zoomEstado.y = dy - razao * (dy - zoomEstado.y);
+    zoomEstado.escala = novaEscala;
+
+    limitarZoom();
+    aplicarZoom();
+
+}
+
+function ativarGestosVisualizador() {
+
+    const viz = document.getElementById("foto-visualizador");
+
+    if (!viz || viz.dataset.gestos) return;
+
+    viz.dataset.gestos = "1";
+
+    const ponteiros = new Map();
+
+    let inicio = null;
+    let ultimaDistancia = 0;
+    let ultimoMeio = { x: 0, y: 0 };
+    let moveu = false;
+    let ultimoToque = { t: 0, x: 0, y: 0 };
+    let bloqueioAte = 0;
+
+    // evita o navegador "arrastar" a imagem como arquivo
+    viz.addEventListener("dragstart", evento => evento.preventDefault());
+
+    viz.addEventListener("pointerdown", evento => {
+
+        if (evento.target.closest("button, video")) return;
+        if (evento.pointerType === "mouse" && evento.button !== 0) return;
+
+        if (!ponteiros.size) moveu = false;
+
+        ponteiros.set(evento.pointerId, {
+            x: evento.clientX,
+            y: evento.clientY,
+            ox: evento.clientX,
+            oy: evento.clientY
+        });
+
+        viz.classList.add("viz-gesto");
+
+        if (ponteiros.size === 1) {
+
+            const img = imagemDoVisualizador();
+
+            inicio = {
+                x: evento.clientX,
+                y: evento.clientY,
+                t: Date.now(),
+                naImagem: evento.target === img && !img.classList.contains("oculto")
+            };
+
+        } else if (ponteiros.size === 2) {
+
+            const [a, b] = [...ponteiros.values()];
+
+            ultimaDistancia = Math.hypot(a.x - b.x, a.y - b.y);
+            ultimoMeio = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+
+            inicio = null;
+            moveu = true;
+
+        }
+
+    });
+
+    viz.addEventListener("pointermove", evento => {
+
+        const anterior = ponteiros.get(evento.pointerId);
+
+        if (!anterior) return;
+
+        const atual = { ...anterior, x: evento.clientX, y: evento.clientY };
+
+        ponteiros.set(evento.pointerId, atual);
+
+        // dois dedos: pinça (zoom) e arrasto junto
+        if (ponteiros.size === 2) {
+
+            const [a, b] = [...ponteiros.values()];
+
+            const distancia = Math.hypot(a.x - b.x, a.y - b.y);
+            const meio = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+
+            if (ultimaDistancia) {
+
+                zoomarEm(zoomEstado.escala * (distancia / ultimaDistancia), meio.x, meio.y);
+
+                zoomEstado.x += meio.x - ultimoMeio.x;
+                zoomEstado.y += meio.y - ultimoMeio.y;
+
+                limitarZoom();
+                aplicarZoom();
+
+            }
+
+            ultimaDistancia = distancia;
+            ultimoMeio = meio;
+
+            return;
+
+        }
+
+        if (Math.hypot(atual.x - atual.ox, atual.y - atual.oy) > 6) moveu = true;
+
+        // um dedo com zoom: arrasta a foto
+        if (zoomEstado.escala > 1) {
+
+            zoomEstado.x += atual.x - anterior.x;
+            zoomEstado.y += atual.y - anterior.y;
+
+            limitarZoom();
+            aplicarZoom();
+
+        }
+
+    });
+
+    const terminar = evento => {
+
+        if (!ponteiros.has(evento.pointerId)) return;
+
+        ponteiros.delete(evento.pointerId);
+
+        if (ponteiros.size === 1) ultimaDistancia = 0;
+
+        if (ponteiros.size > 0) return;
+
+        viz.classList.remove("viz-gesto");
+
+        // depois de arrastar, o "clique" que o navegador dispara não pode fechar o visualizador
+        bloqueioAte = moveu ? Date.now() + 150 : 0;
+
+        if (evento.type === "pointercancel" || !inicio) {
+            inicio = null;
+            return;
+        }
+
+        const dx = evento.clientX - inicio.x;
+        const dy = evento.clientY - inicio.y;
+        const rapido = Date.now() - inicio.t < 700;
+
+        // deslizar para o lado troca de foto (só sem zoom)
+        if (
+            zoomEstado.escala === 1 &&
+            rapido &&
+            Math.abs(dx) > 50 &&
+            Math.abs(dx) > Math.abs(dy) * 1.4
+        ) {
+
+            navegarVisualizador(dx < 0 ? 1 : -1);
+
+            inicio = null;
+
+            return;
+
+        }
+
+        // toque duplo na foto: amplia / volta
+        if (!moveu && inicio.naImagem) {
+
+            const agora = Date.now();
+
+            const perto =
+                Math.hypot(evento.clientX - ultimoToque.x, evento.clientY - ultimoToque.y) < 40;
+
+            if (agora - ultimoToque.t < 320 && perto) {
+
+                zoomarEm(zoomEstado.escala > 1 ? 1 : 2.5, evento.clientX, evento.clientY);
+
+                ultimoToque = { t: 0, x: 0, y: 0 };
+
+            } else {
+
+                ultimoToque = { t: agora, x: evento.clientX, y: evento.clientY };
+
+            }
+
+        }
+
+        inicio = null;
+
+    };
+
+    viz.addEventListener("pointerup", terminar);
+    viz.addEventListener("pointercancel", terminar);
+
+    document.addEventListener("click", evento => {
+
+        if (Date.now() < bloqueioAte) {
+            evento.stopImmediatePropagation();
+            evento.preventDefault();
+        }
+
+    }, true);
+
+    // rodinha do mouse (e pinça do touchpad)
+    viz.addEventListener("wheel", evento => {
+
+        const img = imagemDoVisualizador();
+
+        if (!img || img.classList.contains("oculto")) return;
+
+        evento.preventDefault();
+
+        zoomarEm(
+            zoomEstado.escala * (evento.deltaY < 0 ? 1.2 : 1 / 1.2),
+            evento.clientX,
+            evento.clientY
+        );
+
+    }, { passive: false });
+
+    // teclado: + aproxima, - afasta, 0 volta
+    document.addEventListener("keydown", evento => {
+
+        if (viz.classList.contains("oculto")) return;
+
+        const img = imagemDoVisualizador();
+
+        if (!img || img.classList.contains("oculto")) return;
+
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+
+        if (evento.key === "+" || evento.key === "=") zoomarEm(zoomEstado.escala * 1.4, cx, cy);
+        if (evento.key === "-") zoomarEm(zoomEstado.escala / 1.4, cx, cy);
+        if (evento.key === "0") resetarZoom();
+
+    });
+
+}
 carregarGaleria();
 
 ativarBotaoTopo();

@@ -74,15 +74,19 @@
         "categoria": "queremos",
         "titulo": "Harry Potter",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1786910514468.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 59,
             "g": 86,
             "b": 111
-        }
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "diario-de-uma-paixao",
@@ -383,30 +387,38 @@
         "categoria": "queremos",
         "titulo": "Minha História de Amor com Yamada-kun Nível 999",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1786912457594.webp",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 175,
             "g": 166,
             "b": 162
-        }
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "the-walking-dead",
         "categoria": "queremos",
         "titulo": "The Walking Dead",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1786912497130.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 66,
             "g": 66,
             "b": 52
-        }
+        },
+        "tipo": "series",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "sing",
@@ -461,41 +473,53 @@
         "categoria": "queremos",
         "titulo": "Para Todos Os Garotos Que Já Amei",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1788752314214.jpg",
+        "cor": null,
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
         "notaEu": null,
         "notaEla": null,
-        "memoria": "",
-        "cor": null
+        "memoria": ""
     },
     {
         "id": "detona-ralph",
         "categoria": "queremos",
         "titulo": "Detona Ralph",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1788835546409.webp",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 86,
             "g": 62,
             "b": 80
-        }
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "wifi-ralph-quebrando-a-internet",
         "categoria": "queremos",
         "titulo": "WiFi Ralph: Quebrando a Internet",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1788835590179.webp",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 62,
             "g": 108,
             "b": 144
-        }
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "crepusculo",
@@ -586,15 +610,19 @@
         "categoria": "queremos",
         "titulo": "O Mentalista",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1789318597602.jpg",
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": "",
         "cor": {
             "r": 146,
             "g": 110,
             "b": 89
-        }
+        },
+        "tipo": "series",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     },
     {
         "id": "como-se-fosse-a-primeira-vez",
@@ -677,8 +705,10 @@
         "categoria": "queremos",
         "titulo": "Garota, Interrompida",
         "ano": null,
+        "anoAssistido": null,
         "capa": "assets/images/assistidos/assistido-1790559678157.jpg",
         "cor": null,
+        "tipo": "filmes",
         "status": null,
         "progresso": null,
         "notaEu": null,
@@ -739,7 +769,7 @@
     {
         "id": "it-a-coisa",
         "categoria": "filmes",
-        "titulo": "It - A Coisa",
+        "titulo": "IT - A Coisa",
         "ano": null,
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1791931520374.png",
@@ -793,6 +823,21 @@
         },
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "it-capitulo-dois",
+        "categoria": "filmes",
+        "titulo": "IT: Capítulo Dois",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1792192624790.png",
+        "cor": null,
+        "aura": "branca",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]

@@ -49,185 +49,512 @@
 
 
 /* =========================================================
-   PASTAS (polaroids)
+   PASTAS — pastinhas coloridas com a foto saindo de dentro
    ========================================================= */
 
 .galeria-pastas-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--spacing-lg);
+    gap: 38px 30px;
     max-width: 1000px;
     margin: 0 auto var(--spacing-lg);
 }
 
 .galeria-pasta-card {
+    /* tamanhos (mudam no estado recolhido e no celular) */
+    --w: 200px;
+    --h: 252px;
+    --papel-h: 160px;
+    --frente-h: 98px;
+
+    /* cores: rosa por padrão, as outras vêm abaixo */
+    --p0: #fbd3e4;
+    --p1: #f4a9c8;
+    --p2: #e57fae;
+    --glow: rgba(240, 140, 192, 0.45);
+
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 190px;
-    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
-    border-radius: 8px;
+
+    width: var(--w);
+    height: var(--h);
+
+    padding: 0;
+
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+
     cursor: pointer;
 
-    background: linear-gradient(155deg, #fcfcfc, #ede4d3);
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.35),
-        0 18px 40px rgba(0, 0, 0, 0.55),
-        0 40px 70px rgba(0, 0, 0, 0.3);
-
     transform: rotate(var(--rot, 0deg));
-    transition: transform 0.35s ease, box-shadow 0.35s ease;
+
+    filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.45));
+
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.5s ease;
+
+    animation: pasta-entra 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* outra "folha" atrás, dá profundidade */
+@keyframes pasta-entra {
+    from { opacity: 0; translate: 0 30px; }
+}
+
+/* uma cor para cada pasta */
+
+.galeria-pasta-card:nth-child(5n + 2) {
+    --p0: #e3d6fa;
+    --p1: #bfa5ee;
+    --p2: #9a7ad8;
+    --glow: rgba(176, 140, 240, 0.5);
+}
+
+.galeria-pasta-card:nth-child(5n + 3) {
+    --p0: #fde3c8;
+    --p1: #f6bf8d;
+    --p2: #ea9a5e;
+    --glow: rgba(246, 170, 110, 0.45);
+}
+
+.galeria-pasta-card:nth-child(5n + 4) {
+    --p0: #d4e8fb;
+    --p1: #9fc6f2;
+    --p2: #6f9fe0;
+    --glow: rgba(120, 170, 240, 0.5);
+}
+
+.galeria-pasta-card:nth-child(5n + 5) {
+    --p0: #d3f1e5;
+    --p1: #98dcc2;
+    --p2: #62bf9e;
+    --glow: rgba(110, 210, 170, 0.45);
+}
+
+/* parte de trás da pasta */
+
 .galeria-pasta-card::before {
-    content: '';
+    content: "";
+
     position: absolute;
-    inset: 6px 6px -6px 6px;
-    z-index: -1;
-    border-radius: 8px;
-    background: rgba(232, 227, 218, 0.9);
-    transform: rotate(3deg);
+    left: 0;
+    right: 0;
+    top: 16px;
+    bottom: 0;
+
+    z-index: 0;
+
+    border-radius: 4px 16px 14px 14px;
+
+    background: linear-gradient(150deg, var(--p1), var(--p2));
+
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
 }
 
-/* fita adesiva no topo */
+/* estrelinha que aparece ao passar o mouse */
+
 .galeria-pasta-card::after {
-    content: '';
+    content: "✦";
+
     position: absolute;
-    top: -9px;
-    left: 50%;
-    z-index: 3;
+    top: -8px;
+    right: -4px;
 
-    width: 62px;
-    height: 20px;
+    z-index: 5;
 
-    background:
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px),
-        rgba(240, 170, 205, 0.62);
+    font-size: 1.05rem;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    color: #fff;
 
-    transform: translateX(-50%) rotate(-4deg);
+    text-shadow: 0 0 12px var(--p1), 0 0 22px var(--p2);
+
+    opacity: 0;
+
+    transform: scale(0.4) rotate(-20deg);
+
+    transition: opacity 0.4s ease, transform 0.4s ease;
 
     pointer-events: none;
-
-    transition: transform 0.35s ease;
 }
 
-.galeria-pasta-card:nth-child(even)::after {
+/* a orelhinha da pasta, com o emoji dentro */
+
+.galeria-pasta-aba {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    z-index: 0;
+
+    display: flex;
+    align-items: center;
+
+    width: 46%;
+    height: 26px;
+
+    padding-left: 12px;
+
+    border-radius: 12px 0 0 0;
+
+    background: var(--p1);
+
+    clip-path: polygon(0 0, 78% 0, 100% 100%, 0 100%);
+}
+
+.galeria-pasta-emoji {
+    font-size: 0.82rem;
+    line-height: 1;
+
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+/* a foto que sai de dentro da pasta */
+
+.galeria-pasta-papeis {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 34px;
+
+    z-index: 1;
+
+    height: var(--papel-h);
+
+    isolation: isolate;
+
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* outra folha atrás da foto */
+.galeria-pasta-papeis::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+
+    border-radius: 3px;
+
+    background: linear-gradient(155deg, #fffaf0, #efe4cf);
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+
+    transform: rotate(4deg) translate(5px, -4px);
+}
+
+/* fita adesiva na foto */
+.galeria-pasta-papeis::after {
+    content: "";
+
+    position: absolute;
+    top: -8px;
+    left: 50%;
+
+    z-index: 3;
+
+    width: 54px;
+    height: 18px;
+
     background:
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px),
-        rgba(190, 170, 240, 0.62);
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 4px, transparent 4px 8px),
+        rgba(255, 214, 232, 0.72);
 
-    transform: translateX(-50%) rotate(3deg);
-}
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
-.galeria-pasta-card:hover {
-    transform: rotate(0deg) scale(1.06);
-    box-shadow:
-        0 6px 12px rgba(0, 0, 0, 0.4),
-        0 24px 50px rgba(0, 0, 0, 0.6),
-        0 50px 80px rgba(0, 0, 0, 0.35),
-        0 0 40px rgba(240, 140, 192, 0.18);
-    z-index: 2;
-}
+    transform: translateX(-50%) rotate(-5deg);
 
-.galeria-pasta-card:hover::after {
-    transform: translateX(-50%) rotate(0deg) scale(1.08);
+    pointer-events: none;
 }
 
 .galeria-pasta-capa {
     position: relative;
+
+    box-sizing: border-box;
+
     width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 3px;
+    height: 100%;
+
     overflow: hidden;
-    margin-bottom: var(--spacing-sm);
-    background: #000;
+
+    border: 5px solid #fffaf3;
+    border-radius: 3px;
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.75), rgba(25, 50, 100, 0.8));
+
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+
+    transform: rotate(-2.5deg);
+
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .galeria-pasta-capa img {
+    display: block;
+
     width: 100%;
     height: 100%;
+
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* a frente da pasta, com o nome e as contagens */
+
+.galeria-pasta-frente {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    height: var(--frente-h);
+
+    padding: 8px 10px 6px;
+
+    overflow: hidden;
+
+    border-radius: 4px 4px 14px 14px;
+
+    background: linear-gradient(170deg, var(--p0), var(--p1) 130%);
+
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -10px 18px rgba(150, 60, 110, 0.12);
+
+    transform-origin: 50% 100%;
+
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* brilho que atravessa a frente */
+.galeria-pasta-frente::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+
+    width: 40%;
+
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+
+    transform: skewX(-18deg);
+
+    transition: left 0.8s ease;
+
+    pointer-events: none;
+}
+
+.galeria-pasta-nome {
+    max-width: 100%;
+
+    overflow: hidden;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: #3a2236;
+
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.galeria-pasta-quantidade {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin: 0;
+
+    font-family: var(--font-body);
+}
+
+.pasta-conta {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    padding: 2px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.5);
+
+    color: #5a3350;
+
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.pasta-conta::before {
+    content: "♡";
+
+    font-size: 0.85em;
+
+    color: #d0508a;
+}
+
+.pasta-conta-videos::before {
+    content: "▶";
+
+    font-size: 0.6em;
+
+    color: #7a4fb5;
+}
+
+/* hover / pasta aberta: a pasta sobe, a foto sai e a frente "abre" */
+
+.galeria-pasta-card:hover,
+.galeria-pasta-card.galeria-pasta-aberta {
+    z-index: 2;
+
+    transform: rotate(0deg) translateY(-8px) scale(1.04);
+
+    filter:
+        drop-shadow(0 24px 22px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 22px var(--glow));
+}
+
+.galeria-pasta-card:hover::after,
+.galeria-pasta-card.galeria-pasta-aberta::after {
+    opacity: 1;
+
+    transform: scale(1) rotate(10deg);
+
+    animation: pasta-brilho 1.8s ease-in-out infinite;
+}
+
+@keyframes pasta-brilho {
+    0%, 100% { transform: scale(1) rotate(10deg); }
+    50%      { transform: scale(1.3) rotate(30deg); }
+}
+
+.galeria-pasta-card:hover .galeria-pasta-papeis,
+.galeria-pasta-card.galeria-pasta-aberta .galeria-pasta-papeis {
+    transform: translateY(-18px);
+}
+
+.galeria-pasta-card:hover .galeria-pasta-capa,
+.galeria-pasta-card.galeria-pasta-aberta .galeria-pasta-capa {
+    transform: rotate(0deg);
 }
 
 .galeria-pasta-card:hover .galeria-pasta-capa img {
     transform: scale(1.06);
 }
 
-.galeria-pasta-emoji {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    z-index: 2;
-
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 0.85rem;
-
-    background: rgba(5, 5, 16, 0.55);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(3px);
+.galeria-pasta-card:hover .galeria-pasta-frente,
+.galeria-pasta-card.galeria-pasta-aberta .galeria-pasta-frente {
+    transform: perspective(700px) rotateX(16deg);
 }
 
-.galeria-pasta-nome {
-    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
-    font-style: italic;
-    font-size: 1.22rem;
-    font-weight: 700;
-    line-height: 1.1;
-    color: #2a1d28;
-    transition: font-size 0.4s ease;
-}
-
-.galeria-pasta-quantidade {
-    margin-top: 3px;
-
-    font-family: var(--font-body);
-    font-size: 0.66rem;
-    letter-spacing: 0.4px;
-    color: #6b4a5e;
-
-    transition: opacity 0.3s ease;
-}
-
-.galeria-pasta-quantidade::before {
-    content: "♡ ";
-
-    color: #d0608f;
+.galeria-pasta-card:hover .galeria-pasta-frente::after {
+    left: 130%;
 }
 
 /* pastas recolhidas (quando uma está aberta) */
 
 .galeria-pastas-recolhida .galeria-pasta-card {
-    width: 110px;
-    padding: var(--spacing-sm);
-    transform: rotate(0deg);
+    --w: 118px;
+    --h: 150px;
+    --papel-h: 84px;
+    --frente-h: 56px;
+
+    --rot: 0deg !important;
 }
 
-.galeria-pastas-recolhida .galeria-pasta-card::after {
-    width: 40px;
-    height: 14px;
-    top: -7px;
+.galeria-pastas-recolhida .galeria-pasta-card::before {
+    top: 10px;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-aba {
+    height: 18px;
+
+    padding-left: 8px;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-emoji {
+    font-size: 0.66rem;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-papeis {
+    left: 9px;
+    right: 9px;
+    top: 22px;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-papeis::after {
+    width: 34px;
+    height: 12px;
+    top: -6px;
+}
+
+.galeria-pastas-recolhida .galeria-pasta-frente {
+    gap: 0;
 }
 
 .galeria-pastas-recolhida .galeria-pasta-nome {
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 .galeria-pastas-recolhida .galeria-pasta-quantidade {
-    opacity: 0;
-    height: 0;
-    margin: 0;
+    display: none;
+}
+
+@media (max-width: 520px) {
+
+    .galeria-pastas-container {
+        gap: 30px 18px;
+    }
+
+    .galeria-pasta-card {
+        --w: 150px;
+        --h: 196px;
+        --papel-h: 122px;
+        --frente-h: 80px;
+    }
+
+    .galeria-pasta-nome {
+        font-size: 1.12rem;
+    }
+
+    .pasta-conta {
+        padding: 2px 7px;
+
+        font-size: 0.58rem;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .galeria-pasta-card { animation: none; }
+
+    .galeria-pasta-card:hover::after { animation: none; }
+
 }
 
 
@@ -614,13 +941,13 @@
 .galeria-perfis-vista {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: 56px;
     grid-template-columns: none;
-    max-width: 700px;
+    max-width: 760px;
     margin: 0 auto;
 }
 
-/* ---- Cabeçalho "Nossos Perfis" ---- */
+/* ---- Cabeçalho "Nossos Perfis" (vem do abrirPasta) ---- */
 
 .perfil-titulo-icone {
     display: block;
@@ -643,270 +970,453 @@
     text-shadow: none;
 }
 
-/* no título dos perfis a ornamentação fica só no ícone */
 .galeria-pasta-titulo:has(.perfil-titulo-icone)::after {
     display: none;
 }
 
-/* ---- Título de cada plataforma ---- */
+/* ---- Cada plataforma ---- */
 
 .perfil-secao {
+    --plat: 201, 167, 245;
+
     opacity: 0;
     animation: entrada-card 0.7s ease forwards;
     animation-delay: var(--delay, 0s);
 }
 
+/* cor de cada plataforma (r, g, b) */
+.perfil-plat-discord    { --plat: 130, 140, 255; }
+.perfil-plat-tiktok     { --plat: 255, 105, 160; }
+.perfil-plat-roblox     { --plat: 190, 110, 240; }
+.perfil-plat-genshin    { --plat: 150, 130, 255; }
+.perfil-plat-instagram  { --plat: 255, 150, 120; }
+.perfil-plat-widgetable { --plat: 120, 210, 190; }
+.perfil-plat-rave       { --plat: 240, 120, 200; }
+.perfil-plat-wildrift   { --plat: 100, 160, 255; }
+
+/* separador entre uma plataforma e a próxima */
+.perfil-secao:not(:last-child)::after {
+    content: "✦  ♥  ✦";
+
+    display: block;
+
+    margin-top: 34px;
+
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    letter-spacing: 4px;
+    text-align: center;
+
+    color: rgba(240, 140, 192, 0.6);
+}
+
+/* ---- Título da plataforma ---- */
+
 .perfil-secao-cabecalho {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+
+    margin-bottom: 26px;
+
+    text-align: center;
+}
+
+.perfil-secao-selo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    width: min(320px, 86%);
+
     margin-bottom: 10px;
 }
 
-.perfil-secao-cabecalho::before,
-.perfil-secao-cabecalho::after {
-    content: '';
+.perfil-secao-selo::before,
+.perfil-secao-selo::after {
+    content: "";
+
     flex: 1;
-    max-width: 70px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(245, 194, 209, 0.4), transparent);
+}
+
+.perfil-secao-selo::before {
+    background: linear-gradient(90deg, transparent, rgba(var(--plat), 0.65));
+}
+
+.perfil-secao-selo::after {
+    background: linear-gradient(270deg, transparent, rgba(var(--plat), 0.65));
 }
 
 .perfil-secao-emoji {
-    font-size: 1rem;
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(var(--plat), 0.55);
+
+    background: rgba(var(--plat), 0.16);
+
+    box-shadow: 0 0 22px rgba(var(--plat), 0.35);
+
+    font-size: 1.2rem;
 }
 
 .perfil-secao-titulo {
     font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.9rem;
     font-style: italic;
-    font-size: 1.4rem;
     font-weight: 700;
-    color: var(--color-text-light);
-    white-space: nowrap;
+    line-height: 1;
+
+    color: #fff;
+
+    text-shadow: 0 0 26px rgba(var(--plat), 0.45);
 }
 
-/* ---- Fotos empilhadas na diagonal ---- */
+.perfil-secao-frase {
+    margin: 6px 0 0;
 
-.perfil-secao-midia-wrapper {
-    position: relative;
-    margin-bottom: var(--spacing-xl);
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.02rem;
+    font-style: italic;
+
+    color: rgba(228, 214, 250, 0.7);
 }
+
+/* ---- Palco das fotos ---- */
 
 .perfil-secao-midia {
     position: relative;
+    isolation: isolate;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 220px;
-    padding: 24px 0 34px;
+
+    gap: 20px;
+
+    padding: 22px 10px 34px;
 }
 
-/* TikTok: prints verticais precisam de mais altura */
+/* brilho da cor da plataforma atrás das fotos */
+.perfil-secao-midia::before {
+    content: "";
 
-.perfil-secao-midia-tiktok {
-    min-height: 0;
-    padding: 24px 0 34px;
+    position: absolute;
+    inset: -10px 4%;
+
+    z-index: -1;
+
+    background: radial-gradient(ellipse 55% 60% at 50% 50%, rgba(var(--plat), 0.2), transparent 72%);
+
+    filter: blur(6px);
 }
 
 /* sombra de contato no "chão" */
+.perfil-secao-midia::after {
+    content: "";
 
-.perfil-secao-midia::before {
-    content: '';
     position: absolute;
-    bottom: 8px;
+    bottom: 14px;
     left: 50%;
-    transform: translateX(-50%);
-    width: 55%;
-    height: 24px;
+
+    z-index: -1;
+
+    width: 62%;
+    height: 26px;
+
     background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
-    filter: blur(4px);
-    z-index: 0;
+
+    filter: blur(5px);
+
+    transform: translateX(-50%);
 }
+
+/* ---- Moldura polaroid ---- */
 
 .perfil-secao-foto {
     position: relative;
-    width: auto;
-    max-width: 200px;
-    background: linear-gradient(155deg, #ffffff, #f2ece1);
-    padding: 8px 8px 22px;
+
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 320px;
+
+    padding: 9px 9px 30px;
+
     border-radius: 6px;
+
+    background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.4), rgba(var(--plat), 0.28)),
+        #fbf8f4;
+
     box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.35),
         0 18px 40px rgba(0, 0, 0, 0.55),
-        0 40px 70px rgba(0, 0, 0, 0.3),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9),
-        inset 0 -3px 6px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+        0 36px 60px rgba(0, 0, 0, 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+
+    cursor: pointer;
+
+    transform: rotate(var(--tilt, 0deg));
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
 
-/* toque de cor por plataforma, bem sutil */
+.perfil-foto-1 { --tilt: -2.4deg; }
 
-.perfil-secao-midia-discord .perfil-secao-foto {
-    background: linear-gradient(155deg, #f5f3ff, #e4e0f9);
+.perfil-foto-2 { --tilt: 2.2deg; margin-top: 14px; }
+
+/* verticais (TikTok, prints de celular) ficam mais estreitas */
+.perfil-secao-foto.perfil-vertical {
+    max-width: 200px;
 }
 
-.perfil-secao-midia-tiktok .perfil-secao-foto {
-    background: linear-gradient(155deg, #fff2f6, #fbdde8);
+/* uma foto só: maior e quase reta */
+.perfil-qtd-1 .perfil-secao-foto {
+    flex: 0 1 420px;
+    max-width: 420px;
 }
 
-.perfil-secao-midia-roblox .perfil-secao-foto {
-    background: linear-gradient(155deg, #f7ecfd, #e8d6f8);
-}
+.perfil-qtd-1 .perfil-foto-1 { --tilt: -1.6deg; }
 
-.perfil-secao-midia-genshin .perfil-secao-foto {
-    background: linear-gradient(155deg, #f2edff, #e0d3fb);
-}
-
-.perfil-secao-foto > img:not(.perfil-decoracao-clipe-coracao) {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 280px;
-    object-fit: contain;
-    border-radius: 2px;
-    background: #000;
-}
-
-/* TikTok: fotos verticais maiores */
-
-.perfil-secao-midia-tiktok .perfil-secao-foto {
-    max-width: 240px;
-}
-
-.perfil-secao-midia-tiktok .perfil-secao-foto img {
-    max-height: 380px;
-}
-
-/* uma foto sozinha: tomba pra um lado */
-
-.perfil-secao-foto:only-of-type {
-    transform: rotate(-4deg);
-}
-
-/* duas fotos: empilhadas na mesa */
-
-.perfil-secao-foto:nth-of-type(1):not(:only-of-type) {
-    transform: rotate(-8deg);
-    z-index: 1;
-}
-
-.perfil-secao-foto:nth-of-type(2) {
-    transform: rotate(7deg) translate(4px, 6px);
-    margin-left: -70px;
-    z-index: 2;
-}
-
-.perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
-    margin-left: -90px;
+.perfil-qtd-1 .perfil-secao-foto.perfil-vertical {
+    flex: 0 1 230px;
+    max-width: 230px;
 }
 
 .perfil-secao-foto:hover {
-    transform: rotate(0deg) scale(1.08) !important;
+    z-index: 5;
+
+    transform: rotate(0deg) translateY(-6px) scale(1.04);
+
     box-shadow:
         0 6px 10px rgba(0, 0, 0, 0.4),
-        0 26px 50px rgba(0, 0, 0, 0.65),
-        0 50px 80px rgba(0, 0, 0, 0.35);
-    z-index: 5;
+        0 26px 50px rgba(0, 0, 0, 0.62),
+        0 0 40px rgba(var(--plat), 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
-/* coraçãozinho-prendedor */
+.perfil-foto-img {
+    display: block;
 
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+
+    object-fit: contain;
+
+    border-radius: 2px;
+
+    background: #0b0814;
+}
+
+/* legenda na faixa branca do polaroid (usa a descrição da foto) */
+.perfil-foto-legenda {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 6px;
+
+    overflow: hidden;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 0.98rem;
+    font-style: italic;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: #5a3f55;
+}
+
+/* "+3": tem mais fotos desta plataforma */
+.perfil-mais {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    z-index: 4;
+
+    padding: 3px 10px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    background: rgba(14, 10, 28, 0.7);
+
+    backdrop-filter: blur(4px);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+/* ---- Decorações ---- */
+
+/* fita adesiva na segunda foto */
+.perfil-foto-2::before {
+    content: "";
+
+    position: absolute;
+    top: -9px;
+    right: 14%;
+
+    z-index: 4;
+
+    width: 56px;
+    height: 18px;
+
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 4px, transparent 4px 8px),
+        rgba(var(--plat), 0.55);
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+    transform: rotate(4deg);
+
+    pointer-events: none;
+}
+
+/* clipe de papel no topo da primeira foto */
+.perfil-decoracao-clipe {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+
+    z-index: 4;
+
+    width: 30px;
+    height: auto;
+
+    transform: translateX(-50%) rotate(-12deg);
+
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+
+    pointer-events: none;
+}
+
+/* coraçãozinho-prendedor na costura entre as duas fotos */
 .perfil-decoracao-clipe-coracao {
     position: absolute;
     top: 50%;
-    left: -8px;
-    transform: translateY(-50%) rotate(-6deg);
-    width: 34px;
-    height: auto;
+    left: -20px;
+
     z-index: 6;
-    pointer-events: none;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
-}
 
-/* clipe de papel no topo */
-
-.perfil-decoracao-clipe {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    width: 32px;
+    width: 36px;
     height: auto;
-    z-index: 3;
-    transform: translateX(-50%) rotate(-12deg);
-    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+
+    transform: translateY(-50%) rotate(-6deg);
+
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+
+    pointer-events: none;
 }
 
-/* o Rave é o único que precisa do clipe mais embaixo */
-
-.perfil-secao-midia-rave .perfil-decoracao-clipe {
-    top: 18px;
-}
-
-/* florzinha ou coração fino no canto de baixo */
-
+/* florzinha ou coração fino no canto, sobre a moldura branca */
 .perfil-decoracao-canto {
     position: absolute;
-    bottom: 2px;
-    right: 6%;
-    width: 48px;
+    bottom: -18px;
+    right: -14px;
+
+    z-index: 5;
+
+    width: 46px;
     height: auto;
-    z-index: 3;
-    opacity: 0.95;
+
     filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+
     pointer-events: none;
 }
+
+/* ---- Celular: as fotos viram um zigue-zague ---- */
 
 @media (max-width: 640px) {
 
-    .perfil-secao-midia {
-        min-height: 190px;
-        padding: 18px 0 26px;
+    .galeria-perfis-vista {
+        gap: 46px;
     }
 
-    .perfil-secao-midia-tiktok {
-        min-height: 260px;
+    .perfil-secao-titulo {
+        font-size: 1.65rem;
+    }
+
+    .perfil-secao-midia {
+        flex-direction: column;
+
+        gap: 24px;
+
+        padding: 18px 0 30px;
     }
 
     .perfil-secao-foto {
-        max-width: 150px;
+        flex: 0 0 auto;
+
+        width: 84%;
+        max-width: none;
     }
 
-    .perfil-secao-foto img {
-        max-height: 210px;
+    .perfil-secao-foto.perfil-vertical {
+        width: 58%;
+        max-width: 260px;
     }
 
-    .perfil-secao-midia-tiktok .perfil-secao-foto {
-        max-width: 180px;
+    .perfil-foto-1 {
+        align-self: flex-start;
+        margin-left: 4%;
     }
 
-    .perfil-secao-midia-tiktok .perfil-secao-foto img {
-        max-height: 280px;
+    .perfil-foto-2 {
+        align-self: flex-end;
+        margin-right: 4%;
+        margin-top: 0;
     }
 
-    .perfil-secao-foto:nth-of-type(2) {
-        margin-left: -50px;
+    .perfil-qtd-1 .perfil-secao-foto {
+        flex: 0 0 auto;
+
+        align-self: center;
+
+        width: 88%;
+        max-width: none;
+        margin: 0;
     }
 
-    .perfil-secao-midia-tiktok .perfil-secao-foto:nth-of-type(2) {
-        margin-left: -65px;
-    }
+    .perfil-qtd-1 .perfil-secao-foto.perfil-vertical {
+        flex: 0 0 auto;
 
-    .perfil-secao-cabecalho::before,
-    .perfil-secao-cabecalho::after {
-        max-width: 40px;
-    }
-
-    .perfil-decoracao-clipe-coracao {
-        width: 28px;
+        width: 62%;
+        max-width: 290px;
     }
 
     .perfil-decoracao-clipe {
-        width: 24px;
+        width: 26px;
+    }
+
+    .perfil-decoracao-clipe-coracao {
+        left: -17px;
+
+        width: 30px;
     }
 
     .perfil-decoracao-canto {
-        width: 36px;
+        bottom: -14px;
+        right: -10px;
+
+        width: 38px;
+    }
+
+    .perfil-foto-legenda {
+        font-size: 0.9rem;
     }
 
 }
@@ -941,7 +1451,6 @@
     position: relative;
     z-index: 1;
 }
-
 
 /* =========================================================
    VISUALIZADOR DE FOTO / VÍDEO
@@ -1157,4 +1666,54 @@
         font-size: 1.45rem;
     }
 
+}
+
+/* =========================================================
+   VISUALIZADOR — zoom e gestos
+   ========================================================= */
+
+.foto-visualizador {
+    overflow: hidden;
+
+    touch-action: none;
+}
+
+img.foto-visualizador-img {
+    cursor: zoom-in;
+
+    transform-origin: 50% 50%;
+
+    -webkit-user-drag: none;
+    user-select: none;
+
+    will-change: transform;
+
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+img.foto-visualizador-img.com-zoom {
+    cursor: grab;
+}
+
+/* enquanto o dedo/mouse está mexendo, sem animação */
+.viz-gesto img.foto-visualizador-img {
+    cursor: grabbing;
+
+    transition: none;
+}
+
+/* a foto ampliada passa por cima do resto, mas os botões ficam na frente */
+.foto-visualizador-fechar,
+.foto-visualizador-seta {
+    z-index: 5;
+}
+
+.foto-visualizador-legenda {
+    transition: opacity 0.3s ease;
+}
+
+.viz-zoom .foto-visualizador-legenda {
+    opacity: 0;
+
+    pointer-events: none;
 }

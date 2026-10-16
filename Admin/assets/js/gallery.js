@@ -224,7 +224,8 @@ const LABELS_PLATAFORMA_ADMIN = {
     instagram: '📸 Instagram',
     widgetable: '🧩 Widgetable',
     rave: '🎬 Rave',
-    genshin: '✨ Genshin Impact'
+    genshin: '✨ Genshin Impact',
+    wildrift: '⚔️ Wild Rift'
 };
 
 function renderizarFotosAdmin() {
