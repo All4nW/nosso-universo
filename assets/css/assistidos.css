@@ -4471,3 +4471,63 @@ body.sorteio-aberto { overflow: hidden; }
 
     box-shadow: 0 10px 24px rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.4);
 }
+/* =========================================================
+   CHECK VERDE — série/anime concluído (só o símbolo, animado)
+   ========================================================= */
+
+.assistido-check-concluido {
+    position: relative;
+
+    flex-shrink: 0;
+
+    display: inline-grid;
+    place-items: center;
+
+    width: 17px;
+    height: 17px;
+
+    margin-left: 4px;
+
+    background: none;
+    box-shadow: none;
+}
+
+.assistido-check-concluido svg {
+    width: 17px;
+    height: 17px;
+
+    fill: none;
+    stroke: #4ade80;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    stroke-dasharray: 18;
+    stroke-dashoffset: 18;
+
+    animation:
+        check-desenha 4.5s cubic-bezier(0.45, 0, 0.2, 1) infinite,
+        check-brilho 2.6s ease-in-out infinite;
+}
+
+@keyframes check-desenha {
+
+    0%   { stroke-dashoffset: 18; opacity: 1; }
+
+    22%  { stroke-dashoffset: 0; }
+
+    88%  { stroke-dashoffset: 0; opacity: 1; }
+
+    96%  { stroke-dashoffset: 0; opacity: 0; }
+
+    100% { stroke-dashoffset: 18; opacity: 0; }
+
+}
+
+@keyframes check-brilho {
+
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(74, 222, 128, 0.55)); }
+
+    50% { filter: drop-shadow(0 0 7px rgba(110, 231, 160, 0.95)); }
+
+}

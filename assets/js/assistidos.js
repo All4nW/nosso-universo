@@ -1,7 +1,7 @@
 // =====================================================
 // NOSSO UNIVERSO — COISAS QUE JÁ ASSISTIMOS
 // =====================================================
-
+(() => {
 const CATEGORIAS_ORDEM = [
     { chave: "filmes", titulo: "🎬 Filmes" },
     { chave: "series", titulo: "📺 Séries" },
@@ -1014,6 +1014,7 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
     const temAvaliacao = !ehListaFutura && item.categoria !== "queremos";
     const { notaEu, notaEla } = lerNotasDoItem(item);
 
+    
     let notaMedia = 0;
 
     if (notaEu && notaEla) {
@@ -1029,6 +1030,15 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
     const temNotaEu = notaEu > 0;
     const temNotaEla = notaEla > 0;
     const temAlgumaNota = temAvaliacao && (temNotaEu || temNotaEla);
+
+
+    // check verde: série/anime concluído
+    const pontoConcluido =
+        (!ehListaFutura &&
+            item.status === "concluido" &&
+            (item.categoria === "series" || item.categoria === "animes"))
+            ? `<span class="assistido-check-concluido" title="Concluído" aria-label="Concluído"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 12.5l3.8 3.8L17.5 8"/></svg></span>`
+            : "";
 
     card.innerHTML = `
 
@@ -1056,9 +1066,10 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
                         <span class="assistido-notas-info">
                             ${temNotaEu ? `<span class="nota-chip nota-chip-eu nota-chip-mini">★ ${formatarNota(notaEu)}</span>` : ""}
                             ${temNotaEla ? `<span class="nota-chip nota-chip-ela nota-chip-mini">★ ${formatarNota(notaEla)}</span>` : ""}
+                            ${pontoConcluido}
                         </span>
                     `
-                    : ""
+                    : pontoConcluido
             }
         </div>
 
@@ -1106,6 +1117,12 @@ function criarCardContinuar(item, indice) {
     const infoTopo = selarInfoTopo(item);
     const { notaEu, notaEla } = lerNotasDoItem(item);
 
+    const temNotaEu = notaEu > 0;
+    const temNotaEla = notaEla > 0;
+    const temAlgumaNota = temNotaEu || temNotaEla;
+    const pontoConcluido = "";
+
+
     card.innerHTML = `
 
         <div class="assistido-capa">
@@ -1130,6 +1147,17 @@ function criarCardContinuar(item, indice) {
 
         <div class="assistido-info">
             ${item.ano ? `<span class="assistido-ano">${item.ano}</span>` : ""}
+            ${
+                temAlgumaNota
+                    ? `
+                        <span class="assistido-notas-info">
+                            ${temNotaEu ? `<span class="nota-chip nota-chip-eu nota-chip-mini">★ ${formatarNota(notaEu)}</span>` : ""}
+                            ${temNotaEla ? `<span class="nota-chip nota-chip-ela nota-chip-mini">★ ${formatarNota(notaEla)}</span>` : ""}
+                            ${pontoConcluido}
+                        </span>
+                    `
+                    : pontoConcluido
+            }
         </div>
 
     `;
@@ -1801,3 +1829,5 @@ function soltarConfete() {
 
 }
 carregarAssistidos();
+
+})();

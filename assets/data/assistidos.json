@@ -28,7 +28,6 @@
             "b": 35
         },
         "aura": "#480304",
-        "tempAssistida": 5,
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -286,14 +285,18 @@
         "ano": null,
         "anoAssistido": 2025,
         "capa": "assets/images/assistidos/assistido-1786911767051.webp",
-        "notaEu": 10,
-        "notaEla": 8,
-        "memoria": "",
         "cor": {
             "r": 75,
             "g": 81,
             "b": 106
-        }
+        },
+        "aura": "#3a5877",
+        "tempAssistida": 2,
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 8,
+        "memoria": ""
     },
     {
         "id": "frieren",
@@ -307,6 +310,8 @@
             "g": 175,
             "b": 153
         },
+        "aura": "#8bd9f8",
+        "tempAssistida": 2,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -325,7 +330,8 @@
             "g": 82,
             "b": 49
         },
-        "status": "assistido",
+        "aura": "#e04300",
+        "status": "concluido",
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
@@ -339,7 +345,7 @@
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786911888643.jpg",
         "cor": null,
-        "status": "assistido",
+        "status": "concluido",
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
@@ -358,6 +364,7 @@
             "b": 105
         },
         "aura": "branca",
+        "tempAssistida": 1,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -796,7 +803,8 @@
             "g": 46,
             "b": 64
         },
-        "status": "assistido",
+        "aura": "#572437",
+        "status": "concluido",
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
@@ -817,7 +825,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 1,
-            "episodio": 3,
+            "episodio": 11,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -838,6 +846,26 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "tonikawa-over-the-moon-for-you",
+        "categoria": "queremos",
+        "titulo": "Tonikawa: Over The Moon For You",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792212677289.webp",
+        "cor": {
+            "r": 67,
+            "g": 99,
+            "b": 124
+        },
+        "tipo": "animes",
+        "previewTexto": "https://www.tiktok.com/@animeu_edits/video/7683682570776710420?is_from_webapp=1&sender_device=pc",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]
