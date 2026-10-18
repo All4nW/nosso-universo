@@ -122,6 +122,8 @@
     let estrelas = [];
     let bokehs = [];
     let flutuantes = [];
+    let brilhos = [];
+    let subindo = [];
     let cadentes = [];
     let proximaCadente = 3.5;
     let explosao = [];
@@ -290,7 +292,7 @@
         particulas = [];
 
         const N_CONTORNO = DISPOSITIVO_LEVE ? 150 : 220;
-        const N_MIOLO = DISPOSITIVO_LEVE ? 130 : 200;
+        const N_MIOLO = DISPOSITIVO_LEVE ? 230 : 380;
 
         // ---- contorno: aparece conforme as faíscas sobem pelos dois lados ----
         const colocados = [];
@@ -316,7 +318,7 @@
 
         // ---- miolo: floresce do centro pra fora ----
         const colocadosMiolo = [];
-        const gapM = 30 * fatorGap;
+        const gapM = 19 * fatorGap;
 
         let tentativas = 0;
         let criados = 0;
@@ -346,7 +348,7 @@
         // ---- estrelas ----
         estrelas = [];
 
-        const nEstrelas = DISPOSITIVO_LEVE ? 38 : 80;
+        const nEstrelas = DISPOSITIVO_LEVE ? 70 : 150;
 
         for (let i = 0; i < nEstrelas; i++) {
 
@@ -365,7 +367,7 @@
 
         const cores = [[240, 140, 192], [150, 130, 255], [110, 170, 255]];
 
-        const nBokeh = DISPOSITIVO_LEVE ? 5 : 10;
+        const nBokeh = 0;   // as bolas foram removidas
 
         for (let i = 0; i < nBokeh; i++) {
 
@@ -381,22 +383,40 @@
 
         }
 
+        // ---- brilhos em cruz (piscam como estrelas de cinema) ----
+        brilhos = [];
+
+        const nBrilhos = DISPOSITIVO_LEVE ? 7 : 14;
+
+        for (let i = 0; i < nBrilhos; i++) {
+
+            brilhos.push({
+                x: Math.random() * largura,
+                y: Math.random() * altura,
+                tam: 7 + Math.random() * 10,
+                fase: Math.random() * Math.PI * 2,
+                vel: 0.5 + Math.random() * 0.9,
+                cor: escolher(['255,255,255', '246,179,214', '190,170,255'])
+            });
+
+        }
+
         // ---- coraçõezinhos subindo ----
         flutuantes = [];
 
-        const nFlutuantes = DISPOSITIVO_LEVE ? 8 : 16;
+        const nFlutuantes = DISPOSITIVO_LEVE ? 18 : 34;
 
         for (let i = 0; i < nFlutuantes; i++) {
 
             flutuantes.push({
                 x: Math.random() * largura,
                 y: Math.random() * altura,
-                tam: 3 + Math.random() * 5,
+                tam: 3 + Math.random() * 6.5,
                 vy: 10 + Math.random() * 16,
                 fase: Math.random() * Math.PI * 2,
                 balanco: 8 + Math.random() * 18,
                 cor: escolher(['#f6b3d6', '#f08cc0', '#c9a7f5']),
-                alpha: 0.12 + Math.random() * 0.22
+                alpha: 0.16 + Math.random() * 0.30
             });
 
         }
@@ -606,6 +626,7 @@
         const intro = easeOut(clamp((tempo - 0.6) / 1.5, 0, 1));
 
         ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
 
         flutuantes.forEach((f) => {
 
@@ -614,12 +635,25 @@
             if (f.y < -20) { f.y = altura + 20; f.x = Math.random() * largura; }
 
             const x = f.x + Math.sin(tempo * 0.8 + f.fase) * f.balanco;
+            const girar = Math.sin(tempo * 0.9 + f.fase) * 0.35;
 
-            ctx.globalAlpha = f.alpha * intro * alphaGrupo;
             ctx.fillStyle = f.cor;
 
-            formaCoracao(ctx, x, f.y, f.tam);
+            ctx.save();
+            ctx.translate(x, f.y);
+            ctx.rotate(girar);
+
+            // brilho atrás
+            ctx.globalAlpha = f.alpha * 0.35 * intro * alphaGrupo;
+            formaCoracao(ctx, 0, 0, f.tam * 1.9);
             ctx.fill();
+
+            // o coração
+            ctx.globalAlpha = f.alpha * intro * alphaGrupo;
+            formaCoracao(ctx, 0, 0, f.tam);
+            ctx.fill();
+
+            ctx.restore();
 
         });
 
@@ -629,16 +663,21 @@
 
     function desenharCadentes(dt) {
 
-        if (!REDUZIR && tempo > proximaCadente && cadentes.length < 2) {
+        if (!REDUZIR && tempo > proximaCadente && cadentes.length < 4) {
 
-            proximaCadente = tempo + 3 + Math.random() * 5;
+            proximaCadente = tempo + 1.2 + Math.random() * 2.6;
+
+            const grande = Math.random() < 0.22;
+            const fator = grande ? 1.25 : 1;
 
             cadentes.push({
-                x: largura * (0.3 + Math.random() * 0.8),
-                y: -20 + Math.random() * altura * 0.25,
-                vx: -(260 + Math.random() * 200),
-                vy: 170 + Math.random() * 110,
-                comp: 90 + Math.random() * 90,
+                x: largura * (0.25 + Math.random() * 0.85),
+                y: -20 + Math.random() * altura * 0.3,
+                vx: -(280 + Math.random() * 240) * fator,
+                vy: (170 + Math.random() * 120) * fator,
+                comp: grande ? 170 + Math.random() * 90 : 80 + Math.random() * 80,
+                larg: grande ? 2.8 : 1.6,
+                cor: escolher([[255, 235, 250], [255, 226, 190], [200, 220, 255]]),
                 vida: 1
             });
 
@@ -656,7 +695,7 @@
             c.y += c.vy * dt;
             c.vida -= dt * 0.55;
 
-            if (c.vida <= 0 || c.y > altura + 40 || c.x < -200) {
+            if (c.vida <= 0 || c.y > altura + 40 || c.x < -240) {
                 cadentes.splice(i, 1);
                 continue;
             }
@@ -665,19 +704,131 @@
             const caudaX = c.x - Math.cos(ang) * c.comp;
             const caudaY = c.y - Math.sin(ang) * c.comp;
 
+            const [r, g, b] = c.cor;
+
             const grad = ctx.createLinearGradient(c.x, c.y, caudaX, caudaY);
 
-            grad.addColorStop(0, `rgba(255,235,250,${c.vida})`);
-            grad.addColorStop(1, 'rgba(180,200,255,0)');
+            grad.addColorStop(0, `rgba(${r},${g},${b},${c.vida})`);
+            grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
             ctx.strokeStyle = grad;
-            ctx.lineWidth = 1.8;
+            ctx.lineWidth = c.larg;
             ctx.globalAlpha = alphaGrupo;
 
             ctx.beginPath();
             ctx.moveTo(c.x, c.y);
             ctx.lineTo(caudaX, caudaY);
             ctx.stroke();
+
+            // brilho na cabeça do cometa
+            ctx.globalAlpha = c.vida * alphaGrupo;
+            brilhoPonto(c.x, c.y, c.larg * 7, c.vida);
+
+        }
+
+        ctx.restore();
+
+    }
+
+    // estrelinhas em cruz que piscam
+    function desenharBrilhos() {
+
+        const intro = easeOut(clamp((tempo - 0.4) / 1.4, 0, 1));
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        brilhos.forEach((b) => {
+
+            const p = Math.pow(Math.max(0, Math.sin(tempo * b.vel + b.fase)), 3);
+
+            if (p < 0.02) return;
+
+            const t = b.tam * (0.4 + 0.6 * p);
+
+            ctx.globalAlpha = p * 0.9 * intro * alphaGrupo;
+
+            const gh = ctx.createLinearGradient(b.x - t, 0, b.x + t, 0);
+
+            gh.addColorStop(0, `rgba(${b.cor},0)`);
+            gh.addColorStop(0.5, `rgba(${b.cor},1)`);
+            gh.addColorStop(1, `rgba(${b.cor},0)`);
+
+            ctx.fillStyle = gh;
+            ctx.fillRect(b.x - t, b.y - 0.6, t * 2, 1.2);
+
+            const gv = ctx.createLinearGradient(0, b.y - t, 0, b.y + t);
+
+            gv.addColorStop(0, `rgba(${b.cor},0)`);
+            gv.addColorStop(0.5, `rgba(${b.cor},1)`);
+            gv.addColorStop(1, `rgba(${b.cor},0)`);
+
+            ctx.fillStyle = gv;
+            ctx.fillRect(b.x - 0.6, b.y - t, 1.2, t * 2);
+
+            ctx.fillStyle = `rgba(${b.cor},1)`;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+
+        });
+
+        ctx.restore();
+
+    }
+
+    // a cada batida, saem coraçõezinhos do contorno e sobem
+    function soltarCoracoes() {
+
+        if (REDUZIR) return;
+
+        const n = DISPOSITIVO_LEVE ? 4 : 8;
+
+        for (let i = 0; i < n; i++) {
+
+            const t = Math.random() * Math.PI * 2;
+            const b = heartXY(t);
+            const p = paraTela(b.x, b.y);
+
+            subindo.push({
+                x: p.sx,
+                y: p.sy,
+                vx: (Math.random() - 0.5) * 24,
+                vy: -(26 + Math.random() * 34),
+                tam: 3 + Math.random() * 4.5,
+                vida: 1,
+                dec: 0.3 + Math.random() * 0.25,
+                fase: Math.random() * Math.PI * 2,
+                cor: escolher(['#f6b3d6', '#f08cc0', '#ffd6ec'])
+            });
+
+        }
+
+    }
+
+    function desenharCoracoesSubindo(dt) {
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (let i = subindo.length - 1; i >= 0; i--) {
+
+            const h = subindo[i];
+
+            h.y += h.vy * dt;
+            h.x += h.vx * dt + Math.sin(tempo * 2 + h.fase) * 0.3;
+            h.vida -= h.dec * dt;
+
+            if (h.vida <= 0) {
+                subindo.splice(i, 1);
+                continue;
+            }
+
+            ctx.globalAlpha = Math.min(1, h.vida * 1.4) * 0.85 * alphaGrupo;
+            ctx.fillStyle = h.cor;
+
+            formaCoracao(ctx, h.x, h.y, h.tam * (0.8 + 0.2 * h.vida));
+            ctx.fill();
 
         }
 
@@ -899,7 +1050,7 @@
 
             const fase = ((tempo - T_FORMADO) % PERIODO) / PERIODO;
 
-            if (fase < ultimaFase) ondas.push(tempo);
+            if (fase < ultimaFase) { ondas.push(tempo); soltarCoracoes(); }
 
             ultimaFase = fase;
 
@@ -1201,11 +1352,13 @@
         desenharEstrelas(dt);
         desenharBokeh(dt);
         desenharFlutuantes(dt);
+        desenharBrilhos();
         desenharCadentes(dt);
         desenharPonteiro();
 
         desenharGrupo();
         desenharOndas();
+        desenharCoracoesSubindo(dt);
 
         desenharTitulo();
         desenharExplosao(dt);
