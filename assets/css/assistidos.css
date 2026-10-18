@@ -4939,3 +4939,102 @@ body.sorteio-aberto { overflow: hidden; }
     }
 
 }
+
+/* =========================================================
+   SORTEIO — tela mais limpa
+   ========================================================= */
+
+/* contador de quantidade: menor, não é o ponto principal */
+.sorteio-contador {
+    gap: 14px;
+}
+
+.sorteio-mais-menos {
+    width: 32px;
+    height: 32px;
+
+    font-size: 1.1rem;
+}
+
+.sorteio-numero {
+    width: 64px;
+
+    padding-bottom: 4px;
+
+    font-size: 2.3rem;
+}
+
+.sorteio-max {
+    margin-top: 6px;
+
+    font-size: 0.64rem;
+}
+
+/* "Escolha tudo ou um gênero": maior, com uma linha separando do resto */
+.sorteio-grupo-genero {
+    margin-top: 30px;
+}
+
+.sorteio-grupo-genero::before {
+    content: "";
+
+    display: block;
+
+    width: min(420px, 88%);
+    height: 1px;
+
+    margin: 0 auto 26px;
+
+    background: linear-gradient(90deg, transparent, rgba(240, 140, 192, 0.5), transparent);
+}
+
+.sorteio-rotulo-grande {
+    margin-bottom: 16px;
+
+    font-size: 0.88rem;
+    letter-spacing: 3px;
+
+    color: #f6b3d6;
+}
+
+/* =========================================================
+   SORTEIO — números das opções bem visíveis
+   ========================================================= */
+
+.sorteio-opcoes button {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.sorteio-opcoes button .sorteio-qtd,
+.sorteio-opcoes button small {
+    display: inline-grid;
+    place-items: center;
+
+    min-width: 28px;
+    height: 28px;
+
+    padding: 0 8px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(246, 179, 214, 0.6);
+
+    background: rgba(240, 140, 192, 0.22);
+
+    color: #fff;
+
+    /* fonte reta e números alinhados, sem o estilo "baixinho" do itálico */
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-style: normal;
+    font-weight: 800;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
+    line-height: 1;
+
+    opacity: 1;
+
+    text-shadow: 0 1px 2px rgba(0, 0, 0,

@@ -1784,7 +1784,6 @@ function sorteioTelaOpcoes() {
     const naLista = itensLista.filter(({ i }) => !sorteioExcluidos.has(i)).length;
 
     caixa.innerHTML = `
-        <p class="sorteio-eyebrow"><i>✦</i> nossa lista <i>✦</i></p>
         <h2 class="sorteio-titulo">O que vamos ver?</h2>
 
         <div class="sorteio-ornamento" aria-hidden="true"><span>♥</span></div>
@@ -1806,8 +1805,8 @@ function sorteioTelaOpcoes() {
         </div>
 
         ${temTipos ? `
-            <div class="sorteio-grupo">
-                <span class="sorteio-rotulo">Escolha tudo ou um gênero</span>
+            <div class="sorteio-grupo sorteio-grupo-genero">
+                <span class="sorteio-rotulo sorteio-rotulo-grande">Escolha tudo ou um gênero</span>
                 <div class="sorteio-opcoes">
                     ${tipos.map(([valor, nome]) => `
                         <button type="button" data-tipo="${valor}"

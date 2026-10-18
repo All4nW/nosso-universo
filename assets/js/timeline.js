@@ -329,12 +329,18 @@ function criarItemTimeline(
             ${avatarHtml}
 
             ${
-                ehFuturo
+                ehFuturo && item.tipo === "Sonho"
                     ? `
                         <span class="timeline-badge-futuro">
                             💗 Um sonho a caminho
                         </span>
+                    `
+                    : ""
+            }
 
+            ${
+                ehFuturo
+                    ? `
                         <span
                             class="timeline-contagem"
                             data-alvo="${alvoContagem}"
