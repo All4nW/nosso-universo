@@ -824,8 +824,8 @@
         },
         "status": "assistindo",
         "progresso": {
-            "temporada": 1,
-            "episodio": 11,
+            "temporada": 2,
+            "episodio": 2,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -861,7 +861,141 @@
             "b": 124
         },
         "tipo": "animes",
-        "previewTexto": "https://www.tiktok.com/@animeu_edits/video/7683682570776710420?is_from_webapp=1&sender_device=pc",
+        "previewTexto": "Tonikawa é a comédia romântica mais direta e fofa que você vai encontrar. A história acompanha Nasa Yuzaki, um garoto genial que, no dia de seu vestibular, se apaixona à primeira vista por uma garota misteriosa chamada Tsukasa. Distraído pela beleza dela, ele atravessa a rua e é atropelado por um caminhão.\nTsukasa salva a vida dele usando suas próprias forças (em uma cena bem misteriosa). Mesmo todo ensanguentado e com as pernas quebradas, Nasa corre atrás dela e se declara. Tsukasa aceita os sentimentos dele, mas com uma condição: \"Eu saio com você, se nós nos casarmos\".\nAnos depois, no dia em que Nasa completa 18 anos, Tsukasa bate na porta dele com os papéis do casamento. Eles se casam logo no primeiro episódio! A partir daí, o anime é puramente sobre a rotina engraçada, inocente e fofa deles descobrindo como é a vida de casados, enquanto um mistério sobrenatural sobre o passado de Tsukasa fica no ar.",
+        "links": [
+            {
+                "nome": "TikTok",
+                "url": "https://www.tiktok.com/@animeu_edits/video/7683682570776710420?is_from_webapp=1&sender_device=pc"
+            }
+        ],
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "the-fragrant-flower-blooms",
+        "categoria": "queremos",
+        "titulo": "The Fragrant Flower Blooms",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792288135653.webp",
+        "cor": {
+            "r": 129,
+            "g": 166,
+            "b": 192
+        },
+        "tipo": "animes",
+        "previewTexto": "The Fragrant Flower Blooms with Dignity é um romance de 13 episódios focado em superar preconceitos. A história funciona como uma versão moderna, madura e sem tragédia de Romeu e Julieta.\nAqui está o resumo detalhado da trama:\n\nO anime é sobre um cara com cara de delinquente (mas que é um amor de pessoa) e uma patricinha de uma escola de elite super gentil. As escolas deles se odeiam e todo mundo tem preconceito, mas os dois se conhecem numa confeitaria, se apaixonam e decidem mandar o julgamento dos outros à merda para ficarem juntos.",
+        "links": [
+            {
+                "nome": "TikTok",
+                "url": "https://www.tiktok.com/@lotyy00/video/7675774158457949458?is_from_webapp=1&sender_device=pc"
+            }
+        ],
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "your-name",
+        "categoria": "queremos",
+        "titulo": "Your Name",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792289592849.jpg",
+        "cor": {
+            "r": 79,
+            "g": 153,
+            "b": 194
+        },
+        "tipo": "animes",
+        "previewTexto": "Your Name acompanha Mitsuha, uma garota do interior, e Taki, um rapaz da cidade grande, que começam a trocar de corpo misteriosamente enquanto dormem.\n\nNo início, eles se divertem tentando viver a rotina um do outro e deixando regras e bilhetes no celular. Mas a história muda completamente quando a troca de corpos para de acontecer do nada. Taki decide procurar a cidade de Mitsuha e descobre um mistério sobrenatural gigantesco: um cometa caiu na cidade dela há 3 anos, destruindo tudo.\n\nA partir daí, o filme vira uma corrida emocionante contra o próprio tempo e o destino, onde os dois tentam se conectar através de linhas temporais diferentes para salvar a vida de Mitsuha e finalmente se encontrarem de verdade.",
+        "links": [
+            {
+                "nome": "TikTok",
+                "url": "https://www.tiktok.com/@japaedits_lg/video/7664726960177827080?is_from_webapp=1&sender_device=pc"
+            }
+        ],
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "o-castelo-animado",
+        "categoria": "queremos",
+        "titulo": "O Castelo Animado",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792290163081.webp",
+        "cor": {
+            "r": 70,
+            "g": 138,
+            "b": 153
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "a-viagem-de-chihiro",
+        "categoria": "queremos",
+        "titulo": "A Viagem de Chihiro",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792290265954.webp",
+        "cor": {
+            "r": 148,
+            "g": 91,
+            "b": 75
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "princesa-mononoke",
+        "categoria": "queremos",
+        "titulo": "Princesa Mononoke",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792290321673.jpg",
+        "cor": {
+            "r": 133,
+            "g": 128,
+            "b": 110
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "o-servico-de-entregas-da-kiki",
+        "categoria": "queremos",
+        "titulo": "O Serviço de Entregas da Kiki",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792290345842.webp",
+        "cor": {
+            "r": 63,
+            "g": 104,
+            "b": 121
+        },
+        "tipo": "animes",
         "status": null,
         "progresso": null,
         "notaEu": null,

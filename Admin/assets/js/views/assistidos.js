@@ -1089,7 +1089,18 @@ function extrairPaletaAdmin(src) {
 
 function adicionarLinhaLink(nome = "", url = "") {
 
-    const lista = document.getElementById("assistidos-links-lista");
+    let lista = document.getElementById("assistidos-links-lista");
+
+    // se a caixinha da lista não existir no HTML, cria na hora
+    if (!lista) {
+
+        lista = document.createElement("div");
+
+        lista.id = "assistidos-links-lista";
+
+        document.getElementById("assistidos-links-add")?.before(lista);
+
+    }
 
     const linha = document.createElement("div");
 
@@ -1114,6 +1125,8 @@ function adicionarLinhaLink(nome = "", url = "") {
     lista.appendChild(linha);
 
 }
+
+window.adicionarLinhaLink = adicionarLinhaLink;
 
 function lerLinksDoForm() {
 

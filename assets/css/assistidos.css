@@ -4531,3 +4531,411 @@ body.sorteio-aberto { overflow: hidden; }
     50% { filter: drop-shadow(0 0 7px rgba(110, 231, 160, 0.95)); }
 
 }
+
+/* =========================================================
+   AINDA QUEREMOS — "Ler mais" e links no texto
+   ========================================================= */
+
+.assistido-queremos-texto {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+
+    overflow: hidden;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* esmaece o fim quando o texto está cortado */
+.assistido-queremos-texto.cortado:not(.expandido) {
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+    mask-image: linear-gradient(180deg, #000 60%, transparent);
+}
+
+.assistido-queremos-texto.expandido {
+    display: block;
+
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+
+    overflow: visible;
+}
+
+.assistido-queremos-mais {
+    margin-top: 8px;
+    padding: 4px 2px;
+
+    border: 0;
+    background: none;
+
+    color: #f6b3d6;
+
+    font-family: var(--font-body);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    text-decoration: underline dotted;
+    text-underline-offset: 4px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.assistido-queremos-mais:hover {
+    color: #fff;
+}
+
+.assistido-queremos-mais[hidden] {
+    display: none;
+}
+
+/* link colado no meio do texto */
+.assistido-queremos-inline {
+    display: inline-block;
+
+    padding: 0 10px;
+
+    border-radius: 999px;
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.28);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-style: normal;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: background 0.3s ease;
+}
+
+.assistido-queremos-inline:hover {
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.5);
+}
+
+@media (max-width: 640px) {
+
+    .assistido-queremos-texto {
+        -webkit-line-clamp: 7;
+        line-clamp: 7;
+
+        font-size: 1.08rem;
+    }
+
+}
+/* =========================================================
+   SORTEIO — "tirar algum do sorteio"
+   ========================================================= */
+
+.sorteio button {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* número ao lado do nome (Tudo 15, Filmes 5...) */
+.sorteio-qtd {
+    margin-left: 4px;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-style: normal;
+
+    opacity: 0.6;
+}
+
+.sorteio-excluir {
+    margin-bottom: 26px;
+}
+
+/* botão que abre e fecha a lista */
+.sorteio-lista-toggle {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px 20px;
+
+    border: 1px solid rgba(240, 140, 192, 0.3);
+    border-radius: 999px;
+
+    background: none;
+
+    color: rgba(228, 214, 250, 0.7);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.sorteio-lista-toggle:hover,
+.sorteio-lista-toggle.aberta {
+    border-color: rgba(240, 140, 192, 0.7);
+
+    background: rgba(240, 140, 192, 0.08);
+
+    color: #fff;
+}
+
+.sorteio-lista-fora {
+    padding: 1px 10px;
+
+    border-radius: 999px;
+
+    background: rgba(240, 140, 192, 0.22);
+
+    color: #f6b3d6;
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.sorteio-lista-seta {
+    font-size: 0.8rem;
+    font-style: normal;
+
+    transition: transform 0.3s ease;
+}
+
+.sorteio-lista-toggle.aberta .sorteio-lista-seta {
+    transform: rotate(180deg);
+}
+
+/* a caixa da lista */
+.sorteio-lista-caixa {
+    width: min(520px, 100%);
+
+    margin: 14px auto 0;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(240, 140, 192, 0.18);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    text-align: left;
+}
+
+.sorteio-lista-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 12px 16px;
+
+    border-bottom: 1px solid rgba(240, 140, 192, 0.12);
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+
+    color: rgba(228, 214, 250, 0.6);
+}
+
+.sorteio-link-mini {
+    padding: 0;
+
+    border: 0;
+    background: none;
+
+    color: #f6b3d6;
+
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+
+    cursor: pointer;
+}
+
+.sorteio-link-mini:hover {
+    color: #fff;
+}
+
+/* a lista rola por dentro, a tela não cresce */
+.sorteio-lista {
+    max-height: min(46vh, 360px);
+
+    padding: 6px;
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 140, 192, 0.3) transparent;
+}
+
+.sorteio-linha {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 7px 10px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: none;
+
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.25s ease;
+}
+
+.sorteio-linha:hover {
+    background: rgba(240, 140, 192, 0.08);
+}
+
+/* capinha pequena (era aqui que as imagens estouravam) */
+.sorteio-linha-capa {
+    flex: none;
+
+    width: 34px;
+    height: 50px;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+
+    background: linear-gradient(145deg, rgba(111, 58, 173, 0.75), rgba(25, 50, 100, 0.8));
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.sorteio-linha-capa img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.sorteio-linha-nome {
+    flex: 1;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    font-weight: 700;
+
+    color: #fff;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sorteio-linha-tipo {
+    flex: none;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    color: rgba(228, 214, 250, 0.45);
+}
+
+.sorteio-linha-marca {
+    flex: none;
+
+    display: grid;
+    place-items: center;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #c15f9d, #8e4fb8);
+
+    color: #fff;
+
+    font-size: 0.68rem;
+}
+
+/* item que foi tirado do sorteio */
+.sorteio-linha.fora .sorteio-linha-capa img {
+    filter: grayscale(1);
+
+    opacity: 0.35;
+}
+
+.sorteio-linha.fora .sorteio-linha-nome {
+    color: rgba(228, 214, 250, 0.4);
+
+    text-decoration: line-through;
+    text-decoration-color: rgba(240, 140, 192, 0.6);
+}
+
+.sorteio-linha.fora .sorteio-linha-marca {
+    background: rgba(255, 255, 255, 0.08);
+
+    color: rgba(228, 214, 250, 0.6);
+}
+
+.sorteio-aviso {
+    margin: 0 0 14px;
+
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+
+    color: #f6b3d6;
+}
+
+/* botão Sortear desligado (todos foram tirados) */
+.sorteio-go:disabled {
+    opacity: 0.4;
+
+    box-shadow: none;
+
+    cursor: default;
+
+    transform: none;
+}
+
+.sorteio-go:disabled::before {
+    display: none;
+}
+
+@media (max-width: 420px) {
+
+    .sorteio-linha-tipo {
+        display: none;
+    }
+
+}

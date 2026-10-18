@@ -1789,3 +1789,261 @@ body.modal-aberto {
     position: relative;
     z-index: 1;
 }
+
+/* =========================================================
+   TIMELINE — visual refeito (rodada 1, só CSS)
+   ========================================================= */
+
+/* ---- Título da página ---- */
+
+.view[data-view="timeline"] .section-title {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+
+    background: linear-gradient(100deg, #ffe6c2, #f6b3d6 45%, #e3a6ff 75%, #f6b3d6);
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    filter: drop-shadow(0 0 22px rgba(246, 179, 214, 0.3));
+
+    animation: timeline-titulo-brilho 8s ease-in-out infinite;
+}
+
+@keyframes timeline-titulo-brilho {
+
+    0%, 100% { background-position: 0% 50%; }
+
+    50% { background-position: 100% 50%; }
+
+}
+
+
+/* ---- A linha: mais viva, com uma faísca descendo ---- */
+
+.timeline-container::before {
+    width: 3px;
+
+    border-radius: 3px;
+
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(201, 167, 245, 0.9) 8%,
+        rgba(245, 194, 209, 0.9) 50%,
+        rgba(201, 167, 245, 0.9) 92%,
+        transparent
+    );
+
+    box-shadow: 0 0 16px rgba(201, 167, 245, 0.45);
+}
+
+.timeline-container::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 9px;
+    height: 9px;
+
+    margin-left: -4.5px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow: 0 0 12px 4px rgba(246, 179, 214, 0.85);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    animation: timeline-faisca 10s ease-in-out infinite;
+}
+
+@keyframes timeline-faisca {
+
+    0%   { top: 0; opacity: 0; }
+
+    8%   { opacity: 1; }
+
+    92%  { opacity: 1; }
+
+    100% { top: 100%; opacity: 0; }
+
+}
+
+
+/* ---- Marcadores: em cima da linha, com anel pulsando ---- */
+
+.timeline-marker::after {
+    content: "";
+
+    position: absolute;
+    inset: -4px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.55);
+
+    animation: timeline-anel 3.2s ease-out infinite;
+}
+
+@keyframes timeline-anel {
+
+    0%   { transform: scale(0.8); opacity: 0.9; }
+
+    70%, 100% { transform: scale(1.9); opacity: 0; }
+
+}
+
+@media (min-width: 641px) {
+
+    /* centraliza a bolinha exatamente sobre a linha */
+    .timeline-item-esquerda .timeline-marker { right: -47px; }
+
+    .timeline-item-direita .timeline-marker { left: -47px; }
+
+    /* fio ligando o card à bolinha */
+    .timeline-item-esquerda::after,
+    .timeline-item-direita::after {
+        content: "";
+
+        position: absolute;
+        top: 12px;
+
+        width: 33px;
+        height: 2px;
+
+        pointer-events: none;
+    }
+
+    .timeline-item-esquerda::after {
+        left: 100%;
+
+        background: linear-gradient(90deg, rgba(201, 167, 245, 0.55), rgba(201, 167, 245, 0.12));
+    }
+
+    .timeline-item-direita::after {
+        right: 100%;
+
+        background: linear-gradient(270deg, rgba(201, 167, 245, 0.55), rgba(201, 167, 245, 0.12));
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .timeline-container::after { left: 22px; }
+
+}
+
+
+/* ---- Cards: vidro, profundidade e foto que reage ---- */
+
+.timeline-card {
+    position: relative;
+
+    border-radius: 18px;
+
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02));
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.timeline-item:hover .timeline-card {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.45),
+        0 0 32px rgba(201, 167, 245, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.timeline-card-thumb {
+    position: relative;
+
+    border-radius: 12px;
+}
+
+.timeline-card-thumb img {
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-item:hover .timeline-card-thumb img {
+    transform: scale(1.06);
+}
+
+/* véu suave embaixo da foto */
+.timeline-card-thumb::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(180deg, transparent 60%, rgba(10, 6, 24, 0.4));
+
+    pointer-events: none;
+}
+
+/* no "sonho a caminho" o contador já ocupa esse lugar */
+.timeline-item-futuro .timeline-card::before {
+    display: none;
+}
+
+
+/* ---- Textos ---- */
+
+.timeline-card-data {
+    letter-spacing: 1.6px;
+}
+
+.timeline-card-titulo {
+    margin: 6px 0;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.timeline-card-resumo {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.45;
+
+    color: rgba(228, 214, 250, 0.78);
+}
+
+@media (max-width: 640px) {
+
+    .timeline-card-titulo { font-size: 1.32rem; }
+
+    .timeline-card-resumo { font-size: 1.02rem; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .view[data-view="timeline"] .section-title,
+    .timeline-container::after,
+    .timeline-marker::after {
+        animation: none;
+    }
+
+}

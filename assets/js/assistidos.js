@@ -1180,7 +1180,64 @@ function criarCardContinuar(item, indice) {
 // =====================================================
 // DETALHES (MODAL) — LAYOUT NOVO + COR AMBIENTE
 // =====================================================
+// transforma links colados no texto em botõezinhos clicáveis
+function linkificarTexto(textoEscapado) {
 
+    return textoEscapado.replace(/https?:\/\/[^\s<>"']+/g, (bruto) => {
+
+        // tira pontuação que ficou grudada no fim do link
+        const sobra = bruto.match(/[.,;:!?)\]]+$/);
+        const fim = sobra ? sobra[0] : "";
+        const url = fim ? bruto.slice(0, -fim.length) : bruto;
+
+        let rotulo = url;
+
+        try {
+            rotulo = new URL(url.replace(/&amp;/g, "&")).hostname.replace(/^www\./, "");
+        } catch (erro) { /* deixa a url inteira mesmo */ }
+
+        return `<a class="assistido-queremos-inline" href="${url}" target="_blank" rel="noopener noreferrer">${rotulo} ↗</a>${fim}`;
+
+    });
+
+}
+
+// mostra "Ler mais" só quando o texto passa do limite
+function ativarLerMaisAssistido() {
+
+    const texto = document.querySelector("#modal-descricao .assistido-queremos-texto");
+    const botao = document.querySelector("#modal-descricao .assistido-queremos-mais");
+
+    if (!texto || !botao) return;
+
+    const medir = () => {
+
+        if (texto.classList.contains("expandido")) return;
+
+        const passou = texto.scrollHeight > texto.clientHeight + 2;
+
+        botao.hidden = !passou;
+
+        texto.classList.toggle("cortado", passou);
+
+    };
+
+    botao.addEventListener("click", () => {
+
+        const aberto = texto.classList.toggle("expandido");
+
+        botao.textContent = aberto ? "Ler menos ▴" : "Ler mais ▾";
+
+        botao.setAttribute("aria-expanded", String(aberto));
+
+    });
+
+    requestAnimationFrame(medir);
+
+    // as fontes podem chegar depois: mede de novo
+    setTimeout(medir, 250);
+
+}
 function abrirDetalhesAssistido(item, dados) {
 
     const { notaEu, notaEla, ehListaFutura, ehContinuar = false } = dados;
@@ -1213,7 +1270,8 @@ function abrirDetalhesAssistido(item, dados) {
 
                 ${
                     texto
-                        ? `<p class="assistido-queremos-texto">${escaparHTML(texto)}</p>`
+                        ? `<p class="assistido-queremos-texto">${linkificarTexto(escaparHTML(texto))}</p>
+                           <button type="button" class="assistido-queremos-mais" hidden aria-expanded="false">Ler mais ▾</button>`
                         : `<p class="assistido-queremos-texto assistido-queremos-vazio">Ainda sem resumo por aqui. ❤️</p>`
                 }
 
@@ -1243,7 +1301,7 @@ function abrirDetalhesAssistido(item, dados) {
         });
 
         aplicarCorDoItem(item);
-
+        ativarLerMaisAssistido();
         return;
 
     }
@@ -1545,6 +1603,9 @@ let sorteioJaSaiu = new Set();
 let sorteioEl = null;
 let sorteioTimer = null;
 
+let sorteioExcluidos = new Set();   // posições (em queremosCache) tiradas do sorteio
+let sorteioListaAberta = false;
+
 // lê o tipo (filmes / series / animes) do item da lista "queremos"
 function tipoDoQueremos(item) {
     return String(item.tipo ?? item.tipoMidia ?? item.categoriaOriginal ?? "").toLowerCase();
@@ -1605,27 +1666,55 @@ function criarSorteio() {
 
         const passo = evento.target.closest("[data-passo]");
         const tipo = evento.target.closest("[data-tipo]");
+        const linha = evento.target.closest("[data-ex]");
         const acao = evento.target.closest("[data-acao]");
         const carta = evento.target.closest("[data-carta]");
 
         if (passo) {
+
             const campo = sorteioEl.querySelector(".sorteio-numero");
             const maximo = Number(campo.max) || 1;
             const novo = Math.min(Math.max(1, (Number(campo.value) || 1) + Number(passo.dataset.passo)), maximo);
+
             sorteioConfig.qtd = novo;
             campo.value = novo;
+
         } else if (tipo) {
+
             sorteioConfig.tipo = tipo.dataset.tipo;
             sorteioTelaOpcoes();
+
+        } else if (linha) {
+
+            alternarExcluido(Number(linha.dataset.ex));
+
         } else if (acao) {
-            if (acao.dataset.acao === "sortear") fazerSorteio();
-            if (acao.dataset.acao === "opcoes") sorteioTelaOpcoes();
+
+            const qual = acao.dataset.acao;
+
+            if (qual === "sortear") fazerSorteio();
+            if (qual === "opcoes") sorteioTelaOpcoes();
+
+            if (qual === "lista") {
+                sorteioListaAberta = !sorteioListaAberta;
+                sorteioTelaOpcoes();
+            }
+
+            if (qual === "incluir-todos") {
+                sorteioExcluidos.clear();
+                sorteioTelaOpcoes();
+            }
+
         } else if (carta) {
+
             const item = sorteioUltimo[Number(carta.dataset.carta)];
+
             fecharSorteio();
+
             setTimeout(() => {
                 abrirDetalhesAssistido(item, { notaEu: 0, notaEla: 0, notaMedia: 0, ehListaFutura: true });
             }, 250);
+
         }
 
     });
@@ -1636,11 +1725,26 @@ function criarSorteio() {
 
 }
 
+function sorteioPassaTipo(item) {
+
+    return sorteioConfig.tipo === "todos" || tipoDoQueremos(item) === sorteioConfig.tipo;
+
+}
+
 function sorteioFiltrados() {
 
-    return sorteioConfig.tipo === "todos"
-        ? queremosCache.slice()
-        : queremosCache.filter(i => tipoDoQueremos(i) === sorteioConfig.tipo);
+    return queremosCache.filter((item, i) =>
+        !sorteioExcluidos.has(i) && sorteioPassaTipo(item)
+    );
+
+}
+
+function alternarExcluido(indice) {
+
+    if (sorteioExcluidos.has(indice)) sorteioExcluidos.delete(indice);
+    else sorteioExcluidos.add(indice);
+
+    sorteioTelaOpcoes();
 
 }
 
@@ -1648,18 +1752,36 @@ function sorteioTelaOpcoes() {
 
     const caixa = sorteioEl.querySelector(".sorteio-caixa");
 
+    // guarda a rolagem pra tela não pular quando atualiza
+    const rolagemCaixa = caixa.scrollTop;
+    const rolagemLista = caixa.querySelector(".sorteio-lista")?.scrollTop || 0;
+
+    // quantos de cada tipo ainda estão no sorteio (os tirados não contam)
     const contar = t =>
-        t === "todos"
-            ? queremosCache.length
-            : queremosCache.filter(i => tipoDoQueremos(i) === t).length;
+        queremosCache.filter((item, i) =>
+            !sorteioExcluidos.has(i) && (t === "todos" || tipoDoQueremos(item) === t)
+        ).length;
 
     const temTipos = queremosCache.some(i => tipoDoQueremos(i));
 
     const tipos = [["todos", "Tudo"], ["filmes", "Filmes"], ["series", "Séries"], ["animes", "Animes"]];
 
-    const maximo = Math.max(1, sorteioFiltrados().length);
+    const nomesTipo = { filmes: "Filme", series: "Série", animes: "Anime" };
+
+    const disponiveis = sorteioFiltrados().length;
+
+    const maximo = Math.max(1, disponiveis);
 
     sorteioConfig.qtd = Math.min(Math.max(1, sorteioConfig.qtd), maximo);
+
+    const fora = sorteioExcluidos.size;
+
+    // a tabelinha mostra os itens do tipo escolhido (inclusive os já tirados, pra dar pra voltar)
+    const itensLista = queremosCache
+        .map((item, i) => ({ item, i }))
+        .filter(({ item }) => sorteioPassaTipo(item));
+
+    const naLista = itensLista.filter(({ i }) => !sorteioExcluidos.has(i)).length;
 
     caixa.innerHTML = `
         <p class="sorteio-eyebrow"><i>✦</i> nossa lista <i>✦</i></p>
@@ -1668,7 +1790,7 @@ function sorteioTelaOpcoes() {
         <div class="sorteio-ornamento" aria-hidden="true"><span>♥</span></div>
 
         <div class="sorteio-grupo">
-            <span class="sorteio-rotulo">Quantos?</span>
+            <span class="sorteio-rotulo">Quantidade para sortear</span>
 
             <div class="sorteio-contador">
                 <button type="button" class="sorteio-mais-menos" data-passo="-1" aria-label="Menos um">−</button>
@@ -1680,25 +1802,70 @@ function sorteioTelaOpcoes() {
                 <button type="button" class="sorteio-mais-menos" data-passo="1" aria-label="Mais um">+</button>
             </div>
 
-            <small class="sorteio-max">de ${maximo} na lista</small>
+            <small class="sorteio-max">${disponiveis ? `de ${disponiveis} no sorteio` : "nada disponível agora"}</small>
         </div>
 
         ${temTipos ? `
             <div class="sorteio-grupo">
-                <span class="sorteio-rotulo">De quê?</span>
+                <span class="sorteio-rotulo">Escolha tudo ou um gênero</span>
                 <div class="sorteio-opcoes">
                     ${tipos.map(([valor, nome]) => `
                         <button type="button" data-tipo="${valor}"
                                 class="${sorteioConfig.tipo === valor ? "ativa" : ""}"
                                 ${contar(valor) ? "" : "disabled"}>
-                            ${nome} <small>${contar(valor)}</small>
+                            <span>${nome}</span>
+                            <span class="sorteio-qtd">${contar(valor)}</span>
                         </button>
                     `).join("")}
                 </div>
             </div>
         ` : ""}
 
-        <button type="button" class="sorteio-go" data-acao="sortear">
+        <div class="sorteio-grupo sorteio-excluir">
+
+            <button type="button" class="sorteio-lista-toggle ${sorteioListaAberta ? "aberta" : ""}"
+                    data-acao="lista" aria-expanded="${sorteioListaAberta}">
+                <span>Tirar algum do sorteio</span>
+                ${fora ? `<span class="sorteio-lista-fora">${fora} fora</span>` : ""}
+                <span class="sorteio-lista-seta" aria-hidden="true">▾</span>
+            </button>
+
+            ${sorteioListaAberta ? `
+                <div class="sorteio-lista-caixa">
+
+                    <div class="sorteio-lista-topo">
+                        <span>${naLista} de ${itensLista.length} entram no sorteio</span>
+                        ${fora ? `<button type="button" class="sorteio-link-mini" data-acao="incluir-todos">voltar com todos</button>` : ""}
+                    </div>
+
+                    <div class="sorteio-lista">
+                        ${itensLista.map(({ item, i }) => {
+
+                            const tirado = sorteioExcluidos.has(i);
+
+                            return `
+                                <button type="button" class="sorteio-linha ${tirado ? "fora" : ""}"
+                                        data-ex="${i}" aria-pressed="${!tirado}">
+                                    <span class="sorteio-linha-capa">
+                                        ${item.capa ? `<img src="${item.capa}" alt="" loading="lazy">` : ""}
+                                    </span>
+                                    <span class="sorteio-linha-nome">${escaparHTML(item.titulo)}</span>
+                                    <span class="sorteio-linha-tipo">${nomesTipo[tipoDoQueremos(item)] || ""}</span>
+                                    <span class="sorteio-linha-marca" aria-hidden="true">${tirado ? "✕" : "✔"}</span>
+                                </button>
+                            `;
+
+                        }).join("")}
+                    </div>
+
+                </div>
+            ` : ""}
+
+        </div>
+
+        ${disponiveis ? "" : `<p class="sorteio-aviso">Todos foram tirados do sorteio. ♡</p>`}
+
+        <button type="button" class="sorteio-go" data-acao="sortear" ${disponiveis ? "" : "disabled"}>
             <span class="sorteio-go-dado" aria-hidden="true">⚄</span>
             <span>Sortear</span>
         </button>
@@ -1726,6 +1893,13 @@ function sorteioTelaOpcoes() {
     });
 
     campo.addEventListener("focus", () => campo.select());
+
+    // devolve a rolagem de antes
+    const lista = caixa.querySelector(".sorteio-lista");
+
+    if (lista) lista.scrollTop = rolagemLista;
+
+    caixa.scrollTop = rolagemCaixa;
 
 }
 

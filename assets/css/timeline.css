@@ -1,0 +1,1004 @@
+/* =========================================================
+   NOSSO UNIVERSO — TIMELINE (Mural)
+   Carregar DEPOIS do components.css.
+   ========================================================= */
+
+
+/* =========================================================
+   TÍTULO DA PÁGINA
+   ========================================================= */
+
+.view[data-view="timeline"] .section-title {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+
+    background: linear-gradient(100deg, #ffe6c2, #f6b3d6 45%, #e3a6ff 75%, #f6b3d6);
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    filter: drop-shadow(0 0 22px rgba(246, 179, 214, 0.3));
+
+    animation: timeline-titulo-brilho 8s ease-in-out infinite;
+}
+
+@keyframes timeline-titulo-brilho {
+
+    0%, 100% { background-position: 0% 50%; }
+
+    50% { background-position: 100% 50%; }
+
+}
+
+
+/* =========================================================
+   A LINHA — fica acesa até onde você já rolou
+   ========================================================= */
+
+.timeline-container::before {
+    width: 3px;
+
+    border-radius: 3px;
+
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(201, 167, 245, 0.55) 8%,
+        rgba(245, 194, 209, 0.55) 50%,
+        rgba(201, 167, 245, 0.55) 92%,
+        transparent
+    );
+}
+
+/* o trecho aceso: a altura vem do JS (--prog) */
+.timeline-container::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 3px;
+    height: var(--prog, 0px);
+
+    margin-left: -1.5px;
+
+    border-radius: 3px;
+
+    background: linear-gradient(to bottom, rgba(246, 179, 214, 0), #f6b3d6 14%, #ffd6ec);
+
+    box-shadow: 0 0 14px 2px rgba(246, 179, 214, 0.6);
+
+    opacity: 1;
+
+    animation: none;
+
+    pointer-events: none;
+
+    transition: height 0.25s ease-out;
+}
+
+
+/* =========================================================
+   MARCADORES
+   ========================================================= */
+
+.timeline-marker {
+    transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+}
+
+/* ainda não chegou lá: apagadinho */
+.timeline-item:not(.timeline-item-passou) .timeline-marker {
+    opacity: 0.5;
+
+    filter: saturate(0.6);
+}
+
+/* já passou: aceso */
+.timeline-item-passou .timeline-marker {
+    opacity: 1;
+
+    filter: none;
+
+    transform: scale(1.15);
+}
+
+/* anel que pulsa */
+.timeline-marker::after {
+    content: "";
+
+    position: absolute;
+    inset: -4px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.55);
+
+    animation: timeline-anel 3.2s ease-out infinite;
+}
+
+@keyframes timeline-anel {
+
+    0%   { transform: scale(0.8); opacity: 0.9; }
+
+    70%, 100% { transform: scale(1.9); opacity: 0; }
+
+}
+
+@media (min-width: 641px) {
+
+    /* centraliza a bolinha exatamente sobre a linha */
+    .timeline-item-esquerda .timeline-marker { right: -47px; }
+
+    .timeline-item-direita .timeline-marker { left: -47px; }
+
+    /* fio ligando o card à bolinha */
+    .timeline-item-esquerda::after,
+    .timeline-item-direita::after {
+        content: "";
+
+        position: absolute;
+        top: 12px;
+
+        width: 33px;
+        height: 2px;
+
+        pointer-events: none;
+    }
+
+    .timeline-item-esquerda::after {
+        left: 100%;
+
+        background: linear-gradient(90deg, rgba(201, 167, 245, 0.55), rgba(201, 167, 245, 0.12));
+    }
+
+    .timeline-item-direita::after {
+        right: 100%;
+
+        background: linear-gradient(270deg, rgba(201, 167, 245, 0.55), rgba(201, 167, 245, 0.12));
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .timeline-container::after { left: 22px; }
+
+}
+
+
+/* =========================================================
+   CARDS — vidro, profundidade e foto que reage (sem fita)
+   ========================================================= */
+
+.timeline-card {
+    position: relative;
+
+    border-radius: 18px;
+
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02));
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.timeline-item:hover .timeline-card {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.45),
+        0 0 32px rgba(201, 167, 245, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.timeline-card-thumb {
+    position: relative;
+
+    border-radius: 12px;
+}
+
+.timeline-card-thumb img {
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-item:hover .timeline-card-thumb img {
+    transform: scale(1.06);
+}
+
+/* véu suave embaixo da foto */
+.timeline-card-thumb::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(180deg, transparent 60%, rgba(10, 6, 24, 0.4));
+
+    pointer-events: none;
+}
+
+/* garante que não aparece fita nenhuma no topo do card */
+.timeline-card:has(.timeline-card-thumb)::before {
+    content: none;
+}
+
+
+/* =========================================================
+   TEXTOS
+   ========================================================= */
+
+.timeline-card-data {
+    letter-spacing: 1.6px;
+}
+
+.timeline-card-titulo {
+    margin: 6px 0;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.timeline-card-resumo {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.45;
+
+    color: rgba(228, 214, 250, 0.78);
+}
+
+@media (max-width: 640px) {
+
+    .timeline-card-titulo { font-size: 1.32rem; }
+
+    .timeline-card-resumo { font-size: 1.02rem; }
+
+}
+
+
+/* =========================================================
+   FILTRO POR TIPO — texto solto com sublinhado rosa
+   ========================================================= */
+
+.timeline-filtros {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 4px 26px;
+
+    max-width: 800px;
+
+    margin: 0 auto 46px;
+    padding: 0 16px;
+}
+
+.timeline-filtro {
+    position: relative;
+
+    display: inline-flex;
+    align-items: baseline;
+
+    gap: 6px;
+
+    padding: 6px 4px 12px;
+
+    border: 0;
+    background: none;
+
+    color: rgba(228, 214, 250, 0.55);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: color 0.3s ease;
+}
+
+.timeline-filtro small {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-style: normal;
+    font-weight: 700;
+
+    opacity: 0.6;
+}
+
+.timeline-filtro::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    box-shadow: 0 0 12px rgba(240, 140, 192, 0.75);
+
+    opacity: 0;
+    transform: scaleX(0);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.timeline-filtro:hover {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.timeline-filtro:hover::after {
+    opacity: 0.5;
+
+    transform: scaleX(0.5);
+}
+
+.timeline-filtro.ativo {
+    color: #fff;
+}
+
+.timeline-filtro.ativo::after {
+    opacity: 1;
+
+    transform: scaleX(1);
+}
+
+@media (max-width: 520px) {
+
+    .timeline-filtros { gap: 2px 18px; }
+
+    .timeline-filtro { font-size: 1.1rem; }
+
+}
+
+
+/* =========================================================
+   DIVISOR DE ANO
+   ========================================================= */
+
+.timeline-ano-divisor {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+
+    margin: 6px 0 34px;
+
+    animation: timeline-ano-entra 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes timeline-ano-entra {
+
+    from { opacity: 0; translate: 0 -18px; }
+
+}
+
+.timeline-ano-pilula {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 6px 26px 8px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(246, 179, 214, 0.28);
+
+    background: rgba(16, 9, 34, 0.86);
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        0 0 30px rgba(240, 140, 192, 0.18);
+}
+
+.timeline-ano-pilula b {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 2.3rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.5px;
+
+    background: linear-gradient(100deg, #ffe6c2, #f6b3d6 40%, #e3a6ff 70%, #f6b3d6);
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    animation: timeline-titulo-brilho 7s ease-in-out infinite;
+}
+
+.timeline-ano-pilula i {
+    font-size: 0.8rem;
+    font-style: normal;
+
+    color: #f6b3d6;
+
+    text-shadow: 0 0 10px rgba(246, 179, 214, 0.85);
+
+    animation: timeline-pisca 2.8s ease-in-out infinite;
+}
+
+.timeline-ano-pilula i:last-child {
+    color: #f08cc0;
+
+    animation-delay: 1.4s;
+}
+
+@keyframes timeline-pisca {
+
+    0%, 100% { opacity: 0.35; transform: scale(0.8); }
+
+    50% { opacity: 1; transform: scale(1.2); }
+
+}
+
+
+/* =========================================================
+   MARCADOR "ESTAMOS AQUI" — separa o que já foi do que vem
+   ========================================================= */
+
+.timeline-hoje {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+
+    margin: 6px 0 38px;
+
+    animation: timeline-ano-entra 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.timeline-hoje-pilula {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 8px 22px 8px 18px;
+
+    border-radius: 999px;
+
+    border: 1px solid transparent;
+
+    background:
+        linear-gradient(rgba(16, 9, 34, 0.92), rgba(16, 9, 34, 0.92)) padding-box,
+        linear-gradient(120deg, #f08cc0, #c9a7f5, #f6b3d6) border-box;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        0 0 28px rgba(240, 140, 192, 0.25);
+}
+
+.timeline-hoje-ponto {
+    position: relative;
+
+    flex-shrink: 0;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #f6b3d6;
+
+    box-shadow: 0 0 12px rgba(246, 179, 214, 0.95);
+}
+
+.timeline-hoje-ponto::after {
+    content: "";
+
+    position: absolute;
+    inset: -4px;
+
+    border-radius: 50%;
+
+    border: 1px solid #f6b3d6;
+
+    animation: timeline-anel 2.4s ease-out infinite;
+}
+
+.timeline-hoje-rotulo {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1;
+
+    color: #fff;
+}
+
+.timeline-hoje-data {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+
+    color: #f6b3d6;
+}
+
+@media (max-width: 640px) {
+
+    /* no celular a linha fica na lateral: os avisos alinham com os cards */
+    .timeline-ano-divisor,
+    .timeline-hoje {
+        justify-content: flex-start;
+
+        padding-left: 54px;
+    }
+
+    .timeline-ano-pilula b { font-size: 1.9rem; }
+
+}
+
+
+/* =========================================================
+   CONTAGEM REGRESSIVA — "um sonho a caminho"
+   ========================================================= */
+
+.timeline-contagem {
+    border-color: rgba(246, 179, 214, 0.45);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(240, 140, 192, 0.22);
+}
+
+.timeline-contagem b {
+    color: #fff;
+
+    text-shadow: 0 0 8px rgba(246, 179, 214, 0.7);
+}
+
+
+/* =========================================================
+   FILTRO: itens escondidos
+   ========================================================= */
+
+.timeline-item[hidden],
+.timeline-ano-divisor[hidden],
+.timeline-hoje[hidden] {
+    display: none !important;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    .view[data-view="timeline"] .section-title,
+    .timeline-marker::after,
+    .timeline-ano-pilula b,
+    .timeline-ano-pilula i,
+    .timeline-hoje-ponto::after {
+        animation: none;
+    }
+
+    .timeline-container::after {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   MENU FLUTUANTE — ☰ filtro e ⏳ contadores
+   ========================================================= */
+
+.timeline-dock {
+    position: fixed;
+
+    /* logo abaixo do botão ↑ */
+    top: calc(var(--spacing-lg) + 56px);
+    right: var(--spacing-lg);
+
+    z-index: 55;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 10px;
+}
+
+.timeline-dock-item {
+    position: relative;
+}
+
+.timeline-dock-btn {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(201, 167, 245, 0.3);
+
+    background: rgba(255, 255, 255, 0.06);
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+
+    color: var(--color-lilac);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.timeline-dock-btn svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.timeline-dock-btn:hover,
+.timeline-dock-item.aberto .timeline-dock-btn {
+    background: rgba(240, 140, 192, 0.2);
+
+    border-color: rgba(240, 140, 192, 0.6);
+
+    color: #fff;
+
+    transform: scale(1.06);
+}
+
+.timeline-dock-icone {
+    font-size: 1rem;
+
+    animation: timeline-ampulheta 5s ease-in-out infinite;
+}
+
+@keyframes timeline-ampulheta {
+
+    0%, 45% { transform: rotate(0deg); }
+
+    55%, 100% { transform: rotate(180deg); }
+
+}
+
+/* pontinho: tem filtro ligado */
+.timeline-dock-ponto {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #f08cc0;
+
+    box-shadow: 0 0 8px #f08cc0;
+
+    opacity: 0;
+
+    transform: scale(0);
+
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.timeline-dock-btn.filtrando .timeline-dock-ponto {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+/* número de eventos futuros */
+.timeline-dock-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    display: grid;
+    place-items: center;
+
+    min-width: 17px;
+    height: 17px;
+
+    padding: 0 4px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #f08cc0, #c9a7f5);
+
+    box-shadow: 0 0 10px rgba(240, 140, 192, 0.6);
+
+    color: #2b0f1f;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* painéis (abrem pro lado esquerdo do botão) */
+.timeline-dock-painel {
+    position: absolute;
+    top: 0;
+    right: calc(100% + 12px);
+
+    width: min(250px, calc(100vw - 90px));
+
+    padding: 16px 10px 10px;
+
+    border-radius: 20px;
+
+    background:
+        radial-gradient(ellipse 85% 55% at 50% 0%, rgba(240, 140, 192, 0.16), transparent 72%),
+        rgba(12, 7, 26, 0.95);
+
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 24px 50px rgba(0, 0, 0, 0.65),
+        0 0 40px rgba(201, 167, 245, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateX(10px) scale(0.96);
+    transform-origin: top right;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0.3s;
+}
+
+.timeline-dock-item.aberto .timeline-dock-painel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: none;
+}
+
+.timeline-dock-titulo {
+    margin: 0 0 10px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid rgba(240, 140, 192, 0.2);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 600;
+    text-align: center;
+
+    color: #f6b3d6;
+}
+
+/* opções do filtro */
+.timeline-dock-opcao {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: rgba(228, 214, 250, 0.62);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.timeline-dock-opcao span {
+    flex: 1;
+}
+
+.timeline-dock-opcao small {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-style: normal;
+    font-weight: 700;
+
+    opacity: 0.55;
+}
+
+.timeline-dock-opcao i {
+    width: 12px;
+
+    font-size: 0.75rem;
+    font-style: normal;
+
+    color: #f08cc0;
+
+    opacity: 0;
+
+    transform: scale(0.4);
+
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.22, 1.5, 0.36, 1);
+}
+
+.timeline-dock-opcao:hover {
+    background: linear-gradient(90deg, rgba(240, 140, 192, 0.14), transparent 90%);
+
+    color: #fff;
+}
+
+.timeline-dock-opcao.ativa {
+    background: linear-gradient(90deg, rgba(240, 140, 192, 0.22), transparent 92%);
+
+    color: #fff;
+}
+
+.timeline-dock-opcao.ativa i {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+/* linhas do painel de contadores */
+.timeline-dock-contador {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 4px;
+
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.timeline-dock-contador + .timeline-dock-contador {
+    margin-top: 8px;
+}
+
+.timeline-dock-contador:hover {
+    background: rgba(240, 140, 192, 0.14);
+
+    transform: translateX(-3px);
+}
+
+.timeline-dock-contador-nome {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.12rem;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.1;
+
+    color: #fff;
+}
+
+.timeline-painel-contagem {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+
+    color: rgba(228, 214, 250, 0.75);
+}
+
+.timeline-painel-contagem b {
+    color: #fff;
+
+    text-shadow: 0 0 8px rgba(246, 179, 214, 0.6);
+}
+
+.timeline-dock-contador small {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+
+    color: #f6b3d6;
+}
+
+/* o card brilha quando você chega nele pelo contador */
+.timeline-item-destaque .timeline-card {
+    animation: timeline-destaque 2.6s ease;
+}
+
+@keyframes timeline-destaque {
+
+    0%, 100% {
+        box-shadow:
+            0 14px 34px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    25%, 60% {
+        box-shadow:
+            0 0 0 2px rgba(246, 179, 214, 0.8),
+            0 0 44px rgba(240, 140, 192, 0.6);
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .timeline-dock {
+        right: 12px;
+    }
+
+    .timeline-dock-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .timeline-dock-icone,
+    .timeline-item-destaque .timeline-card {
+        animation: none;
+    }
+
+}
