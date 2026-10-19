@@ -901,32 +901,6 @@
         "memoria": ""
     },
     {
-        "id": "your-name",
-        "categoria": "queremos",
-        "titulo": "Your Name",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1792289592849.jpg",
-        "cor": {
-            "r": 79,
-            "g": 153,
-            "b": 194
-        },
-        "tipo": "animes",
-        "previewTexto": "Your Name acompanha Mitsuha, uma garota do interior, e Taki, um rapaz da cidade grande, que começam a trocar de corpo misteriosamente enquanto dormem.\n\nNo início, eles se divertem tentando viver a rotina um do outro e deixando regras e bilhetes no celular. Mas a história muda completamente quando a troca de corpos para de acontecer do nada. Taki decide procurar a cidade de Mitsuha e descobre um mistério sobrenatural gigantesco: um cometa caiu na cidade dela há 3 anos, destruindo tudo.\n\nA partir daí, o filme vira uma corrida emocionante contra o próprio tempo e o destino, onde os dois tentam se conectar através de linhas temporais diferentes para salvar a vida de Mitsuha e finalmente se encontrarem de verdade.",
-        "links": [
-            {
-                "nome": "TikTok",
-                "url": "https://www.tiktok.com/@japaedits_lg/video/7664726960177827080?is_from_webapp=1&sender_device=pc"
-            }
-        ],
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "o-castelo-animado",
         "categoria": "queremos",
         "titulo": "O Castelo Animado",
@@ -1000,6 +974,25 @@
         "progresso": null,
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "your-name",
+        "categoria": "animes",
+        "titulo": "Your Name",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1792289592849.jpg",
+        "cor": {
+            "r": 79,
+            "g": 153,
+            "b": 194
+        },
+        "aura": "#17a6dd",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
