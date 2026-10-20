@@ -5037,4 +5037,83 @@ body.sorteio-aberto { overflow: hidden; }
 
     opacity: 1;
 
-    text-shadow: 0 1px 2px rgba(0, 0, 0,
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+
+    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* opção escolhida: bolinha preenchida e brilhando */
+.sorteio-opcoes button.ativa .sorteio-qtd,
+.sorteio-opcoes button.ativa small {
+    border-color: rgba(255, 214, 236, 0.7);
+
+    background: linear-gradient(135deg, #c15f9d, #8e4fb8);
+
+    box-shadow: 0 0 14px rgba(193, 95, 157, 0.7);
+}
+
+/* opção sem itens (número 0): fica apagadinha */
+.sorteio-opcoes button:disabled .sorteio-qtd,
+.sorteio-opcoes button:disabled small {
+    background: rgba(255, 255, 255, 0.06);
+
+    border-color: rgba(255, 255, 255, 0.15);
+
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 420px) {
+
+    .sorteio-opcoes {
+        gap: 6px 16px;
+    }
+
+    .sorteio-opcoes button .sorteio-qtd,
+    .sorteio-opcoes button small {
+        min-width: 26px;
+        height: 26px;
+
+        font-size: 0.86rem;
+    }
+
+}
+
+/* =========================================================
+   HISTÓRICO DAS TEMPORADAS — chips no modal
+   ========================================================= */
+
+.assistido-modal-historico {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin: 0 0 14px;
+}
+
+.hist-chip {
+    display: inline-flex;
+    align-items: baseline;
+
+    gap: 6px;
+
+    padding: 5px 14px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.45);
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.16);
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    letter-spacing: 0.2px;
+}
+
+.hist-chip b {
+    color: #fff;
+
+    font-weight: 800;
+}

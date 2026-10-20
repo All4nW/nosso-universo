@@ -687,6 +687,15 @@ function abrirModalAssistido(item = null) {
         "assistidos-imagem"
     ).value = "";
 
+        const listaHist = document.getElementById("assistidos-historico-lista");
+
+    if (listaHist) listaHist.innerHTML = "";
+
+    (Array.isArray(item?.historicoTemporadas) ? item.historicoTemporadas : [])
+        .forEach(h => adicionarLinhaHistorico(h.temp, h.ano));
+
+
+
     document.getElementById("assistidos-tipo").value =
         item?.tipo || "";
 
@@ -819,6 +828,16 @@ function atualizarCampoNotas() {
 
         areaQueremos.style.display =
             categoria === "queremos" ? "block" : "none";
+
+    }
+        const areaHist = document.getElementById("assistidos-historico-area");
+
+    if (areaHist) {
+
+        areaHist.style.display =
+            (categoria === "series" || categoria === "animes")
+                ? "block"
+                : "none";
 
     }
     atualizarCampoProgresso();
@@ -1148,7 +1167,48 @@ function lerLinksDoForm() {
         .filter(Boolean);
 
 }
+function adicionarLinhaHistorico(temp = "", ano = "") {
 
+    const lista = document.getElementById("assistidos-historico-lista");
+
+    if (!lista) return;
+
+    const linha = document.createElement("div");
+
+    linha.className = "assistidos-hist-linha";
+
+    linha.style.cssText =
+        "display:grid;grid-template-columns:1.4fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;";
+
+    linha.innerHTML = `
+        <input type="text" class="assistidos-hist-temp" placeholder="Temporada(s), ex.: 1–2">
+        <input type="number" class="assistidos-hist-ano" min="1900" max="2100" placeholder="Ano, ex.: 2025">
+        <button type="button" class="assistidos-hist-remover" title="Remover" aria-label="Remover">✕</button>
+    `;
+
+    linha.querySelector(".assistidos-hist-temp").value = temp;
+    linha.querySelector(".assistidos-hist-ano").value = ano;
+
+    linha
+        .querySelector(".assistidos-hist-remover")
+        .addEventListener("click", () => linha.remove());
+
+    lista.appendChild(linha);
+
+}
+
+function lerHistoricoDoForm() {
+
+    return [...document.querySelectorAll("#assistidos-historico-lista .assistidos-hist-linha")]
+        .map(linha => ({
+            temp: linha.querySelector(".assistidos-hist-temp").value.trim(),
+            ano: Number(linha.querySelector(".assistidos-hist-ano").value)
+        }))
+        .filter(h => h.temp && h.ano > 0);
+
+}
+
+window.adicionarLinhaHistorico = adicionarLinhaHistorico;
 
 // =====================================================
 // PREVIEW
@@ -1381,8 +1441,9 @@ async function salvarAssistido(evento) {
     const linksLidos = ehQueremos ? lerLinksDoForm() : [];
 
     const links = linksLidos.length ? linksLidos : undefined;
+    const histLido = ehSerie ? lerHistoricoDoForm() : [];
 
-
+    const historicoTemporadas = histLido.length ? histLido : undefined;
     const novoItem = {
 
         id:
@@ -1417,6 +1478,8 @@ async function salvarAssistido(evento) {
 
                 tempAssistida,
         tempTotal,
+
+                historicoTemporadas,
 
                 tipo,
         previewTexto,

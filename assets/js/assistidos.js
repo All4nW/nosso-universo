@@ -1380,17 +1380,34 @@ function abrirDetalhesAssistido(item, dados) {
 
     const ehSerieOuAnime = item.categoria === "series" || item.categoria === "animes";
 
-    if (ehSerieOuAnime && (Number(item.tempAssistida) > 0 || item.status === "concluido")) {
+    // histórico: "Temp. 1–2 em 2025 · Temp. 3 em 2027"
+    const historico = (Array.isArray(item.historicoTemporadas) ? item.historicoTemporadas : [])
+        .filter(h => h && h.temp && Number(h.ano) > 0);
+
+    if (ehSerieOuAnime && (historico.length || Number(item.tempAssistida) > 0 || item.status === "concluido")) {
+
+        const historicoHtml = historico.length
+            ? `<div class="assistido-modal-historico">${
+                historico.map(h => `
+                    <span class="hist-chip"><b>Temp. ${escaparHTML(String(h.temp))}</b> em ${Number(h.ano)}</span>
+                `).join("")
+            }</div>`
+            : "";
+
+        // sem histórico, continua a linha de antes
+        const ultimaHtml = (!historico.length && Number(item.tempAssistida) > 0)
+            ? `<p>Última temporada assistida: <strong>Temp. ${Number(item.tempAssistida)}</strong></p>`
+            : "";
+
+        const concluidoHtml = item.status === "concluido"
+            ? `<div class="assistido-modal-concluido-pilula">✔ Concluído</div>`
+            : "";
 
         temporadaHtml = `
-            <div class="assistido-modal-temporada">
-                ${Number(item.tempAssistida) > 0
-                    ? `<p>Última temporada assistida: <strong>Temp. ${Number(item.tempAssistida)}</strong></p>`
-                    : ""}
-                ${item.status === "concluido"
-                    ? `<div class="assistido-modal-concluido-pilula">✔ Concluído</div>`
-                    : ""}
-            </div>
+            ${historicoHtml}
+            ${(ultimaHtml || concluidoHtml)
+                ? `<div class="assistido-modal-temporada">${ultimaHtml}${concluidoHtml}</div>`
+                : ""}
         `;
 
     }

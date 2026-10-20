@@ -292,6 +292,16 @@
         },
         "aura": "#3a5877",
         "tempAssistida": 2,
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2025
+            },
+            {
+                "temp": "2",
+                "ano": 2025
+            }
+        ],
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -312,6 +322,16 @@
         },
         "aura": "#8bd9f8",
         "tempAssistida": 2,
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            },
+            {
+                "temp": "2",
+                "ano": 2026
+            }
+        ],
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -996,31 +1016,6 @@
         "memoria": ""
     },
     {
-        "id": "suzume",
-        "categoria": "queremos",
-        "titulo": "Suzume",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1792436949012.webp",
-        "cor": {
-            "r": 56,
-            "g": 97,
-            "b": 135
-        },
-        "previewTexto": "Suzume acompanha uma adolescente de 17 anos que abre uma porta misteriosa em ruínas e, sem querer, liberta forças sobrenaturais que causam terremotos por todo o Japão.\nPara consertar o erro, ela precisa se unir a Souta, um jovem guardião místico que — logo no começo da história — é transformado por um feitiço em uma cadeira de madeira de três pernas.\nMesmo com ele em forma de cadeira, os dois viajam juntos pelo país trancando as portas mágicas. Nessa jornada cheia de perigos e momentos divertidos, nasce um romance lindo e muito profundo entre eles.",
-        "links": [
-            {
-                "nome": "TikTok",
-                "url": "https://www.tiktok.com/@supplydrop0/video/7675183338692349198?is_from_webapp=1&sender_device=pc"
-            }
-        ],
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "o-tempo-com-voce",
         "categoria": "queremos",
         "titulo": "O Tempo Com Você",
@@ -1048,6 +1043,24 @@
         "progresso": null,
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "suzume",
+        "categoria": "animes",
+        "titulo": "Suzume",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1792436949012.webp",
+        "cor": {
+            "r": 56,
+            "g": 97,
+            "b": 135
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
