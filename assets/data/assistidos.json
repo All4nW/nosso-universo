@@ -845,7 +845,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 2,
-            "episodio": 5,
+            "episodio": 7,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -1061,6 +1061,26 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "scooby-doo-zombie-island",
+        "categoria": "queremos",
+        "titulo": "Scooby Doo Zombie Island",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792466292199.jpg",
+        "cor": {
+            "r": 105,
+            "g": 89,
+            "b": 83
+        },
+        "aura": "#c56a17",
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]
