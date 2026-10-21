@@ -92,32 +92,36 @@
         "categoria": "filmes",
         "titulo": "Diário De Uma Paixão",
         "ano": null,
-        "anoAssistido": 2025,
+        "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786910587348.jpg",
-        "notaEu": 10,
-        "notaEla": 10,
-        "memoria": "",
         "cor": {
             "r": 130,
             "g": 134,
             "b": 166
-        }
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
     },
     {
         "id": "como-eu-era-antes-de-voce",
         "categoria": "filmes",
         "titulo": "Como Eu Era Antes De Você",
         "ano": null,
-        "anoAssistido": 2025,
+        "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786910661404.jpg",
-        "notaEu": 10,
-        "notaEla": 10,
-        "memoria": "",
         "cor": {
             "r": 169,
             "g": 128,
             "b": 113
-        }
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
     },
     {
         "id": "antes-do-amanhecer",
@@ -1065,10 +1069,10 @@
     },
     {
         "id": "scooby-doo-zombie-island",
-        "categoria": "queremos",
+        "categoria": "filmes",
         "titulo": "Scooby Doo Zombie Island",
         "ano": null,
-        "anoAssistido": null,
+        "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1792466292199.jpg",
         "cor": {
             "r": 105,
@@ -1076,11 +1080,10 @@
             "b": 83
         },
         "aura": "#c56a17",
-        "tipo": "filmes",
-        "status": null,
+        "status": "assistido",
         "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
