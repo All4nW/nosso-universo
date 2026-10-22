@@ -10,6 +10,10 @@ const CATEGORIAS_ORDEM = [
 
 const CATEGORIA_QUEREMOS = "queremos";
 
+// botão do TikTok (pasta de vídeos dos assistidos)
+const LINK_TIKTOK_ASSISTIDOS = "https://vt.tiktok.com/ZS9UvSbD837kb-FsE8a/";
+const ICONE_TIKTOK = "assets/images/assistidos/tiktok_icon.png";
+
 let painelLateralCriado = false;
 
 // =====================================================
@@ -931,6 +935,8 @@ async function carregarAssistidos() {
 
     ativarBotaoTopoAssistidos();
 
+        montarBotaoTikTok();
+
 }
 
 
@@ -1588,7 +1594,82 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
 }
 
 
+// =====================================================
+// BOTÃO DO TIKTOK — 1º toque mostra a descrição, 2º abre o link
+// =====================================================
 
+function montarBotaoTikTok() {
+
+    const view = document.querySelector('.view[data-view="assistidos"]');
+
+    if (!view || document.getElementById("assistidos-tiktok")) return;
+
+    // só aparece depois que o link for colado
+    if (!/^https?:\/\//i.test(LINK_TIKTOK_ASSISTIDOS)) return;
+
+    const caixa = document.createElement("div");
+
+    caixa.id = "assistidos-tiktok";
+    caixa.className = "assistidos-tiktok";
+
+    caixa.innerHTML = `
+        <button type="button" class="assistidos-tiktok-btn" aria-label="Pasta de vídeos no TikTok" aria-expanded="false">
+            <img src="${ICONE_TIKTOK}" alt="" onerror="this.replaceWith(document.createTextNode('♪'))">
+        </button>
+
+        <a class="assistidos-tiktok-bolha" href="${LINK_TIKTOK_ASSISTIDOS}" target="_blank" rel="noopener noreferrer">
+            <strong>Pasta com nossos assistidos</strong>
+            <small>toque de novo para abrir ↗</small>
+        </a>
+    `;
+
+    const botao = caixa.querySelector(".assistidos-tiktok-btn");
+
+    let timer = null;
+
+    const fechar = () => {
+        clearTimeout(timer);
+        caixa.classList.remove("aberto");
+        botao.setAttribute("aria-expanded", "false");
+    };
+
+    const abrir = () => {
+        caixa.classList.add("aberto");
+        botao.setAttribute("aria-expanded", "true");
+        clearTimeout(timer);
+        timer = setTimeout(fechar, 6000);
+    };
+
+    botao.addEventListener("click", () => {
+
+        // 1º toque: mostra a descrição
+        if (!caixa.classList.contains("aberto")) {
+            abrir();
+            return;
+        }
+
+        // 2º toque: abre a pasta
+        window.open(LINK_TIKTOK_ASSISTIDOS, "_blank", "noopener,noreferrer");
+
+        fechar();
+
+    });
+
+    // tocar no próprio balão também abre (é um link de verdade)
+    caixa.querySelector(".assistidos-tiktok-bolha").addEventListener("click", fechar);
+
+    // tocar fora ou apertar Esc fecha
+    document.addEventListener("click", (evento) => {
+        if (!caixa.contains(evento.target)) fechar();
+    });
+
+    document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape") fechar();
+    });
+
+    view.appendChild(caixa);
+
+}
 // =====================================================
 // BOTÃO VOLTAR AO TOPO
 // =====================================================
