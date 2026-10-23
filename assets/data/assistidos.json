@@ -414,25 +414,6 @@
         "memoria": ""
     },
     {
-        "id": "minha-historia-de-amor-com-yamada-kun-nivel-999",
-        "categoria": "queremos",
-        "titulo": "Minha História de Amor com Yamada-kun Nível 999",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1786912457594.webp",
-        "cor": {
-            "r": 175,
-            "g": 166,
-            "b": 162
-        },
-        "tipo": "animes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "the-walking-dead",
         "categoria": "queremos",
         "titulo": "The Walking Dead",
@@ -982,25 +963,6 @@
         "memoria": ""
     },
     {
-        "id": "o-servico-de-entregas-da-kiki",
-        "categoria": "queremos",
-        "titulo": "O Serviço de Entregas da Kiki",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1792290345842.webp",
-        "cor": {
-            "r": 63,
-            "g": 104,
-            "b": 121
-        },
-        "tipo": "animes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "your-name",
         "categoria": "animes",
         "titulo": "Your Name",
@@ -1017,36 +979,6 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
-        "memoria": ""
-    },
-    {
-        "id": "o-tempo-com-voce",
-        "categoria": "queremos",
-        "titulo": "O Tempo Com Você",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1792437560265.jpg",
-        "cor": {
-            "r": 89,
-            "g": 126,
-            "b": 154
-        },
-        "tipo": "animes",
-        "previewTexto": "O Tempo com Você acompanha Hodaka, um garoto de 16 anos que foge de sua ilha natal para tentar a vida na chuvosa cidade de Tóquio. Sem dinheiro e passando dificuldades, ele conhece Hina, uma garota órfã que possui um segredo incrível: ela tem o poder místico de limpar o céu e parar a chuva apenas rezando.\nPara ganhar dinheiro, os dois se unem e criam um serviço de \"garota sol\", cobrando para trazer o sol de volta em eventos como casamentos e festas ao ar livre. Enquanto trabalham juntos, os dois se apaixonam profundamente. O grande drama começa quando eles descobrem que controlar o clima exige um preço pessoal terrível da Hina, forçando o casal a fazer uma escolha extrema um pelo outro.",
-        "links": [
-            {
-                "nome": "TikTok",
-                "url": "https://www.tiktok.com/@pisoioo/video/7467682817154043142?is_from_webapp=1&sender_device=pc"
-            },
-            {
-                "nome": "Drive",
-                "url": "https://drive.google.com/file/d/1fAy8cf3mRCDKwy_mx9hZp4Q9pq_eGMol/view"
-            }
-        ],
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
         "memoria": ""
     },
     {
@@ -1084,6 +1016,43 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "o-tempo-com-voce",
+        "categoria": "animes",
+        "titulo": "Weathering With You",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1792723282743.jpg",
+        "cor": {
+            "r": 70,
+            "g": 149,
+            "b": 182
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "o-servico-de-entregas-da-kiki",
+        "categoria": "queremos",
+        "titulo": "O Serviço de Entregas da Kiki",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1792290345842.webp",
+        "cor": {
+            "r": 63,
+            "g": 104,
+            "b": 121
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]
