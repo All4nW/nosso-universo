@@ -1717,3 +1717,81 @@ img.foto-visualizador-img.com-zoom {
 
     pointer-events: none;
 }
+
+/* =========================================================
+   SEPARADOR DE MÊS — discreto: só um rótulo com fio
+   ========================================================= */
+
+.galeria-mes-divisor {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: baseline;
+
+    gap: 8px;
+
+    margin: 14px 0 -8px;
+
+    opacity: 0;
+
+    animation: entrada-card 0.6s ease forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.galeria-mes-divisor:first-child {
+    margin-top: 0;
+}
+
+.galeria-mes-nome {
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1;
+
+    color: #f6b3d6;
+}
+
+.galeria-mes-ano {
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+
+    color: rgba(228, 214, 250, 0.5);
+}
+
+.galeria-mes-qtd {
+    padding: 1px 8px;
+
+    border-radius: 999px;
+
+    background: rgba(240, 140, 192, 0.14);
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+
+    color: #f6b3d6;
+}
+
+/* o fio que se estende até o fim da linha */
+.galeria-mes-divisor::after {
+    content: "";
+
+    flex: 1;
+
+    align-self: center;
+
+    height: 1px;
+
+    background: linear-gradient(90deg, rgba(240, 140, 192, 0.4), transparent);
+}
+
+@media (max-width: 600px) {
+
+    .galeria-mes-nome {
+        font-size: 1.1rem;
+    }
+
+}

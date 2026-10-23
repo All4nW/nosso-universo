@@ -637,9 +637,28 @@ function renderizarFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
         return;
 
     }
+    // só separa por mês quando as fotos cobrem mais de um mês
+    const mesDe = (foto) => String(foto.data || "").slice(0, 7);
+
+    const separarPorMes =
+        new Set(fotos.map(mesDe).filter(Boolean)).size > 1;
+
+    let mesAnterior = null;
 
     fotos.forEach((foto, indice) => {
+        const mes = mesDe(foto);
 
+        if (separarPorMes && mes && mes !== mesAnterior) {
+
+            const quantidade =
+                fotos.filter((f) => mesDe(f) === mes).length;
+
+            lista.appendChild(criarDivisorMes(mes, quantidade, indice));
+
+            mesAnterior = mes;
+
+        }
+        
         const item =
             document.createElement("div");
 
@@ -695,6 +714,32 @@ function renderizarFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
         lista.appendChild(item);
 
     });
+
+}
+
+// separador de mês: "Agosto 2025 · 12 ———"
+function criarDivisorMes(chave, quantidade, indice) {
+
+    const [ano, mes] = chave.split("-");
+
+    const nome =
+        new Date(Number(ano), Number(mes) - 1, 1)
+            .toLocaleDateString("pt-BR", { month: "long" });
+
+    const div =
+        document.createElement("div");
+
+    div.className = "galeria-mes-divisor";
+
+    div.style.setProperty("--delay", `${indice * 0.08}s`);
+
+    div.innerHTML = `
+        <span class="galeria-mes-nome">${nome.charAt(0).toUpperCase() + nome.slice(1)}</span>
+        <span class="galeria-mes-ano">${ano}</span>
+        <span class="galeria-mes-qtd">${quantidade}</span>
+    `;
+
+    return div;
 
 }
 
