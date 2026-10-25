@@ -83,7 +83,31 @@
         </div>
     </div>
 
-  
+      <!-- Filtros (jogos) desta pasta -->
+    <div id="jogos-admin-secao" style="margin: 16px 0; display:none;">
+
+        <p class="settings-card-descricao" style="margin-bottom: 8px;">🎮 Filtros desta pasta</p>
+
+        <div id="jogos-admin-itens" class="timeline-admin-itens"></div>
+
+        <div class="settings-field" style="margin-top: 12px;">
+
+            <label class="settings-label">Colocar fotos num filtro (marque as fotos na lista abaixo)</label>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:8px; align-items:center;">
+                <select id="jogos-lote-select" class="settings-input"></select>
+                <input type="text" id="jogos-lote-novo" class="settings-input" placeholder="ou digite um filtro novo">
+                <button type="button" id="jogos-lote-aplicar" class="settings-botao settings-botao-primario">Aplicar</button>
+            </div>
+
+            <label style="display:flex; gap:8px; align-items:center; margin-top:8px; cursor:pointer;">
+                <input type="checkbox" id="jogos-lote-todas"> Marcar todas as fotos da lista
+            </label>
+
+        </div>
+
+    </div>
+    
     <!-- Formulário de foto -->
     <div id="foto-formulario" class="settings-card timeline-admin-formulario" style="display:none;">
         <div class="settings-card-corpo">
@@ -110,6 +134,15 @@
         <option value="__novo__">＋ Criar novo álbum...</option>
     </select>
     <input type="text" id="foto-album-novo" class="settings-input" placeholder="Nome do novo álbum (ex.: 2025, 2026, Mundo novo...)" style="display:none; margin-top: 8px;">
+</div>
+
+<div class="settings-field" id="foto-jogo-campo" style="display:none;">
+    <label class="settings-label">Jogo / filtro (opcional)</label>
+    <select id="foto-jogo-select" class="settings-input">
+        <option value="">Sem filtro</option>
+        <option value="__novo__">＋ Criar novo filtro...</option>
+    </select>
+    <input type="text" id="foto-jogo-novo" class="settings-input" placeholder="Nome do jogo (ex.: Murder Mystery 2)" style="display:none; margin-top: 8px;">
 </div>
 
             <!-- Só aparece dentro da pasta "Perfil" — controlado via JS -->

@@ -11,6 +11,13 @@ const EMOJIS_PASTA = {
     perfil: "💌"
 };
 
+// ícone de cada pasta (se a pasta não estiver aqui, o título continua em texto)
+const ICONES_PASTA = {
+    roblox: "assets/images/assistidos/icons/icon_roblox.png",
+    minecraft: "assets/images/assistidos/icons/icon_minecraft.png",
+    genshin: "assets/images/assistidos/icons/icon_genshin.png"
+};
+
 function adicionarDecoracoesFundoGaleria() {
     const wrapper = document.querySelector(".galeria-pastas-wrapper");
     if (!wrapper || wrapper.querySelector(".hub-fundo-decoracoes")) return;
@@ -61,14 +68,14 @@ function urlImagemGaleria(caminho) {
 // plataforma vazia ou não mapeada cai no grupo genérico "outro".
 // "categoria" é usada pelos filtros (Todos / Redes Sociais / Jogos / Outros).
 const PLATAFORMAS_PERFIL = {
-    genshin: { label: "Genshin Impact", emoji: "✨", frase: "Nossa aventura em Teyvat", categoria: "jogos" },
-    roblox: { label: "Roblox", emoji: "🎮", frase: "Nosso lugar de brincar", categoria: "jogos" },
-        wildrift: { label: "Wild Rift", emoji: "⚔️", frase: "Nossa batalha juntos", categoria: "jogos" },
-    discord: { label: "Discord", emoji: "💬", frase: "Nosso cantinho", categoria: "redes" },
-    tiktok: { label: "TikTok", emoji: "🎵", frase: "Onde a gente perde horas", categoria: "redes" },
-    instagram: { label: "Instagram", emoji: "📸", frase: "Onde a gente compartilha", categoria: "redes" },
-    widgetable: { label: "Widgetable", emoji: "🧩", frase: "Nosso cantinho personalizado", categoria: "redes" },
-    rave: { label: "Rave", emoji: "🎬", frase: "Onde a gente assiste junto", categoria: "redes" }
+    genshin: { label: "Genshin Impact", emoji: "✨", frase: "", categoria: "jogos" },
+    roblox: { label: "Roblox", emoji: "🎮", frase: "", categoria: "jogos" },
+        wildrift: { label: "Wild Rift", emoji: "⚔️", frase: "", categoria: "jogos" },
+    discord: { label: "Discord", emoji: "💬", frase: "", categoria: "redes" },
+    tiktok: { label: "TikTok", emoji: "🎵", frase: "", categoria: "redes" },
+    instagram: { label: "Instagram", emoji: "📸", frase: "", categoria: "redes" },
+    widgetable: { label: "Widgetable", emoji: "🧩", frase: "", categoria: "redes" },
+    rave: { label: "Rave", emoji: "🎬", frase: "", categoria: "redes" }
 };
 
 function ehPastaDePerfis(pasta) {
@@ -622,7 +629,7 @@ function criarFiltroAlbuns(albuns, todasFotos, lista, pasta) {
 }
 
 
-function renderizarFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
+function desenharFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
 
     lista.innerHTML = "";
 
@@ -640,8 +647,9 @@ function renderizarFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
     // só separa por mês quando as fotos cobrem mais de um mês
     const mesDe = (foto) => String(foto.data || "").slice(0, 7);
 
+    // mostra o mês sempre que as fotos tiverem data
     const separarPorMes =
-        new Set(fotos.map(mesDe).filter(Boolean)).size > 1;
+        new Set(fotos.map(mesDe).filter(Boolean)).size >= 1;
 
     let mesAnterior = null;
 
@@ -743,6 +751,213 @@ function criarDivisorMes(chave, quantidade, indice) {
 
 }
 
+// =====================================================
+// FILTRO DE JOGO dentro da pasta (ex.: Roblox → Murder Mystery 2...)
+// Aparece sozinho quando alguma foto tem jogo preenchido no admin.
+// =====================================================
+
+function jogoDaFoto(foto) {
+    return String(foto.plataforma || "").trim();
+}
+
+let galeriaJogosEventos = false;
+
+function fecharMenusJogos() {
+
+    document.querySelectorAll(".galeria-jogos-menu.aberto").forEach((menu) => {
+
+        menu.classList.remove("aberto");
+
+        menu.querySelector(".galeria-jogos-btn")
+            ?.setAttribute("aria-expanded", "false");
+
+    });
+
+}
+
+const JOGO_LEGADO = 900;
+
+// a ordem escolhida no admin vem escondida no nome ("02|MM2")
+function nomeDoJogo(valor) {
+    return String(valor || "").replace(/^\d{1,4}\|/, "").trim();
+}
+
+function ordemDoJogo(valor) {
+    const m = String(valor || "").match(/^(\d{1,4})\|/);
+    return m ? Number(m[1]) : JOGO_LEGADO;
+}
+
+// botão ☰ ao lado do ícone da pasta, com os filtros por jogo dentro
+function montarFiltroJogos(fotos, lista, pasta) {
+
+    const titulo = document.getElementById("galeria-pasta-titulo");
+
+    if (!titulo) return;
+
+    titulo.querySelector(".galeria-jogos-menu")?.remove();
+
+    // limpeza da versão antiga (barra de texto solto)
+    document.querySelector("#galeria-fotos .galeria-filtro-jogos")?.remove();
+
+    // o Perfil tem layout próprio
+    if (ehPastaDePerfis(pasta)) return;
+
+    // nome do filtro → quantas fotos e qual a ordem
+    const grupos = new Map();
+
+    fotos.forEach((foto) => {
+
+        const bruto = jogoDaFoto(foto);
+        const nome = nomeDoJogo(bruto);
+
+        if (!nome) return;
+
+        const ordem = ordemDoJogo(bruto);
+        const atual = grupos.get(nome);
+
+        if (atual) {
+            atual.qtd++;
+            atual.ordem = Math.min(atual.ordem, ordem);
+        } else {
+            grupos.set(nome, { qtd: 1, ordem });
+        }
+
+    });
+
+    // pasta sem nenhum jogo preenchido: não mostra nada
+    if (!grupos.size) return;
+
+    const jogos = [...grupos.entries()].sort((a, b) =>
+        (a[1].ordem - b[1].ordem) || a[0].localeCompare(b[0], "pt-BR")
+    );
+
+    const opcoes = [
+        { jogo: "", rotulo: "Todos", qtd: fotos.length, todos: true },
+        ...jogos.map(([nome, g]) => ({ jogo: nome, rotulo: nome, qtd: g.qtd, todos: false }))
+    ];
+
+    const caixa = document.createElement("span");
+
+    caixa.className = "galeria-jogos-menu";
+
+    caixa.innerHTML = `
+
+        <button type="button" class="galeria-jogos-btn" aria-label="Filtrar por jogo" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path class="gj-l1" d="M4 7h16"/>
+                <path class="gj-l2" d="M4 12h16"/>
+                <path class="gj-l3" d="M4 17h16"/>
+            </svg>
+            <span class="galeria-jogos-ponto"></span>
+        </button>
+
+        <span class="galeria-jogos-chip" hidden></span>
+
+        <div class="galeria-jogos-painel" role="menu">
+
+            <p class="galeria-jogos-titulo">Filtrar por jogo</p>
+
+            ${opcoes.map((o, i) => `
+                <button type="button"
+                        class="galeria-jogos-opcao ${o.todos ? "galeria-jogos-todos" : ""} ${i === 0 ? "ativa" : ""}"
+                        data-i="${i}" style="--n:${i}" role="menuitemradio" aria-checked="${i === 0}">
+                    <span></span><small>${o.qtd}</small>
+                </button>
+            `).join("")}
+
+        </div>
+
+    `;
+
+    // o nome entra como texto (sem risco de quebrar o HTML)
+    caixa.querySelectorAll(".galeria-jogos-opcao").forEach((b, i) => {
+        b.firstElementChild.textContent = opcoes[i].rotulo;
+    });
+
+    const botao = caixa.querySelector(".galeria-jogos-btn");
+    const chip = caixa.querySelector(".galeria-jogos-chip");
+    const painel = caixa.querySelector(".galeria-jogos-painel");
+
+    botao.addEventListener("click", () => {
+
+        const abrir = !caixa.classList.contains("aberto");
+
+        fecharMenusJogos();
+
+        caixa.classList.toggle("aberto", abrir);
+
+        botao.setAttribute("aria-expanded", String(abrir));
+
+    });
+
+    painel.addEventListener("click", (evento) => {
+
+        const opcao = evento.target.closest("[data-i]");
+
+        if (!opcao) return;
+
+        const escolhida = opcoes[Number(opcao.dataset.i)];
+
+        painel.querySelectorAll(".galeria-jogos-opcao").forEach((b) => {
+
+            const ativa = b === opcao;
+
+            b.classList.toggle("ativa", ativa);
+            b.setAttribute("aria-checked", String(ativa));
+
+        });
+
+        botao.classList.toggle("filtrando", Boolean(escolhida.jogo));
+
+        chip.hidden = !escolhida.jogo;
+        chip.textContent = escolhida.jogo ? escolhida.rotulo : "";
+
+        const subconjunto = escolhida.jogo
+            ? fotos.filter((foto) => nomeDoJogo(jogoDaFoto(foto)) === escolhida.jogo)
+            : fotos;
+
+        // o visualizador passa a andar só pelas fotos filtradas
+        fotosDaPastaAberta = subconjunto;
+
+        desenharFotosGaleria(subconjunto, lista, pasta, false);
+
+        fecharMenusJogos();
+
+    });
+
+    titulo.appendChild(caixa);
+
+    // tocar fora (ou Esc) fecha — registrado uma vez só
+    if (!galeriaJogosEventos) {
+
+        galeriaJogosEventos = true;
+
+        document.addEventListener("click", (evento) => {
+
+            if (evento.target.closest(".galeria-jogos-menu")) return;
+
+            fecharMenusJogos();
+
+        });
+
+        document.addEventListener("keydown", (evento) => {
+
+            if (evento.key === "Escape") fecharMenusJogos();
+
+        });
+
+    }
+
+}
+
+function renderizarFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum) {
+
+    montarFiltroJogos(fotos, lista, pasta);
+
+    desenharFotosGaleria(fotos, lista, pasta, mostrarSeloAlbum);
+
+}
+
 function abrirPasta(pasta) {
 
     // Sempre reinicia a rolagem no topo da seção,
@@ -792,6 +1007,13 @@ function abrirPasta(pasta) {
         .querySelector(".perfil-fundo-decoracoes")
         ?.remove();
 
+            // tira o filtro de jogo da pasta anterior
+    containerFotos
+        .querySelector(".galeria-filtro-jogos")
+        ?.remove();
+
+            titulo.classList.remove("galeria-pasta-titulo-icone");
+
 
     if (ehPastaDePerfis(pasta)) {
 
@@ -836,8 +1058,37 @@ function abrirPasta(pasta) {
 
     else {
 
-        titulo.textContent =
-            pasta.nome || "";
+        const icone = ICONES_PASTA[(pasta.nome || "").trim().toLowerCase()];
+
+        if (icone) {
+
+            titulo.textContent = "";
+            titulo.classList.add("galeria-pasta-titulo-icone");
+
+            const img = document.createElement("img");
+
+            img.className = "galeria-pasta-icone galeria-pasta-icone-" + (pasta.nome || "").trim().toLowerCase();
+            img.src = icone;
+            img.alt = pasta.nome || "";
+
+            // se o arquivo não existir, volta pro título em texto
+            img.addEventListener("error", () => {
+                titulo.classList.remove("galeria-pasta-titulo-icone");
+                img.remove();
+            });
+
+            const nome = document.createElement("span");
+
+            nome.className = "galeria-pasta-icone-nome";
+            nome.textContent = pasta.nome || "";
+
+            titulo.append(img, nome);
+
+        } else {
+
+            titulo.textContent = pasta.nome || "";
+
+        }
 
     }
 

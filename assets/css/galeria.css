@@ -1795,3 +1795,567 @@ img.foto-visualizador-img.com-zoom {
     }
 
 }
+
+/* =========================================================
+   FILTRO DE JOGO — discreto, abaixo dos álbuns
+   ========================================================= */
+
+.galeria-filtro-jogos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 2px 22px;
+
+    margin: -10px auto 26px;
+}
+
+.galeria-filtro-jogo {
+    position: relative;
+
+    display: inline-flex;
+    align-items: baseline;
+
+    gap: 6px;
+
+    padding: 5px 3px 10px;
+
+    border: 0;
+    background: none;
+
+    color: rgba(228, 214, 250, 0.5);
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.08rem;
+    font-style: italic;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: color 0.3s ease;
+}
+
+.galeria-filtro-jogo small {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-style: normal;
+    font-weight: 700;
+
+    opacity: 0.6;
+}
+
+.galeria-filtro-jogo::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    opacity: 0;
+    transform: scaleX(0);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.galeria-filtro-jogo:hover {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.galeria-filtro-jogo.ativo {
+    color: #fff;
+}
+
+.galeria-filtro-jogo.ativo::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+@media (max-width: 600px) {
+
+    .galeria-filtro-jogos { gap: 0 16px; }
+
+    .galeria-filtro-jogo { font-size: 1rem; }
+
+}
+
+/* =========================================================
+   TÍTULO DA PASTA COM ÍCONE
+   ========================================================= */
+
+.galeria-pasta-titulo-icone {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    gap: 6px 12px;
+
+    font-size: 1rem;
+    line-height: 1;
+
+    text-shadow: none;
+}
+
+.galeria-pasta-icone {
+    order: 1;
+
+    display: block;
+
+    width: clamp(68px, 15vw, 100px);
+    height: auto;
+
+    filter:
+        drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 22px rgba(240, 140, 192, 0.22));
+
+    animation: gj-flutua 5.5s ease-in-out infinite;
+}
+
+@keyframes gj-flutua {
+
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+
+    50% { transform: translateY(-6px) rotate(1.5deg); }
+
+}
+
+.galeria-pasta-titulo-icone .galeria-jogos-menu {
+    order: 2;
+
+    margin-left: 4px;
+}
+
+/* o nome vira um detalhe pequeno embaixo do ícone */
+.galeria-pasta-titulo-icone .galeria-pasta-icone-nome {
+    order: 3;
+
+    flex: 0 0 100%;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-align: center;
+
+    color: #f6b3d6;
+
+    text-shadow: none;
+}
+
+.galeria-pasta-titulo-icone::after {
+    order: 4;
+
+    flex: 0 0 100%;
+
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   FILTRO POR JOGO — três tracinhos azuis ao lado do ícone
+   ========================================================= */
+
+.galeria-jogos-menu {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-left: 10px;
+
+    vertical-align: middle;
+
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0;
+    text-shadow: none;
+
+    z-index: 40;
+}
+
+.galeria-jogos-btn {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+
+    border: 0;
+    background: none;
+    box-shadow: none;
+
+    color: #8ecbff;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.galeria-jogos-btn svg {
+    width: 26px;
+    height: 26px;
+
+    overflow: visible;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+
+    filter: drop-shadow(0 0 5px rgba(142, 203, 255, 0.65));
+
+    animation: gj-respira 3.2s ease-in-out infinite;
+}
+
+.galeria-jogos-btn svg path {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+/* as três linhas "dançam", uma de cada vez */
+.gj-l1 { animation: gj-linha 2.8s ease-in-out infinite; }
+.gj-l2 { animation: gj-linha 2.8s ease-in-out -0.9s infinite; }
+.gj-l3 { animation: gj-linha 2.8s ease-in-out -1.8s infinite; }
+
+@keyframes gj-linha {
+
+    0%, 100% { transform: scaleX(1); }
+
+    50% { transform: scaleX(0.6); }
+
+}
+
+@keyframes gj-respira {
+
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(142, 203, 255, 0.5)); }
+
+    50% { filter: drop-shadow(0 0 10px rgba(142, 203, 255, 0.95)); }
+
+}
+
+.galeria-jogos-btn:hover {
+    color: #cfe6ff;
+
+    transform: scale(1.12);
+}
+
+.galeria-jogos-btn:hover svg path {
+    animation-duration: 0.9s;
+}
+
+/* estrelinha que aparece ao tocar */
+.galeria-jogos-btn::after {
+    content: "✦";
+
+    position: absolute;
+    top: -2px;
+    right: -1px;
+
+    font-size: 0.8rem;
+
+    color: #cfe6ff;
+
+    text-shadow: 0 0 8px #8ecbff;
+
+    opacity: 0;
+
+    transform: scale(0.3) rotate(-20deg);
+
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    pointer-events: none;
+}
+
+.galeria-jogos-btn:hover::after,
+.galeria-jogos-menu.aberto .galeria-jogos-btn::after {
+    opacity: 1;
+
+    transform: scale(1) rotate(12deg);
+}
+
+/* aberto: os tracinhos viram um ✕ */
+.galeria-jogos-menu.aberto .galeria-jogos-btn svg path {
+    animation: none;
+}
+
+.galeria-jogos-menu.aberto .gj-l1 { transform: translateY(5px) rotate(45deg); }
+
+.galeria-jogos-menu.aberto .gj-l2 { opacity: 0; transform: scaleX(0); }
+
+.galeria-jogos-menu.aberto .gj-l3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* pontinho: tem filtro ligado */
+.galeria-jogos-ponto {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #8ecbff;
+
+    box-shadow: 0 0 8px #8ecbff;
+
+    opacity: 0;
+
+    transform: scale(0);
+
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.galeria-jogos-btn.filtrando .galeria-jogos-ponto {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+/* nome do filtro ligado, ao lado do botão */
+.galeria-jogos-chip {
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.15rem;
+
+    color: #e4f1ff;
+
+    text-decoration: underline wavy #8ecbff 2px;
+    text-underline-offset: 5px;
+}
+
+.galeria-jogos-chip[hidden] {
+    display: none;
+}
+
+/* ---------- o menuzinho ---------- */
+
+.galeria-jogos-painel {
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    min-width: 210px;
+    max-width: min(260px, calc(100vw - 32px));
+
+    padding: 14px 10px 10px;
+
+    border: 2.5px solid #8ecbff;
+    border-radius: 18px 24px 16px 22px / 22px 16px 24px 18px;
+
+    background: #0f1830;
+
+    box-shadow: 4px 5px 0 rgba(142, 203, 255, 0.45);
+
+    text-align: left;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(-6px) rotate(-1deg);
+    transform-origin: top right;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0.2s;
+}
+
+.galeria-jogos-menu.aberto .galeria-jogos-painel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: none;
+}
+
+.galeria-jogos-titulo {
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+
+    border-bottom: 2px dashed rgba(142, 203, 255, 0.5);
+
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.1rem;
+    text-align: center;
+
+    color: #cfe6ff;
+}
+
+.galeria-jogos-opcao {
+    display: flex;
+    align-items: baseline;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: #cfe6ff;
+
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.2rem;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* as opções entram uma a uma */
+.galeria-jogos-menu.aberto .galeria-jogos-opcao {
+    animation: gj-item 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--n, 0) * 0.045s);
+}
+
+@keyframes gj-item {
+
+    from { opacity: 0; transform: translateX(-10px); }
+
+}
+
+.galeria-jogos-opcao::before {
+    content: "◆";
+
+    font-size: 0.55em;
+
+    color: #8ecbff;
+}
+
+.galeria-jogos-opcao span {
+    flex: 1;
+}
+
+.galeria-jogos-opcao small {
+    font-size: 1rem;
+
+    opacity: 0.65;
+}
+
+.galeria-jogos-opcao:hover {
+    background: rgba(142, 203, 255, 0.14);
+
+    transform: translateX(3px);
+}
+
+.galeria-jogos-opcao.ativa {
+    background: rgba(142, 203, 255, 0.18);
+
+    color: #fff;
+}
+
+.galeria-jogos-opcao.ativa span {
+    text-decoration: underline wavy #8ecbff 2px;
+    text-underline-offset: 5px;
+}
+
+/* "Todos": outra tonalidade (rosa), separado dos jogos */
+.galeria-jogos-todos {
+    position: relative;
+
+    margin-bottom: 10px;
+
+    color: #ffd6ec;
+}
+
+.galeria-jogos-todos::before {
+    content: "✦";
+
+    font-size: 0.7em;
+
+    color: #f6b3d6;
+}
+
+.galeria-jogos-todos::after {
+    content: "";
+
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -6px;
+
+    border-bottom: 2px dashed rgba(142, 203, 255, 0.35);
+}
+
+.galeria-jogos-todos.ativa {
+    background: rgba(246, 179, 214, 0.18);
+}
+
+.galeria-jogos-todos.ativa span {
+    text-decoration-color: #f08cc0;
+}
+
+@media (max-width: 600px) {
+
+    .galeria-pasta-icone {
+        width: clamp(60px, 20vw, 84px);
+    }
+
+    .galeria-jogos-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .galeria-jogos-btn svg,
+    .galeria-jogos-btn svg path,
+    .galeria-pasta-icone,
+    .galeria-jogos-menu.aberto .galeria-jogos-opcao {
+        animation: none;
+    }
+
+}
+
+/* tira o nome embaixo do ícone (o ícone já identifica a pasta) */
+.galeria-pasta-titulo-icone .galeria-pasta-icone-nome {
+    display: none;
+}
+
+/* Minecraft e Genshin são logos compridos e ficavam pequenos */
+.galeria-pasta-icone.galeria-pasta-icone-minecraft,
+.galeria-pasta-icone.galeria-pasta-icone-genshin {
+    width: clamp(96px, 20vw, 140px);
+}
+
+@media (max-width: 600px) {
+
+    .galeria-pasta-icone.galeria-pasta-icone-minecraft,
+    .galeria-pasta-icone.galeria-pasta-icone-genshin {
+        width: clamp(84px, 28vw, 112px);
+    }
+
+}

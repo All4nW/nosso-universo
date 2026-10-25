@@ -74,6 +74,7 @@ function renderizarPastasAdmin() {
             <div class="timeline-admin-info">
                 <h3>${escaparHtmlGaleria(pasta.nome)}</h3>
                 <div class="timeline-admin-tags">
+ 
                     ${pasta.ativo
                         ? '<span class="ativo">● Visível</span>'
                         : '<span class="inativo">● Oculta</span>'
@@ -191,6 +192,10 @@ async function abrirGerenciadorFotos(pastaId) {
         campoPlataforma.style.display = pastaAbertaEhPerfil ? 'block' : 'none';
     }
 
+        // o filtro de jogo aparece em todas as pastas, menos no Perfil
+    const campoJogo = document.getElementById('foto-jogo-campo');
+    if (campoJogo) campoJogo.style.display = pastaAbertaEhPerfil ? 'none' : 'block';
+
     await carregarFotosAdmin();
 }
 
@@ -233,6 +238,7 @@ function renderizarFotosAdmin() {
     if (!container) return;
 
     renderizarAlbunsAdmin();
+        renderizarJogosAdmin();
     atualizarIndicadorFiltroAlbumAdmin();
 
     const fotosVisiveis = filtroAlbumAdminAtivo
@@ -269,8 +275,10 @@ function renderizarFotosAdmin() {
                 <div class="timeline-admin-data">${formatarDataGaleria(foto.data)}</div>
                 <h3>${escaparHtmlGaleria(foto.descricao || 'Sem descrição')}</h3>
                 <div class="timeline-admin-tags">
+                                    ${!pastaAbertaEhPerfil ? `<label style="cursor:pointer;"><input type="checkbox" class="foto-marcar-cb" data-id="${foto.id}"> marcar</label>` : ''}
                     ${foto.album ? `<span>📁 ${escaparHtmlGaleria(foto.album)}</span>` : ''}
                     ${rotuloPlataforma ? `<span>${rotuloPlataforma}</span>` : ''}
+                                        ${(!pastaAbertaEhPerfil && foto.plataforma) ? `<span>🎮 ${escaparHtmlGaleria(foto.plataforma)}</span>` : ''}
                     ${foto.ativo ? '<span class="ativo">● Visível</span>' : '<span class="inativo">● Oculta</span>'}
                 </div>
             </div>
@@ -330,6 +338,7 @@ function renderizarAlbunsAdmin() {
             <div class="timeline-admin-info">
                 <h3>${escaparHtmlGaleria(album)}</h3>
                 <div class="timeline-admin-tags">
+                               
                     <span>${quantidade} ${quantidade === 1 ? 'foto' : 'fotos'}</span>
                 </div>
             </div>
@@ -443,6 +452,336 @@ function popularSelectAlbuns(albumSelecionado) {
         novoInput.value = '';
     }
 }
+// ===== FILTROS: a ordem fica guardada no próprio valor ("02|MM2") =====
+
+const JOGO_LEGADO = 900;
+
+function nomeDoJogo(valor) {
+    return String(valor || '').replace(/^\d{1,4}\|/, '').trim();
+}
+
+function ordemDoJogo(valor) {
+    const m = String(valor || '').match(/^(\d{1,4})\|/);
+    return m ? Number(m[1]) : JOGO_LEGADO;
+}
+
+function montarValorJogo(ordem, nome) {
+    return ordem === JOGO_LEGADO ? nome : `${String(ordem).padStart(2, '0')}|${nome}`;
+}
+
+function limparNomeJogo(texto) {
+    return String(texto || '').replace(/\|/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// nomes dos filtros da pasta aberta, na ordem escolhida
+function obterJogosExistentesNaPasta() {
+
+    const ordens = new Map();
+
+    fotosAdmin.forEach((foto) => {
+
+        const nome = nomeDoJogo(foto.plataforma);
+
+        if (!nome) return;
+
+        const o = ordemDoJogo(foto.plataforma);
+
+        ordens.set(nome, Math.min(ordens.has(nome) ? ordens.get(nome) : Infinity, o));
+
+    });
+
+    return [...ordens.entries()]
+        .sort((a, b) => (a[1] - b[1]) || a[0].localeCompare(b[0], 'pt-BR'))
+        .map(([nome]) => nome);
+
+}
+
+function ordemDoNomeJogo(nome) {
+
+    let menor = Infinity;
+
+    fotosAdmin.forEach((foto) => {
+
+        if (nomeDoJogo(foto.plataforma) === nome) {
+            menor = Math.min(menor, ordemDoJogo(foto.plataforma));
+        }
+
+    });
+
+    return menor === Infinity ? null : menor;
+
+}
+
+// valor que vai pro banco: filtro que já existe mantém a ordem; filtro novo vai pro fim
+function valorDoJogo(nome) {
+
+    const existentes = obterJogosExistentesNaPasta();
+
+    nome = existentes.find(n => n.toLowerCase() === nome.toLowerCase()) || nome;
+
+    const atual = ordemDoNomeJogo(nome);
+
+    if (atual !== null) return montarValorJogo(atual, nome);
+
+    const maior = Math.max(0, ...existentes.map(ordemDoNomeJogo));
+
+    return montarValorJogo(maior + 1, nome);
+
+}
+
+function popularSelectJogos(jogoSelecionado) {
+
+    const select = document.getElementById('foto-jogo-select');
+    const novoInput = document.getElementById('foto-jogo-novo');
+
+    if (!select) return;
+
+    const nomes = obterJogosExistentesNaPasta();
+
+    select.innerHTML = `
+        <option value="">Sem filtro</option>
+        ${nomes.map(n => `<option value="${escaparHtmlGaleria(valorDoJogo(n))}">${escaparHtmlGaleria(n)}</option>`).join('')}
+        <option value="__novo__">＋ Criar novo filtro...</option>
+    `;
+
+    const alvo = nomeDoJogo(jogoSelecionado);
+
+    select.value = (alvo && nomes.includes(alvo)) ? valorDoJogo(alvo) : '';
+
+    if (novoInput) {
+        novoInput.style.display = 'none';
+        novoInput.value = '';
+    }
+
+}
+
+function popularSelectLote(nomes) {
+
+    const select = document.getElementById('jogos-lote-select');
+
+    if (!select) return;
+
+    select.innerHTML = `
+        <option value="">Escolha um filtro...</option>
+        ${nomes.map(n => `<option value="${escaparHtmlGaleria(n)}">${escaparHtmlGaleria(n)}</option>`).join('')}
+        <option value="__nenhum__">(tirar as fotos de qualquer filtro)</option>
+    `;
+
+}
+
+function renderizarJogosAdmin() {
+
+    const secao = document.getElementById('jogos-admin-secao');
+    const container = document.getElementById('jogos-admin-itens');
+
+    if (!secao || !container) return;
+
+    // o Perfil não usa esse filtro
+    secao.style.display = pastaAbertaEhPerfil ? 'none' : 'block';
+
+    if (pastaAbertaEhPerfil) return;
+
+    const nomes = obterJogosExistentesNaPasta();
+
+    popularSelectLote(nomes);
+
+    if (!nomes.length) {
+        container.innerHTML = '<div class="timeline-admin-vazio">Nenhum filtro ainda. Marque fotos na lista abaixo, digite um nome em "filtro novo" e clique em Aplicar.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    nomes.forEach((nome, i) => {
+
+        const quantidade = fotosAdmin.filter(f => nomeDoJogo(f.plataforma) === nome).length;
+
+        const el = document.createElement('div');
+
+        el.className = 'timeline-admin-item';
+
+        el.innerHTML = `
+            <div class="timeline-admin-thumb timeline-admin-thumb-vazio">🎮</div>
+            <div class="timeline-admin-info">
+                <h3>${escaparHtmlGaleria(nome)}</h3>
+                <div class="timeline-admin-tags">
+                    <span>${quantidade} ${quantidade === 1 ? 'foto' : 'fotos'}</span>
+                    <span>nº ${i + 1}</span>
+                </div>
+            </div>
+            <div class="timeline-admin-acoes">
+                <button type="button" class="timeline-admin-btn" data-acao="subir-jogo" data-jogo="${escaparHtmlGaleria(nome)}" title="Subir na lista" ${i === 0 ? 'disabled' : ''}>▲</button>
+                <button type="button" class="timeline-admin-btn" data-acao="descer-jogo" data-jogo="${escaparHtmlGaleria(nome)}" title="Descer na lista" ${i === nomes.length - 1 ? 'disabled' : ''}>▼</button>
+                <button type="button" class="timeline-admin-btn" data-acao="editar-jogo" data-jogo="${escaparHtmlGaleria(nome)}" title="Renomear">✎</button>
+                <button type="button" class="timeline-admin-btn timeline-admin-excluir" data-acao="excluir-jogo" data-jogo="${escaparHtmlGaleria(nome)}" title="Apagar filtro">🗑</button>
+            </div>
+        `;
+
+        container.appendChild(el);
+
+    });
+
+}
+
+// sobe (-1) ou desce (+1) um filtro na ordem
+async function moverJogo(nome, passo) {
+
+    const nomes = obterJogosExistentesNaPasta();
+
+    const i = nomes.indexOf(nome);
+    const j = i + passo;
+
+    if (i < 0 || j < 0 || j >= nomes.length) return;
+
+    [nomes[i], nomes[j]] = [nomes[j], nomes[i]];
+
+    try {
+
+        const trabalhos = [];
+
+        // refaz a numeração 1, 2, 3... só nas fotos que mudaram
+        nomes.forEach((n, pos) => {
+
+            const valor = montarValorJogo(pos + 1, n);
+
+            fotosAdmin
+                .filter(f => nomeDoJogo(f.plataforma) === n && (f.plataforma || '').trim() !== valor)
+                .forEach(f => trabalhos.push(atualizarJogoDaFoto(f, valor)));
+
+        });
+
+        await Promise.all(trabalhos);
+
+        await carregarFotosAdmin();
+
+    } catch (erro) {
+
+        console.error('[GALERIA ADMIN] Erro ao mover filtro:', erro);
+        alert('❌ Não foi possível mudar a ordem do filtro.');
+
+    }
+
+}
+
+async function renomearJogo(antigo) {
+
+    const novo = prompt(`Novo nome para o filtro "${antigo}":`, antigo);
+
+    if (!novo) return;
+
+    const nome = limparNomeJogo(novo);
+
+    if (!nome || nome === antigo) return;
+
+    const nomes = obterJogosExistentesNaPasta();
+
+    // se já existe outro filtro com esse nome, as fotos entram nele
+    const existente = nomes.find(n => n !== antigo && n.toLowerCase() === nome.toLowerCase());
+
+    const valor = montarValorJogo(
+        ordemDoNomeJogo(existente || antigo),
+        existente || nome
+    );
+
+    const fotos = fotosAdmin.filter(f => nomeDoJogo(f.plataforma) === antigo);
+
+    try {
+        await Promise.all(fotos.map(f => atualizarJogoDaFoto(f, valor)));
+        await carregarFotosAdmin();
+        alert('✅ Filtro renomeado! Clique em "Sincronizar com o site" pra publicar.');
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao renomear filtro:', erro);
+        alert('❌ Não foi possível renomear o filtro em todas as fotos.');
+    }
+
+}
+
+async function excluirJogo(nome) {
+
+    const fotos = fotosAdmin.filter(f => nomeDoJogo(f.plataforma) === nome);
+
+    if (!confirm(`Apagar o filtro "${nome}"? As ${fotos.length} foto(s) continuam na pasta, só ficam sem filtro.`)) return;
+
+    try {
+        await Promise.all(fotos.map(f => atualizarJogoDaFoto(f, '')));
+        await carregarFotosAdmin();
+        alert('✅ Filtro apagado! Clique em "Sincronizar com o site" pra publicar.');
+    } catch (erro) {
+        console.error('[GALERIA ADMIN] Erro ao apagar filtro:', erro);
+        alert('❌ Não foi possível apagar o filtro em todas as fotos.');
+    }
+
+}
+
+// aplica um filtro nas fotos marcadas, de uma vez
+async function aplicarJogoLote() {
+
+    const ids = [...document.querySelectorAll('#fotos-admin-itens .foto-marcar-cb:checked')]
+        .map(cb => cb.dataset.id);
+
+    if (!ids.length) {
+        alert('Marque pelo menos uma foto na lista abaixo.');
+        return;
+    }
+
+    const novo = limparNomeJogo(document.getElementById('jogos-lote-novo').value);
+    const escolhido = document.getElementById('jogos-lote-select').value;
+
+    let valor;
+
+    if (novo) valor = valorDoJogo(novo);
+    else if (escolhido === '__nenhum__') valor = '';
+    else if (escolhido) valor = valorDoJogo(escolhido);
+    else {
+        alert('Escolha um filtro na lista ou digite um novo.');
+        return;
+    }
+
+    const fotos = fotosAdmin.filter(f => ids.includes(String(f.id)));
+
+    try {
+
+        await Promise.all(fotos.map(f => atualizarJogoDaFoto(f, valor)));
+
+        document.getElementById('jogos-lote-novo').value = '';
+
+        const todas = document.getElementById('jogos-lote-todas');
+
+        if (todas) todas.checked = false;
+
+        await carregarFotosAdmin();
+
+        alert(`✅ ${fotos.length} foto(s) atualizadas! Clique em "Sincronizar com o site" pra publicar.`);
+
+    } catch (erro) {
+
+        console.error('[GALERIA ADMIN] Erro ao aplicar filtro:', erro);
+        alert('❌ Não foi possível aplicar o filtro em todas as fotos.');
+
+    }
+
+}
+
+// ===== FILTROS (jogos) da pasta =====
+
+async function atualizarJogoDaFoto(foto, novoJogo) {
+    const formulario = new FormData();
+    formulario.append('pastaId', foto.pastaId);
+    formulario.append('data', foto.data || '');
+    formulario.append('descricao', foto.descricao || '');
+    formulario.append('plataforma', novoJogo);
+    formulario.append('album', foto.album || '');
+    formulario.append('ativo', foto.ativo ? 'true' : 'false');
+
+    const resposta = await fetch(`http://localhost:3000/api/galeria/fotos/${foto.id}`, {
+        method: 'PUT',
+        body: formulario
+    });
+
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+}
+
+
 
 function abrirFormularioNovaFoto() {
     fotoEditandoId = null;
@@ -451,6 +790,7 @@ function abrirFormularioNovaFoto() {
     document.getElementById('foto-data').value = '';
     document.getElementById('foto-descricao').value = '';
     popularSelectAlbuns('');
+        popularSelectJogos('');
 
     const campoPlataformaSelect = document.getElementById('foto-plataforma');
     if (campoPlataformaSelect) campoPlataformaSelect.value = '';
@@ -470,6 +810,8 @@ function editarFoto(id) {
     document.getElementById('foto-data').value = foto.data;
     document.getElementById('foto-descricao').value = foto.descricao || '';
     popularSelectAlbuns(foto.album || '');
+
+    popularSelectJogos(foto.plataforma || '');
 
     const campoPlataformaSelect = document.getElementById('foto-plataforma');
     if (campoPlataformaSelect) campoPlataformaSelect.value = foto.plataforma || '';
@@ -518,12 +860,43 @@ async function salvarFoto() {
             albumFinal = selectAlbum.value;
         }
     }
+    // fora do Perfil, o campo "plataforma" guarda o jogo/filtro da foto
+    let plataformaFinal = campoPlataformaSelect ? campoPlataformaSelect.value : '';
+
+    if (!pastaAbertaEhPerfil) {
+
+        const selectJogo = document.getElementById('foto-jogo-select');
+        const novoJogoInput = document.getElementById('foto-jogo-novo');
+
+        plataformaFinal = '';
+
+        if (selectJogo) {
+
+            if (selectJogo.value === '__novo__') {
+
+                                const nomeNovo = limparNomeJogo(novoJogoInput?.value);
+                plataformaFinal = nomeNovo ? valorDoJogo(nomeNovo) : '';
+
+                if (!plataformaFinal) {
+                    alert('Digite o nome do novo filtro.');
+                    return;
+                }
+
+            } else {
+
+                plataformaFinal = selectJogo.value;
+
+            }
+
+        }
+
+    }
 
     const formulario = new FormData();
     formulario.append('pastaId', pastaAbertaId);
     formulario.append('data', data);
     formulario.append('descricao', document.getElementById('foto-descricao').value);
-    formulario.append('plataforma', campoPlataformaSelect ? campoPlataformaSelect.value : '');
+    formulario.append('plataforma', plataformaFinal);
     formulario.append('album', albumFinal);
     formulario.append('ativo', document.getElementById('foto-ativa').checked);
 
@@ -602,6 +975,19 @@ function registrarEventosGaleria() {
         }
     });
 
+        document.getElementById('foto-jogo-select')?.addEventListener('change', (event) => {
+        const novoInput = document.getElementById('foto-jogo-novo');
+        if (!novoInput) return;
+
+        if (event.target.value === '__novo__') {
+            novoInput.style.display = 'block';
+            novoInput.focus();
+        } else {
+            novoInput.style.display = 'none';
+            novoInput.value = '';
+        }
+    });
+    
     document.getElementById('foto-btn-cancelar')?.addEventListener('click', fecharFormularioFoto);
     document.getElementById('foto-btn-salvar')?.addEventListener('click', salvarFoto);
 
@@ -635,6 +1021,25 @@ function registrarEventosGaleria() {
     });
 
     document.getElementById('filtro-album-admin-fechar')?.addEventListener('click', fecharFiltroAlbumAdmin);
+        document.getElementById('jogos-admin-itens')?.addEventListener('click', (event) => {
+        const botao = event.target.closest('[data-acao]');
+        if (!botao) return;
+        const jogo = botao.dataset.jogo;
+
+        if (botao.dataset.acao === 'editar-jogo') renomearJogo(jogo);
+        if (botao.dataset.acao === 'excluir-jogo') excluirJogo(jogo);
+
+                if (botao.dataset.acao === 'subir-jogo') moverJogo(jogo, -1);
+        if (botao.dataset.acao === 'descer-jogo') moverJogo(jogo, 1);
+    });
+
+    document.getElementById('jogos-lote-aplicar')?.addEventListener('click', aplicarJogoLote);
+
+    document.getElementById('jogos-lote-todas')?.addEventListener('change', (event) => {
+        document
+            .querySelectorAll('#fotos-admin-itens .foto-marcar-cb')
+            .forEach(cb => { cb.checked = event.target.checked; });
+    });
 }
 
 
