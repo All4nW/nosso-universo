@@ -357,22 +357,23 @@ function criarMenuAno() {
 
     caixa.className = "assistidos-ano-menu";
 
-    caixa.innerHTML = `
+      caixa.innerHTML = `
         <button type="button" class="assistidos-ano-btn" aria-label="Filtrar por ano" aria-haspopup="menu" aria-expanded="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="5" cy="12" r="1.9"/>
-                <circle cx="12" cy="12" r="1.9"/>
-                <circle cx="19" cy="12" r="1.9"/>
+                <path class="gj-l1" d="M4 7h16"/>
+                <path class="gj-l2" d="M4 12h16"/>
+                <path class="gj-l3" d="M4 17h16"/>
             </svg>
             ${filtrando ? `<span class="assistidos-ano-chip">${rotuloAtivo}</span>` : ""}
         </button>
         <div class="assistidos-ano-popover" role="menu">
             <p class="assistidos-ano-titulo">Ano em que assistimos</p>
-            ${opcoes.map(([valor, rotulo, qtd]) => `
+            ${opcoes.map(([valor, rotulo, qtd], i) => `
                 <button type="button" role="menuitemradio"
                         aria-checked="${valor === anoFiltro}"
                         data-ano="${valor}"
-                        class="${valor === anoFiltro ? "ativa" : ""}">
+                        style="--n:${i}"
+                        class="${valor === anoFiltro ? "ativa" : ""} ${valor === "todos" ? "assistidos-ano-todos" : ""}">
                     <span class="assistidos-ano-rotulo">${rotulo}</span>
                     <span class="assistidos-ano-qtd">${qtd}</span>
                     <span class="assistidos-ano-marca" aria-hidden="true">♥</span>

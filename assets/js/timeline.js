@@ -793,21 +793,27 @@ function montarDockTimeline(container, itens) {
 
     dock.innerHTML = `
 
-        ${temFiltro ? `
+              ${temFiltro ? `
             <div class="timeline-dock-item">
 
-                <button type="button" class="timeline-dock-btn" aria-label="Filtrar momentos" aria-haspopup="true" aria-expanded="false">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                <button type="button" class="timeline-dock-btn timeline-dock-btn-filtro" aria-label="Filtrar momentos" aria-haspopup="true" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path class="gj-l1" d="M4 7h16"/>
+                        <path class="gj-l2" d="M4 12h16"/>
+                        <path class="gj-l3" d="M4 17h16"/>
+                    </svg>
                     <span class="timeline-dock-ponto"></span>
                 </button>
+
+                <span class="timeline-dock-chip" hidden></span>
 
                 <div class="timeline-dock-painel" role="menu">
 
                     <p class="timeline-dock-titulo">Filtrar momentos</p>
 
-                    ${[["todos", "Tudo"], ...opcoes].map(([chave, nome]) => `
-                        <button type="button" class="timeline-dock-opcao ${chave === "todos" ? "ativa" : ""}"
-                                data-filtro="${chave}" role="menuitemradio" aria-checked="${chave === "todos"}">
+                    ${[["todos", "Tudo"], ...opcoes].map(([chave, nome], i) => `
+                        <button type="button" class="timeline-dock-opcao ${chave === "todos" ? "ativa timeline-dock-todos" : ""}"
+                                data-filtro="${chave}" style="--n:${i}" role="menuitemradio" aria-checked="${chave === "todos"}">
                             <span>${nome}</span>
                             <small>${chave === "todos" ? itens.length : contagem[chave]}</small>
                             <i aria-hidden="true">♥</i>
@@ -940,6 +946,18 @@ function definirFiltroTimeline(chave) {
     // pontinho rosa no botão enquanto tiver filtro ligado
     dock?.querySelector(".timeline-dock-item .timeline-dock-btn")
         ?.classList.toggle("filtrando", chave !== "todos");
+
+            // nome do filtro ligado, ao lado do botão
+    const chip = dock?.querySelector(".timeline-dock-chip");
+
+    if (chip) {
+
+        const nomeFiltro = (FILTROS_TIMELINE.find(([c]) => c === chave) || [])[1] || "";
+
+        chip.hidden = chave === "todos";
+        chip.textContent = chave === "todos" ? "" : nomeFiltro;
+
+    }
 
     aplicarFiltroTimeline(chave);
 

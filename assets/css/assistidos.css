@@ -5453,3 +5453,275 @@ body.sorteio-aberto { overflow: hidden; }
 .assistidos-ano-menu.aberto .assistidos-ano-popover button {
     animation: none;
 }
+
+/* =========================================================
+   FILTRO DE ANO — ☰ animado em tons de menta
+   (mesmo efeito do filtro da galeria, outra cor)
+   ========================================================= */
+
+.assistidos-estante-titulo .assistidos-ano-menu {
+    --fx: #86f0cf;
+    --fx-claro: #d9fff1;
+    --fx-rgb: 134, 240, 207;
+    --fx-bg: #0b2320;
+    --fx-todos: #ffd7a8;
+    --fx-todos-rgb: 255, 215, 168;
+}
+
+/* o botão: só os três tracinhos */
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    width: auto;
+    min-width: 40px;
+    height: 40px;
+
+    padding: 0 6px;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+    box-shadow: none;
+
+    color: var(--fx);
+
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn svg {
+    width: 26px;
+    height: 26px;
+
+    overflow: visible;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+
+    filter: drop-shadow(0 0 5px rgba(var(--fx-rgb), 0.65));
+
+    animation: as-respira 3.2s ease-in-out infinite;
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn svg path {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+@keyframes as-respira {
+
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(var(--fx-rgb), 0.5)); }
+
+    50% { filter: drop-shadow(0 0 10px rgba(var(--fx-rgb), 0.95)); }
+
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn:hover,
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .assistidos-ano-btn {
+    background: none;
+
+    border: 0;
+
+    color: var(--fx-claro);
+
+    transform: scale(1.1);
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn:hover svg path {
+    animation-duration: 0.9s;
+}
+
+/* estrelinha ao tocar */
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn::after {
+    content: "✦";
+
+    position: absolute;
+    top: -2px;
+    left: 24px;
+
+    font-size: 0.8rem;
+
+    color: var(--fx-claro);
+
+    text-shadow: 0 0 8px var(--fx);
+
+    opacity: 0;
+
+    transform: scale(0.3) rotate(-20deg);
+
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    pointer-events: none;
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn:hover::after,
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .assistidos-ano-btn::after {
+    opacity: 1;
+
+    transform: scale(1) rotate(12deg);
+}
+
+/* aberto: os tracinhos viram um ✕ */
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .assistidos-ano-btn svg path {
+    animation: none;
+}
+
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .gj-l1 { transform: translateY(5px) rotate(45deg); }
+
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .gj-l2 { opacity: 0; transform: scaleX(0); }
+
+.assistidos-estante-titulo .assistidos-ano-menu.aberto .gj-l3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* o ano escolhido, escrito ao lado do botão */
+.assistidos-ano-menu .assistidos-ano-chip {
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.15rem;
+    font-weight: 400;
+
+    color: #effff9;
+
+    text-decoration: underline wavy var(--fx) 2px;
+    text-underline-offset: 5px;
+}
+
+/* ---------- o menuzinho ---------- */
+
+.assistidos-ano-menu .assistidos-ano-popover {
+    min-width: 210px;
+    max-height: min(62vh, 420px);
+
+    overflow-y: auto;
+
+    border-color: var(--fx);
+
+    background: var(--fx-bg);
+
+    box-shadow: 4px 5px 0 rgba(var(--fx-rgb), 0.45);
+
+    transform: translateY(-6px) rotate(-1deg);
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--fx-rgb), 0.5) transparent;
+}
+
+.assistidos-ano-menu.aberto .assistidos-ano-popover {
+    transform: none;
+}
+
+.assistidos-ano-menu .assistidos-ano-titulo {
+    color: var(--fx-claro);
+}
+
+.assistidos-ano-menu .assistidos-ano-titulo::after {
+    border-bottom-color: rgba(var(--fx-rgb), 0.5);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover button {
+    color: var(--fx-claro);
+}
+
+/* as opções entram uma a uma */
+.assistidos-ano-menu.aberto .assistidos-ano-popover button {
+    animation: gj-item 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--n, 0) * 0.045s);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover button::before {
+    content: "◆";
+
+    font-size: 0.55em;
+
+    color: var(--fx);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover button:hover {
+    background: rgba(var(--fx-rgb), 0.14);
+
+    transform: translateX(3px);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover button.ativa {
+    background: rgba(var(--fx-rgb), 0.18);
+
+    color: #fff;
+}
+
+.assistidos-ano-menu .assistidos-ano-popover button.ativa .assistidos-ano-rotulo {
+    text-decoration: underline wavy var(--fx) 2px;
+    text-underline-offset: 5px;
+}
+
+.assistidos-ano-menu .assistidos-ano-marca {
+    color: var(--fx);
+}
+
+/* "Todos os anos": outra tonalidade (pêssego), separado dos anos */
+.assistidos-ano-menu .assistidos-ano-popover .assistidos-ano-todos {
+    position: relative;
+
+    margin-bottom: 10px;
+
+    color: var(--fx-todos);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover .assistidos-ano-todos::before {
+    content: "✦";
+
+    font-size: 0.7em;
+
+    color: var(--fx-todos);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover .assistidos-ano-todos::after {
+    content: "";
+
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -6px;
+
+    border-bottom: 2px dashed rgba(var(--fx-rgb), 0.35);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover .assistidos-ano-todos.ativa {
+    background: rgba(var(--fx-todos-rgb), 0.16);
+}
+
+.assistidos-ano-menu .assistidos-ano-popover .assistidos-ano-todos.ativa .assistidos-ano-rotulo {
+    text-decoration-color: var(--fx-todos);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn svg,
+    .assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn svg path,
+    .assistidos-ano-menu.aberto .assistidos-ano-popover button {
+        animation: none;
+    }
+
+}
+
+
+/* =========================================================
+   SORTEIO — a lista de "tirar do sorteio" mostra todos
+   (antes tinha rolagem própria e escondia linhas no celular)
+   ========================================================= */
+
+.sorteio-lista {
+    max-height: none;
+
+    overflow: visible;
+}
+
+.sorteio-caixa {
+    padding-bottom: 48px;
+}

@@ -1144,3 +1144,275 @@
     letter-spacing: 0;
     text-transform: none;
 }
+
+/* =========================================================
+   MENU FLUTUANTE — ☰ animado em tons de âmbar
+   (mesmo efeito do filtro da galeria, outra cor)
+   ========================================================= */
+
+.timeline-dock {
+    --fx: #ffcf8a;
+    --fx-claro: #ffe9c7;
+    --fx-rgb: 255, 207, 138;
+    --fx-bg: #241808;
+    --fx-todos: #d9c2ff;
+    --fx-todos-rgb: 217, 194, 255;
+}
+
+/* o ⏳ nas mesmas cores */
+.timeline-dock-btn:not(.timeline-dock-btn-filtro) {
+    border-color: var(--fx);
+
+    background: var(--fx-bg);
+
+    box-shadow: 3px 3px 0 rgba(var(--fx-rgb), 0.55);
+
+    color: var(--fx-claro);
+}
+
+.timeline-dock-btn:not(.timeline-dock-btn-filtro):hover,
+.timeline-dock-item.aberto .timeline-dock-btn:not(.timeline-dock-btn-filtro) {
+    border-color: var(--fx);
+
+    background: #3a2810;
+
+    box-shadow: 1px 1px 0 rgba(var(--fx-rgb), 0.55);
+}
+
+.timeline-dock-badge {
+    border-color: var(--fx-bg);
+
+    background: var(--fx);
+
+    color: var(--fx-bg);
+}
+
+/* o ☰: só os três tracinhos */
+.timeline-dock-btn.timeline-dock-btn-filtro {
+    width: 40px;
+
+    border: 0;
+
+    background: none;
+
+    box-shadow: none;
+
+    color: var(--fx);
+}
+
+.timeline-dock-btn.timeline-dock-btn-filtro svg {
+    width: 26px;
+    height: 26px;
+
+    overflow: visible;
+
+    stroke-width: 2.6;
+
+    filter: drop-shadow(0 0 5px rgba(var(--fx-rgb), 0.65));
+
+    animation: tl-respira 3.2s ease-in-out infinite;
+}
+
+.timeline-dock-btn.timeline-dock-btn-filtro svg path {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+@keyframes tl-respira {
+
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(var(--fx-rgb), 0.5)); }
+
+    50% { filter: drop-shadow(0 0 10px rgba(var(--fx-rgb), 0.95)); }
+
+}
+
+.timeline-dock-btn.timeline-dock-btn-filtro:hover,
+.timeline-dock-item.aberto .timeline-dock-btn.timeline-dock-btn-filtro {
+    background: none;
+
+    box-shadow: none;
+
+    color: var(--fx-claro);
+
+    transform: scale(1.12);
+}
+
+.timeline-dock-btn.timeline-dock-btn-filtro:hover svg path {
+    animation-duration: 0.9s;
+}
+
+/* aberto: os tracinhos viram um ✕ */
+.timeline-dock-item.aberto .timeline-dock-btn-filtro svg path {
+    animation: none;
+}
+
+.timeline-dock-item.aberto .gj-l1 { transform: translateY(5px) rotate(45deg); }
+
+.timeline-dock-item.aberto .gj-l2 { opacity: 0; transform: scaleX(0); }
+
+.timeline-dock-item.aberto .gj-l3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* pontinho: tem filtro ligado */
+.timeline-dock-btn-filtro .timeline-dock-ponto {
+    top: auto;
+    right: 3px;
+    bottom: 3px;
+
+    width: 9px;
+    height: 9px;
+
+    background: var(--fx);
+
+    box-shadow: 0 0 8px var(--fx);
+}
+
+/* nome do filtro ligado, à esquerda do botão */
+.timeline-dock-chip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 4px);
+
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.15rem;
+    white-space: nowrap;
+
+    color: var(--fx-claro);
+
+    text-decoration: underline wavy var(--fx) 2px;
+    text-underline-offset: 5px;
+
+    transform: translateY(-50%);
+
+    transition: opacity 0.2s ease;
+
+    pointer-events: none;
+}
+
+.timeline-dock-chip[hidden] {
+    display: none;
+}
+
+.timeline-dock-item.aberto .timeline-dock-chip {
+    opacity: 0;
+}
+
+/* ---------- o painel ---------- */
+
+.timeline-dock-painel {
+    max-height: 70vh;
+
+    overflow-y: auto;
+
+    border-color: var(--fx);
+
+    background: var(--fx-bg);
+
+    box-shadow: 4px 5px 0 rgba(var(--fx-rgb), 0.45);
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--fx-rgb), 0.5) transparent;
+}
+
+.timeline-dock-titulo {
+    border-bottom-color: rgba(var(--fx-rgb), 0.5);
+
+    color: var(--fx-claro);
+}
+
+.timeline-dock-opcao {
+    color: var(--fx-claro);
+}
+
+/* as opções entram uma a uma */
+.timeline-dock-item.aberto .timeline-dock-opcao {
+    animation: gj-item 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--n, 0) * 0.045s);
+}
+
+.timeline-dock-opcao::before {
+    content: "◆";
+
+    font-size: 0.55em;
+
+    color: var(--fx);
+}
+
+.timeline-dock-opcao:hover {
+    background: rgba(var(--fx-rgb), 0.14);
+}
+
+.timeline-dock-opcao.ativa {
+    background: rgba(var(--fx-rgb), 0.18);
+
+    color: #fff;
+}
+
+.timeline-dock-opcao.ativa span {
+    text-decoration-color: var(--fx);
+}
+
+.timeline-dock-opcao i {
+    color: var(--fx);
+}
+
+/* "Tudo": outra tonalidade (lilás), separado dos tipos */
+.timeline-dock-todos {
+    position: relative;
+
+    margin-bottom: 10px;
+
+    color: var(--fx-todos);
+}
+
+.timeline-dock-todos::before {
+    content: "✦";
+
+    font-size: 0.7em;
+
+    color: var(--fx-todos);
+}
+
+.timeline-dock-todos::after {
+    content: "";
+
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -6px;
+
+    border-bottom: 2px dashed rgba(var(--fx-rgb), 0.35);
+}
+
+.timeline-dock-todos.ativa {
+    background: rgba(var(--fx-todos-rgb), 0.16);
+}
+
+.timeline-dock-todos.ativa span {
+    text-decoration-color: var(--fx-todos);
+}
+
+/* contadores */
+.timeline-dock-contador {
+    border-color: rgba(var(--fx-rgb), 0.35);
+
+    background: rgba(var(--fx-rgb), 0.06);
+}
+
+.timeline-dock-contador:hover {
+    background: rgba(var(--fx-rgb), 0.16);
+}
+
+.timeline-dock-contador small {
+    color: var(--fx);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .timeline-dock-btn.timeline-dock-btn-filtro svg,
+    .timeline-dock-item.aberto .timeline-dock-opcao {
+        animation: none;
+    }
+
+}
