@@ -136,10 +136,12 @@
     menuFab.className = "sn-menu-fab";
     menuFab.setAttribute("aria-label", "Índice de categorias");
     menuFab.innerHTML = `
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M5 7h14M5 12h9M5 17h14"/>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="sn-l1" d="M4 7h16"/>
+            <path class="sn-l2" d="M4 12h16"/>
+            <path class="sn-l3" d="M4 17h16"/>
         </svg>
+        <span class="sn-menu-chip" hidden></span>
     `;
 
     topo.appendChild(abas);
@@ -229,6 +231,7 @@
         drawerAberta = true;
         overlay.classList.add("visivel");
         drawer.classList.add("aberta");
+        menuFab.classList.add("aberto");
 
     }
 
@@ -237,10 +240,11 @@
         drawerAberta = false;
         overlay.classList.remove("visivel");
         drawer.classList.remove("aberta");
+        menuFab.classList.remove("aberto");
 
     }
 
-    menuFab.addEventListener("click", abrirDrawer);
+    menuFab.addEventListener("click", () => (drawerAberta ? fecharDrawer() : abrirDrawer()));
     overlay.addEventListener("click", fecharDrawer);
 
     document.addEventListener("keydown", (evento) => {
@@ -516,11 +520,64 @@
         clearTimeout(temporizadorResize);
         temporizadorResize = setTimeout(ajustarTextos, 150);
     });
+    // ---------- os cards aparecem quando chegam na tela ----------
+
+    let observadorPecas = null;
+
+    function revelarPecas() {
+
+        if (observadorPecas) observadorPecas.disconnect();
+
+        // navegador sem suporte: mostra tudo de uma vez
+        if (!("IntersectionObserver" in window)) return;
+
+        observadorPecas = new IntersectionObserver((entradas) => {
+
+            entradas
+                .filter((e) => e.isIntersecting)
+                .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+                .forEach((e, n) => {
+
+                    const el = e.target;
+
+                    // os que chegam juntos entram um depois do outro
+                    el.style.setProperty("--sn-d", `${n * 0.1}s`);
+
+                    el.classList.remove("sn-esperando");
+                    el.classList.add("sn-visto");
+
+                    observadorPecas.unobserve(el);
+
+                });
+
+        }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
+
+        painel.querySelectorAll(".sn-peca").forEach((peca) => {
+
+            peca.classList.add("sn-esperando");
+
+            observadorPecas.observe(peca);
+
+        });
+
+    }
+
 
     function montarPainel() {
 
         renderizarDrawer();
         menuFab.classList.toggle("filtrando", categoriaAtiva !== TODAS);
+
+                // nome da categoria escolhida, ao lado do botão
+        const chip = menuFab.querySelector(".sn-menu-chip");
+        const atual = categorias.find((c) => c.id === categoriaAtiva);
+
+        if (chip) {
+
+            chip.hidden = categoriaAtiva === TODAS || !atual;
+            chip.textContent = atual ? atual.titulo : "";
+
+        }
 
         if (!categorias.length) {
             painel.innerHTML = `<p class="sn-vazio">Ainda não tem nada por aqui.</p>`;
@@ -538,6 +595,7 @@
         `;
 
         ajustarTextos();
+                revelarPecas();
 
         // A fonte do texto carrega depois: refaz a medição quando ela chegar
         if (document.fonts) {

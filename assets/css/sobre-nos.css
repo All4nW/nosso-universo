@@ -1703,3 +1703,438 @@
     --txt-w: 27%;
     --txt-h: 60%;
 }
+
+/* =========================================================
+   BOTÃO DO ÍNDICE — três tracinhos rosa animados
+   (por dentro, o índice continua igual)
+   Pra trocar a cor: --sn-fx e --sn-fx-rgb (os dois com a mesma cor)
+   ========================================================= */
+
+.sn-menu-fab {
+    --sn-fx: #ffa8d2;
+    --sn-fx-claro: #ffe3f1;
+    --sn-fx-rgb: 255, 168, 210;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+
+    box-shadow: none;
+
+    color: var(--sn-fx);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sn-menu-fab.visivel:hover {
+    border-color: transparent;
+
+    color: var(--sn-fx-claro);
+
+    transform: scale(1.12);
+}
+
+.sn-menu-fab svg {
+    width: 28px;
+    height: 28px;
+
+    overflow: visible;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+
+    /* o rosa brilha, e a sombra escura garante leitura sobre os papéis */
+    filter:
+        drop-shadow(0 0 6px rgba(var(--sn-fx-rgb), 0.7))
+        drop-shadow(0 2px 5px rgba(5, 5, 16, 0.9));
+
+    animation: sn-respira 3.2s ease-in-out infinite;
+}
+
+.sn-menu-fab svg path {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+/* as três linhas "dançam", uma de cada vez */
+.sn-l1 { animation: sn-linha 2.8s ease-in-out infinite; }
+.sn-l2 { animation: sn-linha 2.8s ease-in-out -0.9s infinite; }
+.sn-l3 { animation: sn-linha 2.8s ease-in-out -1.8s infinite; }
+
+@keyframes sn-linha {
+
+    0%, 100% { transform: scaleX(1); }
+
+    50% { transform: scaleX(0.6); }
+
+}
+
+@keyframes sn-respira {
+
+    0%, 100% {
+        filter:
+            drop-shadow(0 0 3px rgba(var(--sn-fx-rgb), 0.5))
+            drop-shadow(0 2px 5px rgba(5, 5, 16, 0.9));
+    }
+
+    50% {
+        filter:
+            drop-shadow(0 0 11px rgba(var(--sn-fx-rgb), 0.95))
+            drop-shadow(0 2px 5px rgba(5, 5, 16, 0.9));
+    }
+
+}
+
+.sn-menu-fab.visivel:hover svg path {
+    animation-duration: 0.9s;
+}
+
+/* estrelinha ao tocar */
+.sn-menu-fab::before {
+    content: "✦";
+
+    position: absolute;
+    top: 2px;
+    right: 3px;
+
+    font-size: 0.8rem;
+
+    color: var(--sn-fx-claro);
+
+    text-shadow: 0 0 8px var(--sn-fx);
+
+    opacity: 0;
+
+    transform: scale(0.3) rotate(-20deg);
+
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    pointer-events: none;
+}
+
+.sn-menu-fab.visivel:hover::before,
+.sn-menu-fab.aberto::before {
+    opacity: 1;
+
+    transform: scale(1) rotate(12deg);
+}
+
+/* aberto: os tracinhos viram um ✕ */
+.sn-menu-fab.aberto svg path {
+    animation: none;
+}
+
+.sn-menu-fab.aberto .sn-l1 { transform: translateY(5px) rotate(45deg); }
+
+.sn-menu-fab.aberto .sn-l2 { opacity: 0; transform: scaleX(0); }
+
+.sn-menu-fab.aberto .sn-l3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* pontinho: tem categoria escolhida */
+.sn-menu-fab.filtrando::after {
+    top: auto;
+    right: 7px;
+    bottom: 7px;
+
+    width: 9px;
+    height: 9px;
+
+    background: var(--sn-fx);
+
+    box-shadow: 0 0 8px var(--sn-fx);
+}
+
+/* nome da categoria escolhida, à esquerda do botão */
+.sn-menu-chip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 2px);
+
+    max-width: min(52vw, 220px);
+
+    padding: 2px 0 6px;
+
+    overflow: hidden;
+
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: #fff0f7;
+
+    text-shadow: 0 1px 0 #0a0616, 0 0 10px #0a0616;
+
+    text-decoration: underline wavy var(--sn-fx) 2px;
+    text-underline-offset: 5px;
+
+    transform: translateY(-50%);
+
+    transition: opacity 0.2s ease;
+
+    pointer-events: none;
+}
+
+.sn-menu-chip[hidden] {
+    display: none;
+}
+
+.sn-menu-fab.aberto .sn-menu-chip {
+    opacity: 0;
+}
+
+/* no computador, o botão fica acima do fundo escuro e dá pra fechar nele */
+@media (min-width: 640px) {
+
+    .sn-menu-fab.aberto {
+        z-index: 702;
+    }
+
+}
+
+/* =========================================================
+   ABAS Timeline | Sobre Nós — texto solto com sublinhado rosa
+   ========================================================= */
+
+.sn-abas {
+    display: flex;
+    justify-content: center;
+
+    gap: 34px;
+
+    width: auto;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    background: none;
+}
+
+.sn-abas-marcador {
+    display: none;
+}
+
+.sn-aba {
+    position: relative;
+
+    min-height: 0;
+
+    padding: 8px 6px 14px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 600;
+
+    color: rgba(228, 214, 250, 0.55);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sn-aba:hover {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.sn-aba.ativa {
+    color: #fff;
+}
+
+.sn-aba::after {
+    content: "";
+
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, transparent, #f08cc0 30%, #f6b3d6 50%, #f08cc0 70%, transparent);
+
+    box-shadow: 0 0 12px rgba(240, 140, 192, 0.75);
+
+    opacity: 0;
+
+    transform: scaleX(0);
+
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.sn-aba:hover::after {
+    opacity: 0.5;
+
+    transform: scaleX(0.5);
+}
+
+.sn-aba.ativa::after {
+    opacity: 1;
+
+    transform: scaleX(1);
+}
+
+@media (max-width: 420px) {
+
+    .sn-abas { gap: 22px; }
+
+    .sn-aba { font-size: 1.25rem; }
+
+}
+
+
+/* =========================================================
+   TÍTULOS DAS SEÇÕES — degradê brilhante e ícone flutuando
+   ========================================================= */
+
+.sn-cat-titulo > span:last-child {
+    background: linear-gradient(100deg, #ffe6c2, #f6b3d6 40%, #e3a6ff 70%, #f6b3d6);
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    text-shadow: none;
+
+    filter: drop-shadow(0 0 16px rgba(246, 179, 214, 0.28));
+
+    animation: sn-titulo-brilho 8s ease-in-out infinite;
+}
+
+@keyframes sn-titulo-brilho {
+
+    0%, 100% { background-position: 0% 50%; }
+
+    50% { background-position: 100% 50%; }
+
+}
+
+.sn-cat-icone {
+    animation: sn-icone 5.5s ease-in-out infinite;
+}
+
+@keyframes sn-icone {
+
+    0%, 100% { translate: 0 0; }
+
+    50% { translate: 0 -6px; }
+
+}
+
+
+/* =========================================================
+   PERGUNTAS (a fita) — balançam devagar, coladas no mural
+   ========================================================= */
+
+.sn-peca[data-pos] > .sn-q {
+    transform-origin: 50% 0;
+
+    animation: sn-fita 7s ease-in-out infinite;
+}
+
+.sn-conteudo > .sn-peca:nth-child(even) > .sn-q {
+    animation-delay: -3s;
+}
+
+@keyframes sn-fita {
+
+    0%, 100% { rotate: -0.7deg; }
+
+    50% { rotate: 0.7deg; }
+
+}
+
+/* =========================================================
+   CARDS — aparecem quando você chega neles e flutuam de leve
+   ========================================================= */
+
+/* a entrada antiga (todos de uma vez) dá lugar a esta */
+.sn-peca {
+    animation: none;
+    opacity: 1;
+}
+
+.sn-peca.sn-esperando {
+    opacity: 0;
+
+    translate: 0 34px;
+    scale: 0.96;
+}
+
+.sn-peca.sn-visto {
+    animation: sn-revela 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--sn-d, 0s);
+}
+
+@keyframes sn-revela {
+
+    from { opacity: 0; translate: 0 34px; scale: 0.96; }
+
+}
+
+/* o balão "pula" ao aparecer */
+@keyframes sn-nota-pop {
+
+    from { opacity: 0; scale: 0.8; }
+
+}
+
+/* e depois flutua bem de leve, cada um no seu ritmo */
+@keyframes sn-flutua {
+
+    0%, 100% { translate: 0 0; }
+
+    50% { translate: 0 -5px; }
+
+}
+
+.sn-nota-balao {
+    animation: sn-flutua var(--fl, 7s) ease-in-out infinite;
+    animation-delay: var(--fd, 0s);
+}
+
+.sn-peca.sn-visto .sn-nota-balao {
+    animation:
+        sn-nota-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+        sn-flutua var(--fl, 7s) ease-in-out infinite;
+
+    animation-delay: calc(var(--sn-d, 0s) + 0.15s), var(--fd, 0s);
+}
+
+.sn-nota-balao.sn-nota-allan { --fl: 7s; --fd: 0s; }
+
+.sn-nota-balao.sn-nota-jhennyfer { --fl: 8s; --fd: -3.2s; }
+
+.sn-nota-balao.sn-nota-dupla { --fl: 9s; --fd: -1.5s; }
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sn-peca.sn-esperando {
+        opacity: 1;
+
+        translate: none;
+        scale: none;
+    }
+
+    .sn-peca.sn-visto,
+    .sn-peca.sn-visto .sn-nota-balao,
+    .sn-nota-balao,
+    .sn-cat-icone,
+    .sn-cat-titulo > span:last-child,
+    .sn-peca[data-pos] > .sn-q,
+    .sn-menu-fab svg,
+    .sn-menu-fab svg path {
+        animation: none;
+    }
+
+}
