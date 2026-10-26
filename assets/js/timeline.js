@@ -127,6 +127,8 @@ async function carregarTimeline() {
 
     montarDockTimeline(container, itens);
 
+        prepararRevelacaoTimeline();
+
     // Preenche os contadores já na primeira exibição
     atualizarContagensTimeline();
 
@@ -643,29 +645,9 @@ function escaparHtmlTimeline(
 
 function reproduzirEntradaTimeline() {
 
-    const itens =
-        document.querySelectorAll(
-            "#timeline-container .timeline-item"
-        );
+    prepararRevelacaoTimeline();
 
-
-    itens.forEach(
-        (item) => {
-
-            item.classList.remove(
-                "timeline-item-entrando"
-            );
-
-
-            void item.offsetWidth;
-
-
-            item.classList.add(
-                "timeline-item-entrando"
-            );
-
-        }
-    );
+    atualizarProgressoTimeline();
 
 }
 
@@ -1106,6 +1088,58 @@ function ativarProgressoTimeline() {
     window.addEventListener("resize", pedir);
 
 }
+
+// ========================================
+// REVELAR OS CARDS QUANDO CHEGAM NA TELA
+// ========================================
+
+let observadorTimeline = null;
+
+function prepararRevelacaoTimeline() {
+
+    const itens = [...document.querySelectorAll("#timeline-container .timeline-item")];
+
+    if (observadorTimeline) observadorTimeline.disconnect();
+
+    // navegador sem suporte: mostra tudo de uma vez
+    if (!("IntersectionObserver" in window)) {
+        itens.forEach((item) => item.classList.remove("tl-esperando", "tl-visto"));
+        return;
+    }
+
+    observadorTimeline = new IntersectionObserver((entradas) => {
+
+        entradas
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+            .forEach((e, n) => {
+
+                const el = e.target;
+
+                // os que chegam juntos entram um depois do outro
+                el.style.setProperty("--tl-d", `${n * 0.09}s`);
+
+                el.classList.remove("tl-esperando");
+                el.classList.add("tl-visto");
+
+                observadorTimeline.unobserve(el);
+
+            });
+
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
+
+    itens.forEach((item) => {
+
+        item.classList.remove("tl-visto");
+        item.classList.add("tl-esperando");
+
+        observadorTimeline.observe(item);
+
+    });
+
+}
+
+
 // ========================================
 // BOTÃO VOLTAR AO TOPO
 // ========================================

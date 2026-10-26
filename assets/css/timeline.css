@@ -1793,3 +1793,340 @@
     }
 
 }
+
+/* =========================================================
+   REVELAR AO ROLAR — os cards aparecem quando chegam na tela
+   ========================================================= */
+
+/* a animação antiga (todos de uma vez ao abrir) dá lugar a esta */
+.timeline-item-entrando {
+    animation: none;
+    opacity: 1;
+}
+
+.timeline-item-esquerda { --tl-dx: -34px; }
+
+.timeline-item-direita { --tl-dx: 34px; }
+
+.timeline-item.tl-esperando {
+    opacity: 0;
+
+    translate: var(--tl-dx, 0px) 38px;
+}
+
+.timeline-item.tl-visto {
+    animation: tl-revela 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--tl-d, 0s);
+}
+
+@keyframes tl-revela {
+
+    from { opacity: 0; translate: var(--tl-dx, 0px) 38px; scale: 0.95; }
+
+}
+
+/* a bolinha "pula" quando o card aparece */
+.timeline-item.tl-visto:not(.timeline-item-futuro) .timeline-marker {
+    animation: tl-marker-pop 0.7s cubic-bezier(0.22, 1.6, 0.36, 1) both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.25s);
+}
+
+@keyframes tl-marker-pop {
+
+    0% { scale: 0.2; }
+
+    60% { scale: 1.6; }
+
+    100% { scale: 1; }
+
+}
+
+/* a estrelinha ao lado da bolinha também espera o card aparecer */
+.timeline-item-entrando .timeline-entrada-estrela {
+    animation: none;
+}
+
+.timeline-item.tl-visto .timeline-entrada-estrela {
+    animation: brilho-estrela-entrada 0.9s ease forwards;
+    animation-delay: calc(var(--tl-d, 0s) + 0.2s);
+}
+
+/* um brilho de luz passa uma vez pelo card */
+.timeline-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.14) 50%, transparent 62%);
+    background-size: 260% 100%;
+    background-position: 160% 0;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.timeline-item.tl-visto .timeline-card::after {
+    animation: tl-brilho 1.5s ease both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.35s);
+}
+
+@keyframes tl-brilho {
+
+    from { opacity: 1; background-position: 160% 0; }
+
+    to { opacity: 0; background-position: -60% 0; }
+
+}
+
+/* a foto dá um zoom suave */
+.timeline-item.tl-visto .timeline-card-thumb img {
+    animation: tl-foto 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.1s);
+}
+
+@keyframes tl-foto {
+
+    from { scale: 1.18; }
+
+}
+
+/* data, título e resumo entram em sequência */
+.timeline-item.tl-visto .timeline-card-data {
+    animation: tl-fade 0.7s ease both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.25s);
+}
+
+.timeline-item.tl-visto .timeline-card-titulo {
+    animation: tl-texto 0.7s ease both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.35s);
+}
+
+.timeline-item.tl-visto .timeline-card-resumo {
+    animation: tl-texto 0.7s ease both;
+    animation-delay: calc(var(--tl-d, 0s) + 0.45s);
+}
+
+@keyframes tl-fade {
+
+    from { opacity: 0; }
+
+}
+
+@keyframes tl-texto {
+
+    from { opacity: 0; translate: 0 10px; }
+
+}
+
+/* tocar no card: ele afunda um pouquinho */
+.timeline-item:active .timeline-card {
+    transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .timeline-item.tl-esperando {
+        opacity: 1;
+
+        translate: none;
+    }
+
+    .timeline-item.tl-visto,
+    .timeline-item.tl-visto * {
+        animation: none !important;
+    }
+
+}
+
+/* =========================================================
+   CELULAR — linha, bolinhas e cards bem alinhados
+   Uma coluna só: a linha fica à esquerda e tudo se alinha nela.
+   Pra mexer: --tl-linha = onde a linha passa · --tl-recuo = onde os cards começam
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .timeline-container {
+        --tl-linha: 18px;
+        --tl-recuo: 44px;
+
+        padding: 0;
+    }
+
+    .timeline-container::before,
+    .timeline-container::after {
+        left: var(--tl-linha);
+    }
+
+    /* todos os cards na mesma coluna (acabou o zigue-zague torto) */
+    .timeline-item,
+    .timeline-item-esquerda,
+    .timeline-item-direita {
+        width: calc(100% - var(--tl-recuo));
+
+        margin-left: var(--tl-recuo);
+        margin-right: 0 !important;
+
+        --tl-dx: 28px;
+    }
+
+    .timeline-card {
+        padding: 16px 16px 18px;
+    }
+
+    /* a bolinha, exatamente em cima da linha */
+    .timeline-item-esquerda .timeline-marker,
+    .timeline-item-direita .timeline-marker {
+        top: 15px;
+        left: calc(var(--tl-linha) - var(--tl-recuo) - 7px);
+        right: auto;
+
+        width: 14px;
+        height: 14px;
+    }
+
+    /* fiozinho ligando a bolinha ao card */
+    .timeline-item::after {
+        content: "";
+
+        position: absolute;
+        top: 21px;
+        left: calc(var(--tl-linha) - var(--tl-recuo) + 7px);
+
+        width: calc(var(--tl-recuo) - var(--tl-linha) - 7px);
+        height: 2px;
+
+        background: linear-gradient(90deg, rgba(201, 167, 245, 0.55), rgba(201, 167, 245, 0.1));
+
+        pointer-events: none;
+    }
+
+    .timeline-item-esquerda .timeline-entrada-estrela,
+    .timeline-item-direita .timeline-entrada-estrela {
+        top: 2px;
+        left: calc(var(--tl-linha) - var(--tl-recuo) - 16px);
+        right: auto;
+    }
+
+    /* divisor de ano: um pontinho na linha e a pílula alinhada com os cards */
+    .timeline-ano-divisor {
+        justify-content: flex-start;
+
+        margin: 4px 0 26px;
+        padding-left: var(--tl-recuo);
+    }
+
+    .timeline-ano-divisor::before {
+        content: "";
+
+        position: absolute;
+        left: var(--tl-linha);
+        top: 50%;
+
+        width: 10px;
+        height: 10px;
+
+        margin: -5px 0 0 -5px;
+
+        border-radius: 50%;
+
+        background: #f6b3d6;
+
+        box-shadow: 0 0 12px rgba(246, 179, 214, 0.9);
+    }
+
+    .timeline-ano-divisor::after {
+        content: "";
+
+        position: absolute;
+        left: calc(var(--tl-linha) + 5px);
+        top: 50%;
+
+        width: calc(var(--tl-recuo) - var(--tl-linha) - 5px);
+        height: 2px;
+
+        margin-top: -1px;
+
+        background: linear-gradient(90deg, rgba(246, 179, 214, 0.7), rgba(246, 179, 214, 0.2));
+    }
+
+    /* "estamos aqui": o coração fica EM CIMA da linha, o texto alinha com os cards */
+    .timeline-hoje {
+        display: grid;
+        grid-template-columns: 52px auto auto 1fr;
+        justify-content: start;
+        justify-items: start;
+        align-items: center;
+
+        min-height: 60px;
+
+        margin: 2px 0 28px calc(var(--tl-linha) - 26px);
+        padding: 0;
+    }
+
+    .th-farol {
+        grid-column: 1;
+        grid-row: 1;
+
+        width: 52px;
+        height: 52px;
+    }
+
+    .th-nucleo {
+        font-size: 1.5rem;
+    }
+
+    .th-esq {
+        grid-column: 2;
+        grid-row: 1;
+
+        justify-self: start;
+
+        padding: 0 7px 4px 0;
+
+        font-size: 1.55rem;
+    }
+
+    .th-aqui {
+        grid-column: 3;
+        grid-row: 1;
+
+        justify-self: start;
+
+        padding: 0 0 4px 0;
+
+        font-size: 1.55rem;
+    }
+
+    .th-data {
+        left: 52px;
+        top: calc(50% + 13px);
+    }
+
+}
+
+/* =========================================================
+   CELULAR — menu flutuante no canto de baixo (não cobre os cards)
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .timeline-dock {
+        top: auto;
+        bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+        right: 12px;
+    }
+
+    /* os painéis crescem pra cima */
+    .timeline-dock-painel {
+        top: auto;
+        bottom: 0;
+
+        transform-origin: bottom right;
+    }
+
+}
