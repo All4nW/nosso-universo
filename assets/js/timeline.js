@@ -704,12 +704,24 @@ function criarMarcadorHojeTimeline() {
 
     div.className = "timeline-hoje";
 
+    div.setAttribute("aria-label", `Estamos aqui, ${hoje}`);
+
     div.innerHTML = `
-        <span class="timeline-hoje-pilula">
-            <span class="timeline-hoje-ponto"></span>
-            <span class="timeline-hoje-rotulo">estamos aqui</span>
-            <span class="timeline-hoje-data">${hoje}</span>
+        <span class="th-esq">estamos</span>
+
+        <span class="th-farol" aria-hidden="true">
+            <i class="th-anel"></i>
+            <i class="th-anel th-anel-2"></i>
+            <i class="th-anel th-anel-3"></i>
+            <span class="th-orbita"><b>✦</b></span>
+            <i class="th-sobe th-sobe-1">♥</i>
+            <i class="th-sobe th-sobe-2">♥</i>
+            <span class="th-nucleo">♥</span>
         </span>
+
+        <span class="th-aqui">aqui</span>
+
+        <span class="th-data">${hoje}</span>
     `;
 
     return div;
