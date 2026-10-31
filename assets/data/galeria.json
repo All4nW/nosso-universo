@@ -8,7 +8,7 @@
         "data": "2025-08-06",
         "imagem": "assets/images/galeria/1786860422970-383374187.jpeg",
         "descricao": "A gente jogando juntinhos depois de iniciar nosso namoro.",
-        "plataforma": "02|Altitorture",
+        "plataforma": "04|Altitorture",
         "album": ""
       },
       {
@@ -22,7 +22,7 @@
         "data": "2026-01-14",
         "imagem": "assets/images/galeria/1786488474581-674088269.png",
         "descricao": "",
-        "plataforma": "02|Altitorture",
+        "plataforma": "04|Altitorture",
         "album": ""
       },
       {
@@ -43,7 +43,7 @@
         "data": "2026-02-08",
         "imagem": "assets/images/galeria/1786860108483-68501349.jpeg",
         "descricao": "Tao fofooo",
-        "plataforma": "06|Life Paradise",
+        "plataforma": "07|Life Paradise",
         "album": ""
       },
       {
@@ -64,7 +64,7 @@
         "data": "2026-02-16",
         "imagem": "assets/images/galeria/1786494593080-253535081.png",
         "descricao": "A gente jogando Bingo",
-        "plataforma": "05|Bingo",
+        "plataforma": "06|Bingo",
         "album": ""
       },
       {
@@ -85,7 +85,7 @@
         "data": "2026-05-07",
         "imagem": "assets/images/galeria/1786488670172-233745596.png",
         "descricao": "A gente no meu joguinho de cassino 🥰",
-        "plataforma": "04|Meu Joguinho",
+        "plataforma": "05|Meu Joguinho",
         "album": ""
       },
       {
@@ -99,7 +99,7 @@
         "data": "2026-05-17",
         "imagem": "assets/images/galeria/1786488540942-68482156.png",
         "descricao": "A gente no meu joguinho de cassino",
-        "plataforma": "04|Meu Joguinho",
+        "plataforma": "05|Meu Joguinho",
         "album": ""
       },
       {
@@ -134,14 +134,14 @@
         "data": "2026-08-02",
         "imagem": "assets/images/galeria/1786488330388-734302948.png",
         "descricao": "",
-        "plataforma": "02|Altitorture",
+        "plataforma": "04|Altitorture",
         "album": ""
       },
       {
         "data": "2026-08-02",
         "imagem": "assets/images/galeria/1786488344293-848779707.png",
         "descricao": "",
-        "plataforma": "02|Altitorture",
+        "plataforma": "04|Altitorture",
         "album": ""
       },
       {
@@ -401,6 +401,48 @@
         "imagem": "assets/images/galeria/1793069856869-2797634.png",
         "descricao": "",
         "plataforma": "01|MM2",
+        "album": ""
+      },
+      {
+        "data": "2026-10-30",
+        "imagem": "assets/images/galeria/1793397741206-816756329.png",
+        "descricao": "Ela toda fofinha",
+        "plataforma": "01|MM2",
+        "album": ""
+      },
+      {
+        "data": "2026-10-30",
+        "imagem": "assets/images/galeria/1793397758433-434095829.png",
+        "descricao": "",
+        "plataforma": "01|MM2",
+        "album": ""
+      },
+      {
+        "data": "2026-10-31",
+        "imagem": "assets/images/galeria/1793418984924-850231552.png",
+        "descricao": "",
+        "plataforma": "02|DTI",
+        "album": ""
+      },
+      {
+        "data": "2026-10-31",
+        "imagem": "assets/images/galeria/1793419115886-31867573.png",
+        "descricao": "Ela dando aulas no dti",
+        "plataforma": "02|DTI",
+        "album": ""
+      },
+      {
+        "data": "2026-10-31",
+        "imagem": "assets/images/galeria/1793419136022-918368128.png",
+        "descricao": "Eu passando vergonha",
+        "plataforma": "02|DTI",
+        "album": ""
+      },
+      {
+        "data": "2026-10-31",
+        "imagem": "assets/images/galeria/1793419659048-712456981.png",
+        "descricao": "",
+        "plataforma": "02|DTI",
         "album": ""
       }
     ]
