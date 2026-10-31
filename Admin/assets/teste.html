@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratório 3D ✦ Nosso Universo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Montserrat:wght@500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--rosa:#f6b3d6;--rosa2:#f08cc0;--lilas:#c9a7f5;--tinta:#1b1030}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:#07040f;color:#fff;font-family:'Montserrat',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+#c3d{position:fixed;inset:0;width:100%;height:100%;display:none;touch-action:none;cursor:grab}
+body:not(.modo-hub) #c3d{display:block}
+
+/* ---------- hub de teste ---------- */
+#hub{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:24px;overflow:auto;text-align:center;background:radial-gradient(70% 60% at 50% 30%,#2a1250 0%,#0b0716 72%)}
+body.modo-hub #hub{display:flex}
+#hub h1{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:700;font-size:clamp(2.4rem,8vw,3.6rem);line-height:1;background:linear-gradient(100deg,#ffe6c2,#f6b3d6 45%,#e3a6ff 75%,#f6b3d6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 22px rgba(246,179,214,.3))}
+#hub .sub{font-family:'Patrick Hand',cursive;font-size:1.25rem;color:#e6d8fa;margin-top:8px}
+.cards{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
+.card{width:min(300px,86vw);padding:16px 16px 20px;border:2.5px solid var(--rosa);border-radius:22px 28px 20px 26px/26px 20px 28px 22px;background:var(--tinta);color:#fff;text-decoration:none;box-shadow:5px 6px 0 rgba(240,140,192,.5);transition:transform .2s,box-shadow .2s}
+.card:hover,.card:active{transform:translate(3px,3px) rotate(-.6deg);box-shadow:2px 3px 0 rgba(240,140,192,.5)}
+.arte{height:150px;border-radius:16px;margin-bottom:14px;display:grid;place-items:center;font-size:3.2rem}
+.arte-galaxia{background:radial-gradient(circle at 50% 55%,#fff 0 3%,#ffb0d6 9%,#7a4dff 34%,#140a2e 72%)}
+.arte-caixa{background:radial-gradient(circle at 50% 38%,#fff4f8,#ffc2da 62%,#f58fb7)}
+.card h2{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.9rem}
+.card p{font-family:'Patrick Hand',cursive;font-size:1.15rem;color:#e6d8fa;margin-top:4px}
+.rodape{font-family:'Patrick Hand',cursive;font-size:1.05rem;color:#b9a6d8}
+.rodape a{color:var(--rosa)}
+
+/* ---------- botões e avisos sobre a cena ---------- */
+#voltar{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:14px;z-index:10;width:44px;height:44px;display:none;place-items:center;border:2.5px solid var(--rosa);border-radius:50%;background:var(--tinta);color:#ffd6ec;font-size:1.3rem;text-decoration:none;box-shadow:3px 3px 0 rgba(240,140,192,.55)}
+body:not(.modo-hub) #voltar{display:grid}
+#voltar:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(240,140,192,.55)}
+#dica{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:10;display:none;padding:0 16px;text-align:center;font-family:'Patrick Hand',cursive;font-size:1.15rem;color:#fff;text-shadow:0 1px 0 #0a0616,0 0 10px #0a0616,0 0 4px #0a0616;pointer-events:none}
+body:not(.modo-hub) #dica{display:block}
+#acao{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:10;display:none;transform:translateX(-50%);padding:11px 26px;border:2.5px solid #fff;border-radius:999px;background:#e0689f;color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.95rem;box-shadow:3px 4px 0 rgba(120,25,70,.55);cursor:pointer}
+body.modo-caixa #acao{display:block}
+#acao:active{transform:translate(-50%,2px);box-shadow:1px 2px 0 rgba(120,25,70,.55)}
+#carregando,#erro{position:fixed;left:50%;top:50%;z-index:20;transform:translate(-50%,-50%);padding:12px 20px;border:2.5px solid var(--rosa);border-radius:18px;background:var(--tinta);font-family:'Patrick Hand',cursive;font-size:1.2rem;text-align:center;max-width:86vw}
+#carregando[hidden],#erro[hidden]{display:none}
+</style>
+</head>
+<body class="modo-hub">
+
+<canvas id="c3d"></canvas>
+
+<main id="hub">
+  <div>
+    <h1>Laboratório 3D</h1>
+    <p class="sub">testes de efeitos pro nosso universo ✦</p>
+  </div>
+  <div class="cards">
+    <a class="card" href="#galaxia">
+      <div class="arte arte-galaxia">🌌</div>
+      <h2>Galáxia do amor</h2>
+      <p>estrelas, coração e nossas fotos girando em 3D</p>
+    </a>
+    <a class="card" href="#caixa">
+      <div class="arte arte-caixa">🎁</div>
+      <h2>Caixinha de presente</h2>
+      <p>abre, solta confete e mostra o que tem dentro</p>
+    </a>
+  </div>
+  <p class="rodape">protótipo · <a href="index.html">voltar pro site</a></p>
+</main>
+
+<a id="voltar" href="#" aria-label="Voltar">←</a>
+<button id="acao" type="button"></button>
+<p id="dica"></p>
+<p id="carregando" hidden>preparando ✦</p>
+<p id="erro" hidden></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+'use strict';
+
+const el = (id) => document.getElementById(id);
+
+function mostrarErro(msg) {
+  const e = el('erro');
+  e.textContent = msg;
+  e.hidden = false;
+  el('carregando').hidden = true;
+}
+
+if (!window.THREE) {
+  mostrarErro('Não consegui carregar a biblioteca 3D. Confira a internet e recarregue a página.');
+  return;
+}
+
+const T = window.THREE;
+const canvas = el('c3d');
+const MOBILE = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
+const REDUZIR = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = (l) => l[Math.floor(Math.random() * l.length)];
+const embaralhar = (l) => {
+  const a = l.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+let renderer;
+try {
+  renderer = new T.WebGLRenderer({ canvas: canvas, antialias: !MOBILE });
+} catch (e) {
+  mostrarErro('Seu aparelho não conseguiu abrir o 3D (WebGL).');
+  return;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.6 : 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = T.PCFSoftShadowMap;
+const DPR = renderer.getPixelRatio();
+
+
+/* =========================================================
+   TEXTURAS DESENHADAS NA HORA (sem precisar de imagens)
+   ========================================================= */
+
+function novoCanvas(w, h) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  return c;
+}
+
+function viraTextura(c) {
+  const t = new T.CanvasTexture(c);
+  t.generateMipmaps = false;
+  t.minFilter = T.LinearFilter;
+  t.magFilter = T.LinearFilter;
+  return t;
+}
+
+function texBrilho(rgb) {
+  const c = novoCanvas(128, 128), g = c.getContext('2d');
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(' + rgb + ',1)');
+  gr.addColorStop(0.35, 'rgba(' + rgb + ',0.35)');
+  gr.addColorStop(1, 'rgba(' + rgb + ',0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 128, 128);
+  return viraTextura(c);
+}
+
+function texPonto() {
+  const c = novoCanvas(64, 64), g = c.getContext('2d');
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(0.4, 'rgba(255,255,255,0.8)');
+  gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 64, 64);
+  return viraTextura(c);
+}
+
+// caminho de um coração (mesma fórmula do coração da abertura do site)
+function caminhoCoracao(g, cx, cy, s) {
+  g.beginPath();
+  for (let i = 0; i <= 90; i++) {
+    const t = (i / 90) * Math.PI * 2;
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    if (i === 0) g.moveTo(cx + x * s, cy + y * s);
+    else g.lineTo(cx + x * s, cy + y * s);
+  }
+  g.closePath();
+}
+
+function texCoracao(cor, brilho) {
+  const c = novoCanvas(128, 128), g = c.getContext('2d');
+  g.shadowColor = brilho || cor;
+  g.shadowBlur = 10;
+  g.fillStyle = cor;
+  caminhoCoracao(g, 64, 56, 3.1);
+  g.fill();
+  return viraTextura(c);
+}
+
+function rr(g, x, y, w, h, r) {
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r);
+  g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r);
+  g.arcTo(x, y, x + w, y, r);
+  g.closePath();
+}
+
+function texTexto(txt, opc) {
+  const o = opc || {};
+  const w = 512, h = 128;
+  const c = novoCanvas(w, h), g = c.getContext('2d');
+  let f = o.tam || 64;
+  const fonte = (n) => 'italic 600 ' + n + 'px "Cormorant Garamond", Georgia, serif';
+  g.font = fonte(f);
+  while (g.measureText(txt).width > w - 60 && f > 20) {
+    f -= 2;
+    g.font = fonte(f);
+  }
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillStyle = o.cor || '#ffffff';
+  g.shadowColor = o.brilho || '#ff9ccb';
+  g.shadowBlur = 22;
+  g.fillText(txt, w / 2, h / 2 + 2);
+  g.shadowBlur = 8;
+  g.fillText(txt, w / 2, h / 2 + 2);
+  return { tex: viraTextura(c), aspect: w / h };
+}
+
+// batida de coração (lub-dub), valor de 0 a 1
+function batida(t, periodo) {
+  const fase = (t % periodo) / periodo;
+  const b1 = Math.exp(-Math.pow((fase - 0.06) / 0.045, 2));
+  const b2 = 0.65 * Math.exp(-Math.pow((fase - 0.2) / 0.055, 2));
+  return Math.min(1, b1 + b2);
+}
+
+function geometriaCoracao3D() {
+  const s = new T.Shape();
+  for (let i = 0; i <= 80; i++) {
+    const t = (i / 80) * Math.PI * 2;
+    const x = (16 * Math.pow(Math.sin(t), 3)) / 16;
+    const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 16;
+    if (i === 0) s.moveTo(x, y);
+    else s.lineTo(x, y);
+  }
+  const g = new T.ExtrudeGeometry(s, {
+    depth: 0.4, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.08, bevelSegments: 4, curveSegments: 1
+  });
+  g.center();
+  return g;
+}
+
+
+/* =========================================================
+   CÂMERA, CONTROLES (arrastar, pinça, rolagem) E TOQUE
+   ========================================================= */
+
+let ativo = null;
+
+function posicionarCamera(camera, alvo, orb) {
+  const sp = Math.sin(orb.phi);
+  camera.position.set(
+    alvo.x + orb.dist * sp * Math.sin(orb.theta),
+    alvo.y + orb.dist * Math.cos(orb.phi),
+    alvo.z + orb.dist * sp * Math.cos(orb.theta)
+  );
+  camera.lookAt(alvo);
+}
+
+function passoOrbita(orb, dt) {
+  if (!orb.arrastando) {
+    orb.theta += orb.vTheta * dt;
+    orb.vTheta *= Math.pow(0.05, dt);
+    if (orb.auto && performance.now() - orb.ultima > 2500) orb.theta += dt * orb.auto;
+  }
+  orb.phi = clamp(orb.phi, orb.phiMin, orb.phiMax);
+  orb.dist = clamp(orb.dist, orb.min, orb.max);
+}
+
+// em tela de celular (em pé) afasta a câmera pra a cena caber
+function distParaTela(base, aspecto) {
+  if (aspecto >= 1) return base;
+  return base * Math.pow(1 / aspecto, 0.85) * 0.85;
+}
+
+const raycaster = new T.Raycaster();
+const ndc = new T.Vector2();
+
+function lancarRaio(camera, x, y, objetos, recursivo) {
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  raycaster.camera = camera;
+  return raycaster.intersectObjects(objetos, recursivo);
+}
+
+(function ligarControles() {
+  const ponteiros = new Map();
+  let inicio = null;
+  let distPinca = 0;
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!ativo) return;
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    const orb = ativo.orb;
+    ponteiros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    orb.arrastando = true;
+    orb.ultima = performance.now();
+    if (ponteiros.size === 1) {
+      inicio = { x: e.clientX, y: e.clientY, t: performance.now(), moveu: false };
+      orb.vTheta = 0;
+    } else {
+      inicio = null;
+      const pts = Array.from(ponteiros.values());
+      distPinca = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!ativo) return;
+    const p = ponteiros.get(e.pointerId);
+    if (!p) return;
+    const orb = ativo.orb;
+    const dx = e.clientX - p.x;
+    const dy = e.clientY - p.y;
+    p.x = e.clientX;
+    p.y = e.clientY;
+    orb.ultima = performance.now();
+    if (ponteiros.size >= 2) {
+      const pts = Array.from(ponteiros.values());
+      const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (distPinca > 0 && d > 0) {
+        orb.dist = clamp(orb.dist * (distPinca / d), orb.min, orb.max);
+        orb.zoomou = true;
+      }
+      distPinca = d;
+      return;
+    }
+    if (inicio && Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 8) inicio.moveu = true;
+    orb.theta -= dx * 0.0055;
+    orb.phi = clamp(orb.phi - dy * 0.0045, orb.phiMin, orb.phiMax);
+    orb.vTheta = -dx * 0.0055 * 60;
+  });
+
+  function soltar(e) {
+    if (!ponteiros.has(e.pointerId)) return;
+    ponteiros.delete(e.pointerId);
+    if (ponteiros.size === 0) {
+      if (ativo) ativo.orb.arrastando = false;
+      const foiToque = inicio && !inicio.moveu && performance.now() - inicio.t < 500 && e.type === 'pointerup';
+      if (foiToque && ativo && ativo.aoToque) ativo.aoToque(e.clientX, e.clientY);
+      inicio = null;
+    }
+  }
+
+  canvas.addEventListener('pointerup', soltar);
+  canvas.addEventListener('pointercancel', soltar);
+
+  canvas.addEventListener('wheel', (e) => {
+    if (!ativo) return;
+    e.preventDefault();
+    const orb = ativo.orb;
+    orb.dist = clamp(orb.dist * Math.exp(e.deltaY * 0.0011), orb.min, orb.max);
+    orb.zoomou = true;
+  }, { passive: false });
+})();
+
+
+/* =========================================================
+   EXPERIÊNCIA 1 — GALÁXIA DO AMOR
+   ========================================================= */
+
+function criarGalaxia() {
+  /* ---- ajustes fáceis ---- */
+  const BRILHO = 0.55;       // mais alto = galáxia mais clara
+  const TAM_PONTO = 62;      // tamanho das estrelinhas da galáxia
+  const RAIO = 6.5;          // tamanho da galáxia
+  const RAMOS = 3;           // quantos braços na espiral
+  const TORCAO = 0.78;       // quanto a espiral enrola
+  const DISPERSAO = 0.34;    // quanto os braços ficam "borrados"
+  const N = MOBILE ? 38000 : 80000;
+  const FRASES = ['Te amo', 'Meu amor', 'Sempre juntos', 'Amor da minha vida', 'Você é meu universo', 'Nosso universo', 'Meu lugar favorito', 'Eu e você', 'Para sempre'];
+  const FOTOS_MANUAIS = [];  // se quiser escolher as fotos: ['assets/images/...jpg', ...]
+  const PASTAS_FORA = ['perfil'];
+
+  const cena = new T.Scene();
+  cena.background = new T.Color(0x05030d);
+  const camera = new T.PerspectiveCamera(55, 1, 0.1, 500);
+  const alvo = new T.Vector3(0, 1.4, 0);
+  const orb = { theta: 0.55, phi: 1.1, dist: 15, base: 15, vTheta: 0, arrastando: false, ultima: 0, min: 6, max: 34, phiMin: 0.25, phiMax: 2.35, auto: 0.05, zoomou: false };
+
+  let tempo = 0, pulso = 99, focado = null, pronto = false, proxCoracao = 1.5;
+  const itens = [];
+  const voando = [];
+  const tmp = new T.Vector3();
+  const dirCam = new T.Vector3();
+  let matGalaxia = null, grupoCoracao = null, estrelas = null;
+  const texCor = texCoracao('#ff7ab8', '#ff4f9a');
+  const dicaNormal = 'arraste para girar · pinça ou rolagem para aproximar · toque numa foto ✦';
+
+  const VERTICE = [
+    'uniform float uTempo; uniform float uTam; uniform float uPulso;',
+    'attribute vec3 aCor; attribute float aTam; attribute float aAleat;',
+    'varying vec3 vCor; varying float vBrilho;',
+    'void main() {',
+    '  vec3 p = position;',
+    '  float r = length(p.xz);',
+    '  float ang = uTempo * 0.12 / (1.0 + r * 0.55);',
+    '  float c = cos(ang); float s = sin(ang);',
+    '  p.xz = vec2(c * p.x - s * p.z, s * p.x + c * p.z);',
+    '  p.y += sin(uTempo * 0.6 + r * 1.3 + aAleat * 6.2831) * 0.03 * r;',
+    '  float frente = uPulso * 7.0;',
+    '  float onda = exp(-pow((r - frente) / 0.9, 2.0)) * step(uPulso, 3.0);',
+    '  p.y += onda * 0.35;',
+    '  vBrilho = onda;',
+    '  vCor = aCor;',
+    '  vec4 mv = modelViewMatrix * vec4(p, 1.0);',
+    '  float pisca = 0.85 + 0.15 * sin(uTempo * 2.0 + aAleat * 50.0);',
+    '  gl_PointSize = aTam * uTam * pisca * (1.0 + onda * 1.6) / -mv.z;',
+    '  gl_Position = projectionMatrix * mv;',
+    '}'
+  ].join('\n');
+
+  const FRAGMENTO = [
+    'uniform float uBrilho;',
+    'varying vec3 vCor; varying float vBrilho;',
+    'void main() {',
+    '  float d = length(gl_PointCoord - vec2(0.5));',
+    '  if (d > 0.5) discard;',
+    '  float a = pow(1.0 - d * 2.0, 2.2);',
+    '  vec3 cor = vCor + vec3(1.0, 0.55, 0.8) * vBrilho * 0.9;',
+    '  gl_FragColor = vec4(cor, a * uBrilho);',
+    '}'
+  ].join('\n');
+
+  function construirGalaxia() {
+    const pos = new Float32Array(N * 3);
+    const cor = new Float32Array(N * 3);
+    const tam = new Float32Array(N);
+    const alea = new Float32Array(N);
+    const cDentro = new T.Color('#ffe9f3');
+    const cFora = new T.Color('#5aa9ff');
+    const cRosa = new T.Color('#ff7ab6');
+    const cRoxo = new T.Color('#9b7bff');
+    const c = new T.Color();
+
+    for (let i = 0; i < N; i++) {
+      const r = Math.pow(Math.random(), 1.45) * RAIO;
+      const ramo = ((i % RAMOS) / RAMOS) * Math.PI * 2;
+      const giro = r * TORCAO;
+      const f = r / RAIO;
+      const dx = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * DISPERSAO * r;
+      const dz = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * DISPERSAO * r;
+      const dy = (Math.random() - 0.5 + Math.random() - 0.5) * (0.15 + 1.1 * Math.exp(-r * 0.9));
+      pos[i * 3] = Math.cos(ramo + giro) * r + dx;
+      pos[i * 3 + 1] = dy;
+      pos[i * 3 + 2] = Math.sin(ramo + giro) * r + dz;
+
+      c.copy(cDentro).lerp(cFora, Math.pow(f, 0.7));
+      const sorte = Math.random();
+      if (sorte < 0.12) c.lerp(cRosa, 0.7);
+      else if (sorte < 0.2) c.lerp(cRoxo, 0.6);
+      const luz = 0.6 + 0.8 * Math.exp(-r * 0.8);
+      cor[i * 3] = c.r * luz;
+      cor[i * 3 + 1] = c.g * luz;
+      cor[i * 3 + 2] = c.b * luz;
+
+      tam[i] = 0.35 + Math.random() * 0.85;
+      alea[i] = Math.random();
+    }
+
+    const geo = new T.BufferGeometry();
+    geo.setAttribute('position', new T.BufferAttribute(pos, 3));
+    geo.setAttribute('aCor', new T.BufferAttribute(cor, 3));
+    geo.setAttribute('aTam', new T.BufferAttribute(tam, 1));
+    geo.setAttribute('aAleat', new T.BufferAttribute(alea, 1));
+
+    matGalaxia = new T.ShaderMaterial({
+      uniforms: {
+        uTempo: { value: 0 },
+        uTam: { value: TAM_PONTO * DPR },
+        uPulso: { value: 99 },
+        uBrilho: { value: BRILHO }
+      },
+      vertexShader: VERTICE,
+      fragmentShader: FRAGMENTO,
+      transparent: true,
+      depthWrite: false,
+      blending: T.AdditiveBlending
+    });
+
+    const galaxia = new T.Points(geo, matGalaxia);
+    galaxia.frustumCulled = false;
+    const grupo = new T.Group();
+    grupo.rotation.z = 0.15;
+    grupo.add(galaxia);
+    cena.add(grupo);
+
+    // brilho do núcleo
+    const nucleo = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('255,236,246'), transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false }));
+    nucleo.scale.set(5.5, 5.5, 1);
+    cena.add(nucleo);
+    const halo = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('120,150,255'), transparent: true, opacity: 0.22, blending: T.AdditiveBlending, depthWrite: false }));
+    halo.scale.set(15, 15, 1);
+    cena.add(halo);
+
+    // estrelas de fundo
+    const nE = MOBILE ? 1400 : 2800;
+    const ep = new Float32Array(nE * 3);
+    const ec = new Float32Array(nE * 3);
+    for (let i = 0; i < nE; i++) {
+      const r = rand(50, 110), u = rand(-1, 1), th = rand(0, Math.PI * 2);
+      const s = Math.sqrt(1 - u * u);
+      ep[i * 3] = r * s * Math.cos(th);
+      ep[i * 3 + 1] = r * u;
+      ep[i * 3 + 2] = r * s * Math.sin(th);
+      const q = Math.random();
+      const tom = q < 0.6 ? [1, 1, 1] : q < 0.85 ? [0.75, 0.85, 1] : [1, 0.8, 0.9];
+      ec[i * 3] = tom[0];
+      ec[i * 3 + 1] = tom[1];
+      ec[i * 3 + 2] = tom[2];
+    }
+    const eg = new T.BufferGeometry();
+    eg.setAttribute('position', new T.BufferAttribute(ep, 3));
+    eg.setAttribute('color', new T.BufferAttribute(ec, 3));
+    estrelas = new T.Points(eg, new T.PointsMaterial({ size: 0.55, map: texPonto(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, sizeAttenuation: true }));
+    cena.add(estrelas);
+
+    // nuvens de cor bem ao fundo
+    [['255,120,190', 0.16, [-40, 10, -30], 70], ['120,140,255', 0.14, [45, -5, -40], 80], ['170,110,255', 0.12, [5, 25, -60], 90]].forEach((n) => {
+      const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(n[0]), transparent: true, opacity: n[1], blending: T.AdditiveBlending, depthWrite: false }));
+      sp.position.set(n[2][0], n[2][1], n[2][2]);
+      sp.scale.set(n[3], n[3], 1);
+      cena.add(sp);
+    });
+
+    // coração de partículas
+    grupoCoracao = new T.Group();
+    grupoCoracao.position.set(0, 3.1, 0);
+    cena.add(grupoCoracao);
+
+    const nH = MOBILE ? 2600 : 4200;
+    const hp = new Float32Array(nH * 3);
+    const hc = new Float32Array(nH * 3);
+    const paleta = ['#ffffff', '#ffd6ec', '#ffb3d9', '#e3c4ff'].map((x) => new T.Color(x));
+    for (let i = 0; i < nH; i++) {
+      const t = rand(0, Math.PI * 2);
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      const dentro = Math.random() < 0.15;
+      const k = dentro ? Math.random() * 0.9 : 0.9 + Math.pow(Math.random(), 3) * 0.14;
+      const s = 0.11;
+      hp[i * 3] = x * k * s;
+      hp[i * 3 + 1] = (y + 2.5) * k * s;
+      hp[i * 3 + 2] = (Math.random() + Math.random() + Math.random() - 1.5) * 0.7 * (0.5 + 0.5 * Math.abs(Math.sin(t)));
+      const cc = pick(paleta);
+      hc[i * 3] = cc.r;
+      hc[i * 3 + 1] = cc.g;
+      hc[i * 3 + 2] = cc.b;
+    }
+    const hg = new T.BufferGeometry();
+    hg.setAttribute('position', new T.BufferAttribute(hp, 3));
+    hg.setAttribute('color', new T.BufferAttribute(hc, 3));
+    const coracaoPts = new T.Points(hg, new T.PointsMaterial({ size: 0.11, map: texPonto(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, sizeAttenuation: true }));
+    grupoCoracao.add(coracaoPts);
+
+    const aura = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('255,120,190'), transparent: true, opacity: 0.35, blending: T.AdditiveBlending, depthWrite: false }));
+    aura.scale.set(6.5, 6.5, 1);
+    grupoCoracao.add(aura);
+
+    const texto = texTexto('Te amo', { tam: 70 });
+    const spTexto = new T.Sprite(new T.SpriteMaterial({ map: texto.tex, transparent: true, depthTest: false, depthWrite: false }));
+    spTexto.scale.set(3.2, 3.2 / texto.aspect, 1);
+    spTexto.renderOrder = 10;
+    grupoCoracao.add(spTexto);
+  }
+
+  /* ---- fotos e frases que ficam girando ---- */
+
+  function criarItem(tipo, tex, aspect, esc, escFoco, raio, altura, ang, vel) {
+    const mat = new T.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 1 });
+    const sprite = new T.Sprite(mat);
+    sprite.scale.set(esc * aspect, esc, 1);
+    sprite.position.set(Math.cos(ang) * raio, altura, Math.sin(ang) * raio);
+    cena.add(sprite);
+    const it = { tipo: tipo, sprite: sprite, aspect: aspect, esc: esc, escFoco: escFoco, escAtual: esc, raio: raio, altura: altura, ang: ang, vel: vel, fase: Math.random() * 6.28 };
+    itens.push(it);
+    return it;
+  }
+
+  // moldura de foto instantânea (polaroid); começa com um coraçãozinho colorido
+  function criarPolaroid(i) {
+    const c = novoCanvas(256, 300), g = c.getContext('2d');
+    const tex = viraTextura(c);
+    function desenhar(im) {
+      g.clearRect(0, 0, 256, 300);
+      g.save();
+      g.shadowColor = 'rgba(0,0,0,0.45)';
+      g.shadowBlur = 14;
+      g.shadowOffsetY = 4;
+      g.fillStyle = '#fdf8f2';
+      rr(g, 12, 10, 232, 278, 8);
+      g.fill();
+      g.restore();
+      g.save();
+      rr(g, 26, 24, 204, 204, 4);
+      g.clip();
+      if (im && im.naturalWidth) {
+        const s = Math.max(204 / im.naturalWidth, 204 / im.naturalHeight);
+        const w = im.naturalWidth * s, h = im.naturalHeight * s;
+        g.drawImage(im, 26 + (204 - w) / 2, 24 + (204 - h) / 2, w, h);
+      } else {
+        const gr = g.createLinearGradient(26, 24, 230, 228);
+        gr.addColorStop(0, 'hsl(' + (330 + i * 17) + ',85%,78%)');
+        gr.addColorStop(1, 'hsl(' + (260 + i * 13) + ',70%,70%)');
+        g.fillStyle = gr;
+        g.fillRect(26, 24, 204, 204);
+        g.fillStyle = 'rgba(255,255,255,0.85)';
+        caminhoCoracao(g, 128, 116, 3.6);
+        g.fill();
+      }
+      g.restore();
+      g.fillStyle = '#e0699a';
+      caminhoCoracao(g, 128, 262, 0.7);
+      g.fill();
+      tex.needsUpdate = true;
+    }
+    desenhar(null);
+    return { tex: tex, desenhar: desenhar };
+  }
+
+  // pega fotos da sua galeria (assets/data/galeria.json), menos a pasta Perfil
+  async function buscarFotos(max) {
+    let lista = FOTOS_MANUAIS.slice();
+    if (!lista.length) {
+      try {
+        const r = await fetch('assets/data/galeria.json', { cache: 'no-cache' });
+        if (r.ok) {
+          const pastas = await r.json();
+          (pastas || []).forEach((p) => {
+            const nome = String(p.nome || '').toLowerCase();
+            if (PASTAS_FORA.some((x) => nome.indexOf(x) >= 0)) return;
+            (p.fotos || []).forEach((f) => {
+              const s = String(f.imagem || '');
+              if (/\.(jpe?g|png|webp|gif)$/i.test(s) && s.indexOf('/uploads/') !== 0) lista.push(s);
+            });
+          });
+        }
+      } catch (e) { /* sem galeria: ficam os coraçõezinhos coloridos */ }
+    }
+    return embaralhar(lista).slice(0, max);
+  }
+
+  function construirItens() {
+    const nFotos = MOBILE ? 7 : 10;
+    const specs = [];
+    for (let i = 0; i < nFotos; i++) specs.push({ tipo: 'foto', i: i });
+    FRASES.forEach((f) => specs.push({ tipo: 'frase', texto: f }));
+    const lista = embaralhar(specs);
+    const polas = [];
+
+    lista.forEach((s, idx) => {
+      const ang = (idx / lista.length) * Math.PI * 2 + rand(-0.2, 0.2);
+      const raio = rand(3.9, 6.6);
+      const altura = rand(-0.6, 4.4);
+      const vel = 0.05 + rand(-0.012, 0.012);
+      if (s.tipo === 'foto') {
+        const p = criarPolaroid(s.i);
+        criarItem('foto', p.tex, 256 / 300, 1.5, 3.4, raio, altura, ang, vel);
+        polas.push(p);
+      } else {
+        const t = texTexto(s.texto, { tam: 64 });
+        criarItem('frase', t.tex, t.aspect, 0.6, 1.3, raio, altura, ang, vel);
+      }
+    });
+
+    buscarFotos(polas.length).then((srcs) => {
+      srcs.forEach((src, i) => {
+        const im = new Image();
+        im.onload = () => polas[i].desenhar(im);
+        im.src = src;
+      });
+    });
+  }
+
+  function focar(it) {
+    focado = focado === it ? null : it;
+    el('dica').textContent = focado ? 'toque de novo para soltar ✦' : dicaNormal;
+  }
+
+  function soltarCoracoes(origem, n) {
+    for (let i = 0; i < n; i++) {
+      const m = new T.SpriteMaterial({ map: texCor, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 1 });
+      const s = new T.Sprite(m);
+      const e = rand(0.28, 0.5);
+      s.scale.set(e, e, 1);
+      s.position.copy(origem);
+      cena.add(s);
+      voando.push({ s: s, vx: rand(-1.2, 1.2), vy: rand(0.6, 2.2), vz: rand(-1.2, 1.2), vida: 1, dec: rand(0.35, 0.6) });
+    }
+  }
+
+  function atualizar(dt) {
+    tempo += dt;
+    pulso += dt;
+    passoOrbita(orb, dt);
+    posicionarCamera(camera, alvo, orb);
+
+    matGalaxia.uniforms.uTempo.value = tempo;
+    matGalaxia.uniforms.uPulso.value = Math.min(pulso, 9);
+    estrelas.rotation.y += dt * 0.004;
+
+    const b = batida(tempo, 1.25);
+    grupoCoracao.scale.setScalar(1 + 0.07 * b);
+    grupoCoracao.position.y = 3.1 + Math.sin(tempo * 0.9) * 0.12;
+    grupoCoracao.rotation.y = Math.sin(tempo * 0.5) * 0.5;
+
+    camera.getWorldDirection(dirCam);
+    const alvoFoco = camera.position.clone().addScaledVector(dirCam, 3.6);
+    const k = 1 - Math.exp(-7 * dt);
+
+    itens.forEach((it) => {
+      const emFoco = it === focado;
+      if (emFoco) {
+        tmp.copy(alvoFoco);
+      } else {
+        const a = it.ang + tempo * it.vel;
+        tmp.set(Math.cos(a) * it.raio, it.altura + Math.sin(tempo * 0.8 + it.fase) * 0.22, Math.sin(a) * it.raio);
+      }
+      it.sprite.position.lerp(tmp, k);
+      it.escAtual = lerp(it.escAtual, emFoco ? it.escFoco : it.esc, k);
+      it.sprite.scale.set(it.escAtual * it.aspect, it.escAtual, 1);
+      const op = focado ? (emFoco ? 1 : 0.22) : 1;
+      it.sprite.material.opacity = lerp(it.sprite.material.opacity, op, k);
+    });
+
+    for (let i = voando.length - 1; i >= 0; i--) {
+      const h = voando[i];
+      h.s.position.x += h.vx * dt;
+      h.s.position.y += h.vy * dt;
+      h.s.position.z += h.vz * dt;
+      h.vida -= h.dec * dt;
+      h.s.material.opacity = Math.max(0, h.vida);
+      if (h.vida <= 0) {
+        cena.remove(h.s);
+        h.s.material.dispose();
+        voando.splice(i, 1);
+      }
+    }
+
+    proxCoracao -= dt;
+    if (proxCoracao <= 0) {
+      proxCoracao = rand(1.2, 2.4);
+      tmp.set(rand(-1, 1), grupoCoracao.position.y + rand(-0.5, 0.5), rand(-1, 1));
+      soltarCoracoes(tmp, 1);
+    }
+  }
+
+  return {
+    cena: cena,
+    camera: camera,
+    orb: orb,
+    dica: dicaNormal,
+    async preparar() {
+      if (pronto) return;
+      try {
+        if (document.fonts && document.fonts.load) {
+          await Promise.race([
+            document.fonts.load('italic 600 64px "Cormorant Garamond"'),
+            new Promise((r) => setTimeout(r, 900))
+          ]);
+        }
+      } catch (e) { /* segue com a fonte reserva */ }
+      construirGalaxia();
+      construirItens();
+      pronto = true;
+    },
+    entrar() { orb.ultima = performance.now(); },
+    sair() { focado = null; },
+    atualizar: atualizar,
+    redimensionar(w, h) {
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      if (!orb.zoomou) orb.dist = distParaTela(orb.base, camera.aspect);
+    },
+    aoToque(x, y) {
+      const hits = lancarRaio(camera, x, y, itens.map((i) => i.sprite), false);
+      if (hits.length) {
+        const it = itens.find((i) => i.sprite === hits[0].object);
+        if (it) { focar(it); return; }
+      }
+      if (focado) { focar(focado); return; }
+      pulso = 0;
+      tmp.set(0, grupoCoracao.position.y, 0);
+      soltarCoracoes(tmp, 10);
+    }
+  };
+}
+
+
+/* =========================================================
+   EXPERIÊNCIA 2 — CAIXINHA DE PRESENTE
+   (a gatinha é um desenho original; troque por suas imagens se quiser)
+   ========================================================= */
+
+function texGatinha() {
+  const c = novoCanvas(256, 256), g = c.getContext('2d');
+  g.lineJoin = 'round';
+  g.lineWidth = 6;
+  g.strokeStyle = '#3b2a3a';
+  g.fillStyle = '#ffffff';
+  g.beginPath(); g.moveTo(52, 112); g.lineTo(62, 42); g.lineTo(112, 80); g.closePath(); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(204, 112); g.lineTo(194, 42); g.lineTo(144, 80); g.closePath(); g.fill(); g.stroke();
+  g.beginPath(); g.ellipse(128, 142, 92, 72, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.fillStyle = '#3b2a3a';
+  g.beginPath(); g.ellipse(92, 140, 9, 12, 0, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.ellipse(164, 140, 9, 12, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#f7c64a';
+  g.lineWidth = 4;
+  g.beginPath(); g.ellipse(128, 160, 11, 8, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.lineWidth = 4;
+  [[-1, -6], [-1, 6], [1, -6], [1, 6]].forEach((b) => {
+    g.beginPath();
+    g.moveTo(128 + b[0] * 70, 158 + b[1] * 1.5);
+    g.lineTo(128 + b[0] * 112, 150 + b[1] * 3.5);
+    g.stroke();
+  });
+  g.fillStyle = '#f0589a';
+  g.lineWidth = 5;
+  g.beginPath(); g.moveTo(178, 84); g.lineTo(150, 62); g.lineTo(150, 106); g.closePath(); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(178, 84); g.lineTo(206, 62); g.lineTo(206, 106); g.closePath(); g.fill(); g.stroke();
+  g.beginPath(); g.arc(178, 84, 10, 0, Math.PI * 2); g.fill(); g.stroke();
+  return viraTextura(c);
+}
+
+function texPaleta() {
+  const c = novoCanvas(256, 200), g = c.getContext('2d');
+  g.fillStyle = '#fff7fa';
+  rr(g, 4, 4, 248, 192, 18);
+  g.fill();
+  const cores = ['#ffb6d3', '#ff8fbf', '#e8a97a', '#c9a7f5', '#ffd3a6', '#f06a9f'];
+  cores.forEach((cor, i) => {
+    g.fillStyle = cor;
+    rr(g, 20 + (i % 3) * 76, 22 + Math.floor(i / 3) * 86, 64, 74, 12);
+    g.fill();
+  });
+  return viraTextura(c);
+}
+
+// o painel que fica dentro da tampa: coração com recado
+function texPainelTampa() {
+  const c = novoCanvas(512, 360), g = c.getContext('2d');
+  g.fillStyle = '#ffd6e6';
+  g.fillRect(0, 0, 512, 360);
+  g.fillStyle = 'rgba(255,255,255,0.35)';
+  for (let i = 0; i < 18; i++) {
+    g.beginPath();
+    g.arc((i * 97) % 512, (i * 53) % 360, 6 + (i % 4) * 3, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.lineWidth = 12;
+  g.strokeStyle = '#f0589a';
+  g.fillStyle = '#ffffff';
+  caminhoCoracao(g, 256, 172, 9);
+  g.fill();
+  g.stroke();
+  g.fillStyle = '#d6487f';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.font = 'italic 600 44px "Cormorant Garamond", Georgia, serif';
+  g.fillText('Você merece', 256, 128);
+  g.font = 'italic 700 52px "Cormorant Garamond", Georgia, serif';
+  g.fillText('todo o amor', 256, 184);
+  g.font = 'italic 600 44px "Cormorant Garamond", Georgia, serif';
+  g.fillText('deste mundo', 256, 240);
+  return viraTextura(c);
+}
+
+function criarCaixa() {
+  const W = 4, D = 2.8, H = 2.2, E = 0.14;
+  const dicaNormal = 'arraste para girar · toque na caixinha para abrir ✦';
+
+  const cena = new T.Scene();
+  {
+    const c = novoCanvas(512, 512), g = c.getContext('2d');
+    const gr = g.createRadialGradient(256, 230, 20, 256, 256, 380);
+    gr.addColorStop(0, '#fff4f8');
+    gr.addColorStop(0.55, '#ffd0e3');
+    gr.addColorStop(1, '#f59cc0');
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 512, 512);
+    cena.background = viraTextura(c);
+  }
+  const camera = new T.PerspectiveCamera(38, 1, 0.1, 200);
+  const alvo = new T.Vector3(0, 1.6, 0);
+  const orb = { theta: 0.45, phi: 1.05, dist: 15, base: 15, vTheta: 0, arrastando: false, ultima: 0, min: 8, max: 30, phiMin: 0.45, phiMax: 1.45, auto: 0, zoomou: false };
+
+  let pronto = false, tempo = 0;
+  let aberta = false, abertura = 0, velAb = 0, h = 0, velH = 0, tAbriu = 0, tConfete = 99, giroExtra = 0;
+  const itens = [];
+  const subindo = [];
+  const texCor = texCoracao('#ff4f93', '#ffa0c8');
+  let tampa = null, coracao = null, luzDentro = null, matConfete = null, brilhos = null;
+
+  function construir() {
+    cena.add(new T.HemisphereLight(0xfff1f7, 0xf6a8c8, 0.95));
+    const sol = new T.DirectionalLight(0xffffff, 0.85);
+    sol.position.set(4, 9, 6);
+    sol.castShadow = true;
+    sol.shadow.mapSize.set(1024, 1024);
+    sol.shadow.camera.left = -6; sol.shadow.camera.right = 6;
+    sol.shadow.camera.top = 6; sol.shadow.camera.bottom = -6;
+    sol.shadow.bias = -0.0008;
+    cena.add(sol);
+    const luzFrente = new T.DirectionalLight(0xffd6e8, 0.35);
+    luzFrente.position.set(-6, 4, 3);
+    cena.add(luzFrente);
+
+    const branco = new T.MeshStandardMaterial({ color: 0xfff7fa, roughness: 0.42 });
+    const interior = new T.MeshStandardMaterial({ color: 0xffc2da, roughness: 0.7 });
+    const rosa = new T.MeshStandardMaterial({ color: 0xf06a9f, roughness: 0.4 });
+    const ouro = new T.MeshStandardMaterial({ color: 0xe8c85a, roughness: 0.3, metalness: 0.6 });
+
+    // chão com sombra suave
+    const chao = new T.Mesh(new T.PlaneGeometry(30, 30), new T.ShadowMaterial({ opacity: 0.2 }));
+    chao.rotation.x = -Math.PI / 2;
+    chao.receiveShadow = true;
+    cena.add(chao);
+    const cs = novoCanvas(128, 128), gs = cs.getContext('2d');
+    const grs = gs.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grs.addColorStop(0, 'rgba(190,60,110,0.4)');
+    grs.addColorStop(1, 'rgba(190,60,110,0)');
+    gs.fillStyle = grs;
+    gs.fillRect(0, 0, 128, 128);
+    const falsa = new T.Mesh(new T.PlaneGeometry(8, 6), new T.MeshBasicMaterial({ map: viraTextura(cs), transparent: true, depthWrite: false }));
+    falsa.rotation.x = -Math.PI / 2;
+    falsa.position.y = 0.004;
+    cena.add(falsa);
+
+    // ---- a caixa (base aberta por cima) ----
+    const caixa = new T.Group();
+    cena.add(caixa);
+
+    function painel(w, hh, d, x, y, z, faceInterna) {
+      const mats = [branco, branco, branco, branco, branco, branco];
+      if (faceInterna !== undefined) mats[faceInterna] = interior;
+      const m = new T.Mesh(new T.BoxGeometry(w, hh, d), mats);
+      m.position.set(x, y, z);
+      m.castShadow = true;
+      m.receiveShadow = true;
+      caixa.add(m);
+      return m;
+    }
+    painel(W, E, D, 0, E / 2, 0, 2);
+    painel(W, H, E, 0, H / 2, D / 2 - E / 2, 5);
+    painel(W, H, E, 0, H / 2, -D / 2 + E / 2, 4);
+    painel(E, H, D - 2 * E, -W / 2 + E / 2, H / 2, 0, 0);
+    painel(E, H, D - 2 * E, W / 2 - E / 2, H / 2, 0, 1);
+
+    // fita rosa na frente e as gatinhas
+    const fitaF = new T.Mesh(new T.BoxGeometry(0.55, H + 0.02, 0.03), rosa);
+    fitaF.position.set(0, H / 2, D / 2 + 0.015);
+    caixa.add(fitaF);
+    const texGato = texGatinha();
+    [-1.3, 1.3].forEach((x) => {
+      const d = new T.Mesh(new T.PlaneGeometry(0.95, 0.95), new T.MeshBasicMaterial({ map: texGato, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }));
+      d.position.set(x, H * 0.48, D / 2 + 0.012);
+      caixa.add(d);
+    });
+
+    // ---- a tampa (gira em volta da dobradiça, atrás) ----
+    tampa = new T.Group();
+    tampa.position.set(0, H, -D / 2);
+    caixa.add(tampa);
+    const WL = W + 0.26, DL = D + 0.18, ZC = D / 2 + 0.04;
+    const topo = new T.Mesh(new T.BoxGeometry(WL, 0.16, DL), [branco, branco, branco, interior, branco, branco]);
+    topo.position.set(0, 0.08, ZC);
+    topo.castShadow = true;
+    tampa.add(topo);
+    const labioF = new T.Mesh(new T.BoxGeometry(WL, 0.46, 0.1), branco);
+    labioF.position.set(0, -0.07, D + 0.08);
+    labioF.castShadow = true;
+    tampa.add(labioF);
+    [-1, 1].forEach((lado) => {
+      const lb = new T.Mesh(new T.BoxGeometry(0.1, 0.46, DL), branco);
+      lb.position.set(lado * (W / 2 + 0.08), -0.07, ZC);
+      lb.castShadow = true;
+      tampa.add(lb);
+    });
+    const fitaTopo = new T.Mesh(new T.BoxGeometry(0.55, 0.03, DL), rosa);
+    fitaTopo.position.set(0, 0.175, ZC);
+    tampa.add(fitaTopo);
+    const fitaLabio = new T.Mesh(new T.BoxGeometry(0.55, 0.46, 0.03), rosa);
+    fitaLabio.position.set(0, -0.07, D + 0.145);
+    tampa.add(fitaLabio);
+
+    // laço em cima da tampa
+    [-1, 1].forEach((lado) => {
+      const lc = new T.Mesh(new T.SphereGeometry(0.34, 20, 14), rosa);
+      lc.scale.set(1.2, 0.5, 0.7);
+      lc.position.set(lado * 0.42, 0.28, ZC);
+      lc.rotation.z = lado * 0.35;
+      lc.castShadow = true;
+      tampa.add(lc);
+    });
+    const nozinho = new T.Mesh(new T.SphereGeometry(0.17, 16, 12), rosa);
+    nozinho.position.set(0, 0.26, ZC);
+    tampa.add(nozinho);
+
+    // painel de recado na parte de baixo da tampa
+    const recado = new T.Mesh(new T.PlaneGeometry(W - 0.2, D - 0.1), new T.MeshBasicMaterial({ map: texPainelTampa() }));
+    recado.rotation.x = Math.PI / 2;
+    recado.position.set(0, -0.004, ZC);
+    tampa.add(recado);
+
+    // ---- coisinhas dentro da caixa ----
+    function esfera(r, cor, x, z, metal) {
+      const y = E + r;
+      const m = new T.Mesh(new T.SphereGeometry(r, 24, 16), new T.MeshStandardMaterial({ color: cor, roughness: 0.3, metalness: metal || 0 }));
+      m.position.set(x, y, z);
+      m.castShadow = true;
+      m.receiveShadow = true;
+      m.userData = { tipo: 'item', base: y, vy: 0 };
+      caixa.add(m);
+      itens.push(m);
+    }
+    esfera(0.42, 0xff8fbf, -1.2, 0.2);
+    esfera(0.32, 0xffb6d3, -0.55, 0.65);
+    esfera(0.36, 0xffd3e4, -1.15, -0.55);
+    esfera(0.28, 0xff6fa8, -0.45, -0.3);
+    esfera(0.3, 0xe8c85a, 0.1, 0.7, 0.6);
+    esfera(0.26, 0xffa6cb, 0.0, -0.6);
+
+    [[0.65, -0.35, 0xff5c8a], [0.95, -0.2, 0xff9ac4], [1.25, -0.4, 0xff7a45]].forEach((b) => {
+      const gb = new T.Group();
+      const corpo = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.5, 20), new T.MeshStandardMaterial({ color: 0xfdf0f5, roughness: 0.35 }));
+      corpo.position.y = 0.25;
+      const base = new T.Mesh(new T.CylinderGeometry(0.105, 0.105, 0.12, 20), ouro);
+      base.position.y = 0.06;
+      const bala = new T.Mesh(new T.CylinderGeometry(0.05, 0.085, 0.3, 20), new T.MeshStandardMaterial({ color: b[2], roughness: 0.3 }));
+      bala.position.y = 0.65;
+      [corpo, base, bala].forEach((m) => { m.castShadow = true; gb.add(m); });
+      gb.position.set(b[0], E, b[1]);
+      gb.userData = { tipo: 'item', base: E, vy: 0 };
+      caixa.add(gb);
+      itens.push(gb);
+    });
+
+    const paleta = new T.Mesh(new T.BoxGeometry(0.95, 0.1, 0.75), [branco, branco, new T.MeshBasicMaterial({ map: texPaleta() }), branco, branco, branco]);
+    paleta.position.set(1.0, E + 0.05, 0.55);
+    paleta.rotation.y = 0.3;
+    paleta.castShadow = true;
+    paleta.userData = { tipo: 'item', base: E + 0.05, vy: 0 };
+    caixa.add(paleta);
+    itens.push(paleta);
+
+    // o coração surpresa (sobe quando abre)
+    coracao = new T.Mesh(geometriaCoracao3D(), new T.MeshStandardMaterial({ color: 0xff4f93, roughness: 0.25, emissive: 0x400018 }));
+    coracao.castShadow = true;
+    coracao.userData = { tipo: 'coracao' };
+    coracao.scale.setScalar(0.001);
+    coracao.position.set(0, 0.8, 0.3);
+    cena.add(coracao);
+
+    luzDentro = new T.PointLight(0xff9cc9, 0, 9);
+    luzDentro.position.set(0, 1.8, 0.3);
+    cena.add(luzDentro);
+
+    // brilhinhos flutuando
+    const nb = MOBILE ? 50 : 90;
+    const bp = new Float32Array(nb * 3);
+    for (let i = 0; i < nb; i++) {
+      bp[i * 3] = rand(-6, 6);
+      bp[i * 3 + 1] = rand(0.3, 6);
+      bp[i * 3 + 2] = rand(-5, 5);
+    }
+    const bg = new T.BufferGeometry();
+    bg.setAttribute('position', new T.BufferAttribute(bp, 3));
+    brilhos = new T.Points(bg, new T.PointsMaterial({ size: 0.16, map: texPonto(), transparent: true, depthWrite: false, color: 0xffffff, opacity: 0.85 }));
+    cena.add(brilhos);
+
+    construirConfete();
+  }
+
+  // confete: a física roda toda na placa de vídeo (barato até no celular)
+  function construirConfete() {
+    const NC = MOBILE ? 140 : 240;
+    const cp = new Float32Array(NC * 3);
+    const cv = new Float32Array(NC * 3);
+    const cf = new Float32Array(NC);
+    const cc = new Float32Array(NC * 3);
+    const paleta = ['#ff5c9d', '#ffffff', '#ffd25a', '#8ee6c8', '#c9a7f5', '#7ec8ff', '#ff9ac4'].map((x) => new T.Color(x));
+    for (let i = 0; i < NC; i++) {
+      cp[i * 3] = rand(-0.6, 0.6);
+      cp[i * 3 + 1] = H + 0.4;
+      cp[i * 3 + 2] = rand(-0.4, 0.8);
+      cv[i * 3] = rand(-3.2, 3.2);
+      cv[i * 3 + 1] = rand(4.2, 8.5);
+      cv[i * 3 + 2] = rand(-2.4, 3.2);
+      cf[i] = Math.random();
+      const c = pick(paleta);
+      cc[i * 3] = c.r;
+      cc[i * 3 + 1] = c.g;
+      cc[i * 3 + 2] = c.b;
+    }
+    const geo = new T.BufferGeometry();
+    geo.setAttribute('position', new T.BufferAttribute(cp, 3));
+    geo.setAttribute('aVel', new T.BufferAttribute(cv, 3));
+    geo.setAttribute('aFase', new T.BufferAttribute(cf, 1));
+    geo.setAttribute('aCor', new T.BufferAttribute(cc, 3));
+
+    matConfete = new T.ShaderMaterial({
+      uniforms: { uT: { value: 99 }, uTam: { value: 120 * DPR } },
+      vertexShader: [
+        'uniform float uT; uniform float uTam;',
+        'attribute vec3 aVel; attribute float aFase; attribute vec3 aCor;',
+        'varying vec3 vCor; varying float vA;',
+        'void main() {',
+        '  float t = uT;',
+        '  float k = 1.7;',
+        '  vec3 p = position + aVel * ((1.0 - exp(-k * t)) / k);',
+        '  p.y -= 1.2 * t * t;',
+        '  p.x += sin(t * 3.0 + aFase * 6.2831) * 0.18 * min(t, 1.5);',
+        '  p.z += cos(t * 2.5 + aFase * 8.0) * 0.18 * min(t, 1.5);',
+        '  p.y = max(p.y, 0.05 + aFase * 0.03);',
+        '  vA = smoothstep(0.0, 0.08, t) * (1.0 - smoothstep(5.0, 8.0, t));',
+        '  vCor = aCor;',
+        '  vec4 mv = modelViewMatrix * vec4(p, 1.0);',
+        '  float vira = 0.45 + 0.55 * abs(sin(t * 9.0 + aFase * 6.2831));',
+        '  gl_PointSize = uTam * vira / -mv.z;',
+        '  gl_Position = projectionMatrix * mv;',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'varying vec3 vCor; varying float vA;',
+        'void main() {',
+        '  if (vA < 0.01) discard;',
+        '  gl_FragColor = vec4(vCor, vA);',
+        '}'
+      ].join('\n'),
+      transparent: true,
+      depthWrite: false
+    });
+    const pts = new T.Points(geo, matConfete);
+    pts.frustumCulled = false;
+    cena.add(pts);
+  }
+
+  function alternar() {
+    aberta = !aberta;
+    el('acao').textContent = aberta ? 'Fechar ✦' : 'Abrir presente ✦';
+    if (aberta) {
+      tAbriu = tempo;
+      tConfete = 0;
+      itens.forEach((m) => { m.userData.vy = rand(2.2, 3.4); });
+    }
+  }
+
+  function soltarCoracoes(origem, n) {
+    for (let i = 0; i < n; i++) {
+      const m = new T.SpriteMaterial({ map: texCor, transparent: true, depthWrite: false, opacity: 1 });
+      const s = new T.Sprite(m);
+      const e = rand(0.3, 0.5);
+      s.scale.set(e, e, 1);
+      s.position.copy(origem);
+      cena.add(s);
+      subindo.push({ s: s, vx: rand(-0.8, 0.8), vy: rand(1, 2.4), vz: rand(-0.8, 0.8), vida: 1, dec: rand(0.45, 0.75) });
+    }
+  }
+
+  const tmp = new T.Vector3();
+
+  function atualizar(dt) {
+    tempo += dt;
+    passoOrbita(orb, dt);
+    posicionarCamera(camera, alvo, orb);
+
+    // tampa: mola com um quiquezinho
+    velAb += ((aberta ? 1 : 0) - abertura) * 70 * dt;
+    velAb *= Math.exp(-7 * dt);
+    abertura += velAb * dt;
+    tampa.rotation.x = -abertura * 2.05;
+
+    // coração surpresa sobe um instante depois da tampa
+    const alvoH = aberta && tempo - tAbriu > 0.25 ? 1 : 0;
+    velH += (alvoH - h) * 40 * dt;
+    velH *= Math.exp(-6 * dt);
+    h += velH * dt;
+    const hh = Math.max(0, h);
+    coracao.position.set(0, lerp(0.8, 4.1, hh) + Math.sin(tempo * 2) * 0.08 * hh, 0.3);
+    coracao.scale.setScalar(Math.max(0.001, 0.3 * hh) * (1 + 0.06 * batida(tempo, 1.25)));
+    coracao.rotation.y += dt * (1.4 + giroExtra);
+    giroExtra *= Math.exp(-2 * dt);
+
+    luzDentro.intensity = lerp(luzDentro.intensity, aberta ? 1.4 : 0, 1 - Math.exp(-5 * dt));
+
+    // itens quicando
+    itens.forEach((m) => {
+      const u = m.userData;
+      if (u.vy !== 0 || m.position.y > u.base) {
+        m.position.y += u.vy * dt;
+        u.vy -= 14 * dt;
+        if (m.position.y <= u.base) {
+          m.position.y = u.base;
+          u.vy = Math.abs(u.vy) > 0.6 ? -u.vy * 0.4 : 0;
+        }
+      }
+    });
+
+    tConfete += dt;
+    matConfete.uniforms.uT.value = Math.min(tConfete, 99);
+    brilhos.rotation.y += dt * 0.05;
+
+    for (let i = subindo.length - 1; i >= 0; i--) {
+      const s = subindo[i];
+      s.s.position.x += s.vx * dt;
+      s.s.position.y += s.vy * dt;
+      s.s.position.z += s.vz * dt;
+      s.vida -= s.dec * dt;
+      s.s.material.opacity = Math.max(0, s.vida);
+      if (s.vida <= 0) {
+        cena.remove(s.s);
+        s.s.material.dispose();
+        subindo.splice(i, 1);
+      }
+    }
+  }
+
+  return {
+    cena: cena,
+    camera: camera,
+    orb: orb,
+    dica: dicaNormal,
+    async preparar() {
+      if (pronto) return;
+      try {
+        if (document.fonts && document.fonts.load) {
+          await Promise.race([
+            document.fonts.load('italic 600 44px "Cormorant Garamond"'),
+            new Promise((r) => setTimeout(r, 900))
+          ]);
+        }
+      } catch (e) { /* segue com a fonte reserva */ }
+      construir();
+      pronto = true;
+    },
+    entrar() {
+      orb.ultima = performance.now();
+      el('acao').textContent = aberta ? 'Fechar ✦' : 'Abrir presente ✦';
+    },
+    sair() {},
+    atualizar: atualizar,
+    alternar: alternar,
+    redimensionar(w, hh) {
+      camera.aspect = w / hh;
+      camera.updateProjectionMatrix();
+      if (!orb.zoomou) orb.dist = distParaTela(orb.base, camera.aspect);
+    },
+    aoToque(x, y) {
+      const hits = lancarRaio(camera, x, y, [tampa.parent, coracao], true);
+      if (!hits.length) return;
+      let o = hits[0].object;
+      while (o && !(o.userData && o.userData.tipo) && o.parent) o = o.parent;
+      const tipo = o && o.userData ? o.userData.tipo : '';
+      tmp.copy(hits[0].point);
+      if (tipo === 'item' && aberta) {
+        o.userData.vy = rand(2.4, 3.6);
+        soltarCoracoes(tmp, 5);
+      } else if (tipo === 'coracao') {
+        giroExtra += 7;
+        soltarCoracoes(tmp, 8);
+      } else {
+        alternar();
+      }
+    }
+  };
+}
+
+
+/* =========================================================
+   O "MOTOR": hub, troca de cena e laço de animação
+   ========================================================= */
+
+const EXP = { galaxia: criarGalaxia, caixa: criarCaixa };
+const experiencias = {};
+let alvoAtual = '';
+let rodando = false;
+let ultimo = 0;
+
+function redimensionar() {
+  const vv = window.visualViewport;
+  const w = Math.round(vv ? vv.width : innerWidth);
+  const h = Math.round(vv ? vv.height : innerHeight);
+  renderer.setSize(w, h, false);
+  if (ativo) ativo.redimensionar(w, h);
+}
+
+function frame(agora) {
+  if (!ativo) { rodando = false; return; }
+  const dt = Math.min(0.05, (agora - ultimo) / 1000);
+  ultimo = agora;
+  ativo.atualizar(dt);
+  renderer.render(ativo.cena, ativo.camera);
+  requestAnimationFrame(frame);
+}
+
+async function entrar(nome) {
+  alvoAtual = nome;
+  document.body.className = 'modo-' + nome;
+  el('erro').hidden = true;
+  el('carregando').hidden = false;
+  const exp = experiencias[nome] || (experiencias[nome] = EXP[nome]());
+  try {
+    await exp.preparar();
+  } catch (e) {
+    console.error(e);
+    mostrarErro('Não consegui montar esta cena: ' + (e && e.message ? e.message : e));
+    return;
+  }
+  if (alvoAtual !== nome) return;
+  el('carregando').hidden = true;
+  if (ativo && ativo !== exp) ativo.sair();
+  ativo = exp;
+  el('dica').textContent = exp.dica;
+  exp.entrar();
+  redimensionar();
+  if (!rodando) {
+    rodando = true;
+    ultimo = performance.now();
+    requestAnimationFrame(frame);
+  }
+}
+
+function voltarHub() {
+  alvoAtual = '';
+  if (ativo) { ativo.sair(); ativo = null; }
+  document.body.className = 'modo-hub';
+  el('carregando').hidden = true;
+  el('erro').hidden = true;
+}
+
+function porHash() {
+  const nome = location.hash.replace('#', '');
+  if (EXP[nome]) entrar(nome);
+  else voltarHub();
+}
+
+el('acao').addEventListener('click', () => { if (ativo && ativo.alternar) ativo.alternar(); });
+addEventListener('hashchange', porHash);
+addEventListener('resize', redimensionar);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', redimensionar);
+porHash();
+
+})();
+</script>
+</body>
+</html>

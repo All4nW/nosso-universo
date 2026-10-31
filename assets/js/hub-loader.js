@@ -17,6 +17,7 @@ function adicionarDecoracoesFundoHub(container) {
     container.prepend(decoracoes);
 }
 async function carregarHubCards() {
+        console.trace('[HUB] carregarHubCards foi chamado por:');
     const container = document.getElementById('hub-container');
     if (!container) return;
 
@@ -88,4 +89,4 @@ function criarHubCard(card, indice) {
     return a;
 }
 
-carregarHubCards();
+HubModo.aplicar();
