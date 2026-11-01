@@ -266,6 +266,8 @@ function ativarComportamentoDoSom() {
             btnPlayPause.textContent = tocando ? '⏸' : '▶';
         }
         botaoSom.classList.toggle('tocando', tocando);
+
+                window.dispatchEvent(new CustomEvent('nosso:musica', { detail: { tocando: tocando } }));
     }
 
 
@@ -480,6 +482,10 @@ function ativarComportamentoDoSom() {
 
     botaoSom.addEventListener('click', (evento) => {
         evento.stopPropagation();
+        if (!popup) {
+            console.warn('player-popup não encontrado no components/navbar.html');
+            return;
+        }
         popup.classList.toggle('oculto');
     });
 
@@ -651,6 +657,18 @@ function ativarDockNavbar() {
     document.addEventListener('click', (e) => { if (!dock.contains(e.target)) abrir(false); });
     window.addEventListener('hashchange', () => abrir(false));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') abrir(false); });
+
+        // a setinha de voltar fica bem transparente quando ninguém mexe na tela
+    let timerOcioso = null;
+    const acordar = () => {
+        dock.classList.add('ativo');
+        clearTimeout(timerOcioso);
+        timerOcioso = setTimeout(() => dock.classList.remove('ativo'), 2500);
+    };
+    ['pointerdown', 'pointermove', 'touchstart', 'wheel', 'scroll', 'keydown'].forEach((ev) => {
+        window.addEventListener(ev, acordar, { passive: true, capture: true });
+    });
+    acordar();
 }
 
 carregarNavbar();

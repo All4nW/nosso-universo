@@ -19,30 +19,9 @@
     padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.hub-card {
-    display: flex;
-    justify-content: center;
-    opacity: 0;
-}
-
 .view-ativa .hub-card {
     animation: entrada-card 0.7s ease forwards;
     animation-delay: var(--delay, 0s);
-}
-
-.hub-card-float {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 100%;
-    max-width: 195px;
-
-    transform: rotate(var(--rot, 0deg));
-    transition: transform 0.4s ease;
-
-    animation: flutuar var(--float-duration, 6s) ease-in-out infinite;
-    animation-delay: var(--float-delay, 0s);
 }
 
 .hub-card:hover .hub-card-float {
@@ -52,20 +31,6 @@
 
 /* ===== Pilha de fotos (stack) dentro de cada card ===== */
 
-.hub-card-thumb {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    margin-bottom: var(--spacing-sm);
-}
-
-.stack-layer {
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
 
 .stack-layer-3 {
     background: linear-gradient(135deg, var(--color-blue-night), var(--color-purple));
@@ -111,16 +76,6 @@
 
 /* ===== Título (sempre visível) ===== */
 
-.hub-card-title {
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 0.95rem;
-    color: var(--color-text-light);
-    margin-top: var(--spacing-sm);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
 
 .hub-card-title::before,
 .hub-card-title::after {
@@ -132,59 +87,12 @@
 
 /* ===== Descrição (overlay sobre a foto, só no hover) ===== */
 
-.hub-card-desc {
-    position: absolute;
-    inset: 0;
-    z-index: 4;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: var(--spacing-sm);
-
-    font-family: var(--font-primary);
-    font-size: 0.75rem;
-    line-height: 1.4;
-    color: var(--color-text-light);
-
-    background: rgba(5, 5, 16, 0.75);
-    border-radius: 10px;
-
-    opacity: 0;
-    transition: var(--transition-smooth);
-}
 
 .hub-card:hover .hub-card-desc {
     opacity: 1;
 }
 
 /* ===== Animações ===== */
-
-@keyframes entrada-card {
-    from {
-        opacity: 0;
-        transform: translateY(24px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes flutuar {
-    0%, 100% {
-        transform: rotate(var(--rot, 0deg)) translateY(0);
-    }
-    50% {
-        transform: rotate(var(--rot, 0deg)) translateY(-10px);
-    }
-}
-.hub-card.hub-card-selecionado {
-    transition: transform 0.35s ease, opacity 0.35s ease;
-    transform: scale(1.2);
-    opacity: 0;
-}
 
 .click-heart {
     position: fixed;
@@ -432,12 +340,6 @@
 
 }
 
-@media (max-width: 500px) {
-    .hub-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-}
 
 @media (max-width: 640px) {
 
@@ -1458,18 +1360,6 @@ body.modal-aberto {
     }
 }
 
-.hub-card.hub-card-tocado .stack-layer-3 {
-    transform: rotate(-16deg) translate(-16px, 8px);
-}
-.hub-card.hub-card-tocado .stack-layer-2 {
-    transform: rotate(12deg) translate(16px, 8px);
-}
-.hub-card.hub-card-tocado .stack-layer-1 {
-    transform: rotate(0deg) translateY(-6px) scale(1.03);
-}
-.hub-card.hub-card-tocado .hub-card-desc {
-    opacity: 1;
-}
 
 /* =========================================================
    BARRA DE PROGRESSO

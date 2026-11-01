@@ -14,6 +14,8 @@ function mostrarView(nomeDaView) {
     if (viewAlvo) {
         viewAlvo.classList.add('view-ativa');
 
+        document.body.classList.toggle('na-home', nomeDaView === 'hub');
+
         // FIX: força o navegador a recalcular o layout imediatamente
         void viewAlvo.offsetHeight;
 

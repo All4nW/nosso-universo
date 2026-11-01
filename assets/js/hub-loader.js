@@ -1,92 +1,49 @@
+// hub-loader.js
+// Monta o universo 3D no hub. (O hub clássico em 2D foi removido.)
+// Se o aparelho não conseguir abrir o 3D (WebGL), mostra uma lista simples de links.
 
+(function () {
+    'use strict';
 
-function adicionarDecoracoesFundoHub(container) {
-    if (container.querySelector('.hub-fundo-decoracoes')) return;
-
-    const decoracoes = document.createElement('div');
-    decoracoes.className = 'hub-fundo-decoracoes';
-    decoracoes.setAttribute('aria-hidden', 'true');
-    decoracoes.innerHTML = `
-        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 6%; --py: 12%; --pdelay: 0s; --pduracao: 9s;">
-        <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 90%; --py: 8%; --pdelay: 1.2s; --pduracao: 11s;">
-        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 94%; --py: 60%; --pdelay: 2.4s; --pduracao: 10s;">
-        <img src="assets/images/perfil-decoracoes/brilhos-cluster.png" alt="" style="--px: 4%; --py: 65%; --pdelay: 0.6s; --pduracao: 8.5s;">
-        <img src="assets/images/perfil-decoracoes/coracao-raios.png" alt="" style="--px: 50%; --py: 90%; --pdelay: 1.8s; --pduracao: 9.5s;">
-    `;
-
-    container.prepend(decoracoes);
-}
-async function carregarHubCards() {
-        console.trace('[HUB] carregarHubCards foi chamado por:');
     const container = document.getElementById('hub-container');
     if (!container) return;
 
-    adicionarDecoracoesFundoHub(container);
+    // a data em que vocês começaram (a mesma que o contador sempre usou)
+    const DATA_INICIO = '2025-08-05T00:00:00';
 
-    let cards = [];
-    try {
-        const resposta = await fetch('assets/data/hub.json', { cache: 'no-cache' });
-        if (!resposta.ok) throw new Error('Não foi possível carregar hub.json.');
-        cards = await resposta.json();
-    } catch (erro) {
-        console.error('Erro ao carregar cards do hub:', erro);
+    async function mostrarLinksSimples() {
+        let cards = [];
+        try {
+            const r = await fetch('assets/data/hub.json', { cache: 'no-cache' });
+            if (!r.ok) throw new Error('hub.json');
+            cards = await r.json();
+        } catch (e) {
+            cards = [
+                { titulo: 'Mural', link: 'timeline' },
+                { titulo: 'Galeria', link: 'galeria' },
+                { titulo: 'Assistidos', link: 'assistidos' },
+                { titulo: 'Cartas', link: 'cartas' }
+            ];
+        }
+        container.innerHTML =
+            '<nav class="hub-simples" aria-label="Seções">' +
+            cards.map((c) => '<a href="#' + c.link + '">' + c.titulo + '</a>').join('') +
+            '</nav>';
+    }
+
+    if (!window.Hub3D) {
+        mostrarLinksSimples();
         return;
     }
 
-    container.innerHTML = '';
-
-    cards.forEach((card, indice) => {
-        container.appendChild(criarHubCard(card, indice));
+    window.Hub3D.montar(container, {
+        dataInicio: DATA_INICIO,
+        aoEvento: function (nome, dados) {
+            if (window.HubSons) window.HubSons.evento(nome, dados);
+        },
+        aoFalhar: function (erro) {
+            console.warn('Hub3D indisponível, mostrando links simples:', erro);
+            mostrarLinksSimples();
+        }
     });
-}
-
-function criarHubCard(card, indice) {
-    const rotacoes = [-6, 4, -3, 6, -5, 3, -4];
-    const duracoes = [6, 7, 5.5, 6.5, 7.5, 6, 6.8];
-    const delaysFloat = [0, 0.4, 0.8, 0.2, 0.6, 1, 0.3];
-
-    const rot = rotacoes[indice % rotacoes.length];
-    const duracao = duracoes[indice % duracoes.length];
-    const delayFloat = delaysFloat[indice % delaysFloat.length];
-    const delayEntrada = (indice * 0.07).toFixed(2);
-
-    const a = document.createElement('a');
-    a.href = `#${card.link}`;
-    a.className = 'hub-card';
-    a.style.setProperty('--delay', `${delayEntrada}s`);
-
-    a.innerHTML = `
-        <div class="hub-card-float" style="--rot: ${rot}deg; --float-duration: ${duracao}s; --float-delay: ${delayFloat}s;">
-            <div class="hub-card-thumb">
-                <div class="stack-layer stack-layer-3" ${card.imagem3 ? `` : ''}></div>
-                <div class="stack-layer stack-layer-2"></div>
-                <div class="stack-layer stack-layer-1">
-                    <img src="${card.imagem1 || ''}" alt="${card.titulo}" onerror="this.remove()">
-                </div>
-                
-                ${card.descricao ? `<div class="hub-card-desc">${card.descricao}</div>` : ''}
-            </div>
-            <h3 class="hub-card-title">${card.titulo}</h3>
-        </div>
-    `;
-
-    // Aplica as fotos de fundo (camadas 2 e 3), se existirem
-    const layer2 = a.querySelector('.stack-layer-2');
-    const layer3 = a.querySelector('.stack-layer-3');
-
-    if (card.imagem2) {
-        layer2.style.backgroundImage = `url('${card.imagem2}')`;
-        layer2.style.backgroundSize = 'cover';
-        layer2.style.backgroundPosition = 'center';
-    }
-
-    if (card.imagem3) {
-        layer3.style.backgroundImage = `url('${card.imagem3}')`;
-        layer3.style.backgroundSize = 'cover';
-        layer3.style.backgroundPosition = 'center';
-    }
-
-    return a;
-}
-
-HubModo.aplicar();
+})();

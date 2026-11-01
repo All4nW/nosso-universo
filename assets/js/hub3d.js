@@ -261,7 +261,9 @@ function criar(container, cards, cfg) {
     const dirCam = new T.Vector3();
     const vUp = new T.Vector3();
     const alvoFoco = new T.Vector3();
-    const DICA = 'arraste para girar · toque num card para escolher ✦';
+    const DICA = MOBILE
+        ? 'arraste para girar · pinça para dar zoom · toque num card para escolher ✦'
+        : 'arraste para girar · role para dar zoom · clique num card para escolher ✦';
     elDica.textContent = DICA;
 
     /* ---------- a galáxia principal (espiral definida) ---------- */
@@ -717,10 +719,121 @@ function criar(container, cards, cfg) {
         recursos.push(fg, matFio);
     }
 
+    /* ---------- o sol: bem longe, suave, com um brilho delicado ---------- */
+    let sol = null, matSol = null, solRaios = null;
+    const solHalos = [];
+    const SOL_BRILHO = 0.8;      // brilho do disco (menor = mais discreto)
+
+    // raios finos e transparentes, de tamanhos variados
+    function texRaiosSol() {
+        const c = novoCanvas(256, 256), g = c.getContext('2d');
+        g.translate(128, 128);
+        const n = 14;
+        for (let i = 0; i < n; i++) {
+            g.save();
+            g.rotate((i / n) * Math.PI * 2 + (i % 2) * 0.1);
+            const comp = 70 + (i % 3) * 22;
+            const gr = g.createLinearGradient(0, 0, comp, 0);
+            gr.addColorStop(0, 'rgba(255,236,190,0.55)');
+            gr.addColorStop(1, 'rgba(255,236,190,0)');
+            g.fillStyle = gr;
+            g.beginPath();
+            g.moveTo(10, -2.2);
+            g.lineTo(comp, 0);
+            g.lineTo(10, 2.2);
+            g.closePath();
+            g.fill();
+            g.restore();
+        }
+        return viraTextura(c);
+    }
+
+    function construirSol() {
+        matSol = new T.ShaderMaterial({
+            uniforms: { uT: { value: 0 } },
+            transparent: true,
+            depthWrite: false,
+            blending: T.AdditiveBlending,
+            vertexShader: [
+                'varying vec3 vN; varying vec3 vP; varying vec3 vV;',
+                'void main() {',
+                '  vN = normalize(normalMatrix * normal);',
+                '  vP = position;',
+                '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
+                '  vV = normalize(-mv.xyz);',
+                '  gl_Position = projectionMatrix * mv;',
+                '}'
+            ].join('\n'),
+            fragmentShader: [
+                'uniform float uT;',
+                'varying vec3 vN; varying vec3 vP; varying vec3 vV;',
+                'float hash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
+                'float noise(vec3 x) {',
+                '  vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);',
+                '  float a = hash(i);',
+                '  float b = hash(i + vec3(1.0, 0.0, 0.0));',
+                '  float c = hash(i + vec3(0.0, 1.0, 0.0));',
+                '  float d = hash(i + vec3(1.0, 1.0, 0.0));',
+                '  float e = hash(i + vec3(0.0, 0.0, 1.0));',
+                '  float f1 = hash(i + vec3(1.0, 0.0, 1.0));',
+                '  float g1 = hash(i + vec3(0.0, 1.0, 1.0));',
+                '  float h = hash(i + vec3(1.0, 1.0, 1.0));',
+                '  return mix(mix(mix(a, b, f.x), mix(c, d, f.x), f.y), mix(mix(e, f1, f.x), mix(g1, h, f.x), f.y), f.z);',
+                '}',
+                'float fbm(vec3 p) { float a = 0.5; float s = 0.0; for (int i = 0; i < 3; i++) { s += a * noise(p); p *= 2.03; a *= 0.5; } return s; }',
+                'void main() {',
+                '  vec3 p = normalize(vP);',
+                '  float t = uT * 0.03;',
+                '  float g = fbm(p * 4.0 + vec3(t, -t * 0.6, t * 0.4));',
+                '  float mu = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);',
+                '  float limb = pow(mu, 0.45);',
+                '  vec3 borda = vec3(1.0, 0.58, 0.42);',     // laranja-rosado nas bordas
+                '  vec3 miolo = vec3(1.0, 0.95, 0.80);',     // creme quente no centro
+                '  vec3 col = mix(borda, miolo, limb);',
+                '  col *= 0.92 + 0.14 * g;',
+                '  float a = smoothstep(0.0, 0.55, mu);',    // a borda se dissolve, sem contorno duro
+                '  gl_FragColor = vec4(col, a * ' + SOL_BRILHO.toFixed(2) + ');',
+                '}'
+            ].join('\n')
+        });
+        sol = new T.Mesh(new T.SphereGeometry(3.0, 40, 30), matSol);
+        sol.position.set(72, 27, 75);
+        cena.add(sol);
+
+        // brilho quente em volta (três camadas bem suaves, a última puxa pro rosa do site)
+        [['255,226,170', 0.30, 12], ['255,170,120', 0.10, 26], ['255,150,170', 0.05, 46]].forEach((h) => {
+            const s = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(h[0]), transparent: true, opacity: h[1], blending: T.AdditiveBlending, depthWrite: false }));
+            s.position.copy(sol.position);
+            s.scale.set(h[2], h[2], 1);
+            s.userData.base = h[1];
+            cena.add(s);
+            solHalos.push(s);
+        });
+
+        solRaios = new T.Sprite(new T.SpriteMaterial({ map: texRaiosSol(), transparent: true, opacity: 0.13, blending: T.AdditiveBlending, depthWrite: false }));
+        solRaios.position.copy(sol.position);
+        solRaios.scale.set(34, 34, 1);
+        cena.add(solRaios);
+
+        recursos.push(sol.geometry, matSol);
+    }
+
     function atualizarUniverso(dt) {
         camadasEstrelas[0].material.opacity = 0.65 + 0.35 * Math.sin(tempo * 1.3);
         camadasEstrelas[1].material.opacity = 0.65 + 0.35 * Math.sin(tempo * 1.3 + Math.PI);
         galaxiasLonge.forEach((g, i) => { g.rotation.y += dt * (0.015 + i * 0.006); });
+        if (sol) {
+            sol.rotation.y += dt * 0.02;
+            matSol.uniforms.uT.value = tempo;
+            const respira = 0.5 + 0.5 * Math.sin(tempo * 0.5);
+            if (solRaios) {
+                solRaios.material.rotation += dt * 0.012;
+                solRaios.material.opacity = 0.11 + 0.05 * respira;
+            }
+            solHalos.forEach((h, i) => {
+                h.material.opacity = h.userData.base * (0.9 + 0.2 * Math.sin(tempo * 0.5 + i));
+            });
+        }
         if (grupoSpin) grupoSpin.rotation.y -= dt * 0.06;   // mesmo sentido e velocidade da espiral
         if (espinho) {
             espinho.material.rotation += dt * 0.04;
@@ -1258,7 +1371,8 @@ function criar(container, cards, cfg) {
             if (seg !== ultimoSeg) { ultimoSeg = seg; desenharContador(); }
         }
 
-        const b = batida(tempo, 1.25);
+        const nv = window.HubSons ? window.HubSons.nivelCoracao(dt) : -1;   // batida lida do áudio
+        const b = nv >= 0 ? nv : batida(tempo, 1.25);                       // sem áudio: relógio
         grupoCoracao.scale.setScalar(1.9 * (1 + 0.07 * b));
         grupoCoracao.position.y = 5.4 + Math.sin(tempo * 0.9) * 0.14;
         grupoCoracao.rotation.y = Math.sin(tempo * 0.5) * 0.5;
@@ -1358,6 +1472,7 @@ function criar(container, cards, cfg) {
             const v = es[0].isIntersecting;
             if (v && !visivel && entrando) resetar();   // voltou de outra seção
             visivel = v;
+            evento('visivel', { sim: v });
             if (v) iniciarLaco();
         })
         : null;
@@ -1366,8 +1481,10 @@ function criar(container, cards, cfg) {
     document.addEventListener('visibilitychange', aoVisibilidade);
 
     /* ---------- partida ---------- */
+    evento('visivel', { sim: true });
     construirGalaxia();
     construirUniverso();
+    construirSol();
     construirDetalhesGalaxia();
     construirWarp();
     redimensionar();
