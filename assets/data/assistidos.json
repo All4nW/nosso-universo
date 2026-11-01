@@ -1054,5 +1054,24 @@
         "notaEu": null,
         "notaEla": null,
         "memoria": ""
+    },
+    {
+        "id": "a-orfa",
+        "categoria": "filmes",
+        "titulo": "A Órfã",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1793476238369.jpg",
+        "cor": {
+            "r": 96,
+            "g": 92,
+            "b": 83
+        },
+        "aura": "#375845",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": "Nosso especial Halloween - 31/10/2026"
     }
 ]

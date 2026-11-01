@@ -76,7 +76,7 @@ function mostrarView(nomeDaView) {
 
 function rotearPelaURL() {
     // Pega o que vem depois do "#" na URL. Se não tiver nada, usa "welcome" como padrão.
-    const hashAtual = window.location.hash.replace('#', '') || 'welcome';
+    const hashAtual = window.location.hash.replace('#', '') || 'hub';
     mostrarView(hashAtual);
 }
 

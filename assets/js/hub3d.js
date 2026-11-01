@@ -127,13 +127,7 @@ function criar(container, cards, cfg) {
     raiz.innerHTML =
         '<canvas class="h3d-canvas"></canvas>' +
         '<p class="h3d-dica"></p>' +
-        '<div class="h3d-acao">' +
-        '  <button type="button" class="h3d-entrar" aria-label="Entrar nesta seção">' +
-        '    <span class="h3d-entrar-brilho"></span>' +
-        '    <span class="h3d-entrar-texto">Entrar</span>' +
-        '    <span class="h3d-entrar-estrela">✦</span>' +
-        '  </button>' +
-        '</div>' +
+        '<div class="h3d-acao"><span class="h3d-toque"></span></div>' +
         '<div class="h3d-flash"></div>';
     container.appendChild(raiz);
 
@@ -142,7 +136,7 @@ function criar(container, cards, cfg) {
     const elDica = $('.h3d-dica');
     const elAcao = $('.h3d-acao');
     const elFlash = $('.h3d-flash');
-    const botaoEntrar = $('.h3d-entrar');
+    $('.h3d-toque').textContent = MOBILE ? 'toque de novo para entrar' : 'clique de novo para entrar';
 
     let renderer;
     try {
@@ -152,7 +146,7 @@ function criar(container, cards, cfg) {
         if (cfg.aoFalhar) cfg.aoFalhar(e);
         return { destruir() {} };
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     const DPR = renderer.getPixelRatio();
 
     /* ---------- texturas desenhadas na hora ---------- */
@@ -935,7 +929,7 @@ function criar(container, cards, cfg) {
 
     function construirCards() {
         const n = cards.length;
-        const raio = ladoA < 1 ? 4.3 : 5.6;
+        const raio = ladoA < 1 ? 3.7 : 5.6;
         const alturas = [0.2, 0.9, 0.4, 1.1, 0.3, 0.8, 0.6];
         const texAura = texBrilho('255,130,200');
         cards.forEach((card, i) => {
@@ -970,7 +964,7 @@ function criar(container, cards, cfg) {
     }
 
     function ajustarEscalaCards() {
-        const base = ladoA < 1 ? 3.9 : 3.6;
+        const base = ladoA < 1 ? 3.5 : 3.6;
         itens.forEach((it) => {
             it.esc = base;
             if (it.escAtual === 3) it.escAtual = base;
@@ -983,9 +977,6 @@ function criar(container, cards, cfg) {
         elAcao.classList.toggle('h3d-acao-aberta', sim);
         elAcao.style.opacity = sim ? '1' : '0';
         elAcao.style.visibility = sim ? 'visible' : 'hidden';
-        elAcao.style.pointerEvents = sim ? 'auto' : 'none';
-        botaoEntrar.style.opacity = sim ? '1' : '0';
-        botaoEntrar.style.pointerEvents = sim ? 'auto' : 'none';
     }
     mostrarAcao(false);
 
@@ -1049,10 +1040,7 @@ function criar(container, cards, cfg) {
         setTimeout(() => { if (!destruido && entrando) resetar(); }, 3400);
     }
 
-    botaoEntrar.addEventListener('click', (e) => {
-        e.stopPropagation();
-        entrar();
-    });
+
 
     /* ---------- corações que sobem ---------- */
     const texCor = texCoracao('#ff7ab8', '#ff4f9a');
@@ -1156,10 +1144,10 @@ function criar(container, cards, cfg) {
         camera.updateProjectionMatrix();
         ladoA = aspecto;
         // em tela de celular (em pé) afasta a câmera pra tudo caber
-        if (!orb.zoomou) orb.dist = aspecto >= 1 ? orb.base : orb.base * Math.pow(1 / aspecto, 0.7);
+  if (!orb.zoomou) orb.dist = aspecto >= 1 ? orb.base : Math.max(orb.base, 10.8 / (1.04 * aspecto));
         if (itens.length) {
             ajustarEscalaCards();
-            const raio = ladoA < 1 ? 4.3 : 5.6;
+            const raio = ladoA < 1 ? 3.7 : 5.6;
             itens.forEach((it) => { it.raio = raio; });
         }
     }
@@ -1314,11 +1302,11 @@ function criar(container, cards, cfg) {
         // botão "Entrar" acompanha a parte de baixo do card escolhido
         if (sel >= 0) {
             const it = itens[sel];
-            tmp.copy(it.sprite.position).addScaledVector(vUp, -it.escAtual * 0.5);
+            tmp.copy(it.sprite.position).addScaledVector(vUp, -it.escAtual * 0.47);
             tmp.project(camera);
             const px = (tmp.x * 0.5 + 0.5) * raiz.clientWidth;
             const py = (-tmp.y * 0.5 + 0.5) * raiz.clientHeight;
-            elAcao.style.transform = 'translate(' + px.toFixed(1) + 'px,' + (py + 34).toFixed(1) + 'px)';
+            elAcao.style.transform = 'translate(' + px.toFixed(1) + 'px,' + (py + 10).toFixed(1) + 'px)';
         }
 
         for (let i = voando.length - 1; i >= 0; i--) {
@@ -1343,12 +1331,18 @@ function criar(container, cards, cfg) {
         }
     }
 
-    function frame(agora) {
+      function frame(agora) {
         if (destruido || !visivel || document.hidden) { rodando = false; return; }
         const dt = Math.min(0.05, (agora - ultimo) / 1000);
         ultimo = agora;
-        atualizar(dt);
-        renderer.render(cena, camera);
+        try {
+            atualizar(dt);
+            renderer.render(cena, camera);
+        } catch (e) {
+            console.error('[Hub3D] erro no quadro:', e);
+            rodando = false;
+            return;
+        }
         rafId = requestAnimationFrame(frame);
     }
     function iniciarLaco() {

@@ -42,6 +42,7 @@ function aplicar() {
     container.classList.remove('hub-3d');
 
     const usarClassico = () => {
+        document.getElementById('live-counter')?.classList.add('live-counter-visivel');
         container.classList.remove('hub-3d');
         container.innerHTML = '';
         if (typeof window.carregarHubCards === 'function') window.carregarHubCards();
@@ -75,7 +76,8 @@ function sincronizarAlavanca() {
 
 function atualizarVisibilidadeAlavanca() {
     const b = document.getElementById('hub-alavanca');
-    if (b) b.classList.toggle('visivel', location.hash === '#hub');
+const h = location.hash;
+b.classList.toggle('visivel', h === '#hub' || h === '' || h === '#');
 }
 
 function criarAlavanca() {

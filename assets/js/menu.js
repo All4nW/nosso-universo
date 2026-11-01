@@ -13,9 +13,9 @@ async function carregarNavbar() {
 
         ativarComportamentoDoSom();
         ativarEfeitoClique(document.getElementById('sound-toggle'));
-        ativarEfeitoClique(document.querySelector('.home-link'));
-
+     ativarEfeitoClique(document.querySelector('.nav-home'));
         mostrarLinkAdminSeLocal();
+        ativarDockNavbar();
     } catch (erro) {
         console.error('Erro ao carregar o navbar:', erro);
     }
@@ -265,7 +265,7 @@ function ativarComportamentoDoSom() {
         if (btnPlayPause) {
             btnPlayPause.textContent = tocando ? '⏸' : '▶';
         }
-        botaoSom.textContent = tocando ? '🔊' : '🎵';
+        botaoSom.classList.toggle('tocando', tocando);
     }
 
 
@@ -634,6 +634,23 @@ function ativarComportamentoDoSom() {
             listaContainer.appendChild(item);
         });
     }
+}
+function ativarDockNavbar() {
+    const dock = document.getElementById('nav-dock');
+    const botao = document.getElementById('nav-expandir');
+    if (!dock || !botao) return;
+
+    const abrir = (sim) => {
+        dock.classList.toggle('aberto', sim);
+        botao.setAttribute('aria-expanded', String(sim));
+        botao.setAttribute('aria-label', sim ? 'Esconder botões' : 'Mostrar mais botões');
+        if (!sim) document.getElementById('player-popup')?.classList.add('oculto');
+    };
+
+    botao.addEventListener('click', (e) => { e.stopPropagation(); abrir(!dock.classList.contains('aberto')); });
+    document.addEventListener('click', (e) => { if (!dock.contains(e.target)) abrir(false); });
+    window.addEventListener('hashchange', () => abrir(false));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') abrir(false); });
 }
 
 carregarNavbar();
