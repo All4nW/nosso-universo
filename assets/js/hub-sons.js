@@ -1,51 +1,75 @@
 // hub-sons.js
-// Sons ambiente do universo (hub 3D):
+// Sons do universo (hub 3D):
 //   • som-espaco.mp3          -> ambiente, em loop suave (sem "corte" na emenda)
 //   • som-coracao-batendo.mp3 -> o coração do hub BATE NO RITMO desse áudio (sincronizado)
+//   • som-click-entrar        -> toca quando você toca num card e ele expande
+//   • som-click-sair          -> toca quando você toca fora e o card volta
 //
 // Regras:
 //   • começa no primeiro toque/clique na tela (o navegador não deixa tocar antes disso)
-//   • bem baixinho (ajuste VOL_ESPACO e VOL_CORACAO logo abaixo)
-//   • quando a música do player toca, os sons ambiente somem devagarinho (e voltam quando ela pausa)
-//   • só tocam enquanto o hub está na tela; ao entrar numa seção, somem
+//   • ambiente e coração são baixinhos (ajuste os VOL_ logo abaixo)
+//   • quando a música do player toca, ambiente e coração somem devagarinho (e voltam quando ela pausa)
+//   • ao ENTRAR numa seção (ou sair do hub por qualquer caminho), todos os sons do hub cortam rápido
 //   • a batida visual continua sincronizada mesmo quando o som está mudo
 
 (function () {
 'use strict';
 
 /* ---------- AJUSTES ---------- */
-const ARQUIVO_ESPACO  = 'assets/audio/hub-card/som-espaco.mp3';
-const ARQUIVO_CORACAO = 'assets/audio/hub-card/som-coracao-batendo.mp3';
-const VOL_ESPACO  = 0.10;     // 0 a 1 — baixinho, só pra "sentir" o ambiente
-const VOL_CORACAO = 0.12;     // 0 a 1 — dá pra perceber sem incomodar
+const PASTA = 'assets/audio/hub-card/';
+const ARQUIVO_ESPACO  = PASTA + 'som-espaco.mp3';
+const ARQUIVO_CORACAO = PASTA + 'som-coracao-batendo.mp3';
+const BASE_CLICK_ENTRAR = PASTA + 'som-click-entrar';   // a extensão é descoberta sozinha (.mp3, .wav, .ogg, .m4a)
+const BASE_CLICK_SAIR   = PASTA + 'som-click-sair';
+const VOL_ESPACO  = 0.16;     // 0 a 1 — ambiente
+const VOL_CORACAO = 0.09;     // 0 a 1 — coração batendo (baixinho)
+const VOL_CLICK   = 0.35;     // 0 a 1 — cliques de entrar/sair do card
 const CHAVE = 'nossoUniversoAmbiente';   // guarda 'off' se a pessoa silenciar
 
-let ctx = null, mestre = null, analyser = null, gEspaco = null, gCoracao = null;
-let bufEspaco = null, bufCoracao = null, dados = null;
-let iniciou = false, coracaoTocando = false;
-let hubVisivel = false, musicaTocando = false;
+let ctx = null, mestre = null, analyser = null, gEspaco = null, gCoracao = null, gClick = null;
+let bufEspaco = null, bufCoracao = null, bufEntrar = null, bufSair = null, dados = null;
+let iniciou = false, loopsIniciados = false, coracaoTocando = false;
+let hubVisivel = false, musicaTocando = false, saindo = false;
 let silenciado = false;
-let proxInicio = 0;
+let proxInicio = 0, timerSaindo = 0;
 let pico = 0.02, piso = 1, env = 0;
 const historico = [];          // (tempo, nível) pra compensar o atraso da saída de áudio
 
 try { silenciado = localStorage.getItem(CHAVE) === 'off'; } catch (e) { /* sem storage */ }
 
+function naHome() {
+    const h = location.hash;
+    return h === '' || h === '#' || h === '#hub';
+}
+
+// ambiente/coração só tocam com o hub na tela, na página inicial, sem entrar numa seção e sem música tocando
 function alvo() {
-    return hubVisivel && !musicaTocando && !silenciado ? 1 : 0;
+    return hubVisivel && naHome() && !saindo && !musicaTocando && !silenciado ? 1 : 0;
 }
 
 function aplicar() {
     if (!ctx || !mestre) return;
     const t = ctx.currentTime;
+    const a = alvo();
+    const saiuDoHome = !hubVisivel || !naHome() || saindo;
     mestre.gain.cancelScheduledValues(t);
-    mestre.gain.setTargetAtTime(alvo(), t, 0.7);      // sobe/desce em ~2 segundos, bem suave
+    // saiu do hub: corta rápido (~0,4s). Música começou ou voltou ao hub: transição suave (~2s)
+    mestre.gain.setTargetAtTime(a, t, a === 0 && saiuDoHome ? 0.12 : 0.7);
 }
 
 function carregar(url) {
     return fetch(url)
         .then((r) => { if (!r.ok) throw new Error(url + ' (' + r.status + ')'); return r.arrayBuffer(); })
         .then((ab) => new Promise((ok, erro) => ctx.decodeAudioData(ab, ok, erro)));
+}
+
+async function carregarBase(base) {
+    const exts = ['mp3', 'wav', 'ogg', 'm4a'];
+    for (let i = 0; i < exts.length; i++) {
+        try { return await carregar(base + '.' + exts[i]); } catch (e) { /* tenta a próxima extensão */ }
+    }
+    console.warn('[HubSons] não achei o áudio:', base);
+    return null;
 }
 
 // ambiente: cada volta nasce enquanto a anterior ainda está sumindo (emenda invisível)
@@ -76,14 +100,26 @@ function iniciarCoracao() {
     coracaoTocando = true;
 }
 
-async function iniciar() {
-    if (iniciou) return;
-    iniciou = true;
+// só começa os loops depois do primeiro toque E com os arquivos já carregados
+function iniciarLoops() {
+    if (loopsIniciados || !iniciou || !ctx) return;
+    if (bufEspaco === undefined || bufCoracao === undefined) return;   // ainda carregando
+    loopsIniciados = true;
+    if (bufEspaco) {
+        cicloEspaco(ctx.currentTime + 0.1);
+        setInterval(() => {
+            if (ctx && ctx.state === 'running' && ctx.currentTime >= proxInicio - 1.2) cicloEspaco(proxInicio);
+        }, 400);
+    }
+    if (bufCoracao) iniciarCoracao();
+    aplicar();
+}
+
+// prepara tudo já na abertura da página (o áudio fica "dormindo" até o primeiro toque)
+function preparar() {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
-
     ctx = new AC();
-    ctx.resume().catch(() => {});
 
     mestre = ctx.createGain();
     mestre.gain.value = 0;
@@ -97,23 +133,36 @@ async function iniciar() {
     gCoracao.gain.value = VOL_CORACAO;
     gCoracao.connect(mestre);
 
+    gClick = ctx.createGain();          // cliques vão direto pra saída: não somem quando a música toca
+    gClick.gain.value = VOL_CLICK;
+    gClick.connect(ctx.destination);
+
     analyser = ctx.createAnalyser();
     analyser.fftSize = 512;
     dados = new Float32Array(analyser.fftSize);
 
-    const falhou = (e) => { console.warn('[HubSons] não consegui carregar:', e.message || e); return null; };
-    const r = await Promise.all([carregar(ARQUIVO_ESPACO).catch(falhou), carregar(ARQUIVO_CORACAO).catch(falhou)]);
-    bufEspaco = r[0];
-    bufCoracao = r[1];
+    const falhou = (e) => { console.warn('[HubSons] não consegui carregar:', (e && e.message) || e); return null; };
+    bufEspaco = undefined;
+    bufCoracao = undefined;
+    carregar(ARQUIVO_ESPACO).catch(falhou).then((b) => { bufEspaco = b; iniciarLoops(); });
+    carregar(ARQUIVO_CORACAO).catch(falhou).then((b) => { bufCoracao = b; iniciarLoops(); });
+    carregarBase(BASE_CLICK_ENTRAR).then((b) => { bufEntrar = b; });
+    carregarBase(BASE_CLICK_SAIR).then((b) => { bufSair = b; });
+}
 
-    if (bufEspaco) {
-        cicloEspaco(ctx.currentTime + 0.1);
-        setInterval(() => {
-            if (ctx && ctx.state === 'running' && ctx.currentTime >= proxInicio - 1.2) cicloEspaco(proxInicio);
-        }, 400);
-    }
-    if (bufCoracao) iniciarCoracao();
-    aplicar();
+function iniciar() {
+    if (iniciou || !ctx) return;
+    iniciou = true;
+    ctx.resume().catch(() => {});
+    iniciarLoops();
+}
+
+function tocarClick(buf) {
+    if (!ctx || !iniciou || !buf || silenciado || !hubVisivel || !naHome()) return;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(gClick);
+    src.start();
 }
 
 // nível da batida (0 a 1) lido DO PRÓPRIO ÁUDIO; -1 = sem áudio ainda (a animação usa o relógio dela)
@@ -141,6 +190,8 @@ function nivelCoracao(dt) {
 
 /* ---------- ligações com o resto do site ---------- */
 
+try { preparar(); } catch (e) { console.warn('[HubSons] áudio indisponível:', e); }
+
 // primeiro toque/tecla: libera o áudio
 ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => {
     window.addEventListener(ev, iniciar, { once: true, capture: true, passive: true });
@@ -152,19 +203,32 @@ window.addEventListener('nosso:musica', (e) => {
     aplicar();
 });
 
+// trocou de página (hash): se saiu do hub, corta os sons do hub
+window.addEventListener('hashchange', aplicar);
+
 // aba escondida: pausa o motor de áudio (economiza bateria)
 document.addEventListener('visibilitychange', () => {
-    if (!ctx) return;
+    if (!ctx || !iniciou) return;
     if (document.hidden) ctx.suspend().catch(() => {});
     else ctx.resume().catch(() => {});
 });
 
 window.HubSons = {
-    // o hub 3D avisa aqui o que acontece (visivel, selecionar, entrar...)
+    // o hub 3D avisa aqui o que acontece (visivel, selecionar, soltar, entrar...)
     evento(nome, d) {
         if (nome === 'visivel') {
             hubVisivel = !!(d && d.sim);
+            if (hubVisivel) { saindo = false; clearTimeout(timerSaindo); }
             aplicar();
+        } else if (nome === 'selecionar') {
+            tocarClick(bufEntrar);                     // card expandiu
+        } else if (nome === 'soltar') {
+            tocarClick(bufSair);                       // tocou fora: card voltou
+        } else if (nome === 'entrar') {
+            saindo = true;                             // entrando numa seção: corta ambiente e coração já
+            aplicar();
+            clearTimeout(timerSaindo);
+            timerSaindo = setTimeout(() => { saindo = false; aplicar(); }, 4500);   // se a seção não abrir, volta
         }
     },
     nivelCoracao: nivelCoracao,

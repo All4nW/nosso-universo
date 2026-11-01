@@ -7,7 +7,7 @@ async function carregarNavbar() {
     if (!placeholder) return;
 
     try {
-        const resposta = await fetch('components/navbar.html');
+const resposta = await fetch('components/navbar.html', { cache: 'no-cache' });
         const html = await resposta.text();
         placeholder.innerHTML = html;
 
@@ -163,8 +163,81 @@ function pararCoracoesPlayer() {
         intervaloCoracoesPlayer = null;
     }
 }
+// Garante que a janelinha do player existe: se o navbar.html carregado não
+// tiver, ela é criada aqui (mesmos ids e classes de antes, então o CSS vale).
+function garantirPlayerPopup() {
+
+    if (document.getElementById('player-popup')) return;
+
+    const dock =
+        document.getElementById('nav-dock') ||
+        document.getElementById('navbar-placeholder');
+
+    if (!dock) return;
+
+    dock.insertAdjacentHTML('beforeend', `
+        <div id="player-popup" class="player-popup oculto">
+
+            <div class="player-linha-principal">
+
+                <span class="player-capa">♪</span>
+
+                <div class="player-titulo-wrapper">
+                    <span id="player-titulo" class="player-titulo">—</span>
+                </div>
+                <span class="player-coracao-pulso">♡</span>
+
+                <div class="player-volume-mini">
+                    <button id="player-mute" class="player-botao-volume" aria-label="Mutar">🔊</button>
+                    <button id="player-vol-menos" class="player-botao-volume" aria-label="Diminuir volume">−</button>
+
+                    <span class="player-volume-coracao" aria-hidden="true">
+                        <span class="player-volume-coracao-fundo">♡</span>
+                        <span id="player-volume-coracao-cheio" class="player-volume-coracao-cheio">♥</span>
+                    </span>
+
+                    <span id="player-volume-valor" class="player-volume-texto">25%</span>
+
+                    <button id="player-vol-mais" class="player-botao-volume" aria-label="Aumentar volume">+</button>
+                </div>
+
+            </div>
+
+            <div class="player-progresso-linha">
+                <span id="player-tempo-atual" class="player-tempo">0:00</span>
+
+                <div id="player-barra-progresso" class="player-barra-progresso">
+                    <div id="player-progresso-preenchimento" class="player-progresso-preenchimento"></div>
+                    <div id="player-progresso-bolinha" class="player-progresso-bolinha"></div>
+                </div>
+
+                <span id="player-tempo-total" class="player-tempo">0:00</span>
+            </div>
+
+            <div class="player-controles-linha">
+                <button id="player-anterior" class="player-botao" aria-label="Anterior">⏮</button>
+                <button id="player-play-pause" class="player-botao player-botao-principal" aria-label="Tocar/Pausar">▶</button>
+                <button id="player-proximo" class="player-botao" aria-label="Próxima">⏭</button>
+            </div>
+
+            <div id="player-extra" class="player-extra">
+
+                <button id="player-lista-toggle" class="player-lista-botao">
+                    <span>♡ nossas músicas</span>
+                    <span id="player-lista-seta">⌄</span>
+                </button>
+
+                <div id="player-lista" class="player-lista oculto"></div>
+
+            </div>
+
+        </div>
+    `);
+
+}
 
 function ativarComportamentoDoSom() {
+        garantirPlayerPopup();
     const botaoSom = document.getElementById('sound-toggle');
     const popup = document.getElementById('player-popup');
     const tituloEl = document.getElementById('player-titulo');
@@ -482,16 +555,18 @@ function ativarComportamentoDoSom() {
 
     botaoSom.addEventListener('click', (evento) => {
         evento.stopPropagation();
-        if (!popup) {
+        const janela = document.getElementById('player-popup');
+        if (!janela) {
             console.warn('player-popup não encontrado no components/navbar.html');
             return;
         }
-        popup.classList.toggle('oculto');
+        janela.classList.toggle('oculto');
     });
 
     document.addEventListener('click', (evento) => {
-        if (popup && !popup.contains(evento.target) && evento.target !== botaoSom) {
-            popup.classList.add('oculto');
+        const janela = document.getElementById('player-popup');
+        if (janela && !janela.contains(evento.target) && !botaoSom.contains(evento.target)) {
+            janela.classList.add('oculto');
         }
     });
 
