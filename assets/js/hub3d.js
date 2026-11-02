@@ -221,7 +221,7 @@ function criar(container, cards, cfg) {
 
     /* ---------- cena, câmera, órbita ---------- */
     const cena = new T.Scene();
-    cena.background = new T.Color(0x010104);
+  cena.background = new T.Color(0x000000);
     const FOV = 55;
     const camera = new T.PerspectiveCamera(FOV, 1, 0.1, 500);
     cena.add(camera);                       // precisa estar na cena: o "mergulho" é filho da câmera
@@ -262,8 +262,8 @@ function criar(container, cards, cfg) {
     const vUp = new T.Vector3();
     const alvoFoco = new T.Vector3();
     const DICA = MOBILE
-        ? 'arraste para girar · pinça para dar zoom · toque num card para escolher ✦'
-        : 'arraste para girar · role para dar zoom · clique num card para escolher ✦';
+        ? 'arraste: girar · pinça: zoom · toque: escolher'
+        : 'arraste: girar · role: zoom · clique: escolher';
     elDica.textContent = DICA;
 
     /* ---------- a galáxia principal (espiral definida) ---------- */
@@ -376,7 +376,7 @@ function criar(container, cards, cfg) {
         cena.add(halo);
 
         // estrelas de fundo
-        const nE = MOBILE ? 1200 : 2600;
+const nE = MOBILE ? 2600 : 6000;
         const ep = new Float32Array(nE * 3), ec = new Float32Array(nE * 3);
         for (let i = 0; i < nE; i++) {
             const r = rand(50, 110), u = rand(-1, 1), th = rand(0, Math.PI * 2);
@@ -393,10 +393,11 @@ function criar(container, cards, cfg) {
         eg.setAttribute('color', new T.BufferAttribute(ec, 3));
         estrelas = new T.Points(eg, new T.PointsMaterial({ size: 0.55, map: texPonto(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, sizeAttenuation: true }));
         cena.add(estrelas);
+                estrelas.renderOrder = -30;
         recursos.push(eg);
 
         // nuvens de cor ao fundo (bem sutis)
-        [['255,120,190', 0.07, [-40, 10, -30], 70], ['120,140,255', 0.06, [45, -5, -40], 80], ['170,110,255', 0.05, [5, 25, -60], 90]].forEach((n) => {
+        [['255,120,190', 0.02, [-40, 10, -30], 70], ['120,140,255', 0.018, [45, -5, -40], 80], ['170,110,255', 0.015, [5, 25, -60], 90]].forEach((n) => {
             const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(n[0]), transparent: true, opacity: n[1], blending: T.AdditiveBlending, depthWrite: false }));
             sp.position.set(n[2][0], n[2][1], n[2][2]);
             sp.scale.set(n[3], n[3], 1);
@@ -474,8 +475,8 @@ function criar(container, cards, cfg) {
         const ponto = texPonto();
 
         // duas camadas de estrelas que piscam em fases opostas
-        for (let k = 0; k < 2; k++) {
-            const n = MOBILE ? 1300 : 2800;
+     for (let k = 0; k < 3; k++) {
+            const n = (MOBILE ? 2200 : 5000) * (k === 2 ? 2 : 1);
             const p = new Float32Array(n * 3), col = new Float32Array(n * 3);
             for (let i = 0; i < n; i++) {
                 const r = rand(40, 130), u = rand(-1, 1), th = rand(0, Math.PI * 2), s = Math.sqrt(1 - u * u);
@@ -489,8 +490,9 @@ function criar(container, cards, cfg) {
             const geo = new T.BufferGeometry();
             geo.setAttribute('position', new T.BufferAttribute(p, 3));
             geo.setAttribute('color', new T.BufferAttribute(col, 3));
-            const pts = new T.Points(geo, new T.PointsMaterial({ size: k ? 0.42 : 0.3, map: ponto, transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true }));
+            const pts = new T.Points(geo, new T.PointsMaterial({ size: [0.3, 0.42, 0.2][k], map: ponto, transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true }));
             cena.add(pts);
+                        pts.renderOrder = -29;
             camadasEstrelas.push(pts);
             recursos.push(geo);
         }
@@ -818,7 +820,139 @@ function criar(container, cards, cfg) {
         recursos.push(sol.geometry, matSol);
     }
 
+ 
+    /* ---------- buraco negro: lá no alto, bem longe, estilo Interstellar ---------- */
+    let buracoNegro = null, matBN = null;
+    const BRILHO_BN = 1.0;        // intensidade (0.6 = discreto · 1.3 = forte)
+    const BN_TAMANHO = 64;        // tamanho da "folha" onde ele é desenhado (maior = buraco negro maior)
+    // posição FIXA no espaço (x, y, z), como o sol e as galáxias distantes
+    // sol: (72, 27, 75) · galáxias: (-42, 16, -60) · (52, -8, -70) · (16, 38, -90)
+    const BN_POS = new T.Vector3(-159, -10, 60);
+
+
+    // fica parado no espaço; só vira a "folha" de frente pra câmera (ele é desenhado em 2D)
+    function posicionarBuracoNegro() {
+        if (!buracoNegro) return;
+        buracoNegro.position.copy(BN_POS);
+        buracoNegro.quaternion.copy(camera.quaternion);
+    }
+
+    function construirBuracoNegro() {
+        matBN = new T.ShaderMaterial({
+            uniforms: { uT: { value: 0 }, uInt: { value: BRILHO_BN } },
+            transparent: true,
+            depthWrite: false,
+            blending: T.CustomBlending,             // soma a luz, e a sombra esconde as estrelas de trás
+            blendEquation: T.AddEquation,
+            blendSrc: T.OneFactor,
+            blendDst: T.OneMinusSrcAlphaFactor,
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }'
+            ].join('\n'),
+            fragmentShader: [
+                'uniform float uT; uniform float uInt;',
+                'varying vec2 vUv;',
+                'float hash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
+                'float noise(vec3 x) {',
+                '  vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);',
+                '  float a = hash(i);',
+                '  float b = hash(i + vec3(1.0, 0.0, 0.0));',
+                '  float c = hash(i + vec3(0.0, 1.0, 0.0));',
+                '  float d = hash(i + vec3(1.0, 1.0, 0.0));',
+                '  float e = hash(i + vec3(0.0, 0.0, 1.0));',
+                '  float f1 = hash(i + vec3(1.0, 0.0, 1.0));',
+                '  float g1 = hash(i + vec3(0.0, 1.0, 1.0));',
+                '  float h = hash(i + vec3(1.0, 1.0, 1.0));',
+                '  return mix(mix(mix(a, b, f.x), mix(c, d, f.x), f.y), mix(mix(e, f1, f.x), mix(g1, h, f.x), f.y), f.z);',
+                '}',
+                'float fbm(vec3 p) { float a = 0.5; float s = 0.0; for (int i = 0; i < 3; i++) { s += a * noise(p); p *= 2.03; a *= 0.5; } return s; }',
+                'vec3 gas(float k) {',
+                '  k = clamp(k, 0.0, 1.0);',
+                '  vec3 c0 = vec3(0.20, 0.04, 0.10); vec3 c1 = vec3(0.85, 0.28, 0.14);',
+                '  vec3 c2 = vec3(1.00, 0.66, 0.28); vec3 c3 = vec3(1.00, 0.93, 0.78);',
+                '  vec3 c = mix(c0, c1, smoothstep(0.0, 0.35, k));',
+                '  c = mix(c, c2, smoothstep(0.30, 0.68, k));',
+                '  c = mix(c, c3, smoothstep(0.62, 1.0, k));',
+                '  return c;',
+                '}',
+                'float riscas(float rr, float ang, float rot) {',
+                '  return fbm(vec3(rr * 60.0, cos(ang - rot) * 1.3, sin(ang - rot) * 1.3));',
+                '}',
+                'void main() {',
+                '  vec2 p = (vUv - 0.5) * 2.0;',
+                '  if (length(p) > 0.985) { gl_FragColor = vec4(0.0); return; }',
+                '  float roll = -0.20;',
+                '  p = vec2(cos(roll) * p.x - sin(roll) * p.y, sin(roll) * p.x + cos(roll) * p.y);',
+                '  float R = 0.14;',
+                '  float r = length(p) + 1e-5;',
+                '  float ang = atan(p.y, p.x);',
+                '  float sombra = 1.0 - smoothstep(R * 0.975, R, r);',
+                // disco de gás visto quase de lado, em fios que giram (mais rápido perto do centro)
+                '  vec2 d = vec2(p.x, p.y / 0.16);',
+                '  float rd = length(d) + 1e-5;',
+                '  float rIn = R * 1.22; float rOut = R * 5.0;',
+                '  float u = (rd - rIn) / (rOut - rIn);',
+                '  float uc = clamp(u, 0.0, 1.0);',
+                '  float faixa = smoothstep(0.0, 0.05, u) * (1.0 - smoothstep(0.55, 1.0, u));',
+                '  vec3 disco = vec3(0.0);',
+                '  if (faixa > 0.001) {',
+                '    float angD = atan(d.y, d.x);',
+                '    float rot = uT * 0.35 / pow(max(rd / R, 1.0), 1.5);',
+                '    float tex = 0.45 + 1.05 * riscas(rd, angD, rot);',
+                '    float fino = pow(1.0 - uc, 1.7);',
+                '    float beam = 1.0 + 0.6 * clamp(-d.x / rd, -1.0, 1.0);',
+                '    disco = gas((1.0 - uc) * 0.95 + 0.1 * tex) * (faixa * fino * 2.3 * tex * beam);',
+                '    disco *= 1.0 - sombra * step(0.0, p.y);',
+                '  }',
+                // luz do disco curvada por cima (grande) e por baixo (menor) da sombra
+                '  float h = (r - R) / R;',
+                '  float sY = p.y / r;',
+                '  float topo = smoothstep(-0.25, 0.85, sY);',
+                '  float base = smoothstep(-0.25, 0.85, -sY);',
+                '  float larg = 0.12 + 0.25 * pow(max(sY, 0.0), 1.3);',
+                '  float larg2 = 0.08 + 0.10 * pow(max(-sY, 0.0), 1.3);',
+                '  float t1 = (h - 0.06) / larg; float t2 = (h - 0.05) / larg2;',
+                '  float entra = smoothstep(0.0, 0.05, h);',
+                '  float luzArco = (exp(-t1 * t1) * topo * 1.8 + exp(-t2 * t2) * base * 0.9) * entra;',
+                '  vec3 arcos = vec3(0.0);',
+                '  if (luzArco > 0.002) {',
+                '    float ta = 0.5 + 1.0 * riscas(r, ang, uT * 0.2 / (1.0 + h * 2.0));',
+                '    float lado = 1.0 + 0.4 * clamp(-p.x / r, -1.0, 1.0);',
+                '    arcos = gas(0.62 + 0.38 * exp(-max(h, 0.0) * 2.5)) * (luzArco * ta * lado);',
+                '  }',
+                // anel fininho de luz colado na sombra
+                '  float z = (r - R * 1.015) / (R * 0.02);',
+                '  float anel = exp(-z * z) * (0.8 + 0.2 * sin(uT * 1.3 + ang * 2.0));',
+                '  vec3 aneis = vec3(1.0, 0.94, 0.82) * anel * 1.5;',
+                // jatos azuis finos, bem discretos
+                '  float ay = abs(p.y);',
+                '  float jx = (p.x + sin(p.y * 11.0 + uT * 0.7) * 0.006) / (0.006 + 0.03 * ay);',
+                '  float jato = exp(-jx * jx) * smoothstep(R * 1.15, R * 2.2, ay) * exp(-ay * 2.6);',
+                '  vec3 jatos = vec3(0.45, 0.72, 1.0) * jato * 0.75 * (0.75 + 0.25 * sin(p.y * 30.0 - uT * 2.0));',
+                // brilho suave em volta
+                '  float resp = exp(-max(r - R, 0.0) / (R * 3.2)) * step(R, r);',
+                '  vec3 brilho = (vec3(0.9, 0.45, 0.18) + vec3(0.28, 0.1, 0.32)) * resp * 0.0;',
+                '  vec3 col = disco + arcos + aneis + jatos + brilho;',
+                '  col *= 1.0 - smoothstep(0.80, 0.985, r);',
+                '  col = min(col, vec3(1.5)) * uInt;',
+                '  gl_FragColor = vec4(col, sombra);',
+                '}'
+            ].join('\n')
+        });
+        const geo = new T.PlaneGeometry(BN_TAMANHO, BN_TAMANHO);
+        buracoNegro = new T.Mesh(geo, matBN);
+        buracoNegro.renderOrder = -10;               // desenha depois das estrelas de fundo, antes do resto
+        buracoNegro.frustumCulled = false;
+        cena.add(buracoNegro);
+        posicionarBuracoNegro();
+        recursos.push(geo, matBN);
+    }
+
     function atualizarUniverso(dt) {
+        if (buracoNegro) { posicionarBuracoNegro(); matBN.uniforms.uT.value = tempo; }
+        if (camadasEstrelas[2]) camadasEstrelas[2].material.opacity = 0.8 + 0.2 * Math.sin(tempo * 0.9 + 1.7);
+
         camadasEstrelas[0].material.opacity = 0.65 + 0.35 * Math.sin(tempo * 1.3);
         camadasEstrelas[1].material.opacity = 0.65 + 0.35 * Math.sin(tempo * 1.3 + Math.PI);
         galaxiasLonge.forEach((g, i) => { g.rotation.y += dt * (0.015 + i * 0.006); });
@@ -830,6 +964,7 @@ function criar(container, cards, cfg) {
                 solRaios.material.rotation += dt * 0.012;
                 solRaios.material.opacity = 0.11 + 0.05 * respira;
             }
+
             solHalos.forEach((h, i) => {
                 h.material.opacity = h.userData.base * (0.9 + 0.2 * Math.sin(tempo * 0.5 + i));
             });
@@ -1484,7 +1619,8 @@ function criar(container, cards, cfg) {
     evento('visivel', { sim: true });
     construirGalaxia();
     construirUniverso();
-    construirSol();
+    try { construirSol(); } catch (e) { console.warn('[Hub3D] sol falhou:', e); }
+    try { construirBuracoNegro(); } catch (e) { console.warn('[Hub3D] buraco negro falhou:', e); }
     construirDetalhesGalaxia();
     construirWarp();
     redimensionar();

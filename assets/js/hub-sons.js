@@ -21,13 +21,14 @@ const ARQUIVO_ESPACO  = PASTA + 'som-espaco.mp3';
 const ARQUIVO_CORACAO = PASTA + 'som-coracao-batendo.mp3';
 const BASE_CLICK_ENTRAR = PASTA + 'som-click-entrar';   // a extensão é descoberta sozinha (.mp3, .wav, .ogg, .m4a)
 const BASE_CLICK_SAIR   = PASTA + 'som-click-sair';
+const BASE_CLICK_ENTRANDO = PASTA + 'som-click-entrando';
 const VOL_ESPACO  = 0.16;     // 0 a 1 — ambiente
 const VOL_CORACAO = 0.09;     // 0 a 1 — coração batendo (baixinho)
 const VOL_CLICK   = 0.35;     // 0 a 1 — cliques de entrar/sair do card
 const CHAVE = 'nossoUniversoAmbiente';   // guarda 'off' se a pessoa silenciar
 
 let ctx = null, mestre = null, analyser = null, gEspaco = null, gCoracao = null, gClick = null;
-let bufEspaco = null, bufCoracao = null, bufEntrar = null, bufSair = null, dados = null;
+let bufEspaco = null, bufCoracao = null, bufEntrar = null, bufSair = null, bufEntrando = null, dados = null;
 let iniciou = false, loopsIniciados = false, coracaoTocando = false;
 let hubVisivel = false, musicaTocando = false, saindo = false;
 let silenciado = false;
@@ -148,6 +149,7 @@ function preparar() {
     carregar(ARQUIVO_CORACAO).catch(falhou).then((b) => { bufCoracao = b; iniciarLoops(); });
     carregarBase(BASE_CLICK_ENTRAR).then((b) => { bufEntrar = b; });
     carregarBase(BASE_CLICK_SAIR).then((b) => { bufSair = b; });
+        carregarBase(BASE_CLICK_ENTRANDO).then((b) => { bufEntrando = b; });
 }
 
 function iniciar() {
@@ -225,6 +227,7 @@ window.HubSons = {
         } else if (nome === 'soltar') {
             tocarClick(bufSair);                       // tocou fora: card voltou
         } else if (nome === 'entrar') {
+                        tocarClick(bufEntrando);
             saindo = true;                             // entrando numa seção: corta ambiente e coração já
             aplicar();
             clearTimeout(timerSaindo);

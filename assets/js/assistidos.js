@@ -936,7 +936,7 @@ async function carregarAssistidos() {
 
     ativarBotaoTopoAssistidos();
 
-        montarBotaoTikTok();
+        montarHudAssistidos();
 
 }
 
@@ -1599,76 +1599,117 @@ function montarPainelLateral(itensAssistindo, itensQueremos) {
 // BOTÃO DO TIKTOK — 1º toque mostra a descrição, 2º abre o link
 // =====================================================
 
-function montarBotaoTikTok() {
+// =====================================================
+// ATALHOS (claquete) — "Pra ver" e TikTok juntos, expansível
+// =====================================================
+
+function montarHudAssistidos() {
 
     const view = document.querySelector('.view[data-view="assistidos"]');
 
-    if (!view || document.getElementById("assistidos-tiktok")) return;
+    if (!view || document.getElementById("assistidos-hud")) return;
 
-    // só aparece depois que o link for colado
-    if (!/^https?:\/\//i.test(LINK_TIKTOK_ASSISTIDOS)) return;
+    // o botão antigo do painel continua existindo (escondido); o atalho só clica nele
+    const botaoPraVer = document.getElementById("continuar-lateral-btn");
 
-    const caixa = document.createElement("div");
+    const total = Number(document.getElementById("continuar-lateral-contagem")?.textContent) || 0;
 
-    caixa.id = "assistidos-tiktok";
-    caixa.className = "assistidos-tiktok";
+    const temTikTok = /^https?:\/\//i.test(LINK_TIKTOK_ASSISTIDOS);
 
-    caixa.innerHTML = `
-        <button type="button" class="assistidos-tiktok-btn" aria-label="Pasta de vídeos no TikTok" aria-expanded="false">
-            <img src="${ICONE_TIKTOK}" alt="" onerror="this.replaceWith(document.createTextNode('♪'))">
+    if (!total && !temTikTok) return;
+
+    const hud = document.createElement("div");
+
+    hud.id = "assistidos-hud";
+    hud.className = "as-hud";
+
+    hud.innerHTML = `
+
+        <button type="button" class="as-hud-principal" aria-label="Atalhos" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g class="as-clap-topo">
+                    <path d="M4 4.2 L20 2.4 L20.6 6.6 L4.6 8.4 Z"/>
+                    <path d="M8.2 3.8 L9.6 8 M12.6 3.3 L14 7.5 M17 2.8 L18.4 7"/>
+                </g>
+                <path d="M4 10 H20.4 V19 A1.6 1.6 0 0 1 18.8 20.6 H5.6 A1.6 1.6 0 0 1 4 19 Z"/>
+                <path d="M4 13.6 H20.4"/>
+            </svg>
+            <span class="as-hud-ponto" ${total ? "" : "hidden"}></span>
         </button>
 
-        <a class="assistidos-tiktok-bolha" href="${LINK_TIKTOK_ASSISTIDOS}" target="_blank" rel="noopener noreferrer">
-            <strong>Pasta com nossos assistidos</strong>
-            <small>toque de novo para abrir ↗</small>
-        </a>
+        <button type="button" class="as-hud-seta" aria-label="Abrir atalhos" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+        </button>
+
+        <div class="as-hud-lista">
+
+            ${total ? `
+                <button type="button" class="as-hud-item" data-acao="pra-ver" style="--n:0" aria-label="Pra ver">
+                    <span class="as-hud-rotulo">Pra ver</span>
+                    <span class="as-hud-icone">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                        <b class="as-hud-contagem">${total}</b>
+                    </span>
+                </button>
+            ` : ""}
+
+            ${temTikTok ? `
+                <a class="as-hud-item" data-acao="tiktok" style="--n:${total ? 1 : 0}"
+                   href="${LINK_TIKTOK_ASSISTIDOS}" target="_blank" rel="noopener noreferrer"
+                   aria-label="Pasta com nossos assistidos no TikTok">
+                    <span class="as-hud-rotulo">Pasta com nossos assistidos</span>
+                    <span class="as-hud-icone as-hud-icone-tiktok">
+                        <img src="${ICONE_TIKTOK}" alt="" onerror="this.replaceWith(document.createTextNode('♪'))">
+                    </span>
+                </a>
+            ` : ""}
+
+        </div>
+
     `;
 
-    const botao = caixa.querySelector(".assistidos-tiktok-btn");
+    const principal = hud.querySelector(".as-hud-principal");
+    const seta = hud.querySelector(".as-hud-seta");
 
-    let timer = null;
+    const definir = abrir => {
 
-    const fechar = () => {
-        clearTimeout(timer);
-        caixa.classList.remove("aberto");
-        botao.setAttribute("aria-expanded", "false");
+        hud.classList.toggle("aberto", abrir);
+
+        principal.setAttribute("aria-expanded", String(abrir));
+
+        seta.setAttribute("aria-label", abrir ? "Fechar atalhos" : "Abrir atalhos");
+
     };
 
-    const abrir = () => {
-        caixa.classList.add("aberto");
-        botao.setAttribute("aria-expanded", "true");
-        clearTimeout(timer);
-        timer = setTimeout(fechar, 6000);
-    };
+    const alternar = () => definir(!hud.classList.contains("aberto"));
 
-    botao.addEventListener("click", () => {
+    principal.addEventListener("click", alternar);
+    seta.addEventListener("click", alternar);
 
-        // 1º toque: mostra a descrição
-        if (!caixa.classList.contains("aberto")) {
-            abrir();
-            return;
-        }
+    hud.querySelector('[data-acao="pra-ver"]')?.addEventListener("click", () => {
 
-        // 2º toque: abre a pasta
-        window.open(LINK_TIKTOK_ASSISTIDOS, "_blank", "noopener,noreferrer");
+        definir(false);
 
-        fechar();
+        if (botaoPraVer) botaoPraVer.click();
 
     });
 
-    // tocar no próprio balão também abre (é um link de verdade)
-    caixa.querySelector(".assistidos-tiktok-bolha").addEventListener("click", fechar);
+    hud.querySelector('[data-acao="tiktok"]')?.addEventListener("click", () => definir(false));
 
-    // tocar fora ou apertar Esc fecha
-    document.addEventListener("click", (evento) => {
-        if (!caixa.contains(evento.target)) fechar();
+    // tocar fora ou apertar Esc recolhe
+    document.addEventListener("click", evento => {
+
+        if (!hud.contains(evento.target)) definir(false);
+
     });
 
-    document.addEventListener("keydown", (evento) => {
-        if (evento.key === "Escape") fechar();
+    document.addEventListener("keydown", evento => {
+
+        if (evento.key === "Escape") definir(false);
+
     });
 
-    view.appendChild(caixa);
+    view.appendChild(hud);
 
 }
 // =====================================================

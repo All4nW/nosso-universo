@@ -102,8 +102,8 @@
     padding: 0 18px;
     text-align: center;
     font-family: 'Patrick Hand', 'Montserrat', cursive;
-    font-size: 1.05rem;
-    color: #efe3ff;
+    font-size: .8rem;
+   color: rgba(239, 227, 255, .72);
     text-shadow: 0 0 10px #05030d, 0 0 4px #05030d;
     pointer-events: none;
     transition: opacity .6s;
