@@ -376,7 +376,7 @@ function criar(container, cards, cfg) {
         cena.add(halo);
 
         // estrelas de fundo
-const nE = MOBILE ? 2600 : 6000;
+const nE = MOBILE ? 1200 : 2600;
         const ep = new Float32Array(nE * 3), ec = new Float32Array(nE * 3);
         for (let i = 0; i < nE; i++) {
             const r = rand(50, 110), u = rand(-1, 1), th = rand(0, Math.PI * 2);
@@ -475,8 +475,8 @@ const nE = MOBILE ? 2600 : 6000;
         const ponto = texPonto();
 
         // duas camadas de estrelas que piscam em fases opostas
-     for (let k = 0; k < 3; k++) {
-            const n = (MOBILE ? 2200 : 5000) * (k === 2 ? 2 : 1);
+for (let k = 0; k < 2; k++) {
+const n = MOBILE ? 1300 : 2800;
             const p = new Float32Array(n * 3), col = new Float32Array(n * 3);
             for (let i = 0; i < n; i++) {
                 const r = rand(40, 130), u = rand(-1, 1), th = rand(0, Math.PI * 2), s = Math.sqrt(1 - u * u);
@@ -490,7 +490,7 @@ const nE = MOBILE ? 2600 : 6000;
             const geo = new T.BufferGeometry();
             geo.setAttribute('position', new T.BufferAttribute(p, 3));
             geo.setAttribute('color', new T.BufferAttribute(col, 3));
-            const pts = new T.Points(geo, new T.PointsMaterial({ size: [0.3, 0.42, 0.2][k], map: ponto, transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true }));
+            const pts = new T.Points(geo, new T.PointsMaterial({ size: k ? 0.42 : 0.3, map: ponto, transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true }));
             cena.add(pts);
                         pts.renderOrder = -29;
             camadasEstrelas.push(pts);
@@ -820,6 +820,215 @@ const nE = MOBILE ? 2600 : 6000;
         recursos.push(sol.geometry, matSol);
     }
 
+        /* ---------- sistema solar: planetinhas orbitando o sol, lá no fundo ---------- */
+    let sistema = null, cinturao = null, oclusorSol = null;
+    const planetas = [];
+    const luas = [];
+    const vSolDir = new T.Vector3();
+    const ESCALA_PLANETAS = 0.8;     // tamanho dos planetas (menor = mais discretos)
+    const ESCALA_ORBITAS = 1.0;      // tamanho das órbitas
+    const PERIODO_TERRA = 70;        // segundos pra Terra dar uma volta (os outros seguem a proporção real)
+
+    // raio e órbita em "tamanhos de sol" (o sol do código tem raio 3.0): Júpiter = 0.38 sóis, Terra = 0.14...
+    const PLANETAS = [
+        { nome: 'Mercúrio', raio: 0.075, orbita: 1.9,  tipo: 0, bandas: 0, c1: [0.62, 0.60, 0.58], c2: [0.34, 0.32, 0.31], atm: [0.0, 0.0, 0.0], spin: 0.2,  tilt: 0.0 },
+        { nome: 'Vênus',    raio: 0.13,  orbita: 2.5,  tipo: 0, bandas: 0, c1: [0.98, 0.86, 0.60], c2: [0.86, 0.66, 0.40], atm: [1.0, 0.8, 0.5],   spin: -0.1, tilt: 0.1 },
+        { nome: 'Terra',    raio: 0.14,  orbita: 3.2,  tipo: 2, bandas: 0, c1: [0.08, 0.27, 0.66], c2: [0.24, 0.52, 0.24], atm: [0.35, 0.6, 1.0],  spin: 0.9,  tilt: 0.41, lua: true },
+        { nome: 'Marte',    raio: 0.10,  orbita: 4.0,  tipo: 0, bandas: 0, c1: [0.80, 0.38, 0.22], c2: [0.52, 0.22, 0.14], atm: [0.7, 0.35, 0.25], spin: 0.85, tilt: 0.44 },
+        { nome: 'Júpiter',  raio: 0.38,  orbita: 5.6,  tipo: 1, bandas: 7, c1: [0.90, 0.76, 0.60], c2: [0.66, 0.44, 0.32], atm: [0.9, 0.7, 0.5],   spin: 1.6,  tilt: 0.05 },
+        { nome: 'Saturno',  raio: 0.33,  orbita: 7.2,  tipo: 1, bandas: 6, c1: [0.94, 0.85, 0.62], c2: [0.76, 0.64, 0.44], atm: [0.9, 0.8, 0.55],  spin: 1.4,  tilt: 0.47, aneis: true },
+        { nome: 'Urano',    raio: 0.22,  orbita: 8.7,  tipo: 1, bandas: 3, c1: [0.62, 0.86, 0.88], c2: [0.46, 0.74, 0.80], atm: [0.5, 0.85, 0.9],  spin: -1.0, tilt: 1.4 },
+        { nome: 'Netuno',   raio: 0.21,  orbita: 10.0, tipo: 1, bandas: 4, c1: [0.30, 0.44, 0.92], c2: [0.16, 0.26, 0.70], atm: [0.35, 0.5, 1.0],  spin: 1.0,  tilt: 0.5 }
+    ];
+
+    // anéis de Saturno: faixas finas com um vão no meio
+    function texAneis() {
+        const c = novoCanvas(256, 256), g = c.getContext('2d');
+        const gr = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+        [[0.54, 0], [0.56, 0.55], [0.66, 0.4], [0.68, 0.06], [0.70, 0.5], [0.84, 0.55], [0.855, 0.12], [0.94, 0.38], [1.0, 0]].forEach((s) => {
+            gr.addColorStop(s[0], 'rgba(236,222,190,' + s[1] + ')');
+        });
+        g.fillStyle = gr;
+        g.fillRect(0, 0, 256, 256);
+        return viraTextura(c);
+    }
+
+    // planeta com luz vinda do sol: lado de lá escurece, borda ganha um fio de atmosfera
+    function materialPlaneta(d, semente) {
+        return new T.ShaderMaterial({
+            uniforms: {
+                uC1: { value: new T.Vector3(d.c1[0], d.c1[1], d.c1[2]) },
+                uC2: { value: new T.Vector3(d.c2[0], d.c2[1], d.c2[2]) },
+                uAtm: { value: new T.Vector3(d.atm[0], d.atm[1], d.atm[2]) },
+                uSol: { value: sol.position },
+                uTipo: { value: d.tipo },
+                uBandas: { value: d.bandas },
+                uSeed: { value: semente * 7.3 }
+            },
+            vertexShader: [
+                'varying vec3 vN; varying vec3 vW; varying vec3 vP;',
+                'void main() {',
+                '  vP = position;',
+                '  vN = normalize(mat3(modelMatrix) * normal);',
+                '  vec4 w = modelMatrix * vec4(position, 1.0);',
+                '  vW = w.xyz;',
+                '  gl_Position = projectionMatrix * viewMatrix * w;',
+                '}'
+            ].join('\n'),
+            fragmentShader: [
+                'uniform vec3 uC1; uniform vec3 uC2; uniform vec3 uAtm; uniform vec3 uSol;',
+                'uniform float uTipo; uniform float uBandas; uniform float uSeed;',
+                'varying vec3 vN; varying vec3 vW; varying vec3 vP;',
+                'float hash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
+                'float noise(vec3 x) {',
+                '  vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);',
+                '  float a = hash(i);',
+                '  float b = hash(i + vec3(1.0, 0.0, 0.0));',
+                '  float c = hash(i + vec3(0.0, 1.0, 0.0));',
+                '  float d = hash(i + vec3(1.0, 1.0, 0.0));',
+                '  float e = hash(i + vec3(0.0, 0.0, 1.0));',
+                '  float f1 = hash(i + vec3(1.0, 0.0, 1.0));',
+                '  float g1 = hash(i + vec3(0.0, 1.0, 1.0));',
+                '  float h = hash(i + vec3(1.0, 1.0, 1.0));',
+                '  return mix(mix(mix(a, b, f.x), mix(c, d, f.x), f.y), mix(mix(e, f1, f.x), mix(g1, h, f.x), f.y), f.z);',
+                '}',
+                'float fbm(vec3 p) { float a = 0.5; float s = 0.0; for (int i = 0; i < 4; i++) { s += a * noise(p); p *= 2.03; a *= 0.5; } return s; }',
+                'void main() {',
+                '  vec3 n = normalize(vN);',
+                '  vec3 L = normalize(uSol - vW);',
+                '  vec3 V = normalize(cameraPosition - vW);',
+                '  vec3 p = normalize(vP);',
+                '  float rr = fbm(p * 3.0 + uSeed);',
+                '  vec3 base;',
+                '  if (uTipo > 1.5) {',
+                '    base = mix(uC1, uC2, smoothstep(0.50, 0.56, rr));',
+                '    float nuvem = smoothstep(0.55, 0.75, fbm(p * 4.5 + uSeed * 2.0 + 7.0));',
+                '    base = mix(base, vec3(1.0), nuvem * 0.75);',
+                '    base = mix(base, vec3(0.95, 0.97, 1.0), smoothstep(0.82, 0.95, abs(p.y)));',
+                '  } else if (uTipo > 0.5) {',
+                '    float lat = p.y + (rr - 0.5) * 0.18;',
+                '    base = mix(uC1, uC2, 0.5 + 0.5 * sin(lat * uBandas * 6.2831));',
+                '  } else {',
+                '    base = mix(uC1, uC2, rr);',
+                '  }',
+                '  float luz = smoothstep(-0.08, 0.30, dot(n, L));',
+                '  vec3 col = base * (0.03 + 0.97 * luz);',
+                '  float borda = pow(1.0 - max(dot(n, V), 0.0), 3.0);',
+                '  col += uAtm * borda * (0.15 + 0.85 * luz) * 0.9;',
+                '  gl_FragColor = vec4(col, 1.0);',
+                '}'
+            ].join('\n')
+        });
+    }
+
+    function construirSistemaSolar() {
+        if (!sol) return;
+        const RS = sol.geometry.parameters.radius;           // raio do sol = referência de tamanho
+        sistema = new T.Group();
+        sistema.position.copy(sol.position);                 // o sistema acompanha a posição do sol
+        sistema.rotation.set(0.55, 0.3, -0.2);               // plano das órbitas, levemente inclinado
+        cena.add(sistema);
+
+        // disco invisível (só profundidade) que esconde os planetas quando passam ATRÁS do sol
+        oclusorSol = new T.Mesh(new T.CircleGeometry(RS * 0.99, 40), new T.MeshBasicMaterial({ colorWrite: false, side: T.DoubleSide }));
+        oclusorSol.renderOrder = -100;
+        cena.add(oclusorSol);
+        recursos.push(oclusorSol.geometry, oclusorSol.material);
+
+        PLANETAS.forEach((d, i) => {
+            const raio = d.raio * RS * ESCALA_PLANETAS;
+            const distOrb = d.orbita * RS * ESCALA_ORBITAS;
+
+            // linha da órbita, bem fininha
+            const pts = [];
+            for (let k = 0; k < 120; k++) {
+                const a = (k / 120) * Math.PI * 2;
+                pts.push(new T.Vector3(Math.cos(a) * distOrb, 0, Math.sin(a) * distOrb));
+            }
+            const lg = new T.BufferGeometry().setFromPoints(pts);
+            const linha = new T.LineLoop(lg, new T.LineBasicMaterial({ color: 0xc9a7f5, transparent: true, opacity: 0.08, depthWrite: false }));
+            sistema.add(linha);
+            recursos.push(lg, linha.material);
+
+            const pivo = new T.Group();                       // gira = o planeta anda na órbita
+            pivo.rotation.y = rand(0, Math.PI * 2);
+            sistema.add(pivo);
+            const pos = new T.Group();
+            pos.position.x = distOrb;
+            pivo.add(pos);
+            const inclinado = new T.Group();                  // inclinação do eixo do planeta
+            inclinado.rotation.z = d.tilt;
+            pos.add(inclinado);
+
+            const geo = new T.SphereGeometry(raio, 28, 20);
+            const corpo = new T.Mesh(geo, materialPlaneta(d, i + 1));
+            inclinado.add(corpo);
+            recursos.push(geo, corpo.material);
+
+            // brilhinho: garante que dê pra ver o planeta como um pontinho mesmo bem longe
+            const rgb = Math.round(d.c1[0] * 255) + ',' + Math.round(d.c1[1] * 255) + ',' + Math.round(d.c1[2] * 255);
+            const brilho = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(rgb), transparent: true, opacity: 0.45, blending: T.AdditiveBlending, depthWrite: false }));
+            const e = Math.max(raio * 7, 1.1);
+            brilho.scale.set(e, e, 1);
+            pos.add(brilho);
+
+            if (d.aneis) {
+                const ext = raio * 2.1;
+                const ag = new T.RingGeometry(ext * 0.55, ext, 72);
+                const am = new T.MeshBasicMaterial({ map: texAneis(), color: 0xe8e0d0, transparent: true, opacity: 0.85, side: T.DoubleSide, depthWrite: false });
+                const aneis = new T.Mesh(ag, am);
+                aneis.rotation.x = -Math.PI / 2;
+                inclinado.add(aneis);
+                recursos.push(ag, am);
+            }
+
+            if (d.lua) {                                      // a Lua da Terra
+                const luaPivo = new T.Group();
+                luaPivo.rotation.z = 0.09;
+                pos.add(luaPivo);
+                const lg2 = new T.SphereGeometry(raio * 0.27, 14, 10);
+                const lua = new T.Mesh(lg2, materialPlaneta({ tipo: 0, bandas: 0, c1: [0.78, 0.78, 0.76], c2: [0.45, 0.45, 0.45], atm: [0, 0, 0] }, 9));
+                lua.position.x = raio * 2.6;
+                luaPivo.add(lua);
+                luas.push(luaPivo);
+                recursos.push(lg2, lua.material);
+            }
+
+            // órbita proporcional (3ª lei de Kepler): quanto mais longe, mais devagar
+            const omega = (Math.PI * 2 / PERIODO_TERRA) * Math.pow(d.orbita / 3.2, -1.5);
+            planetas.push({ pivo: pivo, corpo: corpo, omega: omega, spin: d.spin });
+        });
+
+        // cinturão de asteroides entre Marte e Júpiter
+        const nA = MOBILE ? 500 : 1100;
+        const ap = new Float32Array(nA * 3);
+        for (let k = 0; k < nA; k++) {
+            const a = Math.random() * Math.PI * 2;
+            const r = (4.75 + gauss() * 0.22) * RS * ESCALA_ORBITAS;
+            ap[k * 3] = Math.cos(a) * r;
+            ap[k * 3 + 1] = gauss() * 0.25;
+            ap[k * 3 + 2] = Math.sin(a) * r;
+        }
+        const cg = new T.BufferGeometry();
+        cg.setAttribute('position', new T.BufferAttribute(ap, 3));
+        cinturao = new T.Points(cg, new T.PointsMaterial({ color: 0xb8a99a, size: 0.09, map: texPonto(), transparent: true, opacity: 0.6, depthWrite: false, blending: T.AdditiveBlending }));
+        sistema.add(cinturao);
+        recursos.push(cg, cinturao.material);
+    }
+
+    function atualizarSistema(dt) {
+        // o disco "escondedor" fica sempre de frente pra câmera, um tiquinho atrás do centro do sol
+        vSolDir.copy(sol.position).sub(camera.position).normalize();
+        oclusorSol.position.copy(sol.position).addScaledVector(vSolDir, 0.3);
+        oclusorSol.quaternion.copy(camera.quaternion);
+
+        planetas.forEach((p) => {
+            p.pivo.rotation.y += dt * p.omega;
+            p.corpo.rotation.y += dt * p.spin;
+        });
+        luas.forEach((l) => { l.rotation.y += dt * 1.0; });
+        if (cinturao) cinturao.rotation.y += dt * 0.02;
+    }
  
     /* ---------- buraco negro: lá no alto, bem longe, estilo Interstellar ---------- */
     let buracoNegro = null, matBN = null;
@@ -827,7 +1036,7 @@ const nE = MOBILE ? 2600 : 6000;
     const BN_TAMANHO = 64;        // tamanho da "folha" onde ele é desenhado (maior = buraco negro maior)
     // posição FIXA no espaço (x, y, z), como o sol e as galáxias distantes
     // sol: (72, 27, 75) · galáxias: (-42, 16, -60) · (52, -8, -70) · (16, 38, -90)
-    const BN_POS = new T.Vector3(-159, -10, 60);
+const BN_POS = new T.Vector3(-252, -16, 95);
 
 
     // fica parado no espaço; só vira a "folha" de frente pra câmera (ele é desenhado em 2D)
@@ -969,6 +1178,7 @@ const nE = MOBILE ? 2600 : 6000;
                 h.material.opacity = h.userData.base * (0.9 + 0.2 * Math.sin(tempo * 0.5 + i));
             });
         }
+                if (sistema) atualizarSistema(dt);
         if (grupoSpin) grupoSpin.rotation.y -= dt * 0.06;   // mesmo sentido e velocidade da espiral
         if (espinho) {
             espinho.material.rotation += dt * 0.04;
@@ -1620,6 +1830,7 @@ const nE = MOBILE ? 2600 : 6000;
     construirGalaxia();
     construirUniverso();
     try { construirSol(); } catch (e) { console.warn('[Hub3D] sol falhou:', e); }
+        try { construirSistemaSolar(); } catch (e) { console.warn('[Hub3D] sistema solar falhou:', e); }
     try { construirBuracoNegro(); } catch (e) { console.warn('[Hub3D] buraco negro falhou:', e); }
     construirDetalhesGalaxia();
     construirWarp();

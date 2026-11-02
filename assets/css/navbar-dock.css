@@ -587,3 +587,158 @@ body:not(.na-home) #navbar-placeholder .nav-dock:not(.ativo) .nav-home { opacity
     }
 
 }
+
+/* =========================================================
+   PLAYER — fundo preto de espaço, cheio de estrelinhas
+   ========================================================= */
+
+#navbar-placeholder .nav-dock #player-popup {
+    background:
+        radial-gradient(120% 90% at 0% 0%, rgba(var(--player-cor-r), var(--player-cor-g), var(--player-cor-b), 0.22), transparent 60%),
+        radial-gradient(90% 70% at 100% 100%, rgba(255, 140, 200, 0.10), transparent 62%),
+        #030208;
+}
+
+/* camada 1: estrelinhas pequenas, piscando juntas */
+#navbar-placeholder .nav-dock #player-popup::before {
+    background:
+        radial-gradient(1.4px 1.4px at 45% 56%, #dbe8ff, transparent),
+        radial-gradient(0.9px 0.9px at 45% 83%, #fff3e0, transparent),
+        radial-gradient(0.9px 0.9px at 48% 61%, #dbe8ff, transparent),
+        radial-gradient(1.4px 1.4px at 31% 12%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 59% 40%, #fff3e0, transparent),
+        radial-gradient(1.4px 1.4px at 64% 62%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 8% 21%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 77% 34%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 52% 63%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 46% 29%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 70% 33%, #fff, transparent),
+        radial-gradient(0.9px 0.9px at 5% 56%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 83% 39%, #fff, transparent),
+        radial-gradient(0.8px 0.8px at 22% 90%, #dbe8ff, transparent),
+        radial-gradient(0.9px 0.9px at 96% 40%, #fff, transparent),
+        radial-gradient(0.9px 0.9px at 77% 28%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 3% 42%, #fff, transparent),
+        radial-gradient(0.8px 0.8px at 26% 12%, #dbe8ff, transparent),
+        radial-gradient(1.1px 1.1px at 19% 56%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 97% 75%, #dbe8ff, transparent),
+        radial-gradient(0.9px 0.9px at 13% 43%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 85% 95%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 22% 40%, #fff3e0, transparent),
+        radial-gradient(0.9px 0.9px at 12% 96%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 3% 60%, #dbe8ff, transparent),
+        radial-gradient(1.2px 1.2px at 9% 11%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 3% 38%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 94% 48%, #dbe8ff, transparent),
+        radial-gradient(1.4px 1.4px at 20% 17%, #fff3e0, transparent),
+        radial-gradient(1.3px 1.3px at 26% 21%, #fff3e0, transparent),
+        radial-gradient(1.4px 1.4px at 21% 92%, #fff3e0, transparent),
+        radial-gradient(0.9px 0.9px at 10% 7%, #fff3e0, transparent),
+        radial-gradient(1.3px 1.3px at 94% 25%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 42% 88%, #fff3e0, transparent),
+        radial-gradient(0.8px 0.8px at 19% 71%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 48% 64%, #fff, transparent),
+        radial-gradient(0.9px 0.9px at 29% 89%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 9% 42%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 19% 38%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 11% 16%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 65% 68%, #fff, transparent),
+        radial-gradient(1.1px 1.1px at 59% 90%, #fff, transparent),
+        radial-gradient(0.8px 0.8px at 69% 94%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 48% 72%, #fff, transparent),
+        radial-gradient(1.3px 1.3px at 9% 54%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 78% 89%, #dbe8ff, transparent),
+        radial-gradient(1.1px 1.1px at 88% 85%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 85% 57%, #dbe8ff, transparent),
+        radial-gradient(0.9px 0.9px at 38% 4%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 63% 96%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 39% 72%, #dbe8ff, transparent),
+        radial-gradient(1.2px 1.2px at 46% 54%, #fff3e0, transparent),
+        radial-gradient(1.1px 1.1px at 5% 60%, #fff, transparent),
+        radial-gradient(1.3px 1.3px at 94% 14%, #dbe8ff, transparent),
+        radial-gradient(1.0px 1.0px at 27% 4%, #fff3e0, transparent),
+        radial-gradient(1.4px 1.4px at 21% 19%, #dbe8ff, transparent),
+        radial-gradient(1.1px 1.1px at 50% 26%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 21% 44%, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 87% 39%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 22% 16%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 70% 92%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 13% 47%, #dbe8ff, transparent),
+        radial-gradient(1.3px 1.3px at 39% 52%, #fff3e0, transparent),
+        radial-gradient(0.8px 0.8px at 45% 10%, #fff3e0, transparent);
+    animation: pl-pisca 3.6s ease-in-out infinite;
+}
+
+/* camada 2: estrelas coloridas e algumas bem brilhantes, piscando em outro ritmo
+   e andando bem devagar, como se o player estivesse viajando pelo espaço */
+#navbar-placeholder .nav-dock #player-popup::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        radial-gradient(1.5px 1.5px at 6% 70%, #cfe3ff, transparent),
+        radial-gradient(1.6px 1.6px at 64% 56%, #ffe9c7, transparent),
+        radial-gradient(1.7px 1.7px at 46% 5%, #ffd6ec, transparent),
+        radial-gradient(1.9px 1.9px at 77% 78%, #fff, transparent),
+        radial-gradient(1.6px 1.6px at 45% 62%, #cfe3ff, transparent),
+        radial-gradient(1.2px 1.2px at 94% 67%, #ffe9c7, transparent),
+        radial-gradient(1.7px 1.7px at 27% 70%, #e3d4ff, transparent),
+        radial-gradient(1.2px 1.2px at 71% 20%, #cfe3ff, transparent),
+        radial-gradient(1.5px 1.5px at 54% 92%, #ffd6ec, transparent),
+        radial-gradient(1.8px 1.8px at 40% 77%, #fff, transparent),
+        radial-gradient(1.3px 1.3px at 41% 87%, #ffe9c7, transparent),
+        radial-gradient(1.8px 1.8px at 46% 62%, #ffe9c7, transparent),
+        radial-gradient(1.5px 1.5px at 55% 64%, #cfe3ff, transparent),
+        radial-gradient(1.2px 1.2px at 47% 64%, #fff, transparent),
+        radial-gradient(1.9px 1.9px at 22% 88%, #cfe3ff, transparent),
+        radial-gradient(1.3px 1.3px at 54% 77%, #fff, transparent),
+        radial-gradient(1.4px 1.4px at 35% 11%, #e3d4ff, transparent),
+        radial-gradient(1.8px 1.8px at 42% 29%, #ffd6ec, transparent),
+        radial-gradient(1.7px 1.7px at 80% 9%, #ffd6ec, transparent),
+        radial-gradient(1.8px 1.8px at 53% 68%, #ffe9c7, transparent),
+        radial-gradient(1.7px 1.7px at 16% 52%, #ffe9c7, transparent),
+        radial-gradient(1.9px 1.9px at 93% 49%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 75% 44%, #e3d4ff, transparent),
+        radial-gradient(1.8px 1.8px at 63% 52%, #e3d4ff, transparent),
+        radial-gradient(1.9px 1.9px at 27% 66%, #e3d4ff, transparent),
+        radial-gradient(1.9px 1.9px at 22% 83%, #e3d4ff, transparent),
+        radial-gradient(1.4px 1.4px at 28% 50%, #fff, transparent),
+        radial-gradient(1.0px 1.0px at 50% 60%, #fff, transparent),
+        radial-gradient(1.7px 1.7px at 52% 41%, #e3d4ff, transparent),
+        radial-gradient(1.2px 1.2px at 14% 12%, #e3d4ff, transparent),
+        radial-gradient(1.7px 1.7px at 46% 90%, #ffe9c7, transparent),
+        radial-gradient(1.1px 1.1px at 28% 47%, #ffe9c7, transparent),
+        radial-gradient(1.8px 1.8px at 88% 91%, #e3d4ff, transparent),
+        radial-gradient(1.6px 1.6px at 32% 21%, #cfe3ff, transparent),
+        radial-gradient(1.0px 1.0px at 14% 76%, #ffd6ec, transparent),
+        radial-gradient(1.3px 1.3px at 17% 4%, #cfe3ff, transparent),
+        radial-gradient(1.4px 1.4px at 25% 50%, #e3d4ff, transparent),
+        radial-gradient(1.2px 1.2px at 14% 51%, #ffd6ec, transparent),
+        radial-gradient(1.0px 1.0px at 69% 86%, #ffe9c7, transparent),
+        radial-gradient(1.5px 1.5px at 81% 61%, #e3d4ff, transparent),
+        radial-gradient(2.6px 2.6px at 63% 53%, #fff, transparent),
+        radial-gradient(2.6px 2.6px at 24% 73%, #fff, transparent),
+        radial-gradient(2.7px 2.7px at 32% 33%, #fff, transparent),
+        radial-gradient(2.2px 2.2px at 77% 21%, #fff, transparent),
+        radial-gradient(2.3px 2.3px at 15% 11%, #ffe3f1, transparent),
+        radial-gradient(2.6px 2.6px at 82% 43%, #fff, transparent),
+        radial-gradient(2.6px 2.6px at 21% 62%, #fff, transparent);
+    background-size: 125% 125%;
+    animation: pl-pisca 5.2s ease-in-out -2s infinite, pl-deriva 70s linear infinite alternate;
+}
+
+@keyframes pl-deriva {
+    from { background-position: 0% 0%; }
+    to   { background-position: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    #navbar-placeholder .nav-dock #player-popup::after {
+        animation: none !important;
+    }
+
+}

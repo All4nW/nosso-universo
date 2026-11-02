@@ -22,7 +22,7 @@ const ARQUIVO_CORACAO = PASTA + 'som-coracao-batendo.mp3';
 const BASE_CLICK_ENTRAR = PASTA + 'som-click-entrar';   // a extensão é descoberta sozinha (.mp3, .wav, .ogg, .m4a)
 const BASE_CLICK_SAIR   = PASTA + 'som-click-sair';
 const BASE_CLICK_ENTRANDO = PASTA + 'som-click-entrando';
-const VOL_ESPACO  = 0.16;     // 0 a 1 — ambiente
+const VOL_ESPACO  = 0.24;     // 0 a 1 — ambiente
 const VOL_CORACAO = 0.09;     // 0 a 1 — coração batendo (baixinho)
 const VOL_CLICK   = 0.35;     // 0 a 1 — cliques de entrar/sair do card
 const CHAVE = 'nossoUniversoAmbiente';   // guarda 'off' se a pessoa silenciar
@@ -152,11 +152,20 @@ function preparar() {
         carregarBase(BASE_CLICK_ENTRANDO).then((b) => { bufEntrando = b; });
 }
 
+const EVENTOS_DESTRAVAR = ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'click', 'keydown'];
+
+function soltarOuvintes() {
+    EVENTOS_DESTRAVAR.forEach((ev) => window.removeEventListener(ev, iniciar, true));
+}
+
+// o celular só libera o áudio em alguns tipos de toque (ex.: ao LEVANTAR o dedo):
+// por isso tenta de novo a cada toque, até funcionar
 function iniciar() {
-    if (iniciou || !ctx) return;
+    if (!ctx) return;
     iniciou = true;
-    ctx.resume().catch(() => {});
     iniciarLoops();
+    if (ctx.state === 'running') { soltarOuvintes(); return; }
+    ctx.resume().then(() => { if (ctx.state === 'running') soltarOuvintes(); }).catch(() => {});
 }
 
 function tocarClick(buf) {
@@ -194,9 +203,9 @@ function nivelCoracao(dt) {
 
 try { preparar(); } catch (e) { console.warn('[HubSons] áudio indisponível:', e); }
 
-// primeiro toque/tecla: libera o áudio
-['pointerdown', 'touchstart', 'keydown'].forEach((ev) => {
-    window.addEventListener(ev, iniciar, { once: true, capture: true, passive: true });
+// toques/teclas: liberam o áudio (tenta até conseguir)
+EVENTOS_DESTRAVAR.forEach((ev) => {
+    window.addEventListener(ev, iniciar, { capture: true, passive: true });
 });
 
 // o player de música avisa quando toca/pausa (menu.js)

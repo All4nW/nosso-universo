@@ -283,12 +283,22 @@ function montarBarraCategoria(container) {
 
     barra.innerHTML =
         `<span class="assistidos-cats-marca" aria-hidden="true"></span>` +
-        CATEGORIAS_ORDEM.map(c => `
-            <button type="button" role="tab" data-cat="${c.chave}">
-                ${ICONES_CATEGORIA[c.chave] || ""}
-                <span>${NOMES_CATEGORIA[c.chave] || c.chave}</span>
-            </button>
-        `).join("");
+        CATEGORIAS_ORDEM.map(c => {
+
+            // quantos itens tem na categoria (os que estão "assistindo" ficam no painel, não aqui)
+            const qtd = itensCache.filter(item =>
+                item.categoria === c.chave && item.status !== "assistindo"
+            ).length;
+
+            return `
+                <button type="button" role="tab" data-cat="${c.chave}">
+                    ${ICONES_CATEGORIA[c.chave] || ""}
+                    <span>${NOMES_CATEGORIA[c.chave] || c.chave}</span>
+                    <b class="assistidos-cat-qtd">${qtd}</b>
+                </button>
+            `;
+
+        }).join("");
 
     const marcar = () => {
 

@@ -1073,5 +1073,43 @@
         "notaEu": 10,
         "notaEla": 10,
         "memoria": "Nosso especial Halloween - 31/10/2026"
+    },
+    {
+        "id": "a-bela-e-a-fera-1991",
+        "categoria": "queremos",
+        "titulo": "A Bela e A Fera (1991)",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1793630460695.jpg",
+        "cor": {
+            "r": 106,
+            "g": 102,
+            "b": 104
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "cinderela-1950",
+        "categoria": "queremos",
+        "titulo": "Cinderela (1950)",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1793630476740.webp",
+        "cor": {
+            "r": 58,
+            "g": 73,
+            "b": 121
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     }
 ]

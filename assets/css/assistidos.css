@@ -6133,3 +6133,78 @@ body.sorteio-aberto { overflow: hidden; }
     }
 
 }
+
+/* =========================================================
+   CONTAGEM DENTRO DO MENU (Filmes 33 · Séries 12 · Animes 8)
+   ========================================================= */
+
+/* a contagem solta, em cima da lista, sai (agora ela vive dentro de cada botão) */
+.assistidos-estante-titulo .assistidos-estante-contagem {
+    display: none;
+}
+
+#assistidos-cats .assistidos-cat-qtd {
+    display: inline-grid;
+    place-items: center;
+
+    box-sizing: border-box;
+
+    min-width: 24px;
+    height: 24px;
+
+    padding: 0 7px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(201, 167, 245, 0.45);
+
+    background: rgba(201, 167, 245, 0.14);
+
+    color: rgba(236, 226, 255, 0.92);
+
+    /* fonte reta e números alinhados: bem nítido (o Playfair deixa os números "baixinhos") */
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 700;
+    font-variant-numeric: lining-nums tabular-nums;
+    font-feature-settings: "lnum" 1, "tnum" 1;
+    line-height: 1;
+    letter-spacing: 0;
+
+    text-shadow: none;
+
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* categoria escolhida: a bolinha acende */
+#assistidos-cats button[aria-selected="true"] .assistidos-cat-qtd {
+    border-color: rgba(255, 214, 236, 0.75);
+
+    background: linear-gradient(135deg, #c15f9d, #8e4fb8);
+
+    color: #fff;
+
+    box-shadow: 0 0 12px rgba(193, 95, 157, 0.65);
+}
+
+#assistidos-cats button:hover .assistidos-cat-qtd {
+    border-color: rgba(246, 179, 214, 0.7);
+}
+
+@media (max-width: 420px) {
+
+    #assistidos-cats button {
+        gap: 5px;
+    }
+
+    #assistidos-cats .assistidos-cat-qtd {
+        min-width: 20px;
+        height: 20px;
+
+        padding: 0 5px;
+
+        font-size: 0.62rem;
+    }
+
+}
