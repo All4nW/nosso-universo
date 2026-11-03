@@ -742,3 +742,139 @@ body:not(.na-home) #navbar-placeholder .nav-dock:not(.ativo) .nav-home { opacity
     }
 
 }
+/* =========================================================
+   PLAYER — versão compacta
+   ========================================================= */
+
+#navbar-placeholder .nav-dock #player-popup {
+    width: 238px;
+    padding: 11px 13px 9px;
+    grid-template-columns: 50px minmax(0, 1fr) auto;
+    column-gap: 9px;
+    border-radius: 24px 28px 22px 26px / 26px 22px 28px 24px;
+}
+
+/* planetinha */
+#navbar-placeholder #player-popup .player-capa {
+    width: 40px;
+    height: 40px;
+    font-size: 0.72rem;
+}
+
+#navbar-placeholder #player-popup .player-capa::before {
+    border-width: 2px;
+}
+
+#navbar-placeholder #player-popup .player-capa::after {
+    font-size: 0.6rem;
+}
+
+@keyframes pl-orbita {
+    from { transform: rotate(0deg) translateX(30px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(30px) rotate(-360deg); }
+}
+
+/* título e volume */
+#navbar-placeholder #player-popup .player-titulo {
+    font-size: 0.98rem;
+}
+
+#navbar-placeholder #player-popup .player-coracao-pulso {
+    font-size: 0.72rem;
+}
+
+#navbar-placeholder #player-popup .player-volume-mini {
+    gap: 4px;
+}
+
+#navbar-placeholder #player-popup .player-botao-volume {
+    width: 20px;
+    height: 20px;
+    font-size: 0.68rem;
+}
+
+#navbar-placeholder #player-popup .player-volume-texto {
+    min-width: 30px;
+    font-size: 0.64rem;
+}
+
+/* barra de progresso */
+#navbar-placeholder #player-popup .player-progresso-linha {
+    gap: 8px;
+    padding: 7px 2px 0;
+}
+
+#navbar-placeholder #player-popup .player-tempo {
+    font-size: 0.6rem;
+}
+
+#navbar-placeholder #player-popup .player-barra-progresso {
+    height: 16px;
+}
+
+#navbar-placeholder #player-popup .player-barra-progresso::before,
+#navbar-placeholder #player-popup .player-progresso-preenchimento {
+    height: 5px;
+}
+
+#navbar-placeholder #player-popup .player-progresso-bolinha {
+    width: 11px;
+    height: 11px;
+    border-width: 2.5px;
+}
+
+/* botões de tocar */
+#navbar-placeholder #player-popup .player-controles-linha {
+    gap: 16px;
+    padding: 7px 0 5px;
+}
+
+#navbar-placeholder #player-popup .player-botao {
+    width: 32px;
+    height: 32px;
+    font-size: 0.78rem;
+}
+
+#navbar-placeholder #player-popup .player-botao-principal {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+}
+
+/* "nossas músicas" e a lista */
+#navbar-placeholder #player-popup .player-extra {
+    margin-top: 2px;
+    padding-top: 6px;
+}
+
+#navbar-placeholder #player-popup .player-lista-botao {
+    padding: 4px 6px;
+    font-size: 0.88rem;
+}
+
+#navbar-placeholder #player-popup .player-lista {
+    max-height: 150px;
+}
+
+#navbar-placeholder #player-popup .player-lista-item {
+    gap: 8px;
+    padding: 5px 8px;
+}
+
+#navbar-placeholder #player-popup .player-lista-play {
+    width: 20px;
+    height: 20px;
+    font-size: 0.58rem;
+}
+
+#navbar-placeholder #player-popup .player-lista-nome {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 500px) {
+
+    #navbar-placeholder .nav-dock #player-popup {
+        width: min(250px, calc(100vw - 32px));
+    }
+
+}

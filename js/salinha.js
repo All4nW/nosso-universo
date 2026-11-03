@@ -1112,3 +1112,83 @@ else{
   $('who').classList.add('on');
   $('who').querySelectorAll('button').forEach(b => b.onclick = () => { role = b.dataset.r; store.set('role', role); $('who').classList.remove('on'); boot(); });
 }
+
+/* ===== CONFIRMAR ANTES DE SAIR (botão voltar do celular, botão Sair, fechar a aba) ===== */
+(function () {
+
+  const conf = document.createElement('div');
+  conf.id = 'sairConf';
+  conf.innerHTML =
+    '<div class="sc-caixa" role="alertdialog" aria-modal="true" aria-labelledby="scT">' +
+      '<h3 id="scT">Sair da Salinha?</h3>' +
+      '<p id="scP"></p>' +
+      '<div class="sc-bt">' +
+        '<button type="button" class="sc-ficar">Ficar</button>' +
+        '<button type="button" class="sc-sair">Sair</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(conf);
+
+  const txt = conf.querySelector('#scP');
+  const ficar = conf.querySelector('.sc-ficar');
+  const sair = conf.querySelector('.sc-sair');
+  let temCamada = false;
+
+  function mostrar() {
+    if (leaving || !role) return;
+    txt.textContent = localStream
+      ? 'Você está transmitindo a tela. Se sair, a transmissão termina e ' + cfg.otherName + ' perde a conexão com você.'
+      : 'Você vai sair da sala e a conexão com ' + cfg.otherName + ' será encerrada.';
+    conf.classList.add('on');
+    ficar.focus();
+  }
+
+  function esconder() { conf.classList.remove('on'); }
+
+  function sairDeVez() {
+    leaving = true;
+    try { stopShare(); } catch (e) {}
+    try { peer && peer.destroy(); } catch (e) {}
+    location.href = 'index.html';
+  }
+
+  // guarda uma "camada" no histórico: o botão voltar gasta ela em vez de sair da página
+  // (precisa de um toque do usuário, então é reposta a cada toque quando faltar)
+  function empurrar() {
+    if (temCamada || leaving || !role) return;
+    try { history.pushState({ salinha: 1 }, '', location.href); temCamada = true; } catch (e) {}
+  }
+
+  ficar.onclick = () => { esconder(); empurrar(); };
+  sair.onclick = sairDeVez;
+  conf.addEventListener('click', (e) => { if (e.target === conf) { esconder(); empurrar(); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && conf.classList.contains('on')) esconder(); });
+
+  addEventListener('popstate', () => {
+    temCamada = false;
+    if (leaving) return;
+    // o botão voltar fecha primeiro o que estiver aberto por cima
+    const d = $('dlg'), lb = $('lb'), ip = $('imgPrev');
+    if (d && d.open) { d.close(); return; }
+    if (lb && lb.classList.contains('on')) { lb.classList.remove('on'); return; }
+    if (ip && ip.classList.contains('on')) { const n = ip.querySelector('.no'); if (n) n.click(); return; }
+    mostrar();
+  });
+
+  document.addEventListener('pointerdown', empurrar, { passive: true });
+  document.addEventListener('click', empurrar, { passive: true });
+
+  // botão de sair da barra: agora pede confirmação
+  $('bExit').onclick = mostrar;
+
+  // "Trocar quem sou" recarrega a página: não deve disparar o aviso do navegador
+  $('cWho').onclick = () => { leaving = true; store.set('role', null); location.href = location.pathname; };
+
+  // fechar ou atualizar a aba: só dá pra mostrar o aviso padrão do navegador
+  addEventListener('beforeunload', (e) => {
+    if (leaving || !role) return;
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+})();

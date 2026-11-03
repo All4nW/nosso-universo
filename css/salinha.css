@@ -749,3 +749,15 @@ body .say #send{
 dialog select:focus,dialog input:focus{
   outline:none;border-color:rgba(255,143,199,.6);box-shadow:0 0 0 3px rgba(255,143,199,.12);
 }
+
+/* ===== confirmação de saída ===== */
+#sairConf{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,3,.74)}
+#sairConf.on{display:flex;animation:whoIn .25s ease both}
+#sairConf .sc-caixa{width:min(100%,330px);padding:22px 20px 18px;border-radius:24px;background:#150e0a;border:1px solid #3a281c;box-shadow:0 30px 80px rgba(0,0,0,.7);text-align:center}
+#sairConf h3{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:1.7rem;color:#f6e7d6}
+#sairConf p{margin:8px 0 18px;font-family:'DM Sans',var(--ui);font-size:14px;line-height:1.45;color:#d9c3ab}
+#sairConf .sc-bt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#sairConf .sc-bt button{padding:12px;border-radius:99px;font-family:'DM Sans',var(--ui);font-weight:600;font-size:15px;transition:transform .15s ease}
+#sairConf .sc-bt button:active{transform:scale(.96)}
+#sairConf .sc-ficar{background:linear-gradient(135deg,#ffb3d6,#ff8fc7);border:0;color:#3a1020}
+#sairConf .sc-sair{background:transparent;border:1px solid rgba(255,130,130,.55);color:#ffc2c2}

@@ -1562,6 +1562,11 @@ function atualizarVisualizador() {
         fotosDaPastaAberta[
             indiceFotoAberta
         ];
+            // alimenta a barrinha de posição (CSS)
+    const vizBox = document.getElementById("foto-visualizador");
+
+    vizBox?.style.setProperty("--viz-i", indiceFotoAberta);
+    vizBox?.style.setProperty("--viz-n", fotosDaPastaAberta.length);
 
 
     if (!foto) return;

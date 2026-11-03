@@ -2417,3 +2417,468 @@ img.foto-visualizador-img.com-zoom {
     scrollbar-width: thin;
     scrollbar-color: rgba(142, 203, 255, 0.5) transparent;
 }
+
+/* =========================================================
+   VISUALIZADOR — fundo grafite, legenda embaixo, botões discretos
+   ========================================================= */
+
+.foto-visualizador {
+    --viz-i: 0;
+    --viz-n: 1;
+
+    /* preto acinzentado, sem o rosa do fundo anterior */
+    background:
+        radial-gradient(ellipse 85% 65% at 50% 36%, #232126 0%, #141317 48%, #09090b 100%);
+
+    backdrop-filter: none;
+}
+
+.foto-visualizador-conteudo {
+    max-width: min(94vw, 1100px);
+    max-height: 100vh;
+    max-height: 100dvh;
+}
+
+/* ---------- legenda: nome à esquerda, data na borda direita da foto ---------- */
+
+.foto-visualizador-legenda {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "pasta data"
+        "desc  desc"
+        "cont  cont";
+    align-items: baseline;
+
+    /* a legenda acompanha a largura da foto, nem mais nem menos */
+    width: 0;
+    min-width: 100%;
+
+    margin-top: 14px;
+
+    text-align: left;
+}
+
+/* tira o fiozinho decorativo de antes */
+.foto-visualizador-legenda::before {
+    display: none;
+}
+
+.foto-visualizador-pasta {
+    grid-area: pasta;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: rgba(255, 255, 255, 0.88);
+
+    text-shadow: none;
+}
+
+.foto-visualizador-data {
+    grid-area: data;
+
+    margin: 0 0 0 14px;
+
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    color: #f6b3d6;
+}
+
+.foto-visualizador-descricao {
+    grid-area: desc;
+
+    max-width: none;
+    margin: 8px 0 0;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.12rem;
+    font-style: italic;
+    line-height: 1.4;
+
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* posição: "4 / 5" + uma linha fininha com um trecho que anda */
+.foto-visualizador-contagem {
+    grid-area: cont;
+
+    position: relative;
+
+    display: block;
+
+    margin-top: 14px;
+    padding-bottom: 14px;
+
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2.4px;
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.foto-visualizador-contagem:empty {
+    display: none;
+}
+
+.foto-visualizador-contagem::before,
+.foto-visualizador-contagem::after {
+    content: "";
+
+    position: absolute;
+    bottom: 0;
+
+    height: 2px;
+
+    border-radius: 2px;
+}
+
+.foto-visualizador-contagem::before {
+    left: 0;
+    right: 0;
+
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.foto-visualizador-contagem::after {
+    width: calc(100% / var(--viz-n));
+    left: calc(100% / var(--viz-n) * var(--viz-i));
+
+    background: linear-gradient(90deg, #f08cc0, #f6b3d6);
+
+    box-shadow: 0 0 8px rgba(240, 140, 192, 0.7);
+
+    transition: left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- botões: vidro neutro, ícones desenhados ---------- */
+
+.foto-visualizador-fechar,
+.foto-visualizador-seta {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    background: rgba(255, 255, 255, 0.07);
+
+    backdrop-filter: blur(8px);
+
+    font-size: 0;
+}
+
+.foto-visualizador-fechar {
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+
+    width: 42px;
+    height: 42px;
+}
+
+/* o ✕ vira duas linhas finas */
+.foto-visualizador-fechar::before,
+.foto-visualizador-fechar::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 16px;
+    height: 1.7px;
+
+    border-radius: 2px;
+
+    background: #fff;
+}
+
+.foto-visualizador-fechar::before { transform: translate(-50%, -50%) rotate(45deg); }
+
+.foto-visualizador-fechar::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.foto-visualizador-fechar:hover,
+.foto-visualizador-seta:hover {
+    background: rgba(255, 255, 255, 0.14);
+
+    border-color: rgba(246, 179, 214, 0.5);
+}
+
+/* as setas viram "‹" e "›" finos (no computador) */
+.foto-visualizador-seta::before {
+    content: "";
+
+    width: 10px;
+    height: 10px;
+
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+}
+
+.foto-visualizador-seta-direita::before {
+    transform: rotate(45deg);
+
+    margin-right: 4px;
+}
+
+.foto-visualizador-seta-esquerda::before {
+    transform: rotate(-135deg);
+
+    margin-left: 4px;
+}
+
+/* ---------- celular: sem setas, arrasta com o dedo ---------- */
+
+@media (pointer: coarse) {
+
+    .foto-visualizador-seta {
+        display: none;
+    }
+
+    /* duas setinhas nas bordas que balançam um pouco e somem (só se tiver mais de uma foto) */
+    .foto-visualizador::before,
+    .foto-visualizador::after {
+        content: "";
+
+        position: fixed;
+        top: 46%;
+
+        z-index: 4;
+
+        width: 12px;
+        height: 12px;
+
+        border-top: 2.5px solid rgba(255, 255, 255, 0.9);
+        border-right: 2.5px solid rgba(255, 255, 255, 0.9);
+
+        filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
+
+        opacity: 0;
+
+        pointer-events: none;
+    }
+
+    .foto-visualizador::before {
+        left: 12px;
+
+        transform: rotate(-135deg);
+    }
+
+    .foto-visualizador::after {
+        right: 12px;
+
+        transform: rotate(45deg);
+    }
+
+    .foto-visualizador:not(.oculto)::before {
+        animation: viz-dica-esq 3.6s ease 0.6s both;
+    }
+
+    .foto-visualizador:not(.oculto)::after {
+        animation: viz-dica-dir 3.6s ease 0.6s both;
+    }
+
+    .foto-visualizador:has(.foto-visualizador-contagem:empty)::before,
+    .foto-visualizador:has(.foto-visualizador-contagem:empty)::after {
+        display: none;
+    }
+
+}
+
+@keyframes viz-dica-dir {
+
+    0%   { opacity: 0; translate: -6px 0; }
+
+    15%  { opacity: 1; }
+
+    30%  { translate: 5px 0; }
+
+    45%  { translate: -6px 0; }
+
+    60%  { translate: 5px 0; }
+
+    75%  { opacity: 1; translate: -6px 0; }
+
+    100% { opacity: 0; translate: 0 0; }
+
+}
+
+@keyframes viz-dica-esq {
+
+    0%   { opacity: 0; translate: 6px 0; }
+
+    15%  { opacity: 1; }
+
+    30%  { translate: -5px 0; }
+
+    45%  { translate: 6px 0; }
+
+    60%  { translate: -5px 0; }
+
+    75%  { opacity: 1; translate: 6px 0; }
+
+    100% { opacity: 0; translate: 0 0; }
+
+}
+
+@media (max-width: 640px) {
+
+    .foto-visualizador {
+        padding:
+            max(56px, calc(env(safe-area-inset-top) + 48px))
+            12px
+            max(14px, env(safe-area-inset-bottom));
+    }
+
+    .foto-visualizador-conteudo {
+        max-width: calc(100vw - 24px);
+    }
+
+    /* a foto ocupa a altura que sobra, deixando espaço pra legenda */
+    .foto-visualizador-img,
+    .foto-visualizador-video {
+        max-height: calc(100vh - 230px);
+        max-height: calc(100dvh - 230px);
+
+        border-radius: 12px;
+    }
+
+    .foto-visualizador-pasta {
+        font-size: 1.1rem;
+    }
+
+    .foto-visualizador-descricao {
+        font-size: 1.05rem;
+    }
+
+    .foto-visualizador-fechar {
+        right: 12px;
+
+        width: 40px;
+        height: 40px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .foto-visualizador::before,
+    .foto-visualizador::after {
+        animation: none !important;
+    }
+
+}
+
+/* =========================================================
+   VISUALIZADOR — só a descrição, em destaque (sem o nome da pasta)
+   ========================================================= */
+
+/* some o "Roblox" */
+.foto-visualizador-pasta {
+    display: none;
+}
+
+/* descrição à esquerda, data pequena na borda direita, na mesma linha */
+.foto-visualizador-legenda {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "desc data"
+        "cont cont";
+
+    align-items: end;
+
+    margin-top: 18px;
+}
+
+.foto-visualizador-descricao {
+    position: relative;
+
+    margin: 0;
+    padding-left: 18px;
+
+    font-family: "Cormorant Garamond", var(--font-heading), Georgia, serif;
+    font-size: 1.55rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.25;
+
+    color: #fff;
+
+    text-shadow: 0 0 22px rgba(240, 140, 192, 0.35);
+}
+
+/* detalhe rosa na frente da frase */
+.foto-visualizador-descricao::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    bottom: 0.2em;
+
+    width: 3px;
+
+    border-radius: 3px;
+
+    background: linear-gradient(180deg, #f6b3d6, #f08cc0);
+
+    box-shadow: 0 0 10px rgba(240, 140, 192, 0.7);
+}
+
+.foto-visualizador-data {
+    margin: 0 0 0 18px;
+    padding-bottom: 5px;
+
+    color: rgba(246, 179, 214, 0.85);
+}
+
+@media (max-width: 640px) {
+
+    /* no celular a data sobe pra cima da frase, na borda direita */
+    .foto-visualizador-legenda {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "data"
+            "desc"
+            "cont";
+    }
+
+    .foto-visualizador-data {
+        justify-self: end;
+
+        margin: 0 0 8px;
+        padding-bottom: 0;
+    }
+
+    .foto-visualizador-descricao {
+        font-size: 1.32rem;
+
+        padding-left: 14px;
+    }
+
+}
+
+/* descrição do visualizador: um pouco menor */
+.foto-visualizador-descricao {
+    font-size: 1.3rem;
+}
+
+@media (max-width: 640px) {
+
+    .foto-visualizador-descricao {
+        font-size: 1.12rem;
+    }
+
+}
