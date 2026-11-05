@@ -161,6 +161,75 @@ function montar(T, opts) {
         g.fillRect(0, 0, 256, 256);
         return viraTextura(c);
     }
+    function rr(g, x, y, w, h, r) {
+        g.beginPath();
+        g.moveTo(x + r, y);
+        g.arcTo(x + w, y, x + w, y + h, r);
+        g.arcTo(x + w, y + h, x, y + h, r);
+        g.arcTo(x, y + h, x, y, r);
+        g.arcTo(x, y, x + w, y, r);
+        g.closePath();
+    }
+    // estrelinha de 4 pontas (brilho de cinema)
+    function texCruz() {
+        const c = novoCanvas(128, 128), g = c.getContext('2d');
+        g.translate(64, 64);
+        [0, Math.PI / 2].forEach((a) => {
+            g.save();
+            g.rotate(a);
+            const gr = g.createLinearGradient(-64, 0, 64, 0);
+            gr.addColorStop(0, 'rgba(255,255,255,0)');
+            gr.addColorStop(0.5, 'rgba(255,255,255,1)');
+            gr.addColorStop(1, 'rgba(255,255,255,0)');
+            g.fillStyle = gr;
+            g.beginPath();
+            g.ellipse(0, 0, 64, 4.5, 0, 0, Math.PI * 2);
+            g.fill();
+            g.restore();
+        });
+        const r = g.createRadialGradient(0, 0, 0, 0, 0, 16);
+        r.addColorStop(0, 'rgba(255,255,255,1)');
+        r.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = r;
+        g.fillRect(-16, -16, 32, 32);
+        return viraTextura(c);
+    }
+    // envelopezinho que flutua pelo cenário
+    function texEnvelopinho() {
+        const c = novoCanvas(160, 120), g = c.getContext('2d');
+        g.shadowColor = 'rgba(255,140,200,0.6)';
+        g.shadowBlur = 12;
+        g.fillStyle = '#fadcd9';
+        rr(g, 14, 20, 132, 86, 8);
+        g.fill();
+        g.shadowColor = 'transparent';
+        g.fillStyle = '#efc3cf';
+        g.beginPath();
+        g.moveTo(14, 26); g.lineTo(146, 26); g.lineTo(80, 72);
+        g.closePath();
+        g.fill();
+        g.fillStyle = '#d6487f';
+        caminhoCoracao(g, 80, 68, 1.5);
+        g.fill();
+        return viraTextura(c);
+    }
+    // feixe de luz que sobe da boca da caixa (mais forte embaixo, some em cima)
+    function texFeixe() {
+        const c = novoCanvas(128, 256), g = c.getContext('2d');
+        const h = g.createLinearGradient(0, 0, 128, 0);
+        h.addColorStop(0, 'rgba(255,190,225,0)');
+        h.addColorStop(0.5, 'rgba(255,200,230,0.9)');
+        h.addColorStop(1, 'rgba(255,190,225,0)');
+        g.fillStyle = h;
+        g.fillRect(0, 0, 128, 256);
+        g.globalCompositeOperation = 'destination-in';
+        const v = g.createLinearGradient(0, 0, 0, 256);
+        v.addColorStop(0, 'rgba(0,0,0,0)');
+        v.addColorStop(1, 'rgba(0,0,0,1)');
+        g.fillStyle = v;
+        g.fillRect(0, 0, 128, 256);
+        return viraTextura(c);
+    }
     // selinho de cera: coração rosa (Jhennyfer) ou estrela índigo (Allan), igual aos envelopes da página de cartas
     function texSelo(tipo) {
         const c = novoCanvas(256, 256), g = c.getContext('2d');
@@ -260,7 +329,8 @@ function montar(T, opts) {
     /* ---------- estado ---------- */
     let tempo = 0, c = 0, velC = 0, introBurst = false;
     let aberta = false, abertura = 0, velAb = 0, tConfete = 99, entrando = false, destruido = false;
-    let rafId = 0, ultimo = 0, aspecto = 1, proxAmbiente = 0.4;
+    let rafId = 0, ultimo = 0, aspecto = 1, proxAmbiente = 0.4, tOnda = 99;
+    const tmp2 = new T.Vector3(), tmp3 = new T.Vector3();
     const subindo = [];
     const tmp = new T.Vector3();
 
@@ -526,6 +596,197 @@ function montar(T, opts) {
     brilhoTopo.scale.set(7, 7, 1);
     cena.add(brilhoTopo);
 
+    /* ---------- decoração cósmica ---------- */
+    // feixe de luz saindo da caixa quando abre
+    const feixe = new T.Sprite(new T.SpriteMaterial({ map: texFeixe(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0 }));
+    feixe.center.set(0.5, 0);
+    feixe.position.set(0, H, 0.2);
+    feixe.scale.set(2.6, 7.5, 1);
+    cena.add(feixe);
+
+    // onda de luz que se espalha pelo chão (ao abrir e ao entrar)
+    const onda = new T.Mesh(new T.RingGeometry(0.94, 1.0, 72), new T.MeshBasicMaterial({ color: 0xff9ccb, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0, side: T.DoubleSide }));
+    onda.rotation.x = -Math.PI / 2;
+    onda.position.y = 0.05;
+    cena.add(onda);
+
+    // céu estrelado (casca de estrelas ao redor, que piscam e giram devagarinho)
+    let matCeu = null, ceu = null;
+    (function construirCeu() {
+        const n = MOBILE ? 520 : 1200;
+        const pos = new Float32Array(n * 3), fase = new Float32Array(n), cor = new Float32Array(n * 3), tam = new Float32Array(n);
+        const paleta = ['#ffffff', '#ffffff', '#ffd6ec', '#ffb3d9', '#e3c4ff', '#bcd4ff'].map((x) => new T.Color(x));
+        for (let i = 0; i < n; i++) {
+            const r = rand(40, 70), u = rand(-1, 1), th = rand(0, Math.PI * 2), sn = Math.sqrt(1 - u * u);
+            pos[i * 3] = r * sn * Math.cos(th);
+            pos[i * 3 + 1] = r * u;
+            pos[i * 3 + 2] = r * sn * Math.sin(th);
+            fase[i] = Math.random();
+            tam[i] = 0.5 + Math.pow(Math.random(), 3) * 1.4;
+            const cc = pick(paleta);
+            cor[i * 3] = cc.r; cor[i * 3 + 1] = cc.g; cor[i * 3 + 2] = cc.b;
+        }
+        const geo = new T.BufferGeometry();
+        geo.setAttribute('position', new T.BufferAttribute(pos, 3));
+        geo.setAttribute('aFase', new T.BufferAttribute(fase, 1));
+        geo.setAttribute('aCor', new T.BufferAttribute(cor, 3));
+        geo.setAttribute('aTam', new T.BufferAttribute(tam, 1));
+        matCeu = new T.ShaderMaterial({
+            uniforms: { uT: { value: 0 }, uTam: { value: 110 * DPR } },
+            vertexShader: [
+                'uniform float uT; uniform float uTam;',
+                'attribute float aFase; attribute float aTam; attribute vec3 aCor; varying vec3 vCor; varying float vA;',
+                'void main() {',
+                '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
+                '  float t = 0.5 + 0.5 * sin(uT * (0.5 + aFase * 1.5) + aFase * 40.0);',
+                '  vA = 0.25 + 0.75 * t;',
+                '  vCor = aCor;',
+                '  gl_PointSize = uTam * aTam * (0.6 + 0.4 * t) / -mv.z;',
+                '  gl_Position = projectionMatrix * mv;',
+                '}'
+            ].join('\n'),
+            fragmentShader: [
+                'varying vec3 vCor; varying float vA;',
+                'void main() {',
+                '  float d = length(gl_PointCoord - vec2(0.5));',
+                '  if (d > 0.5) discard;',
+                '  gl_FragColor = vec4(vCor, pow(1.0 - d * 2.0, 1.6) * vA);',
+                '}'
+            ].join('\n'),
+            transparent: true, depthWrite: false, blending: T.AdditiveBlending
+        });
+        ceu = new T.Points(geo, matCeu);
+        ceu.frustumCulled = false;
+        cena.add(ceu);
+    })();
+
+    // estrelinhas de 4 pontas espalhadas, piscando
+    const cruzes = [];
+    const texDaCruz = texCruz();
+    (function () {
+        const cores = [0xffffff, 0xffd6ec, 0xe3c4ff, 0xffb3d9];
+        const n = MOBILE ? 10 : 16;
+        for (let i = 0; i < n; i++) {
+            const m = new T.SpriteMaterial({ map: texDaCruz, color: pick(cores), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0 });
+            const sp = new T.Sprite(m);
+            const r = rand(9, 22), th = rand(0, Math.PI * 2), e = rand(0.7, 1.7);
+            sp.position.set(Math.cos(th) * r, rand(0.5, 12), Math.sin(th) * r);
+            sp.scale.set(e, e, 1);
+            cena.add(sp);
+            cruzes.push({ s: sp, base: e, fase: Math.random() * 6.28, vel: rand(0.6, 1.6) });
+        }
+    })();
+
+    // nebulosas bem ao fundo (manchas de cor suaves)
+    const nebulosas = [];
+    [['255,90,170', 0.14, [-30, 12, -34], 46], ['150,100,255', 0.13, [34, 8, -28], 50], ['90,140,255', 0.10, [4, 24, -46], 56], ['255,150,200', 0.10, [-6, -2, 38], 52]].forEach((d, i) => {
+        const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilhoRosa(d[0], 1), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: d[1] }));
+        sp.position.set(d[2][0], d[2][1], d[2][2]);
+        sp.scale.set(d[3], d[3], 1);
+        cena.add(sp);
+        nebulosas.push({ s: sp, base: d[1], fase: i * 1.7 });
+    });
+
+    // embaixo da caixa: poeira cósmica em espiral + órbitas com planetinhas
+    let pontosDisco = null;
+    const planetinhas = [];
+    (function () {
+        const n = MOBILE ? 800 : 1700;
+        const pos = new Float32Array(n * 3), cor = new Float32Array(n * 3);
+        const dentro = new T.Color('#ffd6ec'), fora = new T.Color('#9a8cff'), cx = new T.Color();
+        for (let i = 0; i < n; i++) {
+            const r = 3.3 + Math.pow(Math.random(), 0.8) * 6;
+            const a = (i % 2) * Math.PI + r * 0.55 + (Math.random() + Math.random() - 1) * 0.7;
+            pos[i * 3] = Math.cos(a) * r;
+            pos[i * 3 + 1] = 0.04 + (Math.random() - 0.5) * 0.12;
+            pos[i * 3 + 2] = Math.sin(a) * r;
+            cx.copy(dentro).lerp(fora, (r - 3.3) / 6).multiplyScalar(0.6 + Math.random() * 0.6);
+            cor[i * 3] = cx.r; cor[i * 3 + 1] = cx.g; cor[i * 3 + 2] = cx.b;
+        }
+        const geo = new T.BufferGeometry();
+        geo.setAttribute('position', new T.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new T.BufferAttribute(cor, 3));
+        pontosDisco = new T.Points(geo, new T.PointsMaterial({ size: 0.09, map: texBrilhoRosa('255,255,255', 1), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, opacity: 0.85 }));
+        chao.add(pontosDisco);
+
+        [[4.3, 0xff9ccb, 0.18], [6.6, 0xc9a7f5, 0.14]].forEach((a) => {
+            const pts = [];
+            for (let k = 0; k < 96; k++) {
+                const t = (k / 96) * Math.PI * 2;
+                pts.push(new T.Vector3(Math.cos(t) * a[0], 0.03, Math.sin(t) * a[0]));
+            }
+            const lg = new T.BufferGeometry().setFromPoints(pts);
+            chao.add(new T.LineLoop(lg, new T.LineBasicMaterial({ color: a[1], transparent: true, opacity: a[2], depthWrite: false, blending: T.AdditiveBlending })));
+        });
+
+        [[4.3, 0.35, '255,160,210', 0.55], [6.6, -0.22, '190,160,255', 0.7], [5.4, 0.28, '255,220,150', 0.48]].forEach((d) => {
+            const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilhoRosa(d[2], 1), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0.95 }));
+            sp.scale.set(d[3], d[3], 1);
+            chao.add(sp);
+            planetinhas.push({ g: sp, raio: d[0], vel: d[1], ang: rand(0, Math.PI * 2) });
+        });
+    })();
+
+    // estrelinhas girando em volta da caixa
+    const orbitantes = [];
+    (function () {
+        const n = MOBILE ? 7 : 10;
+        for (let i = 0; i < n; i++) {
+            const m = new T.SpriteMaterial({ map: texDaCruz, color: i % 2 ? 0xffd6ec : 0xffffff, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0 });
+            const sp = new T.Sprite(m);
+            const e = rand(0.35, 0.65);
+            sp.scale.set(e, e, 1);
+            cena.add(sp);
+            orbitantes.push({ s: sp, ang: (i / n) * Math.PI * 2, raio: rand(3.2, 3.9), y: rand(0.5, 3.0), vel: rand(0.35, 0.6), fase: Math.random() * 6.28 });
+        }
+    })();
+
+    // envelopezinhos flutuando (tema das cartas)
+    const flutuantes = [];
+    (function () {
+        const tex = texEnvelopinho();
+        const n = MOBILE ? 4 : 6;
+        for (let i = 0; i < n; i++) {
+            const sp = new T.Sprite(new T.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0.85 }));
+            const e = rand(0.9, 1.3);
+            sp.scale.set(e, e * 0.75, 1);
+            cena.add(sp);
+            flutuantes.push({ s: sp, ang: (i / n) * Math.PI * 2 + rand(-0.3, 0.3), raio: rand(6, 11), y0: rand(1.5, 6), vel: rand(0.04, 0.09) * (i % 2 ? 1 : -1), fase: Math.random() * 6.28 });
+        }
+    })();
+
+    // estrelas cadentes (passam sempre na frente da câmera)
+    const cometas = [];
+    (function () {
+        const cabecaTex = texBrilhoRosa('255,235,250', 1);
+        for (let i = 0; i < 2; i++) {
+            const g = new T.BufferGeometry();
+            g.setAttribute('position', new T.BufferAttribute(new Float32Array(6), 3));
+            g.setAttribute('color', new T.BufferAttribute(new Float32Array([0, 0, 0, 1, 0.9, 1]), 3));
+            const linha = new T.Line(g, new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false }));
+            linha.frustumCulled = false;
+            linha.visible = false;
+            const cabeca = new T.Sprite(new T.SpriteMaterial({ map: cabecaTex, transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false }));
+            cabeca.scale.set(1.3, 1.3, 1);
+            cabeca.visible = false;
+            cena.add(linha);
+            cena.add(cabeca);
+            cometas.push({ linha: linha, cabeca: cabeca, vida: 0, dur: 1, espera: rand(2, 5), p: new T.Vector3(), v: new T.Vector3() });
+        }
+    })();
+    function lancarCometa(k) {
+        const f = tmp2.copy(alvo).sub(camera.position).normalize();
+        const dir = tmp3.set(f.z, 0, -f.x).normalize();                       // "pra direita" da câmera
+        const lado = Math.random() < 0.5 ? 1 : -1;
+        k.p.copy(camera.position).addScaledVector(f, 40).addScaledVector(dir, lado * rand(14, 24));
+        k.p.y += rand(6, 16);
+        k.v.set(0, 0, 0).addScaledVector(dir, -lado * rand(26, 40));
+        k.v.y = -rand(6, 14);
+        k.dur = k.vida = rand(1.0, 1.7);
+        k.linha.visible = true;
+        k.cabeca.visible = true;
+    }
+
     /* ---------- ações ---------- */
     function dica(txt) {
         elDica.textContent = txt;
@@ -537,6 +798,7 @@ function montar(T, opts) {
         if (aberta || entrando) return;
         aberta = true;
         tConfete = 0;
+        tOnda = 0;
         cartas.forEach((k, i) => { k.alvo = Y_ABERTA; k.espera = 0.15 + i * 0.06; });
         tmp.set(0, H + 0.3, 0.3);
         soltarCoracoes(tmp, 8, true);
@@ -555,6 +817,7 @@ function montar(T, opts) {
         entrando = true;
         orb.auto = 0;
         orb.min = 3;
+        tOnda = 0;
         elDica.style.opacity = '0';
         cartas.forEach((k, i) => { k.alvo = Y_SAI; k.espera = i * 0.08; });     // as cartas sobem pela metade
         tmp.set(0, H + 0.6, 0.3);
@@ -709,7 +972,11 @@ function montar(T, opts) {
         velAb += ((aberta ? 1 : 0) - abertura) * 70 * dt;
         velAb *= Math.exp(-7 * dt);
         abertura += velAb * dt;
-        tampa.rotation.x = -abertura * 2.05;
+        // fechada e parada: a tampinha dá uma "tremidinha" de vez em quando, chamando pra abrir
+        const convite = (!aberta && !entrando && c > 0.95)
+            ? Math.pow(Math.max(0, Math.sin(tempo * 1.2)), 12) * Math.sin(tempo * 22) * 0.035
+            : 0;
+        tampa.rotation.x = -abertura * 2.05 + convite;
 
         // cartinhas: cada uma sobe um pouquinho depois da outra
         cartas.forEach((k) => {
@@ -725,6 +992,57 @@ function montar(T, opts) {
 
         luzDentro.intensity = lerp(luzDentro.intensity, entrando ? 2.4 : (aberta ? 1.6 : 0), 1 - Math.exp(-5 * dt));
         brilhoTopo.material.opacity = lerp(brilhoTopo.material.opacity, entrando ? 0.75 : (aberta ? 0.5 : 0), 1 - Math.exp(-4 * dt));
+
+        // ---- decoração cósmica ----
+        const vel = aberta ? 2.2 : 1;                                   // com a caixa aberta, tudo gira mais animado
+        matCeu.uniforms.uT.value = tempo;
+        ceu.rotation.y += dt * 0.012;
+        pontosDisco.rotation.y += dt * 0.07 * vel;
+        planetinhas.forEach((p) => {
+            p.ang += p.vel * vel * dt;
+            p.g.position.set(Math.cos(p.ang) * p.raio, 0.28 + Math.sin(tempo * 1.2 + p.ang) * 0.08, Math.sin(p.ang) * p.raio);
+        });
+        orbitantes.forEach((o) => {
+            o.ang += o.vel * vel * dt;
+            o.s.position.set(Math.cos(o.ang) * o.raio, o.y + Math.sin(tempo * 1.5 + o.fase) * 0.25, Math.sin(o.ang) * o.raio);
+            o.s.material.opacity = (0.35 + 0.65 * Math.pow(0.5 + 0.5 * Math.sin(tempo * 2.2 + o.fase), 2)) * cc;
+            o.s.material.rotation += dt * 0.6;
+        });
+        cruzes.forEach((k) => {
+            const pisca = Math.pow(0.5 + 0.5 * Math.sin(tempo * k.vel + k.fase), 3);
+            k.s.material.opacity = 0.12 + 0.88 * pisca;
+            k.s.material.rotation += dt * 0.12;
+            const e = k.base * (0.8 + 0.3 * pisca);
+            k.s.scale.set(e, e, 1);
+        });
+        flutuantes.forEach((f) => {
+            f.ang += f.vel * dt;
+            f.s.position.set(Math.cos(f.ang) * f.raio, f.y0 + Math.sin(tempo * 0.8 + f.fase) * 0.45, Math.sin(f.ang) * f.raio);
+            f.s.material.rotation = Math.sin(tempo * 0.6 + f.fase) * 0.25;
+        });
+        nebulosas.forEach((n) => { n.s.material.opacity = n.base * (0.8 + 0.2 * Math.sin(tempo * 0.35 + n.fase)); });
+        cometas.forEach((k) => {
+            if (k.vida <= 0) {
+                if (!entrando) { k.espera -= dt; if (k.espera <= 0) lancarCometa(k); }
+                return;
+            }
+            k.vida -= dt;
+            k.p.addScaledVector(k.v, dt);
+            const alfa = Math.sin(clamp(k.vida / k.dur, 0, 1) * Math.PI);
+            const ps = k.linha.geometry.attributes.position;
+            ps.setXYZ(0, k.p.x - k.v.x * 0.3, k.p.y - k.v.y * 0.3, k.p.z - k.v.z * 0.3);
+            ps.setXYZ(1, k.p.x, k.p.y, k.p.z);
+            ps.needsUpdate = true;
+            k.linha.material.opacity = alfa;
+            k.cabeca.position.copy(k.p);
+            k.cabeca.material.opacity = alfa;
+            if (k.vida <= 0) { k.linha.visible = false; k.cabeca.visible = false; k.espera = rand(3, 7); }
+        });
+        feixe.material.opacity = lerp(feixe.material.opacity, entrando ? 0.8 : (aberta ? 0.5 : 0), 1 - Math.exp(-4 * dt));
+        tOnda += dt;
+        const qo = clamp(tOnda / 1.3, 0, 1);
+        onda.scale.setScalar(1 + qo * 7.5);
+        onda.material.opacity = (1 - qo) * (1 - qo) * 0.7;
 
         tConfete += dt;
         matConfete.uniforms.uT.value = Math.min(tConfete, 99);

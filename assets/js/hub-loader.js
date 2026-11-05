@@ -41,6 +41,17 @@
         aoEvento: function (nome, dados) {
             if (window.HubSons) window.HubSons.evento(nome, dados);
         },
+                 entradaDireta: function (card) {
+            if (!card || card.link !== 'cartas' || !window.CaixaCartas) return false;
+            if (window.CaixaCartas.aberta()) return true;
+            var raiz = container.querySelector('.h3d-raiz');
+            window.CaixaCartas.abrir({
+                aoEntrar: function () { location.hash = '#cartas'; },
+                aoCobrirHub: function (sim) { if (raiz) raiz.style.display = sim ? 'none' : ''; },
+                aoEvento: function (nome) { /* gancho pra sons da caixa (abrir-caixa, entrar-cartas...) */ }
+            });
+            return true;
+        },
         aoFalhar: function (erro) {
             console.warn('Hub3D indisponível, mostrando links simples:', erro);
             mostrarLinksSimples();

@@ -1475,6 +1475,11 @@ const BN_POS = new T.Vector3(-252, -16, 95);
         const it = itens[sel];
         const card = it.card;
         const cor = COR_CARD[card.link] || '#ff8fbf';
+                // a página pode cuidar da entrada de um card (ex.: a caixinha das cartas), sem o mergulho de estrelas
+        if (cfg.aoEntrarEspecial && cfg.aoEntrarEspecial(card)) {
+            evento('entrar', { card: card, cor: cor });
+            return;
+        }
         entrando = true;
         tEntrar = 0;
         mostrarAcao(false);
@@ -1529,6 +1534,12 @@ const BN_POS = new T.Vector3(-252, -16, 95);
         const hits = raycaster.intersectObjects(alvos, false);
         if (hits.length) {
             const idx = itens.findIndex((it) => it.sprite === hits[0].object);
+                        if (idx >= 0 && cfg.entradaDireta && cfg.entradaDireta(itens[idx].card)) {
+                // entrada direta (ex.: a caixinha das cartas): o card não expande
+                if (sel >= 0) { sel = -1; elDica.textContent = DICA; mostrarAcao(false); }
+                evento('entrar', { card: itens[idx].card, cor: COR_CARD[itens[idx].card.link] || '#ff8fbf' });
+                return;
+            }
             if (idx === sel) entrar();
             else if (idx >= 0) selecionar(idx);
             return;
