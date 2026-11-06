@@ -17,8 +17,8 @@
 'use strict';
 
 /* ---------- AJUSTES ---------- */
-const TEXTO_TAMPA = ['Nossas cartas', 'e bilhetinhos', 'guardados com amor'];   // escrito na parte de dentro da tampa
-const NUM_CARTAS = 5;                                                          // quantas cartinhas aparecem dentro
+const TEXTO_TAMPA = ['Nossas cartas', 'e bilhetinhos']; // escrito na parte de dentro da tampa
+const NUM_CARTAS = 6;                                                          // quantas cartinhas aparecem dentro
 const COR_FUNDO = '#12050f';                                                   // cor do fundo da página de Cartas
 const DICA_FECHADA_TOQUE = 'toque na caixinha para abrir · arraste para girar ✦';
 const DICA_FECHADA_CLIQUE = 'clique na caixinha para abrir · arraste para girar ✦';
@@ -263,6 +263,39 @@ function montar(T, opts) {
         }
         return viraTextura(c);
     }
+
+        // forro da caixa: papel rosa com listras suaves e corações miudinhos (tipo papel de presente)
+    function texForro() {
+        const c = novoCanvas(256, 256), g = c.getContext('2d');
+        g.fillStyle = '#f4a9c9';
+        g.fillRect(0, 0, 256, 256);
+        g.fillStyle = 'rgba(255,255,255,0.12)';
+        for (let x = 0; x < 256; x += 64) g.fillRect(x, 0, 32, 256);
+        for (let fila = 0; fila < 4; fila++) {
+            for (let col = 0; col < 4; col++) {
+                const x = col * 64 + (fila % 2 ? 32 : 0) + 16;
+                const y = fila * 64 + 32;
+                g.fillStyle = fila % 2 ? 'rgba(255,255,255,0.7)' : 'rgba(214,72,127,0.6)';
+                caminhoCoracao(g, x, y, 0.7);
+                g.fill();
+            }
+        }
+        g.fillStyle = 'rgba(255,255,255,0.55)';
+        for (let i = 0; i < 16; i++) {
+            g.beginPath();
+            g.arc((i % 4) * 64 + 48, Math.floor(i / 4) * 64 + 64, 2.2, 0, Math.PI * 2);
+            g.fill();
+        }
+        const t = viraTextura(c);
+        t.wrapS = t.wrapT = T.RepeatWrapping;
+        t.repeat.set(4, 3);
+        t.generateMipmaps = true;
+        t.minFilter = T.LinearMipmapLinearFilter;
+        t.anisotropy = 4;
+        return t;
+    }
+
+
     // recado dentro da tampa
     const cPainel = novoCanvas(512, 360);
     function desenharPainel() {
@@ -284,11 +317,17 @@ function montar(T, opts) {
         g.fillStyle = '#d6487f';
         g.textAlign = 'center';
         g.textBaseline = 'middle';
-        g.font = '56px "Caveat Brush", "Caveat", "Patrick Hand", cursive';
-        g.fillText(TEXTO_TAMPA[0], 256, 128);
-        g.font = '42px "Caveat Brush", "Caveat", "Patrick Hand", cursive';
-        g.fillText(TEXTO_TAMPA[1], 256, 184);
-        g.fillText(TEXTO_TAMPA[2], 256, 238);
+        function linha(txt, tamIni, maxLarg, y) {
+            let f = tamIni;
+            g.font = f + 'px "Caveat Brush", "Caveat", "Patrick Hand", cursive';
+            while (g.measureText(txt).width > maxLarg && f > 22) {
+                f -= 2;
+                g.font = f + 'px "Caveat Brush", "Caveat", "Patrick Hand", cursive';
+            }
+            g.fillText(txt, 256, y);
+        }
+        linha(TEXTO_TAMPA[0], 62, 250, 138);
+        linha(TEXTO_TAMPA[1], 50, 200, 196);
     }
     desenharPainel();
     const texPainel = viraTextura(cPainel);
@@ -335,7 +374,7 @@ function montar(T, opts) {
     const tmp = new T.Vector3();
 
     /* ---------- luzes ---------- */
-    cena.add(new T.HemisphereLight(0xffe6f1, 0x7a2a5a, 0.95));
+    cena.add(new T.HemisphereLight(0xffe6f1, 0x7a2a5a, 0.7));
     const sol = new T.DirectionalLight(0xffffff, 0.8);
     sol.position.set(4, 9, 6);
     cena.add(sol);
@@ -343,7 +382,7 @@ function montar(T, opts) {
     luzRosa.position.set(-6, 3, -4);
     cena.add(luzRosa);
     const luzDentro = new T.PointLight(0xff9cc9, 0, 9);
-    luzDentro.position.set(0, 1.9, 0.3);
+  luzDentro.position.set(0, 2.7, 0.4);
     cena.add(luzDentro);
 
     /* ---------- chão: poça de luz rosa + sombrinha ---------- */
@@ -367,7 +406,7 @@ function montar(T, opts) {
     /* ---------- a caixa ---------- */
     const W = 4, D = 2.8, H = 2.2, E = 0.14;
     const branco = new T.MeshStandardMaterial({ color: 0xfff4f7, roughness: 0.42 });
-    const interior = new T.MeshStandardMaterial({ color: 0xffc2da, roughness: 0.7 });
+       const interior = new T.MeshStandardMaterial({ map: texForro(), roughness: 0.85 });
     const rosa = new T.MeshStandardMaterial({ color: 0xf06a9f, roughness: 0.4 });
 
     const caixa = new T.Group();
@@ -436,7 +475,7 @@ function montar(T, opts) {
     tampa.add(recado);
 
     /* ---------- as cartinhas lá dentro ---------- */
-    const Y_FECHADA = 0.9, Y_ABERTA = 1.4, Y_SAI = 1.95;     // altura da base de cada carta (a borda da caixa fica em 2.2)
+const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de cada carta (a borda da caixa fica em 2.2)
     const CORES_CARTA = [0xfadcd9, 0xf6cfdc, 0xefc3cf, 0xf3d6e8, 0xe8d3f4];
     const CORES_ABA = [0xeeb9c3, 0xe9afc6, 0xe3a8bd, 0xe6b9d6, 0xd2b6e6];
 
@@ -467,13 +506,93 @@ function montar(T, opts) {
     for (let i = 0; i < NUM_CARTAS; i++) {
         const t = i - (NUM_CARTAS - 1) / 2;
         const g = criarCarta(i);
-        g.position.set(t * 0.55, Y_FECHADA, -0.35 + i * 0.16);
-        g.rotation.z = -t * 0.1;                                 // abre em leque
-        g.rotation.x = 0.16;                                     // inclina um pouco pra frente
+        g.position.set(t * 0.46, Y_FECHADA, -0.55 + i * 0.13);   // cada uma um pouquinho mais à frente, tipo um fichário
+        g.rotation.z = -t * 0.06;
+        g.rotation.x = 0.14;
         g.userData = { tipo: 'envelope' };
         caixa.add(g);
-        cartas.push({ g: g, i: i, y: Y_FECHADA, v: 0, alvo: Y_FECHADA, espera: 0, rotZ: -t * 0.1 });
+        cartas.push({ g: g, i: i, y: Y_FECHADA, v: 0, alvo: Y_FECHADA, espera: 0, rotZ: -t * 0.06, off: (i % 2) * 0.24 });
     }
+
+        (function enfeitesDeDentro() {
+
+        // ---- papel de seda amassado: enche o fundo, e as cartinhas ficam "assentadas" nele ----
+        const sedas = [0xffd9e8, 0xf8c1da, 0xffeaf3, 0xf1b4d3, 0xe8c8f2];
+        const base = new T.Mesh(new T.BoxGeometry(3.6, 0.75, 2.4), new T.MeshStandardMaterial({ color: 0xf8c1da, roughness: 0.9 }));
+        base.position.set(0, E + 0.37, 0);
+        caixa.add(base);
+        for (let i = 0; i < 26; i++) {
+            const r = rand(0.26, 0.42);
+            const m = new T.Mesh(
+                new T.IcosahedronGeometry(r, 0),
+                new T.MeshStandardMaterial({ color: pick(sedas), roughness: 0.9, flatShading: true })
+            );
+            const limX = 1.8 - r * 1.5, limZ = 1.2 - r * 1.5;
+            m.position.set(rand(-limX, limX), rand(0.8, 1.45), rand(-limZ, limZ));
+            m.scale.set(rand(1.1, 1.5), rand(0.7, 1.0), rand(1.1, 1.5));
+            m.rotation.set(rand(0, 3), rand(0, 3), rand(0, 3));
+            caixa.add(m);
+        }
+
+        // ---- no chão, ao lado da caixa ----
+        const papel = (i) => new T.MeshStandardMaterial({ color: CORES_CARTA[i % CORES_CARTA.length], roughness: 0.6 });
+
+        // maço de cartinhas amarrado com fitinha
+        const maco = new T.Group();
+        for (let i = 0; i < 5; i++) {
+            const e = new T.Mesh(new T.BoxGeometry(0.95, 0.05, 0.64), papel(i));
+            e.position.y = 0.03 + i * 0.055;
+            e.rotation.y = (i - 2) * 0.06;
+            maco.add(e);
+        }
+        const fita = new T.Mesh(new T.BoxGeometry(0.1, 0.34, 0.68), rosa);
+        fita.position.y = 0.16;
+        maco.add(fita);
+        [-1, 1].forEach((lado) => {
+            const lc = new T.Mesh(new T.SphereGeometry(0.1, 14, 10), rosa);
+            lc.scale.set(1.5, 0.6, 0.9);
+            lc.position.set(lado * 0.1, 0.36, 0);
+            lc.rotation.z = lado * 0.4;
+            maco.add(lc);
+        });
+        maco.position.set(3.0, 0, 1.3);
+        maco.rotation.y = -0.5;
+        chao.add(maco);
+
+        // envelopes soltos, com selinho
+        [[-3.0, 1.4, 0.5], [-2.5, 2.1, -0.3], [3.5, -1.2, 0.8]].forEach((d, i) => {
+            const env = new T.Group();
+            const corpo = new T.Mesh(new T.BoxGeometry(0.85, 0.03, 0.58), papel(i + 1));
+            corpo.position.y = 0.02;
+            env.add(corpo);
+            const selo = new T.Mesh(new T.CylinderGeometry(0.09, 0.09, 0.02, 20), rosa);
+            selo.position.set(0, 0.045, 0.06);
+            env.add(selo);
+            env.position.set(d[0], 0, d[1]);
+            env.rotation.y = d[2];
+            chao.add(env);
+        });
+
+        // coraçõezinhos de papel espalhados
+        const forma = new T.Shape();
+        for (let i = 0; i <= 60; i++) {
+            const t = (i / 60) * Math.PI * 2;
+            const x = (16 * Math.pow(Math.sin(t), 3)) / 16;
+            const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 16;
+            if (i === 0) forma.moveTo(x, y); else forma.lineTo(x, y);
+        }
+        const geoCor = new T.ExtrudeGeometry(forma, { depth: 0.3, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 3, curveSegments: 1 });
+        geoCor.center();
+        [[1.3, 2.3, 0.2], [-0.9, 2.5, 0.16], [2.4, 2.0, 0.14], [-1.9, 2.6, 0.13], [0.2, 2.8, 0.12]].forEach((h) => {
+            const m = new T.Mesh(geoCor, new T.MeshStandardMaterial({ color: pick([0xff5c9d, 0xff8fbf, 0xf06a9f, 0xc9a7f5]), roughness: 0.3 }));
+            m.scale.setScalar(h[2]);
+            m.rotation.x = -Math.PI / 2;
+            m.rotation.z = rand(-0.6, 0.6);
+            m.position.set(h[0], h[2] * 0.5, h[1]);
+            chao.add(m);
+        });
+
+    })();
 
     /* ---------- brilhinhos, corações subindo, confete ---------- */
     let matBrilhos = null, matConfete = null;
@@ -986,12 +1105,12 @@ function montar(T, opts) {
                 k.v *= Math.exp(-8 * dt);
                 k.y += k.v * dt;
             }
-            k.g.position.y = k.y;
+            k.g.position.y = k.y + k.off * clamp(abertura, 0, 1);
             k.g.rotation.z = k.rotZ + (aberta ? Math.sin(tempo * 1.4 + k.i) * 0.02 : 0);
         });
 
-        luzDentro.intensity = lerp(luzDentro.intensity, entrando ? 2.4 : (aberta ? 1.6 : 0), 1 - Math.exp(-5 * dt));
-        brilhoTopo.material.opacity = lerp(brilhoTopo.material.opacity, entrando ? 0.75 : (aberta ? 0.5 : 0), 1 - Math.exp(-4 * dt));
+        luzDentro.intensity = lerp(luzDentro.intensity, entrando ? 1.4 : (aberta ? 0.9 : 0), 1 - Math.exp(-5 * dt));
+        brilhoTopo.material.opacity = lerp(brilhoTopo.material.opacity, entrando ? 0.45 : (aberta ? 0.22 : 0), 1 - Math.exp(-4 * dt));
 
         // ---- decoração cósmica ----
         const vel = aberta ? 2.2 : 1;                                   // com a caixa aberta, tudo gira mais animado
@@ -1038,7 +1157,7 @@ function montar(T, opts) {
             k.cabeca.material.opacity = alfa;
             if (k.vida <= 0) { k.linha.visible = false; k.cabeca.visible = false; k.espera = rand(3, 7); }
         });
-        feixe.material.opacity = lerp(feixe.material.opacity, entrando ? 0.8 : (aberta ? 0.5 : 0), 1 - Math.exp(-4 * dt));
+        feixe.material.opacity = lerp(feixe.material.opacity, entrando ? 0.5 : (aberta ? 0.22 : 0), 1 - Math.exp(-4 * dt));
         tOnda += dt;
         const qo = clamp(tOnda / 1.3, 0, 1);
         onda.scale.setScalar(1 + qo * 7.5);

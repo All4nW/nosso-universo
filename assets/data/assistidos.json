@@ -1037,25 +1037,6 @@
         "memoria": ""
     },
     {
-        "id": "o-servico-de-entregas-da-kiki",
-        "categoria": "queremos",
-        "titulo": "O Serviço de Entregas da Kiki",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1792290345842.webp",
-        "cor": {
-            "r": 63,
-            "g": 104,
-            "b": 121
-        },
-        "tipo": "animes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "a-orfa",
         "categoria": "filmes",
         "titulo": "A Órfã",
@@ -1075,25 +1056,6 @@
         "memoria": "Nosso especial Halloween - 31/10/2026"
     },
     {
-        "id": "cinderela-1950",
-        "categoria": "queremos",
-        "titulo": "Cinderela (1950)",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1793630476740.webp",
-        "cor": {
-            "r": 58,
-            "g": 73,
-            "b": 121
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "a-bela-e-a-fera-1991",
         "categoria": "filmes",
         "titulo": "A Bela e A Fera (1991)",
@@ -1106,6 +1068,61 @@
             "b": 104
         },
         "aura": "#031748",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "cinderela-1950",
+        "categoria": "filmes",
+        "titulo": "Cinderela (1950)",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1793630476740.webp",
+        "cor": {
+            "r": 58,
+            "g": 73,
+            "b": 121
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "ponyo-uma-amizade-que-veio-do-mar",
+        "categoria": "queremos",
+        "titulo": "Ponyo: Uma Amizade que Veio do Mar",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1793926039277.png",
+        "cor": {
+            "r": 34,
+            "g": 114,
+            "b": 154
+        },
+        "tipo": "animes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "o-servico-de-entregas-da-kiki",
+        "categoria": "animes",
+        "titulo": "O Serviço de Entregas da Kiki",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1792290345842.webp",
+        "cor": {
+            "r": 63,
+            "g": 104,
+            "b": 121
+        },
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,

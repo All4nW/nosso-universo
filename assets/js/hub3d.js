@@ -136,7 +136,20 @@ function criar(container, cards, cfg) {
     const elDica = $('.h3d-dica');
     const elAcao = $('.h3d-acao');
     const elFlash = $('.h3d-flash');
-    $('.h3d-toque').textContent = MOBILE ? 'toque de novo para entrar' : 'clique de novo para entrar';
+    const elToque = $('.h3d-toque');
+    elToque.textContent = MOBILE ? 'toque de novo para entrar' : 'clique de novo para entrar';
+    Object.assign(elToque.style, {
+        position: 'absolute',
+        left: '0',
+        top: '0',
+        transform: 'translate(-50%, 0)',
+        whiteSpace: 'nowrap',
+        font: "500 .62rem/1 'Montserrat', system-ui, sans-serif",
+        letterSpacing: '.14em',
+        color: 'rgba(255, 226, 241, .85)',
+        textShadow: '0 0 10px rgba(255, 150, 205, .7), 0 0 3px #05030d',
+        pointerEvents: 'none'
+    });
 
     let renderer;
     try {
@@ -270,7 +283,7 @@ function criar(container, cards, cfg) {
     const RAIO = 7.5, RAMOS = 3, TORCAO = 0.85;
     const N = MOBILE ? 45000 : 120000;
     const N_HALO = MOBILE ? 32000 : 85000;
-    const HALO_BRILHO = 0.6;          // mais alto = poeira em volta mais visível
+    const HALO_BRILHO = 0.3;          // mais alto = poeira em volta mais visível
     const BRILHO_GALAXIA = 0.7;       // brilho da espiral
 
     const VERTICE = [
@@ -371,7 +384,7 @@ function criar(container, cards, cfg) {
         const nucleo = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('255,236,246'), transparent: true, opacity: 0.55, blending: T.AdditiveBlending, depthWrite: false }));
         nucleo.scale.set(4, 4, 1);
         cena.add(nucleo);
-        const halo = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('120,150,255'), transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false }));
+        const halo = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('120,150,255'), transparent: true, opacity: 0.04, blending: T.AdditiveBlending, depthWrite: false }));
         halo.scale.set(15, 15, 1);
         cena.add(halo);
 
@@ -427,10 +440,10 @@ const nE = MOBILE ? 1200 : 2600;
         const hg = new T.BufferGeometry();
         hg.setAttribute('position', new T.BufferAttribute(hp, 3));
         hg.setAttribute('color', new T.BufferAttribute(hc, 3));
-        grupoCoracao.add(new T.Points(hg, new T.PointsMaterial({ size: 0.11, map: texPonto(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, sizeAttenuation: true })));
+        grupoCoracao.add(new T.Points(hg, new T.PointsMaterial({ size: 0.07, map: texPonto(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, vertexColors: true, sizeAttenuation: true })));
         recursos.push(hg);
 
-        const aura = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('255,120,190'), transparent: true, opacity: 0.25, blending: T.AdditiveBlending, depthWrite: false }));
+        const aura = new T.Sprite(new T.SpriteMaterial({ map: texBrilho('255,120,190'), transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false }));
         aura.scale.set(6.5, 6.5, 1);
         grupoCoracao.add(aura);
 
@@ -612,7 +625,7 @@ const n = MOBILE ? 1300 : 2800;
 
         // 2) neblina colorida bem suave (verde-água, dourado, roxo, rosa, azul)
         [['60,210,180', -5.5, 2.5, 11], ['255,200,90', 2.0, -6.0, 10], ['150,90,230', -3.0, -4.5, 12], ['255,110,190', 5.5, 3.5, 10], ['80,120,255', 0.5, 6.5, 12]].forEach((n) => {
-            const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(n[0]), transparent: true, opacity: 0.11, blending: T.AdditiveBlending, depthWrite: false }));
+            const sp = new T.Sprite(new T.SpriteMaterial({ map: texBrilho(n[0]), transparent: true, opacity: 0.04, blending: T.AdditiveBlending, depthWrite: false }));
             sp.position.set(n[1], 0, n[2]);
             sp.scale.set(n[3], n[3], 1);
             grupoSpin.add(sp);
@@ -689,7 +702,7 @@ const n = MOBILE ? 1300 : 2800;
         fg.setAttribute('position', new T.BufferAttribute(fp, 3));
         fg.setAttribute('aAleat', new T.BufferAttribute(fa, 1));
         matFio = new T.ShaderMaterial({
-            uniforms: { uTempo: { value: 0 }, uTam: { value: 46 * DPR }, uBase: { value: 0.4 }, uAlt: { value: 1.9 } },
+            uniforms: { uTempo: { value: 0 }, uTam: { value: 30 * DPR }, uBase: { value: 0.4 }, uAlt: { value: 1.9 } },
             vertexShader: [
                 'uniform float uTempo; uniform float uTam; uniform float uBase; uniform float uAlt;',
                 'attribute float aAleat; varying float vA;',
@@ -1182,7 +1195,7 @@ const BN_POS = new T.Vector3(-252, -16, 95);
         if (grupoSpin) grupoSpin.rotation.y -= dt * 0.06;   // mesmo sentido e velocidade da espiral
         if (espinho) {
             espinho.material.rotation += dt * 0.04;
-            espinho.material.opacity = 0.42 + 0.14 * Math.sin(tempo * 1.1);
+                        espinho.material.opacity = 0.1 + 0.03 * Math.sin(tempo * 1.1);
         }
         if (matFio) matFio.uniforms.uTempo.value = tempo;
         matGalaxia.uniforms.uBrilho.value = BRILHO_GALAXIA - 0.12 + 0.05 * Math.sin(tempo * 0.7);
@@ -1272,6 +1285,7 @@ const BN_POS = new T.Vector3(-252, -16, 95);
     /* ---------- os cards do hub, orbitando ---------- */
     const CARD_W = 512, CARD_H = 640, CARD_ASPECT = CARD_W / CARD_H;
     const FONTE_TITULO = 'italic 700 64px "Cormorant Garamond", Georgia, serif';
+        const AURA_CARD = 0;          // luz rosa atrás dos cards (0 = sem luz · 0.15 = suave · 0.34 = como era)
 
     // card 3D delicado: fotos empilhadas translúcidas, foto da frente com cantos suaves e brilho rosado,
     // título solto com um halo escuro suave (sem plaquinha)
@@ -1302,13 +1316,13 @@ const BN_POS = new T.Vector3(-252, -16, 95);
         }
 
         // fotos de trás (translúcidas, levemente inclinadas)
-        camada({ im: it.imgs[2], rot: -0.1, dx: -20, dy: 10, alpha: 0.45, c1: '#b58cff', c2: '#6b3fa8' });
-        camada({ im: it.imgs[1], rot: 0.07, dx: 16, dy: 6, alpha: 0.6, c1: '#ff9ccb', c2: '#a8467a' });
+        camada({ im: it.imgs[2], rot: -0.1, dx: -20, dy: 10, alpha: 0, c1: '#b58cff', c2: '#6b3fa8' });
+        camada({ im: it.imgs[1], rot: 0.07, dx: 16, dy: 6, alpha: 0, c1: '#ff9ccb', c2: '#a8467a' });
 
         // brilho rosado por trás da foto da frente
         g.save();
-        g.shadowColor = 'rgba(255,170,215,0.6)';
-        g.shadowBlur = 44;
+        g.shadowColor = 'rgba(255,170,215,0)';
+        g.shadowBlur = 0;
         rr(g, cx - w / 2, cy - h / 2, w, h, r);
         g.fillStyle = '#1a0c33';
         g.fill();
@@ -1766,7 +1780,7 @@ const BN_POS = new T.Vector3(-252, -16, 95);
             it.aura.position.copy(it.sprite.position);
             const ae = it.escAtual * 2.1;
             it.aura.scale.set(ae, ae, 1);
-            it.aura.material.opacity = 0.34 * it.op * (emFoco ? 1.4 : 1);
+            it.aura.material.opacity = AURA_CARD * it.op * (emFoco ? 1.4 : 1);
         });
 
         // botão "Entrar" acompanha a parte de baixo do card escolhido
