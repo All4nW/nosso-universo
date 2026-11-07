@@ -496,25 +496,6 @@
         "memoria": ""
     },
     {
-        "id": "detona-ralph",
-        "categoria": "queremos",
-        "titulo": "Detona Ralph",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1788835546409.webp",
-        "cor": {
-            "r": 86,
-            "g": 62,
-            "b": 80
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "wifi-ralph-quebrando-a-internet",
         "categoria": "queremos",
         "titulo": "WiFi Ralph: Quebrando a Internet",
@@ -1122,6 +1103,24 @@
             "r": 63,
             "g": 104,
             "b": 121
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "detona-ralph",
+        "categoria": "filmes",
+        "titulo": "Detona Ralph",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1788835546409.webp",
+        "cor": {
+            "r": 86,
+            "g": 62,
+            "b": 80
         },
         "status": "assistido",
         "progresso": null,
