@@ -52,28 +52,81 @@ const ESTILOS = [
     '.caixa-cobertura{position:absolute;inset:0;background:' + COR_FUNDO + ';opacity:0;pointer-events:none;transition:opacity .6s ease}'
 ].join('\n');
 
+const ESTILOS_REVELA = [
+    '.caixa-overlay{background:none!important}',
+    '.caixa-fundo{position:absolute;inset:0;pointer-events:none;',
+    '  background:radial-gradient(ellipse 70% 55% at 50% 40%,#4b1239 0%,#26091f 48%,' + COR_FUNDO + ' 100%)}',
+    '.caixa-anel{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;pointer-events:none;opacity:0;',
+    '  transform:translate(-50%,-50%);border:2px solid rgba(255,190,225,.85);',
+    '  box-shadow:0 0 36px 6px rgba(255,140,200,.55),inset 0 0 36px 6px rgba(255,140,200,.35)}',
+    // a página de cartas "brota" da boca da caixa
+    'body.caixa-revelando .view[data-view="cartas"] .cartas-colecao{overflow:visible!important;-webkit-mask-image:none!important;mask-image:none!important}',
+    'body.caixa-revelando .carta-envelope{animation:caixa-brota 1s cubic-bezier(.2,1.15,.3,1) var(--bd,0s) backwards,',
+    '  envelope-flutuar var(--flutuar-duracao,7s) ease-in-out var(--flutuar-delay,0s) infinite}',
+    'body.caixa-revelando .bilhete{animation:caixa-brota 1s cubic-bezier(.2,1.15,.3,1) var(--bd,0s) backwards}',
+    'body.caixa-revelando .cartas-intro,body.caixa-revelando .cartas-filtros,body.caixa-revelando .cartas-secao-cabecalho{',
+    '  animation:caixa-sobe .9s ease var(--bd,0s) backwards}',
+    '@keyframes caixa-brota{from{opacity:0;transform:translate(var(--bx,0px),var(--by,0px)) scale(.12) rotate(-24deg)}60%{opacity:1}}',
+    '@keyframes caixa-sobe{from{opacity:0;transform:translateY(26px) scale(.96)}}'
+].join('\n');
+
 function injetarEstilos() {
     if (estilosOk) return;
     estilosOk = true;
     const s = document.createElement('style');
     s.id = 'caixa-cartas-estilos';
-    s.textContent = ESTILOS;
+    s.textContent = ESTILOS + '\n' + ESTILOS_REVELA;
     document.head.appendChild(s);
 }
 
+let abrindo = false;
+
+function esperarFonte() {
+    if (!(document.fonts && document.fonts.load)) return Promise.resolve();
+    return Promise.race([
+        document.fonts.load('42px "Caveat Brush"'),
+        new Promise((r) => setTimeout(r, 700))
+    ]).catch(() => {});
+}
+
+// lê o letters.json (o mesmo da página de cartas): quantas cartas e bilhetinhos existem e de quem são
+async function lerInfoCartas() {
+    try {
+        const r = await Promise.race([
+            fetch('assets/data/letters.json', { cache: 'no-cache' }),
+            new Promise((_, no) => setTimeout(() => no(new Error('demorou')), 900))
+        ]);
+        if (!r.ok) return null;
+        const itens = await r.json();
+        if (!Array.isArray(itens)) return null;
+        const bilhetes = itens.filter((i) => i && i.tipo === 'bilhete');
+        const cartas = itens
+            .filter((i) => i && i.tipo !== 'bilhete')
+            .sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));   // as mais novas primeiro
+        return { cartas: cartas, nCartas: cartas.length, nBilhetes: bilhetes.length };
+    } catch (e) {
+        return null;
+    }
+}
+
 function abrir(opts) {
-    if (atual) return;
+    if (atual || abrindo) return;
     opts = opts || {};
     const T = window.THREE;
     if (!T) { if (opts.aoEntrar) opts.aoEntrar(); return; }
-    try {
-        atual = montar(T, opts);
-    } catch (e) {
-        // sem WebGL (ou qualquer problema): entra direto nas cartas, sem a caixinha
-        console.warn('[CaixaCartas] não deu pra montar a caixa:', e);
-        atual = null;
-        if (opts.aoEntrar) opts.aoEntrar();
-    }
+    abrindo = true;
+    Promise.all([lerInfoCartas(), esperarFonte()]).then((res) => {
+        abrindo = false;
+        if (atual) return;
+        try {
+            atual = montar(T, opts, res[0]);
+        } catch (e) {
+            // sem WebGL (ou qualquer problema): entra direto nas cartas, sem a caixinha
+            console.warn('[CaixaCartas] não deu pra montar a caixa:', e);
+            atual = null;
+            if (opts.aoEntrar) opts.aoEntrar();
+        }
+    });
 }
 
 function fechar() { if (atual) atual.voltar(); }
@@ -84,7 +137,7 @@ function aberta() { return !!atual; }
    A CAIXA
    ========================================================= */
 
-function montar(T, opts) {
+function montar(T, opts, info) {
     const MOBILE = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
     const REDUZIR = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -101,7 +154,9 @@ function montar(T, opts) {
     const overlay = document.createElement('div');
     overlay.className = 'caixa-overlay';
     overlay.innerHTML =
+        '<div class="caixa-fundo"></div>' +
         '<canvas class="caixa-canvas"></canvas>' +
+        '<div class="caixa-anel"></div>' +
         '<button type="button" class="caixa-voltar" aria-label="Voltar ao universo"><span>‹</span>voltar</button>' +
         '<p class="caixa-dica"></p>' +
         '<div class="caixa-cobertura"></div>';
@@ -120,6 +175,8 @@ function montar(T, opts) {
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(0x000000, 0);
+        renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
     const DPR = renderer.getPixelRatio();
 
     /* ---------- texturas desenhadas na hora ---------- */
@@ -374,11 +431,22 @@ function montar(T, opts) {
     const tmp = new T.Vector3();
 
     /* ---------- luzes ---------- */
-    cena.add(new T.HemisphereLight(0xffe6f1, 0x7a2a5a, 0.7));
-    const sol = new T.DirectionalLight(0xffffff, 0.8);
+cena.add(new T.HemisphereLight(0xffe6f1, 0x7a2a5a, 0.5));
+const sol = new T.DirectionalLight(0xffffff, 0.65);
     sol.position.set(4, 9, 6);
+
+        sol.castShadow = true;
+    sol.shadow.mapSize.set(1024, 1024);
+    sol.shadow.camera.left = -6;
+    sol.shadow.camera.right = 6;
+    sol.shadow.camera.top = 6;
+    sol.shadow.camera.bottom = -6;
+    sol.shadow.camera.near = 1;
+    sol.shadow.camera.far = 30;
+    sol.shadow.bias = -0.0006;
+    sol.shadow.normalBias = 0.02;
     cena.add(sol);
-    const luzRosa = new T.DirectionalLight(0xff9cc9, 0.45);
+const luzRosa = new T.DirectionalLight(0xff9cc9, 0.3);
     luzRosa.position.set(-6, 3, -4);
     cena.add(luzRosa);
     const luzDentro = new T.PointLight(0xff9cc9, 0, 9);
@@ -475,17 +543,44 @@ function montar(T, opts) {
     tampa.add(recado);
 
     /* ---------- as cartinhas lá dentro ---------- */
-const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de cada carta (a borda da caixa fica em 2.2)
+const Y_FECHADA = 0, Y_ABERTA = 0.45, Y_SAI = 1.2;     // altura da base de cada carta (a borda da caixa fica em 2.2)
     const CORES_CARTA = [0xfadcd9, 0xf6cfdc, 0xefc3cf, 0xf3d6e8, 0xe8d3f4];
     const CORES_ABA = [0xeeb9c3, 0xe9afc6, 0xe3a8bd, 0xe6b9d6, 0xd2b6e6];
 
-    function criarCarta(i) {
+        // etiquetinha com o nome de quem escreveu, colada no cantinho da carta
+    function texEtiqueta(nome) {
+        const c = novoCanvas(256, 112), g = c.getContext('2d');
+        g.shadowColor = 'rgba(0,0,0,0.3)';
+        g.shadowBlur = 8;
+        g.shadowOffsetY = 3;
+        g.fillStyle = '#fff8f6';
+        g.beginPath();
+        g.moveTo(40, 12); g.lineTo(240, 12); g.lineTo(240, 100); g.lineTo(40, 100); g.lineTo(12, 56);
+        g.closePath();
+        g.fill();
+        g.shadowColor = 'transparent';
+        g.globalCompositeOperation = 'destination-out';
+        g.beginPath(); g.arc(40, 56, 7, 0, Math.PI * 2); g.fill();     // furinho do barbante
+        g.globalCompositeOperation = 'source-over';
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillStyle = '#b53a73';
+        let f = 46;
+        const fonte = (n) => n + 'px "Caveat Brush", "Caveat", "Patrick Hand", cursive';
+        g.font = fonte(f);
+        while (g.measureText(nome).width > 160 && f > 22) { f -= 2; g.font = fonte(f); }
+        g.fillText(nome, 146, 58);
+        return viraTextura(c);
+    }
+
+
+    function criarCarta(i, autor) {
         const w = 1.2, h = 0.82;
         const g = new T.Group();
         const folha = new T.Mesh(new T.BoxGeometry(w * 0.88, 0.22, 0.02), new T.MeshStandardMaterial({ color: 0xfff8f6, roughness: 0.7 }));
         folha.position.set(0, h + 0.07, -0.03);                  // papelzinho pautado espiando por trás
         g.add(folha);
-        const corpo = new T.Mesh(new T.BoxGeometry(w, h, 0.05), new T.MeshStandardMaterial({ color: CORES_CARTA[i % CORES_CARTA.length], roughness: 0.6 }));
+        const corpo = new T.Mesh(new T.BoxGeometry(w, h, 0.05), new T.MeshStandardMaterial({ color: (autor === 'eu' ? 0x9aa6f2 : 0xf4a3c6), roughness: 0.6 }));
         corpo.position.y = h / 2;
         g.add(corpo);
         const forma = new T.Shape();
@@ -493,26 +588,43 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
         forma.lineTo(w / 2, 0);
         forma.lineTo(0, -h * 0.6);
         forma.closePath();
-        const aba = new T.Mesh(new T.ShapeGeometry(forma), new T.MeshStandardMaterial({ color: CORES_ABA[i % CORES_ABA.length], roughness: 0.6, side: T.DoubleSide }));
+        const aba = new T.Mesh(new T.ShapeGeometry(forma), new T.MeshStandardMaterial({ color: (autor === 'eu' ? 0x7f8cdc : 0xe07fa9), roughness: 0.6, side: T.DoubleSide }));
         aba.position.set(0, h, 0.027);
         g.add(aba);
-        const selo = new T.Mesh(new T.CircleGeometry(0.14, 28), new T.MeshBasicMaterial({ map: texSelo(i % 2 ? 'star' : 'heart'), transparent: true }));
+        const selo = new T.Mesh(new T.CircleGeometry(0.14, 28), new T.MeshBasicMaterial({ map: texSelo(autor === 'eu' ? 'star' : 'heart'), transparent: true }));
         selo.position.set(0, h - h * 0.6 + 0.03, 0.034);
         g.add(selo);
+                const etiqueta = new T.Mesh(new T.PlaneGeometry(0.5, 0.22), new T.MeshBasicMaterial({ map: texEtiqueta(autor === 'eu' ? 'Allan' : 'Jhennyfer'), transparent: true, depthWrite: false }));
+        etiqueta.position.set(w * 0.28, h * 0.9, 0.045);
+        etiqueta.rotation.z = -0.12;
+        g.add(etiqueta);
         return g;
     }
 
     const cartas = [];
-    for (let i = 0; i < NUM_CARTAS; i++) {
-        const t = i - (NUM_CARTAS - 1) / 2;
-        const g = criarCarta(i);
-        g.position.set(t * 0.46, Y_FECHADA, -0.55 + i * 0.13);   // cada uma um pouquinho mais à frente, tipo um fichário
-        g.rotation.z = -t * 0.06;
-        g.rotation.x = 0.14;
-        g.userData = { tipo: 'envelope' };
-        caixa.add(g);
-        cartas.push({ g: g, i: i, y: Y_FECHADA, v: 0, alvo: Y_FECHADA, espera: 0, rotZ: -t * 0.06, off: (i % 2) * 0.24 });
-    }
+    const lista = (info && info.cartas.length)
+        ? info.cartas.slice(0, 8).reverse()                          // até 8 cartas, as mais novas por último (na frente)
+        : [{ autor: 'eu' }, { autor: 'ela' }, { autor: 'eu' }, { autor: 'ela' }, { autor: 'eu' }, { autor: 'ela' }];
+    const metade = Math.ceil(lista.length / 2);
+    const filas = [lista.slice(0, metade), lista.slice(metade)];     // fileira de trás (mais alta) e fileira da frente
+    let idx = 0;
+    filas.forEach((fila, f) => {
+        const costas = f === 0;
+        const base = costas ? 1.15 : 0.75;                           // altura do pé das cartas: degrau vinho / piso lilás
+        const z0 = costas ? -0.9 : -0.3;
+        const passo = fila.length > 1 ? Math.min(0.8, 2.3 / (fila.length - 1)) : 0;
+        fila.forEach((c, j) => {
+            const t = j - (fila.length - 1) / 2;
+            const g = criarCarta(idx, c.autor);
+            g.position.set(t * passo, base + Y_FECHADA, z0 + j * 0.03);
+            g.rotation.z = -t * 0.05;
+            g.rotation.x = -0.2;                                     // encostadas pra trás, com a frente virada pra cima
+            g.userData = { tipo: 'envelope' };
+            caixa.add(g);
+            cartas.push({ g: g, i: idx, y: Y_FECHADA, base: base, v: 0, alvo: Y_FECHADA, espera: 0, rotZ: -t * 0.05, off: 0 });
+            idx++;
+        });
+    });
 
         (function enfeitesDeDentro() {
 
@@ -593,6 +705,148 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
         });
 
     })();
+
+  
+    let luzesBrilho = null;
+
+    (function interiorArrumado() {
+
+        const Y_B = 0.75;                                            // altura do piso (a bandeja) onde tudo fica arrumado
+        const corEnv = (autor) => (autor === 'eu' ? 0x9aa6f2 : 0xf4a3c6);
+        const corSelo = (autor) => (autor === 'eu' ? 0x4a4fb8 : 0xc22a7a);
+        const peca = (w, h, d, x, y, z, cor, rough) => {
+            const m = new T.Mesh(new T.BoxGeometry(w, h, d), new T.MeshStandardMaterial({ color: cor, roughness: rough === undefined ? 0.85 : rough }));
+            m.position.set(x, y, z);
+            caixa.add(m);
+            return m;
+        };
+
+        // ---- piso lilás, degrau vinho pra fileira de trás e trilhos rosa-choque na frente de cada fileira ----
+        peca(3.7, Y_B - E, 2.5, 0, (E + Y_B) / 2, 0, 0xa68be0, 1);
+        peca(3.6, 0.4, 0.7, 0, Y_B + 0.2, -0.85, 0x9c2f67);
+        peca(3.5, 0.5, 0.07, 0, Y_B + 0.25, -0.05, 0xd9457f);
+        peca(3.5, 0.45, 0.06, 0, Y_B + 0.4 + 0.225, -0.62, 0xd9457f);
+
+        // ---- dois tapetes na frente: menta (bilhetinhos) e azul (envelopes soltos) ----
+        const tapete = (x, cor) => {
+            const m = new T.Mesh(new T.PlaneGeometry(1.3, 0.9), new T.MeshStandardMaterial({ color: cor, roughness: 1 }));
+            m.rotation.x = -Math.PI / 2;
+            m.position.set(x, Y_B + 0.004, 0.7);
+            caixa.add(m);
+        };
+        tapete(-1.15, 0x6fd0bd);
+        tapete(1.15, 0x6fa8ea);
+
+        // bilhetinhos coloridos (estilo post-it) no tapete menta
+        const postit = [0xff9cc2, 0xb99cf0, 0x8ec1f5, 0xffd666, 0xff9f7a, 0x7fd8b5];
+        for (let i = 0; i < 6; i++) {
+            const b = new T.Group();
+            b.add(new T.Mesh(new T.BoxGeometry(0.4, 0.02, 0.4), new T.MeshStandardMaterial({ color: postit[i % postit.length], roughness: 0.7 })));
+            const fita = new T.Mesh(new T.BoxGeometry(0.17, 0.025, 0.06), new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, transparent: true, opacity: 0.8 }));
+            fita.position.set(0, 0.012, -0.18);
+            fita.rotation.y = rand(-0.25, 0.25);
+            b.add(fita);
+            const col = i % 3, fila = Math.floor(i / 3);
+            b.position.set(-1.15 + (col - 1) * 0.4 + rand(-0.05, 0.05), Y_B + 0.02 + fila * 0.02, 0.7 + (fila - 0.5) * 0.4 + rand(-0.04, 0.04));
+            b.rotation.y = rand(-0.5, 0.5);
+            caixa.add(b);
+        }
+
+        // envelopes soltos no tapete azul (rosa = Jhennyfer · azul-lilás = Allan)
+        [['ela', -1], ['eu', 0], ['ela', 1]].forEach((d, i) => {
+            const e = new T.Group();
+            e.add(new T.Mesh(new T.BoxGeometry(0.8, 0.03, 0.55), new T.MeshStandardMaterial({ color: corEnv(d[0]), roughness: 0.6 })));
+            const selo = new T.Mesh(new T.CylinderGeometry(0.08, 0.08, 0.02, 20), new T.MeshStandardMaterial({ color: corSelo(d[0]), roughness: 0.4 }));
+            selo.position.set(0, 0.025, 0.06);
+            e.add(selo);
+            e.position.set(1.15 + d[1] * 0.36, Y_B + 0.02 + i * 0.02, 0.7 + rand(-0.05, 0.05));
+            e.rotation.y = d[1] * 0.35 + rand(-0.1, 0.1);
+            caixa.add(e);
+        });
+
+        // maço de cartinhas amarrado com fitinha, no meio
+        const maco = new T.Group();
+        for (let i = 0; i < 5; i++) {
+            const e = new T.Mesh(new T.BoxGeometry(0.9, 0.05, 0.62), new T.MeshStandardMaterial({ color: corEnv(i % 2 ? 'eu' : 'ela'), roughness: 0.6 }));
+            e.position.y = 0.03 + i * 0.055;
+            e.rotation.y = (i - 2) * 0.07;
+            maco.add(e);
+        }
+        const fitaM = new T.Mesh(new T.BoxGeometry(0.1, 0.34, 0.66), rosa);
+        fitaM.position.y = 0.16;
+        maco.add(fitaM);
+        [-1, 1].forEach((lado) => {
+            const lc = new T.Mesh(new T.SphereGeometry(0.1, 14, 10), rosa);
+            lc.scale.set(1.5, 0.6, 0.9);
+            lc.position.set(lado * 0.1, 0.36, 0);
+            lc.rotation.z = lado * 0.4;
+            maco.add(lc);
+        });
+        maco.position.set(0, Y_B, 0.78);
+        maco.rotation.y = 0.2;
+        caixa.add(maco);
+
+        // ---- fio de luzinhas piscando ao longo do topo das paredes ----
+        const cores = [0xffd36e, 0xff9ccb, 0xffffff, 0xc9a7f5].map((x) => new T.Color(x));
+        const posicoes = [], corVert = [];
+        const bulbo = (x, y, z, i) => {
+            const cor = cores[i % cores.length];
+            const m = new T.Mesh(new T.SphereGeometry(0.05, 10, 8), new T.MeshBasicMaterial({ color: cor }));
+            m.position.set(x, y, z);
+            caixa.add(m);
+            posicoes.push(x, y, z);
+            corVert.push(cor.r, cor.g, cor.b);
+        };
+        for (let i = 0; i <= 10; i++) {
+            const u = i / 10;
+            bulbo(-1.7 + u * 3.4, 2.04 - 0.12 * Math.sin(u * Math.PI), -1.2, i);
+        }
+        [-1, 1].forEach((lado) => {
+            for (let i = 1; i <= 4; i++) {
+                const u = i / 5;
+                bulbo(lado * 1.78, 2.04 - 0.1 * Math.sin(u * Math.PI), -1.2 + u * 2.3, i + 3);
+            }
+        });
+        const geo = new T.BufferGeometry();
+        geo.setAttribute('position', new T.Float32BufferAttribute(posicoes, 3));
+        geo.setAttribute('color', new T.Float32BufferAttribute(corVert, 3));
+        luzesBrilho = new T.Points(geo, new T.PointsMaterial({ size: 0.5, map: texBrilhoRosa('255,255,255', 0.9), vertexColors: true, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0.8 }));
+        caixa.add(luzesBrilho);
+
+        // ---- no chão, ao lado da caixa: envelopes soltos e coraçõezinhos de papel ----
+        [[-3.0, 1.4, 0.5, 'ela'], [-2.5, 2.1, -0.3, 'eu'], [3.5, -1.2, 0.8, 'ela'], [3.1, 1.6, -0.4, 'eu']].forEach((d) => {
+            const env = new T.Group();
+            const corpo = new T.Mesh(new T.BoxGeometry(0.85, 0.03, 0.58), new T.MeshStandardMaterial({ color: corEnv(d[3]), roughness: 0.6 }));
+            corpo.position.y = 0.02;
+            env.add(corpo);
+            const selo = new T.Mesh(new T.CylinderGeometry(0.09, 0.09, 0.02, 20), new T.MeshStandardMaterial({ color: corSelo(d[3]), roughness: 0.4 }));
+            selo.position.set(0, 0.045, 0.06);
+            env.add(selo);
+            env.position.set(d[0], 0, d[1]);
+            env.rotation.y = d[2];
+            chao.add(env);
+        });
+
+        const forma = new T.Shape();
+        for (let i = 0; i <= 60; i++) {
+            const t = (i / 60) * Math.PI * 2;
+            const x = (16 * Math.pow(Math.sin(t), 3)) / 16;
+            const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 16;
+            if (i === 0) forma.moveTo(x, y); else forma.lineTo(x, y);
+        }
+        const geoCor = new T.ExtrudeGeometry(forma, { depth: 0.3, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 3, curveSegments: 1 });
+        geoCor.center();
+        [[1.3, 2.3, 0.2], [-0.9, 2.5, 0.16], [2.4, 2.0, 0.14], [-1.9, 2.6, 0.13], [0.2, 2.8, 0.12]].forEach((h) => {
+            const m = new T.Mesh(geoCor, new T.MeshStandardMaterial({ color: pick([0xff5c9d, 0xff8fbf, 0xf06a9f, 0xc9a7f5]), roughness: 0.3 }));
+            m.scale.setScalar(h[2]);
+            m.rotation.x = -Math.PI / 2;
+            m.rotation.z = rand(-0.6, 0.6);
+            m.position.set(h[0], h[2] * 0.5, h[1]);
+            chao.add(m);
+        });
+
+    })();
+
 
     /* ---------- brilhinhos, corações subindo, confete ---------- */
     let matBrilhos = null, matConfete = null;
@@ -907,8 +1161,13 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
     }
 
     /* ---------- ações ---------- */
+     const resumo = info
+        ? (info.nCartas === 1 ? '1 carta' : info.nCartas + ' cartas') +
+          (info.nBilhetes ? ' e ' + (info.nBilhetes === 1 ? '1 bilhetinho' : info.nBilhetes + ' bilhetinhos') : '') +
+          ' guardados'
+        : '';
     function dica(txt) {
-        elDica.textContent = txt;
+        elDica.innerHTML = (resumo ? resumo + '<br>' : '') + txt;
         elDica.style.opacity = '1';
     }
     const dicaFechada = MOBILE ? DICA_FECHADA_TOQUE : DICA_FECHADA_CLIQUE;
@@ -931,6 +1190,79 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
         dica(dicaFechada);
         evento('fechar-caixa');
     }
+    const elFundo = overlay.querySelector('.caixa-fundo');
+    const elAnel = overlay.querySelector('.caixa-anel');
+    let revelando = false, tRev = 0, raioMax = 2000, pxBoca = 0, pyBoca = 0;
+    let paginaTocada = [];
+    const SEL_PAGINA = '.cartas-intro, .cartas-filtros, .cartas-secao-cabecalho, .carta-envelope, .bilhete';
+
+    function limparRevelacao() {
+        document.body.classList.remove('caixa-revelando');
+        paginaTocada.forEach((el) => {
+            el.style.removeProperty('--bx');
+            el.style.removeProperty('--by');
+            el.style.removeProperty('--bd');
+        });
+        paginaTocada = [];
+    }
+
+    // a página de cartas "se forma" a partir da boca da caixa
+    function iniciarRevelacao() {
+        const view = document.querySelector('.view[data-view="cartas"]');
+        const w = overlay.clientWidth, h = overlay.clientHeight;
+        tmp.set(0, H + 0.4, 0.3).project(camera);                  // onde a boca da caixa está na tela
+        pxBoca = (tmp.x * 0.5 + 0.5) * w;
+        pyBoca = (-tmp.y * 0.5 + 0.5) * h;
+        raioMax = Math.hypot(Math.max(pxBoca, w - pxBoca), Math.max(pyBoca, h - pyBoca)) + 140;
+
+        if (view && view.offsetWidth > 0) {
+            view.scrollTop = 0;
+            paginaTocada = Array.from(view.querySelectorAll(SEL_PAGINA)).filter((el) => {
+                const r = el.getBoundingClientRect();
+                return r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+            });
+            document.body.classList.add('caixa-revelando');
+            paginaTocada.forEach((el) => {
+                const r = el.getBoundingClientRect();
+                const dx = pxBoca - (r.left + r.width / 2);
+                const dy = pyBoca - (r.top + r.height / 2);
+                el.style.setProperty('--bx', dx.toFixed(1) + 'px');
+                el.style.setProperty('--by', dy.toFixed(1) + 'px');
+                el.style.setProperty('--bd', Math.min(0.9, Math.hypot(dx, dy) / 1500 + Math.random() * 0.12).toFixed(2) + 's');
+            });
+            // fora da lista de timers: precisa rodar mesmo depois que a caixa sumir
+            setTimeout(limparRevelacao, 3600);
+        }
+
+        elAnel.style.left = pxBoca.toFixed(1) + 'px';
+        elAnel.style.top = pyBoca.toFixed(1) + 'px';
+        revelando = true;
+        tRev = 0;
+    }
+
+    function passoRevelacao(dt) {
+        tRev += dt;
+        const p = clamp(tRev / 1.35, 0, 1);
+        const R = (1 - Math.pow(1 - p, 3)) * raioMax;
+        const mascara = 'radial-gradient(circle at ' + pxBoca.toFixed(1) + 'px ' + pyBoca.toFixed(1) + 'px, transparent ' + R.toFixed(1) + 'px, #000 ' + (R + 90).toFixed(1) + 'px)';
+        elFundo.style.webkitMaskImage = mascara;
+        elFundo.style.maskImage = mascara;
+        elAnel.style.width = elAnel.style.height = (R * 2).toFixed(1) + 'px';
+        elAnel.style.opacity = R > 8 ? String(clamp(1 - p * 1.15, 0, 0.9)) : '0';
+
+        // as cartinhas 3D dão um "pop" e somem: é nesse momento que viram a página
+        const pc = clamp(tRev / 0.5, 0, 1);
+        cartas.forEach((k) => k.g.scale.setScalar(Math.max(0.001, (1 - pc) * (1 + 0.3 * Math.sin(pc * Math.PI)))));
+
+        // depois a caixa se desfaz
+        canvas.style.opacity = String(1 - clamp((tRev - 0.5) / 0.9, 0, 1));
+
+        if (p >= 1 && elFundo.style.display !== 'none') {
+            elFundo.style.display = 'none';
+            overlay.style.pointerEvents = 'none';                      // a página já pode ser clicada
+        }
+    }
+
     function entrar() {
         if (entrando || !aberta) return;
         entrando = true;
@@ -938,14 +1270,15 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
         orb.min = 3;
         tOnda = 0;
         elDica.style.opacity = '0';
-        cartas.forEach((k, i) => { k.alvo = Y_SAI; k.espera = i * 0.08; });     // as cartas sobem pela metade
+        botaoVoltar.style.opacity = '0';
+        botaoVoltar.style.pointerEvents = 'none';
+        cartas.forEach((k, i) => { k.alvo = Y_SAI; k.espera = i * 0.07; });     // as cartas sobem pela metade
         tmp.set(0, H + 0.6, 0.3);
-        soltarCoracoes(tmp, 14, true);
+        soltarCoracoes(tmp, 16, true);
         evento('entrar-cartas');
-        depois(550, () => { elCobertura.style.opacity = '1'; });                // a tela vai escurecendo
-        depois(1250, () => { if (opts.aoEntrar) opts.aoEntrar(); });             // troca para #cartas por trás
-        depois(1550, () => { overlay.classList.add('saindo'); });                // a caixa some e revela as Cartas
-        depois(2500, () => destruir());
+        depois(450, () => { if (opts.aoEntrar) opts.aoEntrar(); });             // troca pra #cartas por baixo, escondida
+        depois(900, iniciarRevelacao);                                          // a página brota da boca da caixa
+        depois(3300, () => destruir());
     }
     function voltar() {
         if (entrando || destruido) return;
@@ -1105,7 +1438,7 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
                 k.v *= Math.exp(-8 * dt);
                 k.y += k.v * dt;
             }
-            k.g.position.y = k.y + k.off * clamp(abertura, 0, 1);
+            k.g.position.y = k.base + k.y + k.off * clamp(abertura, 0, 1);
             k.g.rotation.z = k.rotZ + (aberta ? Math.sin(tempo * 1.4 + k.i) * 0.02 : 0);
         });
 
@@ -1167,6 +1500,8 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
         matConfete.uniforms.uT.value = Math.min(tConfete, 99);
         matBrilhos.uniforms.uT.value = tempo;
 
+                if (luzesBrilho) luzesBrilho.material.opacity = 0.55 + 0.3 * Math.sin(tempo * 2.2);
+
         // corações subindo (de vez em quando, mesmo parado)
         proxAmbiente -= dt;
         if (proxAmbiente <= 0 && subindo.length < 18) {
@@ -1188,6 +1523,8 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
                 subindo.splice(i, 1);
             }
         }
+
+                if (revelando) passoRevelacao(dt);
     }
 
     function frame(agora) {
@@ -1229,6 +1566,16 @@ const Y_FECHADA = 1.1, Y_ABERTA = 1.75, Y_SAI = 2.35;     // altura da base de c
     const api = { voltar: voltar, destruir: destruir };
 
     /* ---------- partida ---------- */
+
+        // sombras: dão volume e deixam cada coisa lá dentro "separada" das outras
+    caixa.traverse((o) => {
+        if (!o.isMesh || !o.material) return;
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        if (m && m.isMeshStandardMaterial) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+        }
+    });
     redimensionar();
     orb.ultima = performance.now();
     overlay.getBoundingClientRect();                    // força o navegador a "ver" o overlay antes da transição
