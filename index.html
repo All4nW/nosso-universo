@@ -1,79 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="msg-final">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="theme-color" content="#000000">
 
-<style>
-/* ===== MENSAGEM FINAL: só vale enquanto o <html> tiver class="msg-final" ===== */
-#msg-final { display: none; }
-
-html.msg-final,
-html.msg-final body {
-    margin: 0;
-    height: 100%;
-    background: #000 !important;
-    overflow: hidden !important;
-}
-
-/* some TUDO que não for a mensagem: hub, navbar, player, canvas, efeitos... */
-html.msg-final body > *:not(#msg-final) { display: none !important; }
-
-html.msg-final #msg-final {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483647;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    padding: max(28px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left));
-    background: #000;
-    cursor: default;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-#msg-final p {
-    max-width: 34em;
-    margin: 0;
-    font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.65rem);
-    line-height: 1.75;
-    text-align: center;
-    text-wrap: pretty;
-    color: #e8e2e6;
-    opacity: 0;
-    animation: msg-final-entra 3.2s ease 0.8s forwards;
-}
-
-@keyframes msg-final-entra { to { opacity: 1; } }
-
-@media (prefers-reduced-motion: reduce) {
-    #msg-final p { animation: none; opacity: 1; }
-}
-</style>
-
-<script>
-/* MENSAGEM FINAL: silêncio total (só age com class="msg-final" no <html>) */
-(function () {
-    if (!document.documentElement.classList.contains('msg-final')) return;
-
-    // o áudio do site nunca "acorda"
-    ['AudioContext', 'webkitAudioContext'].forEach(function (nome) {
-        var AC = window[nome];
-        if (AC && AC.prototype) AC.prototype.resume = function () { return Promise.resolve(); };
-    });
-
-    // nenhum <audio>, <video> ou "new Audio()" consegue tocar
-    HTMLMediaElement.prototype.play = function () {
-        try { this.muted = true; this.pause(); } catch (e) {}
-        return Promise.resolve();
-    };
-})();
-</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosso Universo ❤️</title>
 
@@ -99,10 +28,7 @@ html.msg-final #msg-final {
     
 </head>
 <body>
-    <!-- MENSAGEM FINAL -->
-<div id="msg-final">
-    <p>De todas as escolhas que fiz, as melhores foram por você: as que te davam sorrisos e alimentavam teus sonhos. O meu pior erro, no entanto, foi a decisão que te afastou, que apagou a tua alegria por mim e desmoronou o que tínhamos. Entre tantas escolhas certas, no fim, acabei escolhendo errado. Eu vou te amar pra sempre :c</p>
-</div>
+
 <div id="timeline-fundo"></div>
 <canvas id="stars-bg"></canvas>
     <div id="navbar-placeholder"></div>
