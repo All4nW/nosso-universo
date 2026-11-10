@@ -3,6 +3,7 @@
    Carregue DEPOIS do css/salinha.css.
    ===================================================================== */
 :root{
+      --ic-mic-fill:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='9' y='3' width='6' height='11' rx='3' fill='%23000'/%3E%3Cpath d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --ic-mic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='3' width='6' height='11' rx='3'/%3E%3Cpath d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7'/%3E%3C/svg%3E");
 }
 
@@ -17,7 +18,7 @@ body[data-role="a"] .mic-only{display:grid}
 }
 #bMic.live{color:#8df0b4;background:rgba(110,231,160,.16);border-color:rgba(110,231,160,.55)}
 #bMic.live:hover{background:rgba(110,231,160,.26);border-color:rgba(110,231,160,.8);color:#b8f5cf}
-#bMic.live.talk{box-shadow:0 0 0 3px rgba(110,231,160,.3),0 0 18px rgba(110,231,160,.45)}
+#bMic.live.talk{box-shadow:0 0 0 2px rgba(95,214,140,.6),0 0 10px rgba(95,214,140,.25)}
 #bMic.muted{color:#ff9d9d;background:rgba(255,100,100,.16);border-color:rgba(255,130,130,.5)}
 #bMic.muted:hover{background:rgba(255,100,100,.26);border-color:rgba(255,150,150,.8);color:#ffc2c2}
 #bMic.muted::after{
@@ -31,10 +32,25 @@ body.imm[data-role="a"] .ctrl #bMic{display:grid;width:40px;height:40px}
 body.imm[data-role="a"] .ctrl{gap:8px}
 body.imm #bMic:not(.live):not(.muted){background:rgba(14,9,6,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 
-/* brilho no avatar de quem está falando (vale pros dois lados) */
+/* avatar de quem fala: anel verde nítido, brilho leve, foto escurecida e microfone animado na frente */
 .seat.talk .av{
-  border-color:rgba(110,231,160,.95);
-  box-shadow:0 0 0 4px rgba(110,231,160,.28),0 0 28px rgba(110,231,160,.55),0 4px 14px rgba(0,0,0,.5);
+  border-color:#5fd68c;
+  box-shadow:0 0 0 3px rgba(95,214,140,.75),0 0 14px rgba(95,214,140,.28),0 4px 14px rgba(0,0,0,.5),inset 0 0 0 40px rgba(0,0,0,.5);
+}
+.seat .av::before{
+  content:"";position:absolute;left:50%;top:50%;width:48%;height:48%;transform:translate(-50%,-50%);
+  opacity:0;transition:opacity .2s;pointer-events:none;
+  background:linear-gradient(to top,#eafff2 50%,rgba(234,255,242,.32) 50%);
+  background-size:100% 200%;background-position:50% 70%;
+  -webkit-mask:var(--ic-mic-fill) center/contain no-repeat;mask:var(--ic-mic-fill) center/contain no-repeat;
+}
+.seat.talk .av::before{opacity:1;animation:micLevel 1s ease-in-out infinite}
+@keyframes micLevel{
+  0%{background-position:50% 70%}
+  20%{background-position:50% 15%}
+  45%{background-position:50% 100%}
+  70%{background-position:50% 35%}
+  100%{background-position:50% 70%}
 }
 
 /* ---------- configurações: medidor e sensibilidade ---------- */

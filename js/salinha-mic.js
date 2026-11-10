@@ -109,9 +109,11 @@ class MicGate extends AudioWorkletProcessor{
   constructor(){
     super();
     this.th = -50; this.gateOn = true;
-    this.lvl = 0; this.g = 0; this.hold = 0; this.isOpen = false;
-    this.N = 2048; this.buf = new Float32Array(this.N); this.w = 0;
-    this.D = Math.round(sampleRate * 0.012);
+    this.lvl = 0; this.g = 0; this.hold = 0; this.isOpen = false; this.above = 0;
+    this.l1 = 0; this.l2 = 0;
+    this.k = 1 - Math.exp(-2 * Math.PI * 250 / sampleRate);
+    this.N = 4096; this.buf = new Float32Array(this.N); this.w = 0;
+    this.D = Math.round(sampleRate * 0.025);
     this.cnt = 0;
     this.port.onmessage = e => {
       const d = e.data || {};
@@ -124,16 +126,29 @@ class MicGate extends AudioWorkletProcessor{
     if (!out) return true;
     const inp = inputs[0] && inputs[0][0], n = out.length;
     if (!inp){ out.fill(0); return true; }
-    let s = 0; for (let i = 0; i < n; i++) s += inp[i] * inp[i];
+    let s = 0;
+    for (let i = 0; i < n; i++){
+      const x = inp[i];
+      this.l1 += this.k * (x - this.l1);
+      const h1 = x - this.l1;
+      this.l2 += this.k * (h1 - this.l2);
+      const d = h1 - this.l2;
+      s += d * d;
+    }
     const rms = Math.sqrt(s / n);
     this.lvl = rms > this.lvl ? rms : this.lvl * 0.93 + rms * 0.07;
     const db = 20 * Math.log10(this.lvl + 1e-9);
-    if (db > this.th){ this.isOpen = true; this.hold = sampleRate * 0.30; }
-    else if (this.hold > 0){ this.hold -= n; }
-    else this.isOpen = false;
+    const raw = 20 * Math.log10(rms + 1e-9);
+    if (this.isOpen){
+      if (db > this.th - 5) this.hold = sampleRate * 0.25;
+      else { this.hold -= n; if (this.hold <= 0) this.isOpen = false; }
+    } else {
+      if (raw > this.th) this.above += n; else this.above = Math.max(0, this.above - n / 2);
+      if (this.above >= sampleRate * 0.015){ this.isOpen = true; this.hold = sampleRate * 0.25; this.above = 0; }
+    }
     const target = (!this.gateOn || this.isOpen) ? 1 : 0;
     const ca = 1 - Math.exp(-1 / (sampleRate * 0.004));
-    const cr = 1 - Math.exp(-1 / (sampleRate * 0.10));
+    const cr = 1 - Math.exp(-1 / (sampleRate * 0.12));
     for (let i = 0; i < n; i++){
       this.buf[this.w] = inp[i];
       const r = (this.w - this.D + this.N) % this.N;
@@ -152,15 +167,15 @@ async function ensureCtx(){
   if (M.ctx) return;
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC) throw new Error('sem WebAudio');
-  const ctx = new AC({latencyHint:'interactive'});
+  let ctx; try{ ctx = new AC({latencyHint:'playback', sampleRate:48000}); }catch(e){ ctx = new AC({latencyHint:'playback'}); }
   M.ctx = ctx;
   M.dest = ctx.createMediaStreamDestination();
   M.out = ctx.createGain(); M.out.gain.value = 1;
 
-  M.hp = ctx.createBiquadFilter(); M.hp.type = 'highpass'; M.hp.frequency.value = 90; M.hp.Q.value = .7;
+  M.hp = ctx.createBiquadFilter(); M.hp.type = 'highpass'; M.hp.frequency.value = 120; M.hp.Q.value = .707;
 
   M.comp = ctx.createDynamicsCompressor();
-  M.comp.threshold.value = -26; M.comp.knee.value = 24; M.comp.ratio.value = 3;
+  M.comp.threshold.value = -20; M.comp.knee.value = 30; M.comp.ratio.value = 2;
   M.comp.attack.value = .004; M.comp.release.value = .2;
 
   M.an = ctx.createAnalyser(); M.an.fftSize = 1024; M.hp.connect(M.an);   /* só leitura (reserva do medidor) */
@@ -193,8 +208,8 @@ function startFallbackMeter(){
 
 function constraints(useDev){
   const off = S.ns === 'off';
-  const a = {echoCancellation: !off, noiseSuppression: !off, autoGainControl: !off,
-             channelCount:{ideal:1}, sampleRate:{ideal:48000}, voiceIsolation: S.ns === 'strong'};
+  const a = {echoCancellation: !off, noiseSuppression: !off, autoGainControl: S.ns === 'std',
+             channelCount:{ideal:1}, sampleRate:{ideal:48000}};
   if (useDev && S.dev) a.deviceId = {exact: S.dev};
   return a;
 }
@@ -283,6 +298,11 @@ function ensureCall(){
     if (!conn || !conn.open || !peer || !peer.open) return;
     const c = peer.call(otherId, M.dest.stream, {metadata:{kind:'mic'}, sdpTransform: opusTune});
     M.call = c; M.callAt = Date.now(); M.connRef = conn; M.dis = 0;
+        setTimeout(() => { try{ c.peerConnection.getSenders().forEach(s => {
+      const p = s.getParameters(); if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+      p.encodings[0].priority = 'high'; p.encodings[0].networkPriority = 'high';
+      s.setParameters(p).catch(() => {});
+    }); }catch(e){} }, 500);
     const gone = () => { if (M.call === c) M.call = null; };
     c.on('close', gone); c.on('error', gone);
     const pc = c.peerConnection;
