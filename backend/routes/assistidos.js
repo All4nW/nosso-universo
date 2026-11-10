@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const { espelharPasta } = require("../utils/arquivos");
 
 const router = express.Router();
 
@@ -226,78 +227,69 @@ router.get(
     }
 );
 
-// =====================================================
-// SALVAR / SINCRONIZAR
-// =====================================================
-
 router.post(
     "/",
     (req, res) => {
 
         try {
 
-            const itens =
-                req.body;
+            const itens = req.body;
 
-            if (
-                !Array.isArray(
-                    itens
-                )
-            ) {
+            if (!Array.isArray(itens)) {
 
-                return res
-                    .status(400)
-                    .json({
-
-                        erro:
-                            "Os dados precisam ser um array."
-
-                    });
+                return res.status(400).json({
+                    erro: "Os dados precisam ser um array."
+                });
 
             }
 
             fs.writeFileSync(
-
                 DATA_PATH,
-
-                JSON.stringify(
-                    itens,
-                    null,
-                    4
-                ),
-
+                JSON.stringify(itens, null, 4),
                 "utf8"
-
             );
 
+            // move para a lixeira as imagens que o JSON não usa mais
+            // (só roda se a lista não estiver vazia, por segurança)
+            let removidos = 0;
+
+            if (itens.length > 0) {
+
+                const usados = new Set();
+
+                const achados = JSON.stringify(itens)
+                    .match(/assets\/images\/assistidos\/[^"\\]+/g) || [];
+
+                achados.forEach((caminho) => {
+
+                    usados.add(path.basename(caminho));
+
+                    try {
+                        usados.add(path.basename(decodeURIComponent(caminho)));
+                    } catch (_) {}
+
+                });
+
+                removidos = espelharPasta(IMAGES_DIR, usados);
+
+            }
+
             res.json({
-
                 sucesso: true,
-
-                mensagem:
-                    "Assistidos sincronizados com sucesso.",
-
-                total:
-                    itens.length
-
+                mensagem: "Assistidos sincronizados com sucesso.",
+                total: itens.length,
+                removidos
             });
 
         }
 
         catch (erro) {
 
-            console.error(
-                erro
-            );
+            console.error(erro);
 
-            res
-                .status(500)
-                .json({
-
-                    erro:
-                        "Erro ao salvar assistidos."
-
-                });
+            res.status(500).json({
+                erro: "Erro ao salvar assistidos."
+            });
 
         }
 

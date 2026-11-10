@@ -69,25 +69,6 @@
         "memoria": ""
     },
     {
-        "id": "harry-potter",
-        "categoria": "queremos",
-        "titulo": "Harry Potter",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1786910514468.jpg",
-        "cor": {
-            "r": 59,
-            "g": 86,
-            "b": 111
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "diario-de-uma-paixao",
         "categoria": "filmes",
         "titulo": "Diário De Uma Paixão",
@@ -1133,11 +1114,11 @@
         "titulo": "Harry Potter e a Pedra Filosofal",
         "ano": null,
         "anoAssistido": 2026,
-        "capa": "assets/images/assistidos/assistido-1794289069356.jpg",
+        "capa": "assets/images/assistidos/assistido-1794332848689.jpg",
         "cor": {
-            "r": 72,
-            "g": 91,
-            "b": 124
+            "r": 53,
+            "g": 85,
+            "b": 90
         },
         "status": "assistido",
         "progresso": null,
@@ -1189,11 +1170,11 @@
         "titulo": "Harry Potter e o Cálice de Fogo",
         "ano": null,
         "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290223602.png",
+        "capa": "assets/images/assistidos/assistido-1794333022217.jpg",
         "cor": {
-            "r": 92,
-            "g": 84,
-            "b": 121
+            "r": 45,
+            "g": 67,
+            "b": 77
         },
         "tipo": "filmes",
         "status": null,
@@ -1208,11 +1189,11 @@
         "titulo": "Harry Potter e a Ordem da Fênix",
         "ano": null,
         "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290332195.jpg",
+        "capa": "assets/images/assistidos/assistido-1794333149225.webp",
         "cor": {
-            "r": 44,
-            "g": 96,
-            "b": 94
+            "r": 43,
+            "g": 70,
+            "b": 85
         },
         "tipo": "filmes",
         "status": null,
@@ -1227,11 +1208,11 @@
         "titulo": "Harry Potter e o Enigma do Príncipe",
         "ano": null,
         "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290470859.jpg",
+        "capa": "assets/images/assistidos/assistido-1794333208568.jpg",
         "cor": {
-            "r": 89,
-            "g": 111,
-            "b": 109
+            "r": 43,
+            "g": 82,
+            "b": 92
         },
         "tipo": "filmes",
         "status": null,
@@ -1246,11 +1227,11 @@
         "titulo": "Harry Potter e as Relíquias da Morte – Parte 1",
         "ano": null,
         "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794328527546.jpg",
+        "capa": "assets/images/assistidos/assistido-1794333548336.png",
         "cor": {
-            "r": 75,
-            "g": 99,
-            "b": 92
+            "r": 72,
+            "g": 95,
+            "b": 91
         },
         "tipo": "filmes",
         "status": null,
