@@ -496,25 +496,6 @@
         "memoria": ""
     },
     {
-        "id": "wifi-ralph-quebrando-a-internet",
-        "categoria": "queremos",
-        "titulo": "WiFi Ralph: Quebrando a Internet",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1788835590179.webp",
-        "cor": {
-            "r": 62,
-            "g": 108,
-            "b": 144
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "crepusculo",
         "categoria": "filmes",
         "titulo": "Crepúsculo",
@@ -1126,6 +1107,155 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "wifi-ralph-quebrando-a-internet",
+        "categoria": "filmes",
+        "titulo": "WiFi Ralph: Quebrando a Internet",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1788835590179.webp",
+        "cor": {
+            "r": 62,
+            "g": 108,
+            "b": 144
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-a-pedra-filosofal",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e a Pedra Filosofal",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794289069356.jpg",
+        "cor": {
+            "r": 72,
+            "g": 91,
+            "b": 124
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-a-camara-secreta",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e a Câmara Secreta",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290019203.jpg",
+        "cor": {
+            "r": 95,
+            "g": 101,
+            "b": 67
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-prisioneiro-de-azkaban",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e o Prisioneiro de Azkaban",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290134858.webp",
+        "cor": {
+            "r": 60,
+            "g": 106,
+            "b": 118
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-calice-de-fogo",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e o Cálice de Fogo",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290223602.png",
+        "cor": {
+            "r": 92,
+            "g": 84,
+            "b": 121
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-a-ordem-da-fenix",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e a Ordem da Fênix",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290332195.jpg",
+        "cor": {
+            "r": 44,
+            "g": 96,
+            "b": 94
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-enigma-do-principe",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e o Enigma do Príncipe",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290470859.jpg",
+        "cor": {
+            "r": 89,
+            "g": 111,
+            "b": 109
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-as-reliquias-da-morte-parte-2",
+        "categoria": "queremos",
+        "titulo": "Harry Potter e as Relíquias da Morte – Parte 2",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794290699332.jpg",
+        "cor": {
+            "r": 87,
+            "g": 108,
+            "b": 105
+        },
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]

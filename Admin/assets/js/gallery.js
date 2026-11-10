@@ -11,10 +11,17 @@ let fotoImagemSelecionada = null;
 let galeriaDragId = null;
 let filtroAlbumAdminAtivo = null;
 
+const LIMITE_SYNC_MS = 15000;
+
 
 async function initGaleria() {
+    // o painel às vezes injeta o HTML depois do script: espera a tela da galeria existir
+    for (let i = 0; i < 50 && !document.getElementById('pastas-admin-itens'); i++) {
+        await new Promise((r) => setTimeout(r, 200));
+    }
+
+    registrarEventosGaleria();      // liga os botões ANTES de falar com o servidor
     await carregarPastasAdmin();
-    registrarEventosGaleria();
 }
 
 
@@ -939,14 +946,65 @@ async function excluirFoto(id) {
 // ===== SINCRONIZAR =====
 
 async function sincronizarGaleria() {
+    const botao = document.getElementById('btn-sincronizar-galeria');
+    const status = document.getElementById('galeria-sync-status');
+
+    if (botao && botao.disabled) return;
+
+    const mostrar = (texto, tipo) => {
+        if (status) {
+            status.textContent = texto;
+            status.className = 'galeria-sync-status ' + (tipo || '');
+        }
+        console.log('[GALERIA ADMIN] sincronizar:', texto);
+    };
+
+    if (botao) {
+        botao.dataset.rotulo = botao.dataset.rotulo || botao.textContent;
+        botao.disabled = true;
+        botao.textContent = '⏳ Sincronizando...';
+    }
+
+    mostrar('Falando com o servidor...', 'carregando');
+
+    const controle = new AbortController();
+    const limite = setTimeout(() => controle.abort(), LIMITE_SYNC_MS);
+
     try {
-        const resposta = await fetch('http://localhost:3000/api/galeria/exportar');
-        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        const resposta = await fetch(
+            `http://localhost:3000/api/galeria/exportar?t=${Date.now()}`,
+            { cache: 'no-store', signal: controle.signal }
+        );
+
+        if (!resposta.ok) {
+            let detalhe = '';
+            try { detalhe = (await resposta.text()).slice(0, 160); } catch (_) {}
+            throw new Error(`O servidor respondeu com erro ${resposta.status}. ${detalhe}`);
+        }
+
         const resultado = await resposta.json();
-        alert(`✅ Galeria sincronizada! ${resultado.quantidade} pastas exportadas.\n\nAgora é só fazer o commit/push para publicar.`);
+        const hora = new Date().toLocaleTimeString('pt-BR');
+
+        mostrar(`✅ ${resultado.quantidade ?? '?'} pastas exportadas às ${hora}. Agora é só fazer commit e push.`, 'ok');
     } catch (erro) {
         console.error('[GALERIA ADMIN] Erro ao sincronizar:', erro);
-        alert('❌ Não foi possível sincronizar com o site.');
+
+        let motivo = erro.message;
+
+        if (erro.name === 'AbortError') {
+            motivo = `O servidor não respondeu em ${LIMITE_SYNC_MS / 1000}s (travado?). Olhe o terminal dele.`;
+        } else if (erro instanceof TypeError) {
+            motivo = 'Não consegui falar com o servidor em http://localhost:3000. Ele está ligado?';
+        }
+
+        mostrar('❌ ' + motivo, 'erro');
+    } finally {
+        clearTimeout(limite);
+
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = botao.dataset.rotulo;
+        }
     }
 }
 
@@ -954,6 +1012,10 @@ async function sincronizarGaleria() {
 // ===== EVENTOS =====
 
 function registrarEventosGaleria() {
+
+        const raiz = document.getElementById('pastas-admin-itens');
+    if (!raiz || raiz.dataset.eventosLigados) return;   // evita ligar duas vezes (cada clique rodaria 2x)
+    raiz.dataset.eventosLigados = '1';
     document.getElementById('btn-nova-pasta')?.addEventListener('click', abrirFormularioNovaPasta);
     document.getElementById('pasta-btn-cancelar')?.addEventListener('click', fecharFormularioPasta);
     document.getElementById('pasta-btn-salvar')?.addEventListener('click', salvarPasta);

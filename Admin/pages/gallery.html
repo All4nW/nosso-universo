@@ -8,6 +8,8 @@
     <button type="button" id="btn-nova-pasta" class="settings-botao settings-botao-primario">＋ Nova pasta</button>
 </div>
 
+<p id="galeria-sync-status" class="galeria-sync-status" role="status" aria-live="polite"></p>
+
 <!-- Formulário de pasta -->
 <section id="pasta-formulario" class="settings-card timeline-admin-formulario" style="display:none;">
     <div class="settings-card-header">
@@ -178,9 +180,15 @@
 </section>
 
 <style>
+    
     /* Mesma correção que fizemos na Timeline — texto legível no dropdown nativo */
     .settings-input option {
         color: #1a1a2e;
         background-color: #ffffff;
     }
+
+    .galeria-sync-status { min-height: 1.3em; margin: 6px 0 14px; font-size: 0.92rem; }
+.galeria-sync-status.ok { color: #8ee6a8; }
+.galeria-sync-status.erro { color: #ff9aa8; }
+.galeria-sync-status.carregando { color: #cfe6ff; }
 </style>
