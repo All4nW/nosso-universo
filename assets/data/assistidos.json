@@ -1243,15 +1243,35 @@
     {
         "id": "harry-potter-e-as-reliquias-da-morte-parte-2",
         "categoria": "queremos",
+        "titulo": "Harry Potter e as Relíquias da Morte – Parte 1",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794328527546.jpg",
+        "cor": {
+            "r": 75,
+            "g": 99,
+            "b": 92
+        },
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-as-reliquias-da-morte-parte-1",
+        "categoria": "queremos",
         "titulo": "Harry Potter e as Relíquias da Morte – Parte 2",
         "ano": null,
         "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290699332.jpg",
+        "capa": "assets/images/assistidos/assistido-1794328536514.jpg",
         "cor": {
             "r": 87,
             "g": 108,
             "b": 105
         },
+        "tipo": "filmes",
         "status": null,
         "progresso": null,
         "notaEu": null,
