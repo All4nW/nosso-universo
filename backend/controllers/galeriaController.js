@@ -2,6 +2,7 @@ const Galeria = require("../models/galeriaModel");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { removerUpload, espelharPasta } = require("../utils/arquivos");
 
 
 // ===== PASTAS =====
@@ -48,6 +49,8 @@ exports.updatePasta = async (req, res) => {
             nome: req.body.nome, capa, ativo: req.body.ativo !== "false"
         });
 
+        if (req.file && atual.capa && atual.capa !== capa) removerUpload(atual.capa);
+
         res.json({ success: true });
     } catch (err) {
         console.error("Erro UPDATE pasta:", err);
@@ -57,7 +60,14 @@ exports.updatePasta = async (req, res) => {
 
 exports.deletePasta = async (req, res) => {
     try {
+        const pasta = await Galeria.getPasta(req.params.id);
+        const fotos = pasta ? await Galeria.getFotos(req.params.id, true) : [];
+
         await Galeria.deletePasta(req.params.id);
+
+        if (pasta) removerUpload(pasta.capa);
+        fotos.forEach(f => removerUpload(f.imagem));
+
         res.json({ success: true });
     } catch (err) {
         console.error("Erro DELETE pasta:", err);
@@ -137,6 +147,8 @@ exports.updateFoto = async (req, res) => {
             ativo: req.body.ativo !== "false"
         });
 
+        if (req.file && atual.imagem && atual.imagem !== imagem) removerUpload(atual.imagem);
+
         res.json({ success: true });
     } catch (err) {
         console.error("Erro UPDATE foto:", err);
@@ -146,7 +158,12 @@ exports.updateFoto = async (req, res) => {
 
 exports.deleteFoto = async (req, res) => {
     try {
+        const atual = await Galeria.getFoto(req.params.id);
+
         await Galeria.deleteFoto(req.params.id);
+
+        if (atual) removerUpload(atual.imagem);
+
         res.json({ success: true });
     } catch (err) {
         console.error("Erro DELETE foto:", err);
@@ -176,13 +193,14 @@ exports.exportarGaleria = async (req, res) => {
             fs.mkdirSync(pastaDestinoImagens, { recursive: true });
         }
 
-        // Copia um arquivo de backend/uploads/galeria para assets/images/galeria,
-        // e devolve o novo caminho relativo (ou o caminho original, se já for estático).
+        // guarda o nome de cada arquivo que o site realmente usa
+        const usados = new Set();
+
         function copiarECaminhoLocal(caminhoOriginal) {
             if (!caminhoOriginal) return "";
 
             if (!caminhoOriginal.startsWith("/uploads/galeria/")) {
-                // Já é um caminho estático (ex: assets/images/...) — mantém como está.
+                usados.add(path.basename(caminhoOriginal));
                 return caminhoOriginal;
             }
 
@@ -194,6 +212,7 @@ exports.exportarGaleria = async (req, res) => {
                 fs.copyFileSync(origem, destino);
             }
 
+            usados.add(nomeArquivo);
             return `assets/images/galeria/${nomeArquivo}`;
         }
 
@@ -219,7 +238,10 @@ exports.exportarGaleria = async (req, res) => {
         const caminhoDestino = path.join(__dirname, "../../assets/data/galeria.json");
         fs.writeFileSync(caminhoDestino, JSON.stringify(dadosExportados, null, 2), "utf-8");
 
-        res.json({ success: true, quantidade: dadosExportados.length });
+        // move para a lixeira o que sobrou na pasta do site e não é mais usado
+        const movidos = espelharPasta(pastaDestinoImagens, usados);
+
+        res.json({ success: true, quantidade: dadosExportados.length, removidos: movidos });
     } catch (err) {
         console.error("Erro ao exportar Galeria:", err);
         res.status(500).json({ error: "Erro ao exportar galeria." });

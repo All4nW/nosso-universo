@@ -7,6 +7,8 @@ const crypto =
 const fs = require("fs");
 const path = require("path");
 
+const { removerUpload, espelharPasta } = require("../utils/arquivos");
+
 
 // =====================================================
 // GET
@@ -230,6 +232,7 @@ exports.updateTimeline = async (req, res) => {
             dados
         );
 
+        if (req.file && atual.foto && atual.foto !== foto) removerUpload(atual.foto);
 
         res.json({
 
@@ -268,16 +271,14 @@ exports.deleteTimeline = async (req, res) => {
 
     try {
 
-        await Timeline.deleteTimelineItem(
-            req.params.id
-        );
+        const atual =
+            await Timeline.getTimelineItem(req.params.id);
 
+        await Timeline.deleteTimelineItem(req.params.id);
 
-        res.json({
+        if (atual) removerUpload(atual.foto);
 
-            success: true
-
-        });
+        res.json({ success: true });
 
     }
 
@@ -361,131 +362,88 @@ exports.exportarTimeline = async (req, res) => {
 
     try {
 
-        const itens =
-            await Timeline.getTimeline(false); // só os ativos
+        const itens = await Timeline.getTimeline(false); // só os ativos
 
-
-        const pastaDestinoImagens =
-            path.join(
-                __dirname,
-                "../../assets/images/timeline-uploads"
-            );
-
+        const pastaDestinoImagens = path.join(
+            __dirname,
+            "../../assets/images/timeline-uploads"
+        );
 
         if (!fs.existsSync(pastaDestinoImagens)) {
-
-            fs.mkdirSync(
-                pastaDestinoImagens,
-                { recursive: true }
-            );
-
+            fs.mkdirSync(pastaDestinoImagens, { recursive: true });
         }
 
+        // guarda o nome de cada arquivo que o site realmente usa
+        const usados = new Set();
 
-        const dadosExportados =
-            itens.map((item) => {
+        const dadosExportados = itens.map((item) => {
 
-                let fotoExportada =
-                    item.foto || "";
+            let fotoExportada = item.foto || "";
 
+            if (fotoExportada.startsWith("/uploads/timeline/")) {
 
-                // Só precisa copiar se for uma foto enviada pelo
-                // Admin (upload). Fotos que já eram caminhos fixos
-                // dentro de assets/ (do JSON antigo) não precisam.
-                if (
-                    fotoExportada.startsWith(
-                        "/uploads/timeline/"
-                    )
-                ) {
+                const nomeArquivo = path.basename(fotoExportada);
 
-                    const nomeArquivo =
-                        path.basename(fotoExportada);
+                const origem = path.join(
+                    __dirname,
+                    "../uploads/timeline",
+                    nomeArquivo
+                );
 
+                const destino = path.join(pastaDestinoImagens, nomeArquivo);
 
-                    const origem =
-                        path.join(
-                            __dirname,
-                            "../uploads/timeline",
-                            nomeArquivo
-                        );
+                try {
 
+                    if (fs.existsSync(origem)) {
 
-                    const destino =
-                        path.join(
-                            pastaDestinoImagens,
-                            nomeArquivo
-                        );
+                        fs.copyFileSync(origem, destino);
 
+                        fotoExportada = `assets/images/timeline-uploads/${nomeArquivo}`;
 
-                    try {
+                    } else {
 
-                        if (fs.existsSync(origem)) {
-
-                            fs.copyFileSync(
-                                origem,
-                                destino
-                            );
-
-
-                            fotoExportada =
-                                `assets/images/timeline-uploads/${nomeArquivo}`;
-
-                        }
-
-                        else {
-
-                            console.warn(
-                                `⚠️ Imagem não encontrada pra copiar: ${origem}`
-                            );
-
-                        }
+                        console.warn(`⚠️ Imagem não encontrada pra copiar: ${origem}`);
 
                     }
 
-                    catch (erroCopia) {
+                } catch (erroCopia) {
 
-                        console.error(
-                            "Erro ao copiar imagem da timeline:",
-                            erroCopia
-                        );
-
-                    }
+                    console.error("Erro ao copiar imagem da timeline:", erroCopia);
 
                 }
 
+            }
 
-return {
+            if (fotoExportada) usados.add(path.basename(fotoExportada));
 
-    id: item.id,
-    titulo: item.titulo,
-    data: item.data,
-    hora: item.hora || undefined,
-    resumo: item.resumo,
-    descricao: item.descricao,
-    tipo: item.tipo || undefined,
-    categoria: item.categoria || undefined,
-    sugeridoPor: item.sugeridoPor || undefined,
-    sugeridoTexto: item.sugeridoTexto || undefined,
+            return {
 
-    dataExibicao:
-        item.temDataExata === 0
-            ? item.dataTexto
-            : undefined,
+                id: item.id,
+                titulo: item.titulo,
+                data: item.data,
+                hora: item.hora || undefined,
+                resumo: item.resumo,
+                descricao: item.descricao,
+                tipo: item.tipo || undefined,
+                categoria: item.categoria || undefined,
+                sugeridoPor: item.sugeridoPor || undefined,
+                sugeridoTexto: item.sugeridoTexto || undefined,
 
-    fotos:
-        fotoExportada ? [fotoExportada] : []
+                dataExibicao:
+                    item.temDataExata === 0
+                        ? item.dataTexto
+                        : undefined,
 
-};
+                fotos: fotoExportada ? [fotoExportada] : []
 
-            });
+            };
 
+        });
 
-        const caminhoDestino =
-            path.join(
-                __dirname,
-                "../../assets/data/timeline.json"
-            );
-
+        const caminhoDestino = path.join(
+            __dirname,
+            "../../assets/data/timeline.json"
+        );
 
         fs.writeFileSync(
             caminhoDestino,
@@ -493,32 +451,22 @@ return {
             "utf-8"
         );
 
+        // move para a lixeira o que sobrou na pasta do site e não é mais usado
+        const movidos = espelharPasta(pastaDestinoImagens, usados);
 
         res.json({
-
             success: true,
-
-            quantidade:
-                dadosExportados.length
-
+            quantidade: dadosExportados.length,
+            removidos: movidos
         });
 
     }
 
     catch (err) {
 
-        console.error(
-            "Erro ao exportar Timeline:",
-            err
-        );
+        console.error("Erro ao exportar Timeline:", err);
 
-
-        res.status(500).json({
-
-            error:
-                "Erro ao exportar timeline."
-
-        });
+        res.status(500).json({ error: "Erro ao exportar timeline." });
 
     }
 
