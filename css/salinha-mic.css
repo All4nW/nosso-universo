@@ -1,0 +1,49 @@
+/* =====================================================================
+   MICROFONE DA SALINHA — css/salinha-mic.css
+   Carregue DEPOIS do css/salinha.css.
+   ===================================================================== */
+:root{
+  --ic-mic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='3' width='6' height='11' rx='3'/%3E%3Cpath d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7'/%3E%3C/svg%3E");
+}
+
+/* só o Allan do PC vê o botão e as opções */
+#bMic,.mic-only{display:none}
+body[data-role="a"] #bMic{display:grid}
+body[data-role="a"] .mic-only{display:grid}
+
+#bMic::before{
+  content:"";font-size:0;width:21px;height:21px;background:currentColor;
+  -webkit-mask:var(--ic-mic) center/contain no-repeat;mask:var(--ic-mic) center/contain no-repeat;
+}
+#bMic.live{color:#8df0b4;background:rgba(110,231,160,.16);border-color:rgba(110,231,160,.55)}
+#bMic.live:hover{background:rgba(110,231,160,.26);border-color:rgba(110,231,160,.8);color:#b8f5cf}
+#bMic.live.talk{box-shadow:0 0 0 3px rgba(110,231,160,.3),0 0 18px rgba(110,231,160,.45)}
+#bMic.muted{color:#ff9d9d;background:rgba(255,100,100,.16);border-color:rgba(255,130,130,.5)}
+#bMic.muted:hover{background:rgba(255,100,100,.26);border-color:rgba(255,150,150,.8);color:#ffc2c2}
+#bMic.muted::after{
+  content:"";position:absolute;left:50%;top:50%;width:26px;height:2px;border-radius:2px;
+  background:#ff9d9d;box-shadow:0 0 0 1.5px rgba(20,13,10,.95);transform:translate(-50%,-50%) rotate(-45deg);pointer-events:none;
+}
+#bMic.busy{opacity:.6;pointer-events:none;animation:breathe 1s ease-in-out infinite}
+
+/* tela ampliada: o microfone fica ao lado do botão de chat */
+body.imm[data-role="a"] .ctrl #bMic{display:grid;width:40px;height:40px}
+body.imm[data-role="a"] .ctrl{gap:8px}
+body.imm #bMic:not(.live):not(.muted){background:rgba(14,9,6,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+
+/* brilho no avatar de quem está falando (vale pros dois lados) */
+.seat.talk .av{
+  border-color:rgba(110,231,160,.95);
+  box-shadow:0 0 0 4px rgba(110,231,160,.28),0 0 28px rgba(110,231,160,.55),0 4px 14px rgba(0,0,0,.5);
+}
+
+/* ---------- configurações: medidor e sensibilidade ---------- */
+dialog #cMicSens{padding:0;height:18px;border:0;background:transparent;box-shadow:none;accent-color:#ff8fc7;cursor:pointer}
+.micmeter{position:relative;height:8px;border-radius:99px;background:#2a1c14;margin-top:8px}
+.micmeter i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:#8a817a;transition:width .06s linear,background .15s}
+.micmeter.hot i{background:linear-gradient(90deg,#6ee7a0,#b8f5cf)}
+.micmeter s{position:absolute;top:-3px;bottom:-3px;width:2px;left:50%;border-radius:2px;background:#ff8fc7;box-shadow:0 0 6px #ff8fc7}
+.micfoot{font-size:12px;line-height:1.4;opacity:.65;margin-top:10px}
+.chip.danger{margin-top:10px;border-color:rgba(255,130,130,.55);color:#ffc2c2}
+.chip.danger:hover{background:rgba(255,100,100,.14)}
+#cMicOff[hidden]{display:none}
