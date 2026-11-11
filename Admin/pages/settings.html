@@ -263,7 +263,39 @@
         </div>
 
     </section>
+    <!-- ============================= -->
+    <!-- GERENCIADOR DE MÍDIAS -->
+    <!-- ============================= -->
 
+    <section class="settings-card" id="midias-card">
+
+        <div class="settings-card-header">
+            <span class="settings-card-icone">🗂</span>
+            <div>
+                <h3 class="settings-card-titulo">Gerenciador de mídias</h3>
+                <p class="settings-card-descricao">Veja o que está em uso, ache arquivos perdidos e limpe o excesso.</p>
+            </div>
+        </div>
+
+        <div class="settings-card-corpo">
+
+            <div class="midias-topo">
+                <button type="button" id="midias-btn-lixeira" class="settings-botao settings-botao-secundario">🗑 Ver lixeira</button>
+                <button type="button" id="midias-btn-escanear" class="settings-botao settings-botao-primario">🔍 Escanear de novo</button>
+            </div>
+
+            <p id="midias-resumo" class="midias-resumo"></p>
+            <p id="midias-status" class="midias-status" role="status" aria-live="polite"></p>
+
+            <div id="midias-lixeira" class="midias-lixeira-painel" style="display:none;"></div>
+
+            <div id="midias-topicos">
+                <div class="midias-vazio">Escaneando...</div>
+            </div>
+
+        </div>
+
+    </section>
 </div>
 
 
@@ -293,3 +325,59 @@
     </button>
 
 </div>
+
+<style>
+
+        /* uma coluna, largura total */
+    .settings-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .settings-grid > .settings-card {
+        width: 100%;
+        min-width: 0;
+    }
+    /* seções recolhíveis */
+    .secao-cabecalho { cursor: pointer; position: relative; user-select: none; padding-right: 44px; }
+    .secao-cabecalho::after {
+        content: "▾"; position: absolute; right: 16px; top: 50%;
+        transform: translateY(-50%); opacity: .7; transition: transform .2s;
+    }
+    .secao-fechada .secao-cabecalho::after { transform: translateY(-50%) rotate(-90deg); }
+    .secao-fechada > .settings-card-corpo { display: none; }
+
+    /* gerenciador de mídias */
+    #midias-card { grid-column: 1 / -1; }
+    .midias-topo { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 10px; }
+    .midias-resumo { margin: 4px 0 8px; opacity: .85; font-size: .92rem; }
+    .midias-status { min-height: 1.3em; margin: 0 0 10px; font-size: .92rem; }
+    .midias-status.ok { color: #8ee6a8; }
+    .midias-status.erro { color: #ff9aa8; }
+    .midias-status.carregando { color: #cfe6ff; }
+    .midias-vazio { padding: 16px; text-align: center; opacity: .7; }
+    .midias-lixeira-painel { margin-bottom: 14px; padding: 10px; border: 1px dashed rgba(255,255,255,.18); border-radius: 12px; }
+
+    .midias-topico { border: 1px solid rgba(255,255,255,.08); border-radius: 12px; margin-bottom: 10px; background: rgba(255,255,255,.02); }
+    .midias-topico-alerta { border-color: rgba(255,196,102,.45); }
+    .midias-topico > summary { cursor: pointer; padding: 12px 14px; display: flex; gap: 8px; list-style: none; font-weight: 600; }
+    .midias-topico > summary::-webkit-details-marker { display: none; }
+    .midias-topico > summary::before { content: "▸"; opacity: .7; }
+    .midias-topico[open] > summary::before { content: "▾"; }
+    .midias-extra { margin-left: auto; font-weight: 400; opacity: .7; font-size: .88rem; }
+    .midias-corpo { padding: 0 12px 12px; max-height: 520px; overflow-y: auto; }
+
+    .midias-barra { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; }
+    .midias-linha { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-top: 1px solid rgba(255,255,255,.06); }
+    .midias-linha-perdida { cursor: pointer; }
+    .midias-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; flex-shrink: 0; background: rgba(255,255,255,.06); }
+    .midias-thumb-icone { display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .midias-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .midias-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; }
+    .midias-meta { font-size: .78rem; opacity: .65; }
+    .midias-tamanho { font-size: .85rem; opacity: .8; white-space: nowrap; }
+    .midias-pesado { color: #ffb86b; opacity: 1; font-weight: 600; }
+</style>

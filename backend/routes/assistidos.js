@@ -269,6 +269,11 @@ router.post(
                     } catch (_) {}
 
                 });
+// só as capas enviadas pelo painel ("assistido-...") podem ser limpas;
+// qualquer outro arquivo da pasta (como o ícone do TikTok) é do código e fica
+fs.readdirSync(IMAGES_DIR).forEach((nome) => {
+    if (!nome.startsWith("assistido-")) usados.add(nome);
+});
 
                 removidos = espelharPasta(IMAGES_DIR, usados);
 

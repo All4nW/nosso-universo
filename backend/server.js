@@ -27,6 +27,8 @@ const lettersRoutes = require("./routes/letters");
 
 const sobreNosRoutes = require("./routes/sobreNos");
 
+const midiasRoutes = require("./routes/midias");
+
 
 const app =
     express();
@@ -111,6 +113,8 @@ app.use("/api/assistidos", assistidosRoutes);
 app.use("/api/letters", lettersRoutes);
 
 app.use("/api/sobre-nos", sobreNosRoutes);
+
+app.use("/api/midias", midiasRoutes);
 
 
 

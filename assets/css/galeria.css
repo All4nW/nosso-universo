@@ -2882,3 +2882,108 @@ img.foto-visualizador-img.com-zoom {
     }
 
 }
+
+/* =========================================================
+   PAINEL DO FILTRO DE JOGOS — estilo do índice do "Sobre Nós"
+   ========================================================= */
+
+.galeria-jogos-painel {
+    min-width: 240px;
+    width: min(280px, calc(100vw - 32px));
+    padding: 8px 0 10px;
+    border: 1px solid rgba(201, 167, 245, 0.28);
+    border-radius: 22px 8px 22px 8px;
+    background: rgba(14, 12, 34, 0.98);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+}
+
+.galeria-jogos-titulo {
+    margin: 0;
+    padding: 12px 22px 8px;
+    border: 0;
+    text-align: left;
+    font-family: 'Cormorant Garamond', var(--font-heading), Georgia, serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 600;
+    color: #fff;
+}
+
+.galeria-jogos-opcao {
+    align-items: center;
+    gap: 12px;
+    width: calc(100% - 36px);
+    margin: 0 18px;
+    padding: 13px 4px;
+    border-bottom: 1px dotted rgba(201, 167, 245, 0.22);
+    border-radius: 0;
+    background: none;
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.96rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #b9b3d4);
+    transition: color 0.2s ease, padding 0.2s ease;
+}
+
+.galeria-jogos-opcao:last-child { border-bottom: 0; }
+
+.galeria-jogos-opcao:hover {
+    padding-left: 10px;
+    background: none;
+    color: #fff;
+    transform: none;
+}
+
+.galeria-jogos-opcao.ativa,
+.galeria-jogos-todos.ativa {
+    background: none;
+    color: #fff;
+    font-weight: 600;
+}
+
+.galeria-jogos-opcao.ativa span,
+.galeria-jogos-todos.ativa span { text-decoration: none; }
+
+.galeria-jogos-todos {
+    margin: 0 18px;
+    color: var(--color-text-muted, #b9b3d4);
+}
+
+.galeria-jogos-opcao::before,
+.galeria-jogos-todos::before { content: none; }
+
+.galeria-jogos-opcao::after,
+.galeria-jogos-todos::after {
+    content: "✦";
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    flex: none;
+    width: 14px;
+    margin: 0;
+    border: 0;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #8ecbff;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.galeria-jogos-opcao.ativa::after { opacity: 1; }
+
+.galeria-jogos-opcao small {
+    min-width: 26px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(201, 167, 245, 0.12);
+    color: var(--color-text-muted, #b9b3d4);
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-align: center;
+    opacity: 1;
+}
+
+.galeria-jogos-opcao.ativa small {
+    background: rgba(142, 203, 255, 0.2);
+    color: #8ecbff;
+}

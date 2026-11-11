@@ -2130,3 +2130,161 @@
     }
 
 }
+
+/* =========================================================
+   PAINÉIS DOS FILTROS — estilo do índice do "Sobre Nós"
+   ========================================================= */
+
+.timeline-dock-painel {
+    width: min(290px, calc(100vw - 90px));
+    padding: 8px 0 10px;
+    border: 1px solid rgba(201, 167, 245, 0.28);
+    border-radius: 22px 8px 22px 8px;
+    background: rgba(14, 12, 34, 0.98);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+    text-align: left;
+}
+
+.timeline-dock-titulo {
+    margin: 0;
+    padding: 12px 22px 8px;
+    border: 0;
+    text-align: left;
+    font-family: 'Cormorant Garamond', var(--font-heading), Georgia, serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 600;
+    color: #fff;
+}
+
+.timeline-dock-opcao {
+    gap: 12px;
+    width: calc(100% - 36px);
+    margin: 0 18px;
+    padding: 13px 4px;
+    border-bottom: 1px dotted rgba(201, 167, 245, 0.22);
+    border-radius: 0;
+    background: none;
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.96rem;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--color-text-muted, #b9b3d4);
+    transition: color 0.2s ease, padding 0.2s ease;
+}
+
+.timeline-dock-opcao:last-child { border-bottom: 0; }
+
+.timeline-dock-opcao:hover {
+    padding-left: 10px;
+    background: none;
+    color: #fff;
+}
+
+.timeline-dock-opcao.ativa,
+.timeline-dock-todos.ativa {
+    background: none;
+    color: #fff;
+    font-weight: 600;
+}
+
+.timeline-dock-opcao.ativa span,
+.timeline-dock-todos.ativa span { text-decoration: none; }
+
+.timeline-dock-todos {
+    margin: 0 18px;
+    color: var(--color-text-muted, #b9b3d4);
+}
+
+/* tira o ◆ e o tracejado antigos; o ✦ aparece só na opção escolhida */
+.timeline-dock-opcao::before,
+.timeline-dock-todos::before { content: none; }
+
+.timeline-dock-opcao::after,
+.timeline-dock-todos::after {
+    content: "✦";
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    flex: none;
+    width: 14px;
+    margin: 0;
+    border: 0;
+    font-size: 0.8rem;
+    text-align: center;
+    color: rgb(var(--fx-rgb));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.timeline-dock-opcao.ativa::after { opacity: 1; }
+
+.timeline-dock-opcao i { display: none; }
+
+.timeline-dock-opcao small {
+    min-width: 26px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(201, 167, 245, 0.12);
+    color: var(--color-text-muted, #b9b3d4);
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-align: center;
+    opacity: 1;
+}
+
+.timeline-dock-opcao.ativa small {
+    background: rgba(var(--fx-rgb), 0.2);
+    color: rgb(var(--fx-rgb));
+}
+
+/* contagem regressiva */
+.timeline-dock-contador {
+    width: calc(100% - 36px);
+    margin: 0 18px;
+    padding: 14px 4px;
+    border: 0;
+    border-bottom: 1px dotted rgba(201, 167, 245, 0.22);
+    border-radius: 0;
+    background: none;
+    transition: padding 0.2s ease;
+}
+
+.timeline-dock-contador + .timeline-dock-contador { margin-top: 0; }
+.timeline-dock-contador:last-child { border-bottom: 0; }
+
+.timeline-dock-contador:hover {
+    padding-left: 10px;
+    background: none;
+    transform: none;
+}
+
+.timeline-dock-contador-nome {
+    font-family: 'Cormorant Garamond', var(--font-heading), Georgia, serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 600;
+    color: #fff;
+}
+
+.timeline-painel-contagem {
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    word-spacing: 0.12em;
+    color: var(--color-text-muted, #b9b3d4);
+}
+
+.timeline-painel-contagem b {
+    font-size: 1.05rem;
+    color: rgb(var(--fx-rgb));
+    text-shadow: none;
+}
+
+.timeline-dock-contador small {
+    font-family: 'Manrope', var(--font-body), system-ui, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(var(--fx-rgb), 0.85);
+}

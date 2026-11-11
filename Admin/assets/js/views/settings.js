@@ -7,6 +7,10 @@ async function initSettings() {
 
         registrarBotoes();
 
+                // Seções recolhíveis e gerenciador de mídias
+        if (window.iniciarSecoesRecolhiveis) window.iniciarSecoesRecolhiveis();
+        if (window.iniciarGerenciadorMidias) window.iniciarGerenciadorMidias();
+
         // Música
         iniciarGerenciadorMusicas();
 

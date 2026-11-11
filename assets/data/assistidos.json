@@ -1127,63 +1127,6 @@
         "memoria": ""
     },
     {
-        "id": "harry-potter-e-a-camara-secreta",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e a Câmara Secreta",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290019203.jpg",
-        "cor": {
-            "r": 95,
-            "g": 101,
-            "b": 67
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
-        "id": "harry-potter-e-o-prisioneiro-de-azkaban",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e o Prisioneiro de Azkaban",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794290134858.webp",
-        "cor": {
-            "r": 60,
-            "g": 106,
-            "b": 118
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
-        "id": "harry-potter-e-o-calice-de-fogo",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e o Cálice de Fogo",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794333022217.jpg",
-        "cor": {
-            "r": 45,
-            "g": 67,
-            "b": 77
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "harry-potter-e-a-ordem-da-fenix",
         "categoria": "queremos",
         "titulo": "Harry Potter e a Ordem da Fênix",
@@ -1257,6 +1200,62 @@
         "progresso": null,
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-a-camara-secreta",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e a Câmara Secreta",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794339492231.webp",
+        "cor": {
+            "r": 93,
+            "g": 101,
+            "b": 69
+        },
+        "aura": "#162718",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-prisioneiro-de-azkaban",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e o Prisioneiro de Azkaban",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794290134858.webp",
+        "cor": {
+            "r": 60,
+            "g": 106,
+            "b": 118
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-calice-de-fogo",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e o Cálice de Fogo",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794333022217.jpg",
+        "cor": {
+            "r": 45,
+            "g": 67,
+            "b": 77
+        },
+        "aura": "#051926",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
