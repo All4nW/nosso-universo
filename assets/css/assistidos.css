@@ -6322,3 +6322,323 @@ body.sorteio-aberto { overflow: hidden; }
     background: rgba(var(--fx-rgb), 0.2);
     color: rgb(var(--fx-rgb));
 }
+
+/* =========================================================
+   TEMPORADAS — botão que expande a lista no modal
+   ========================================================= */
+
+.as-temp {
+    margin: 0 0 16px;
+}
+
+.as-temp-btn {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 16px 9px 18px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.55);
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.16);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.as-temp-btn:hover {
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.3);
+
+    transform: translateY(-2px);
+}
+
+.as-temp-conta {
+    padding: 1px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* todas vistas: o botão ganha um check verde */
+.as-temp-btn.completo {
+    border-color: rgba(74, 222, 128, 0.6);
+}
+
+.as-temp-check {
+    display: grid;
+    place-items: center;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #4ade80, #22c58b);
+
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.55);
+}
+
+.as-temp-check svg {
+    width: 12px;
+    height: 12px;
+
+    fill: none;
+    stroke: #06281a;
+    stroke-width: 3.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.as-temp-seta {
+    font-size: 0.8rem;
+
+    transition: transform 0.35s ease;
+}
+
+.as-temp.aberto .as-temp-seta {
+    transform: rotate(180deg);
+}
+
+/* a lista desce suavemente */
+.as-temp-painel {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.as-temp.aberto .as-temp-painel {
+    grid-template-rows: 1fr;
+}
+
+.as-temp-lista {
+    min-height: 0;
+
+    overflow: hidden;
+}
+
+.as-temp-linha:first-child {
+    margin-top: 12px;
+}
+
+.as-temp-linha {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 4px;
+
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
+
+    font-family: var(--font-body);
+}
+
+.as-temp-linha:last-child {
+    border-bottom: 0;
+}
+
+.as-temp.aberto .as-temp-linha {
+    animation: as-temp-entra 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--n, 0) * 0.05s);
+}
+
+@keyframes as-temp-entra {
+
+    from { opacity: 0; translate: -10px 0; }
+
+}
+
+.as-temp-marca {
+    display: grid;
+    place-items: center;
+
+    flex: none;
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 50%;
+
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+.as-temp-marca svg {
+    width: 13px;
+    height: 13px;
+
+    fill: none;
+    stroke: #06281a;
+    stroke-width: 3.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.as-temp-nome {
+    flex: 1;
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    color: #fff;
+}
+
+.as-temp-direita {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* vista: bolinha verde com ✓ */
+.as-temp-vista .as-temp-marca {
+    border-color: transparent;
+
+    background: linear-gradient(135deg, #4ade80, #22c58b);
+
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.45);
+}
+
+/* ainda não vista: apagadinha */
+.as-temp-falta .as-temp-nome {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* nova temporada: rosa e pulsando */
+.as-temp-nova .as-temp-marca {
+    border-color: #f08cc0;
+
+    animation: as-temp-pulso 2.4s ease-in-out infinite;
+}
+
+.as-temp-nova .as-temp-direita {
+    padding: 2px 10px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #f08cc0, #c9a7f5);
+
+    color: #2b0f1f;
+}
+
+@keyframes as-temp-pulso {
+
+    0%, 100% { box-shadow: 0 0 0 0 rgba(240, 140, 192, 0.5); }
+
+    50% { box-shadow: 0 0 0 6px rgba(240, 140, 192, 0); }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .as-temp.aberto .as-temp-linha,
+    .as-temp-nova .as-temp-marca {
+        animation: none;
+    }
+
+    .as-temp-painel {
+        transition: none;
+    }
+
+}
+
+/* =========================================================
+   TEMPORADAS — painel largo, em colunas, com rolagem própria
+   ========================================================= */
+
+.as-temp.aberto .as-temp-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    gap: 0 18px;
+    align-content: start;
+
+    max-height: min(340px, 46vh);
+
+    margin-top: 12px;
+    padding: 8px 18px;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.3);
+    border-radius: 18px;
+
+    background: rgba(0, 0, 0, 0.24);
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.55) transparent;
+}
+
+/* linhas compactas (zera o espaçamento que vinha do modal) */
+.as-temp .as-temp-linha,
+.as-temp .as-temp-linha:first-child {
+    min-height: 0;
+    height: auto;
+    margin: 0;
+    padding: 9px 2px;
+
+    line-height: 1.2;
+}
+
+.as-temp .as-temp-nome {
+    font-size: 0.88rem;
+    white-space: nowrap;
+}
+
+.as-temp .as-temp-direita {
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.as-temp .as-temp-marca {
+    width: 20px;
+    height: 20px;
+}
+
+/* as bordas de baixo valem para todas as linhas, inclusive a última de cada coluna */
+.as-temp .as-temp-linha:last-child {
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
+}
+
+.as-temp-lista::-webkit-scrollbar {
+    width: 6px;
+}
+
+.as-temp-lista::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.5);
+}
+
+.as-temp-lista::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* celular: uma coluna só */
+@media (max-width: 640px) {
+
+    .as-temp.aberto .as-temp-lista {
+        grid-template-columns: 1fr;
+
+        max-height: min(300px, 40vh);
+    }
+
+}

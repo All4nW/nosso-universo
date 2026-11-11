@@ -28,6 +28,28 @@
             "b": 35
         },
         "aura": "#480304",
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            },
+            {
+                "temp": "2",
+                "ano": 2026
+            },
+            {
+                "temp": "3",
+                "ano": 2026
+            },
+            {
+                "temp": "4",
+                "ano": 2026
+            },
+            {
+                "temp": "5",
+                "ano": 2026
+            }
+        ],
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -336,6 +358,24 @@
             "b": 49
         },
         "aura": "#e04300",
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            },
+            {
+                "temp": "2",
+                "ano": 2026
+            },
+            {
+                "temp": "3",
+                "ano": 2026
+            },
+            {
+                "temp": "4",
+                "ano": 2026
+            }
+        ],
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -350,6 +390,12 @@
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786911888643.jpg",
         "cor": null,
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            }
+        ],
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -370,6 +416,12 @@
         },
         "aura": "branca",
         "tempAssistida": 1,
+        "historicoTemporadas": [
+            {
+                "temp": "2",
+                "ano": 2025
+            }
+        ],
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -388,6 +440,68 @@
             "g": 66,
             "b": 132
         },
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            },
+            {
+                "temp": "2",
+                "ano": 2026
+            },
+            {
+                "temp": "3",
+                "ano": 2026
+            },
+            {
+                "temp": "4",
+                "ano": 2026
+            },
+            {
+                "temp": "5",
+                "ano": 2026
+            },
+            {
+                "temp": "6",
+                "ano": 2026
+            },
+            {
+                "temp": "7",
+                "ano": 2026
+            },
+            {
+                "temp": "8",
+                "ano": 2026
+            },
+            {
+                "temp": "9",
+                "ano": 2026
+            },
+            {
+                "temp": "10",
+                "ano": 2026
+            },
+            {
+                "temp": "11",
+                "ano": 2026
+            },
+            {
+                "temp": "12",
+                "ano": 2026
+            },
+            {
+                "temp": "13",
+                "ano": 2026
+            },
+            {
+                "temp": "14",
+                "ano": 2026
+            },
+            {
+                "temp": "15",
+                "ano": 2026
+            }
+        ],
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -752,6 +866,16 @@
             "b": 64
         },
         "aura": "#572437",
+        "historicoTemporadas": [
+            {
+                "temp": "1",
+                "ano": 2026
+            },
+            {
+                "temp": "2",
+                "ano": 2026
+            }
+        ],
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -773,7 +897,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 3,
-            "episodio": 6,
+            "episodio": 9,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },

@@ -1255,6 +1255,155 @@ function ativarLerMaisAssistido() {
     setTimeout(medir, 250);
 
 }
+
+// =====================================================
+// TEMPORADAS — lista para o botão "Temporadas" do modal
+// =====================================================
+
+function listarTemporadas(item) {
+
+    // formato novo (feito no admin): [{ numero, ano, vista }]
+    if (Array.isArray(item.temporadas) && item.temporadas.length) {
+
+        return item.temporadas
+            .map((t, i) => ({
+                numero: Number(t.numero) || i + 1,
+                ano: Number(t.ano) || 0,
+                vista: Boolean(t.vista),
+                nova: false
+            }))
+            .sort((a, b) => a.numero - b.numero);
+
+    }
+
+    // formato antigo: monta a lista a partir dos campos que já existem
+    const assistida = Number(item.tempAssistida) || 0;
+    const total = Number(item.tempTotal) || 0;
+
+    const anos = new Map();
+    const vistas = new Set();
+
+    (Array.isArray(item.historicoTemporadas) ? item.historicoTemporadas : []).forEach((h) => {
+
+        if (!h || !h.temp) return;
+
+        const texto = String(h.temp);
+        const nums = (texto.match(/\d+/g) || []).map(Number);
+
+        let lista = nums;
+
+        // "1–2" ou "1 a 3" vira 1, 2, 3
+        if (nums.length === 2 && /[–—-]|\s(a|até)\s/i.test(texto)) {
+            lista = [];
+            for (let n = Math.min(...nums); n <= Math.max(...nums); n++) lista.push(n);
+        }
+
+        lista.forEach((n) => {
+            vistas.add(n);
+            if (Number(h.ano) > 0) anos.set(n, Number(h.ano));
+        });
+
+    });
+
+    const ultimo = Math.max(total, assistida, ...vistas, 0);
+
+    if (!ultimo) return [];
+
+    const concluido = item.status === "concluido";
+
+    const resultado = [];
+
+    for (let n = 1; n <= ultimo; n++) {
+
+        const semInfo = !assistida && !vistas.size;
+
+        const vista = (concluido && semInfo) || n <= assistida || vistas.has(n);
+
+        resultado.push({
+            numero: n,
+            ano: anos.get(n) || 0,
+            vista,
+            nova: !vista && total > 0 && n <= total && assistida > 0
+        });
+
+    }
+
+    return resultado;
+
+}
+
+const ICONE_CHECK_TEMP = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 12.5l3.8 3.8L17.5 8"/></svg>`;
+
+function montarTemporadasHtml(item) {
+
+    const temporadas = listarTemporadas(item);
+
+    if (!temporadas.length) return "";
+
+    const vistas = temporadas.filter(t => t.vista).length;
+    const completo = vistas === temporadas.length;
+
+    const linhas = temporadas.map((t, i) => {
+
+        const estado = t.vista ? "vista" : (t.nova ? "nova" : "falta");
+
+        const direita = t.vista
+            ? (t.ano ? t.ano : "")
+            : (t.nova ? "Nova!" : "ainda não vimos");
+
+        return `
+            <div class="as-temp-linha as-temp-${estado}" style="--n:${i}">
+                <span class="as-temp-marca">${t.vista ? ICONE_CHECK_TEMP : ""}</span>
+                <span class="as-temp-nome">Temporada ${t.numero}</span>
+                <span class="as-temp-direita">${direita}</span>
+            </div>
+        `;
+
+    }).join("");
+
+    return `
+        <div class="as-temp">
+
+            <button type="button" class="as-temp-btn ${completo ? "completo" : ""}" aria-expanded="false">
+                <span>Temporadas</span>
+                <span class="as-temp-conta">${vistas}/${temporadas.length}</span>
+                ${completo ? `<span class="as-temp-check">${ICONE_CHECK_TEMP}</span>` : ""}
+                <span class="as-temp-seta" aria-hidden="true">▾</span>
+            </button>
+
+            <div class="as-temp-painel">
+                <div class="as-temp-lista">${linhas}</div>
+            </div>
+
+        </div>
+    `;
+
+}
+
+function ativarTemporadas() {
+
+    const caixa = document.querySelector("#modal-descricao .as-temp");
+
+    if (!caixa) return;
+
+    const botao = caixa.querySelector(".as-temp-btn");
+
+    botao.addEventListener("click", () => {
+
+        const aberto = caixa.classList.toggle("aberto");
+
+        botao.setAttribute("aria-expanded", String(aberto));
+
+        // se a lista ficar fora da tela, rola até ela
+        if (aberto) {
+            setTimeout(() => caixa.scrollIntoView({ block: "nearest", behavior: "smooth" }), 280);
+        }
+
+    });
+
+}
+
+
 function abrirDetalhesAssistido(item, dados) {
 
     const { notaEu, notaEla, ehListaFutura, ehContinuar = false } = dados;
@@ -1393,41 +1542,9 @@ function abrirDetalhesAssistido(item, dados) {
         ehContinuar
             ? "Assistindo agora ♥"
             : `Assistido juntos ♥ ${item.ano || ""}`;
-    let temporadaHtml = "";
-
     const ehSerieOuAnime = item.categoria === "series" || item.categoria === "animes";
 
-    // histórico: "Temp. 1–2 em 2025 · Temp. 3 em 2027"
-    const historico = (Array.isArray(item.historicoTemporadas) ? item.historicoTemporadas : [])
-        .filter(h => h && h.temp && Number(h.ano) > 0);
-
-    if (ehSerieOuAnime && (historico.length || Number(item.tempAssistida) > 0 || item.status === "concluido")) {
-
-        const historicoHtml = historico.length
-            ? `<div class="assistido-modal-historico">${
-                historico.map(h => `
-                    <span class="hist-chip"><b>Temp. ${escaparHTML(String(h.temp))}</b> em ${Number(h.ano)}</span>
-                `).join("")
-            }</div>`
-            : "";
-
-        // sem histórico, continua a linha de antes
-        const ultimaHtml = (!historico.length && Number(item.tempAssistida) > 0)
-            ? `<p>Última temporada assistida: <strong>Temp. ${Number(item.tempAssistida)}</strong></p>`
-            : "";
-
-        const concluidoHtml = item.status === "concluido"
-            ? `<div class="assistido-modal-concluido-pilula">✔ Concluído</div>`
-            : "";
-
-        temporadaHtml = `
-            ${historicoHtml}
-            ${(ultimaHtml || concluidoHtml)
-                ? `<div class="assistido-modal-temporada">${ultimaHtml}${concluidoHtml}</div>`
-                : ""}
-        `;
-
-    }
+    const temporadaHtml = ehSerieOuAnime ? montarTemporadasHtml(item) : "";
 
     abrirModal({
         titulo: item.titulo,
@@ -1438,6 +1555,8 @@ function abrirDetalhesAssistido(item, dados) {
     });
 
     aplicarCorDoItem(item);
+
+        ativarTemporadas();
 
  
 
