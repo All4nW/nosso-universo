@@ -298,17 +298,27 @@
             "b": 106
         },
         "aura": "#3a5877",
-        "tempAssistida": 2,
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "1",
-                "ano": 2025
+                "numero": 1,
+                "ano": 2025,
+                "vista": true,
+                "estado": "vista"
             },
             {
-                "temp": "2",
-                "ano": 2025
+                "numero": 2,
+                "ano": 2025,
+                "vista": true,
+                "estado": "vista"
+            },
+            {
+                "numero": 3,
+                "vista": false,
+                "estado": "breve"
             }
         ],
+        "tempAssistida": 2,
+        "tempTotal": 2,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -328,17 +338,27 @@
             "b": 153
         },
         "aura": "#8bd9f8",
-        "tempAssistida": 2,
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "1",
-                "ano": 2026
+                "numero": 1,
+                "ano": 2026,
+                "vista": true,
+                "estado": "vista"
             },
             {
-                "temp": "2",
-                "ano": 2026
+                "numero": 2,
+                "ano": 2026,
+                "vista": true,
+                "estado": "vista"
+            },
+            {
+                "numero": 3,
+                "vista": false,
+                "estado": "breve"
             }
         ],
+        "tempAssistida": 2,
+        "tempTotal": 2,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -358,24 +378,30 @@
             "b": 49
         },
         "aura": "#e04300",
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "1",
-                "ano": 2026
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "2",
-                "ano": 2026
+                "numero": 2,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "3",
-                "ano": 2026
+                "numero": 3,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "4",
-                "ano": 2026
+                "numero": 4,
+                "ano": 2026,
+                "vista": true
             }
         ],
+        "tempAssistida": 4,
+        "tempTotal": 4,
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -390,12 +416,15 @@
         "anoAssistido": 2026,
         "capa": "assets/images/assistidos/assistido-1786911888643.jpg",
         "cor": null,
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "1",
-                "ano": 2026
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
             }
         ],
+        "tempAssistida": 1,
+        "tempTotal": 1,
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -415,13 +444,35 @@
             "b": 105
         },
         "aura": "branca",
-        "tempAssistida": 1,
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "2",
-                "ano": 2025
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
+            },
+            {
+                "numero": 2,
+                "vista": false
+            },
+            {
+                "numero": 3,
+                "vista": false
+            },
+            {
+                "numero": 4,
+                "vista": false
+            },
+            {
+                "numero": 5,
+                "vista": false
+            },
+            {
+                "numero": 6,
+                "vista": false
             }
         ],
+        "tempAssistida": 1,
+        "tempTotal": 6,
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -434,74 +485,91 @@
         "titulo": "Supernatural",
         "ano": null,
         "anoAssistido": 2026,
-        "capa": "assets/images/assistidos/assistido-1786912235058.png",
+        "capa": "assets/images/assistidos/assistido-1794418813307.jpg",
         "cor": {
-            "r": 57,
-            "g": 66,
-            "b": 132
+            "r": 91,
+            "g": 100,
+            "b": 82
         },
-        "historicoTemporadas": [
+        "temporadas": [
             {
-                "temp": "1",
-                "ano": 2026
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "2",
-                "ano": 2026
+                "numero": 2,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "3",
-                "ano": 2026
+                "numero": 3,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "4",
-                "ano": 2026
+                "numero": 4,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "5",
-                "ano": 2026
+                "numero": 5,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "6",
-                "ano": 2026
+                "numero": 6,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "7",
-                "ano": 2026
+                "numero": 7,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "8",
-                "ano": 2026
+                "numero": 8,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "9",
-                "ano": 2026
+                "numero": 9,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "10",
-                "ano": 2026
+                "numero": 10,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "11",
-                "ano": 2026
+                "numero": 11,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "12",
-                "ano": 2026
+                "numero": 12,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "13",
-                "ano": 2026
+                "numero": 13,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "14",
-                "ano": 2026
+                "numero": 14,
+                "ano": 2026,
+                "vista": true
             },
             {
-                "temp": "15",
-                "ano": 2026
+                "numero": 15,
+                "ano": 2026,
+                "vista": true
             }
         ],
+        "tempAssistida": 15,
+        "tempTotal": 15,
         "status": "concluido",
         "progresso": null,
         "notaEu": 10,
@@ -740,6 +808,31 @@
             "g": 136,
             "b": 136
         },
+        "temporadas": [
+            {
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
+            },
+            {
+                "numero": 2,
+                "vista": false
+            },
+            {
+                "numero": 3,
+                "vista": false
+            },
+            {
+                "numero": 4,
+                "vista": false
+            },
+            {
+                "numero": 5,
+                "vista": false
+            }
+        ],
+        "tempAssistida": 1,
+        "tempTotal": 5,
         "status": "assistindo",
         "progresso": {
             "temporada": 2,
@@ -894,6 +987,24 @@
             "g": 82,
             "b": 85
         },
+        "temporadas": [
+            {
+                "numero": 1,
+                "ano": 2026,
+                "vista": true
+            },
+            {
+                "numero": 2,
+                "ano": 2026,
+                "vista": true
+            },
+            {
+                "numero": 3,
+                "vista": false
+            }
+        ],
+        "tempAssistida": 2,
+        "tempTotal": 3,
         "status": "assistindo",
         "progresso": {
             "temporada": 3,
@@ -1042,6 +1153,7 @@
             "b": 194
         },
         "aura": "#17a6dd",
+        "subtipo": "filme",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -1060,6 +1172,7 @@
             "g": 97,
             "b": 135
         },
+        "subtipo": "filme",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -1097,6 +1210,7 @@
             "g": 149,
             "b": 182
         },
+        "subtipo": "filme",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -1190,6 +1304,7 @@
             "g": 104,
             "b": 121
         },
+        "subtipo": "filme",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,
@@ -1248,44 +1363,6 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
-        "memoria": ""
-    },
-    {
-        "id": "harry-potter-e-a-ordem-da-fenix",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e a Ordem da Fênix",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794333149225.webp",
-        "cor": {
-            "r": 43,
-            "g": 70,
-            "b": 85
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
-        "id": "harry-potter-e-o-enigma-do-principe",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e o Enigma do Príncipe",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794333208568.jpg",
-        "cor": {
-            "r": 43,
-            "g": 82,
-            "b": 92
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
         "memoria": ""
     },
     {
@@ -1376,6 +1453,42 @@
             "b": 77
         },
         "aura": "#051926",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-a-ordem-da-fenix",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e a Ordem da Fênix",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794333149225.webp",
+        "cor": {
+            "r": 43,
+            "g": 70,
+            "b": 85
+        },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 9,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-o-enigma-do-principe",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e o Enigma do Príncipe",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794333208568.jpg",
+        "cor": {
+            "r": 43,
+            "g": 82,
+            "b": 92
+        },
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,

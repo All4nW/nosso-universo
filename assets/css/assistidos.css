@@ -6642,3 +6642,217 @@ body.sorteio-aberto { overflow: hidden; }
     }
 
 }
+
+/* rótulo "Temporadas" / "Filmes" dentro do ano, na aba Animes */
+.assistidos-sub-divisor {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 4px 0 -6px;
+
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    color: rgba(228, 214, 250, 0.6);
+}
+
+.assistidos-sub-divisor::after {
+    content: "";
+
+    flex: 1;
+    height: 1px;
+
+    background: linear-gradient(90deg, rgba(201, 167, 245, 0.35), transparent);
+}
+
+/* três pontinhos animados (temporada em breve) */
+.as-temp-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    margin-left: 5px;
+
+    vertical-align: middle;
+}
+
+.as-temp-dots i {
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    animation: as-dots 1.3s ease-in-out infinite;
+}
+
+.as-temp-dots i:nth-child(2) { animation-delay: 0.18s; }
+.as-temp-dots i:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes as-dots {
+
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+
+    30% { transform: translateY(-3px); opacity: 1; }
+
+}
+
+/* linha de temporada "em breve" no modal */
+.as-temp-breve .as-temp-marca {
+    border-style: dashed;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.as-temp-breve .as-temp-nome {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+.as-temp-breve .as-temp-direita {
+    display: inline-flex;
+    align-items: center;
+
+    color: #ffd7a8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .as-temp-dots i { animation: none; opacity: 0.8; }
+
+}
+
+/* botãozinho "!" ao lado da temporada que ainda vai lançar */
+.as-temp-aviso {
+    display: inline-grid;
+    place-items: center;
+
+    width: 16px;
+    height: 16px;
+
+    margin-left: 8px;
+    padding: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 215, 168, 0.8);
+
+    background: rgba(255, 215, 168, 0.14);
+
+    color: #ffd7a8;
+
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 1;
+
+    vertical-align: middle;
+
+    cursor: help;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.as-temp { position: relative; }
+
+.as-temp-aviso {
+    cursor: pointer;
+
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* "em breve": pêssego, para diferenciar de "ainda não vimos" */
+.as-temp-aviso.breve {
+    border-color: rgba(255, 215, 168, 0.85);
+    background: rgba(255, 215, 168, 0.16);
+
+    color: #ffd7a8;
+}
+
+.as-temp-aviso:hover { transform: scale(1.12); }
+
+.as-temp-dica {
+    position: absolute;
+
+    z-index: 6;
+
+    max-width: 190px;
+
+    padding: 7px 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(var(--cor-ambiente-r, 201), var(--cor-ambiente-g, 167), var(--cor-ambiente-b, 245), 0.5);
+
+    background: rgba(12, 10, 24, 0.97);
+
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+
+    color: #fff;
+
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+
+    opacity: 0;
+
+    transform: translate(-50%, -100%) translateY(4px);
+
+    pointer-events: none;
+
+    transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.as-temp-dica.on {
+    opacity: 1;
+
+    transform: translate(-50%, -100%);
+}
+
+/* "!" redondinho, sem borda */
+.as-temp-aviso {
+    width: 17px;
+    height: 17px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    color: rgba(255, 255, 255, 0.78);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    box-shadow: none;
+
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.as-temp-aviso:hover {
+    background: rgba(255, 255, 255, 0.26);
+
+    color: #fff;
+
+    transform: scale(1.1);
+}
+
+/* em breve: pêssego suave */
+.as-temp-aviso.breve {
+    border: 0;
+
+    background: rgba(255, 215, 168, 0.2);
+
+    color:

@@ -225,7 +225,7 @@ function renderizarAssistidosAdmin() {
                     item.categoria === categoria
             );
 
-        if (!itens.length) return;
+        
 
 
         const bloco =
@@ -256,6 +256,10 @@ function renderizarAssistidosAdmin() {
                     ${itens.length}
                     ${itens.length === 1 ? "item" : "itens"}
                 </span>
+
+                <button type="button" class="assistidos-admin-add-cat" data-novo="${categoria}">
+                    + Adicionar
+                </button>
             </div>
         `;
 
@@ -549,6 +553,65 @@ function configurarEventosAssistidos() {
 
         }
     );
+    document
+        .getElementById("assistidos-cat-picker")
+        ?.addEventListener("click", evento => {
+
+            const botao = evento.target.closest("[data-cat]");
+
+            if (!botao) return;
+
+            const seletor = document.getElementById("assistidos-categoria");
+
+            seletor.value = botao.dataset.cat;
+
+            seletor.dispatchEvent(new Event("change"));
+
+        });
+
+    document
+        .getElementById("assistidos-subtipo")
+        ?.addEventListener("change", atualizarCampoNotas);
+
+    document
+        .getElementById("assistidos-temp-add")
+        ?.addEventListener("click", () => {
+            adicionarTemporadas(Number(document.getElementById("assistidos-temp-qtd").value) || 1);
+        });
+
+
+    document
+        .getElementById("assistidos-temp-todas")
+        ?.addEventListener("click", () => {
+            document
+                .querySelectorAll("#assistidos-temp-lista .assistidos-temp-estado")
+                .forEach(seletor => {
+
+                    // "em breve" continua em breve; o resto vira vista
+                    if (seletor.value === "breve" || seletor.value === "vista") return;
+
+                    seletor.value = "vista";
+                    seletor.dispatchEvent(new Event("change"));
+
+                });
+        });
+
+    // "+ Adicionar" de cada categoria já abre o formulário com ela escolhida
+    document.addEventListener("click", evento => {
+
+        const botao = evento.target.closest("[data-novo]");
+
+        if (!botao) return;
+
+        abrirModalAssistido();
+
+        const seletor = document.getElementById("assistidos-categoria");
+
+        seletor.value = botao.dataset.novo;
+
+        seletor.dispatchEvent(new Event("change"));
+
+    });
 
 }
 
@@ -625,7 +688,7 @@ function abrirModalAssistido(item = null) {
     document.getElementById(
         "assistidos-item-status"
     ).value =
-        item?.status || "assistido";
+        item?.status === "concluido" ? "assistido" : (item?.status || "assistido");
 
 
     document.getElementById(
@@ -687,12 +750,7 @@ function abrirModalAssistido(item = null) {
         "assistidos-imagem"
     ).value = "";
 
-        const listaHist = document.getElementById("assistidos-historico-lista");
 
-    if (listaHist) listaHist.innerHTML = "";
-
-    (Array.isArray(item?.historicoTemporadas) ? item.historicoTemporadas : [])
-        .forEach(h => adicionarLinhaHistorico(h.temp, h.ano));
 
 
 
@@ -708,12 +766,15 @@ function abrirModalAssistido(item = null) {
         .forEach(link => adicionarLinhaLink(link.nome, link.url));
 
 
-    atualizarCampoNotas();
-    document.getElementById("assistidos-temp-assistida").value =
-        item?.tempAssistida ?? "";
+    document.getElementById("assistidos-subtipo").value =
+        item?.subtipo === "filme" ? "filme" : "temporada";
 
-    document.getElementById("assistidos-temp-total").value =
-        item?.tempTotal ?? "";
+    document.getElementById("assistidos-concluido").checked =
+        item?.status === "concluido";
+
+    carregarTemporadasNoForm(item);
+
+    atualizarCampoNotas();
     const aura = String(item?.aura || "").toLowerCase();
 
     const seletorAura = document.getElementById("assistidos-aura");
@@ -760,6 +821,8 @@ function fecharModalAssistido() {
 // =====================================================
 
 function atualizarCampoNotas() {
+
+        marcarCategoriaPicker();
 
     const categoria =
         document.getElementById(
@@ -811,13 +874,23 @@ function atualizarCampoNotas() {
                 : "block";
 
     }
+    const subtipoAnime =
+        document.getElementById("assistidos-subtipo")?.value;
+
+    const areaSubtipo =
+        document.getElementById("assistidos-subtipo-area");
+
+    if (areaSubtipo) {
+        areaSubtipo.style.display = categoria === "animes" ? "block" : "none";
+    }
+
     const areaTemp = document.getElementById("assistidos-temporadas-area");
 
     if (areaTemp) {
 
         areaTemp.style.display =
-            (categoria === "series" || categoria === "animes")
-                ? "grid"
+            (categoria === "series" || (categoria === "animes" && subtipoAnime !== "filme"))
+                ? "block"
                 : "none";
 
     }
@@ -851,6 +924,8 @@ function atualizarCampoNotas() {
 // =====================================================
 
 function atualizarCampoProgresso() {
+
+        atualizarCampoConcluido();
 
     const categoria =
         document.getElementById(
@@ -1364,12 +1439,20 @@ async function salvarAssistido(evento) {
     }
 
 
-    const status =
+    const statusBase =
         categoria === "queremos"
             ? null
             : (document.getElementById("assistidos-item-status")?.value || "assistido");
 
+    const concluidoMarcado =
+        document.getElementById("assistidos-concluido")?.checked &&
+        statusBase === "assistido" &&
+        (
+            categoria === "series" ||
+            (categoria === "animes" && document.getElementById("assistidos-subtipo").value !== "filme")
+        );
 
+    const status = concluidoMarcado ? "concluido" : statusBase;
     let progresso = null;
 
 
@@ -1420,13 +1503,27 @@ async function salvarAssistido(evento) {
                 : undefined;
     const ehSerie = categoria === "series" || categoria === "animes";
 
-    const tempAssistida = ehSerie
-        ? (Number(document.getElementById("assistidos-temp-assistida").value) || undefined)
+        const ehAnimeFilme =
+        categoria === "animes" &&
+        document.getElementById("assistidos-subtipo").value === "filme";
+
+    const temporadasLidas = (ehSerie && !ehAnimeFilme) ? lerTemporadasDoForm() : [];
+
+    const temporadas = temporadasLidas.length ? temporadasLidas : undefined;
+
+    const numerosVistos = temporadasLidas.filter(t => t.vista).map(t => t.numero);
+
+    // os campos antigos continuam sendo gravados, derivados da lista
+    const tempAssistida = numerosVistos.length ? Math.max(...numerosVistos) : undefined;
+
+    const lancadasLidas = temporadasLidas.filter(t => t.estado !== "breve");
+
+    const tempTotal = lancadasLidas.length
+        ? Math.max(...lancadasLidas.map(t => t.numero))
         : undefined;
 
-    const tempTotal = ehSerie
-        ? (Number(document.getElementById("assistidos-temp-total").value) || undefined)
-        : undefined;
+    const subtipo = ehAnimeFilme ? "filme" : undefined;
+
 
             const ehQueremos = categoria === "queremos";
 
@@ -1441,9 +1538,8 @@ async function salvarAssistido(evento) {
     const linksLidos = ehQueremos ? lerLinksDoForm() : [];
 
     const links = linksLidos.length ? linksLidos : undefined;
-    const histLido = ehSerie ? lerHistoricoDoForm() : [];
 
-    const historicoTemporadas = histLido.length ? histLido : undefined;
+
     const novoItem = {
 
         id:
@@ -1476,10 +1572,10 @@ async function salvarAssistido(evento) {
 
         aura,
 
-                tempAssistida,
+        temporadas,
+        tempAssistida,
         tempTotal,
-
-                historicoTemporadas,
+        subtipo,
 
                 tipo,
         previewTexto,
@@ -1930,6 +2026,198 @@ function escaparHTML(texto) {
 
 }
 
+// =====================================================
+// CATEGORIA, CONCLUÍDO E TEMPORADAS (formulário novo)
+// =====================================================
+
+function marcarCategoriaPicker() {
+
+    const categoria = document.getElementById("assistidos-categoria").value;
+
+    document
+        .querySelectorAll("#assistidos-cat-picker [data-cat]")
+        .forEach(botao => {
+            botao.classList.toggle("ativa", botao.dataset.cat === categoria);
+        });
+
+}
+
+// a caixinha "Concluído" só aparece em série/anime (que não seja filme) já assistido
+function atualizarCampoConcluido() {
+
+    const area = document.getElementById("assistidos-concluido-area");
+
+    if (!area) return;
+
+    const categoria = document.getElementById("assistidos-categoria").value;
+    const status = document.getElementById("assistidos-item-status")?.value || "assistido";
+    const subtipo = document.getElementById("assistidos-subtipo")?.value;
+
+    const serie =
+        categoria === "series" ||
+        (categoria === "animes" && subtipo !== "filme");
+
+    area.style.display = (serie && status === "assistido") ? "flex" : "none";
+
+}
+
+function criarLinhaTemporada(numero, ano, situacao) {
+
+    const lista = document.getElementById("assistidos-temp-lista");
+
+    if (!lista) return;
+
+    const validas = ["vista", "nao", "nova", "breve"];
+
+    const inicial = validas.includes(situacao) ? situacao : (situacao === true ? "vista" : "nao");
+
+    const linha = document.createElement("div");
+
+    linha.className = "assistidos-temp-linha";
+
+    linha.innerHTML = `
+        <span class="assistidos-temp-rotulo">Temp.</span>
+        <input type="number" class="assistidos-temp-num" min="1" max="99" aria-label="Número da temporada">
+        <input type="number" class="assistidos-temp-ano" min="1900" max="2100" placeholder="Ano" aria-label="Ano em que assistimos">
+        <select class="assistidos-temp-estado" aria-label="Situação da temporada">
+            <option value="vista">✓ Vista</option>
+            <option value="nao">Ainda não vimos</option>
+            <option value="nova">✨ Nova (já lançou)</option>
+            <option value="breve">⏳ Em breve (a lançar)</option>
+        </select>
+        <button type="button" class="assistidos-temp-remover" aria-label="Remover temporada">✕</button>
+    `;
+
+    linha.querySelector(".assistidos-temp-num").value = numero;
+
+    const campoAno = linha.querySelector(".assistidos-temp-ano");
+    const seletor = linha.querySelector(".assistidos-temp-estado");
+
+    campoAno.value = ano || "";
+    seletor.value = inicial;
+    seletor.dataset.estado = inicial;
+
+    seletor.addEventListener("change", () => {
+
+        seletor.dataset.estado = seletor.value;
+
+        // ao marcar como vista sem ano, já sugere o ano em que começamos a assistir
+        if (seletor.value === "vista" && !campoAno.value) {
+            campoAno.value =
+                Number(document.getElementById("assistidos-ano-assistido").value) ||
+                new Date().getFullYear();
+        }
+
+    });
+
+    linha
+        .querySelector(".assistidos-temp-remover")
+        .addEventListener("click", () => linha.remove());
+
+    lista.appendChild(linha);
+
+}
+
+function adicionarTemporadas(quantidade = 1) {
+
+    const existentes = [...document.querySelectorAll("#assistidos-temp-lista .assistidos-temp-num")]
+        .map(campo => Number(campo.value) || 0);
+
+    let proxima = Math.max(0, ...existentes) + 1;
+
+    for (let i = 0; i < quantidade; i++) {
+        criarLinhaTemporada(proxima++, "", false);
+    }
+
+}
+
+// itens antigos: monta a lista a partir de "última temporada / lançadas / histórico"
+function temporadasDoItemAntigo(item) {
+
+    if (!item) return [];
+
+    const assistida = Number(item.tempAssistida) || 0;
+    const total = Number(item.tempTotal) || 0;
+
+    const anos = new Map();
+    const vistas = new Set();
+
+    (Array.isArray(item.historicoTemporadas) ? item.historicoTemporadas : []).forEach(h => {
+
+        if (!h || !h.temp) return;
+
+        const texto = String(h.temp);
+        const nums = (texto.match(/\d+/g) || []).map(Number);
+
+        let lista = nums;
+
+        if (nums.length === 2 && /[–—-]|\s(a|até)\s/i.test(texto)) {
+            lista = [];
+            for (let n = Math.min(...nums); n <= Math.max(...nums); n++) lista.push(n);
+        }
+
+        lista.forEach(n => {
+            vistas.add(n);
+            if (Number(h.ano) > 0) anos.set(n, Number(h.ano));
+        });
+
+    });
+
+    const ultimo = Math.max(total, assistida, ...vistas, 0);
+
+    const resultado = [];
+
+    for (let n = 1; n <= ultimo; n++) {
+        resultado.push({
+            numero: n,
+            ano: anos.get(n) || 0,
+            vista: n <= assistida || vistas.has(n)
+        });
+    }
+
+    return resultado;
+
+}
+
+function carregarTemporadasNoForm(item) {
+
+    const lista = document.getElementById("assistidos-temp-lista");
+
+    if (!lista) return;
+
+    lista.innerHTML = "";
+
+    const temporadas =
+        Array.isArray(item?.temporadas) && item.temporadas.length
+            ? item.temporadas
+            : temporadasDoItemAntigo(item);
+
+    temporadas.forEach(t => criarLinhaTemporada(t.numero, t.ano, t.estado || (t.vista ? "vista" : "nao")));
+
+}
+
+function lerTemporadasDoForm() {
+
+    return [...document.querySelectorAll("#assistidos-temp-lista .assistidos-temp-linha")]
+        .map(linha => {
+
+            const estado = linha.querySelector(".assistidos-temp-estado").value;
+            const vista = estado === "vista";
+            const ano = Number(linha.querySelector(".assistidos-temp-ano").value) || 0;
+
+            return {
+                numero: Number(linha.querySelector(".assistidos-temp-num").value) || 0,
+                ano: vista && ano ? ano : undefined,
+                vista,
+                estado
+            };
+
+        })
+        .filter(t => t.numero > 0)
+        .sort((a, b) => a.numero - b.numero)
+        .filter((t, i, todas) => i === 0 || t.numero !== todas[i - 1].numero);
+
+}
 
 window.initAssistidos =
     initAssistidos;

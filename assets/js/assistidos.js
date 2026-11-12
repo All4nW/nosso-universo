@@ -554,8 +554,7 @@ function temNovaTemporada(item) {
 
     return (item.categoria === "series" || item.categoria === "animes") &&
         item.status !== "assistindo" &&
-        Number(item.tempAssistida) > 0 &&
-        Number(item.tempTotal) > Number(item.tempAssistida);
+        listarTemporadas(item).some(t => t.nova);
 
 }
 
@@ -950,6 +949,61 @@ async function carregarAssistidos() {
 
 }
 
+const ehFilmeAnime = item => item.subtipo === "filme";
+
+// dentro de cada ano: primeiro as temporadas, depois os filmes (a ordem em que assistimos é mantida)
+function separarTemporadasFilmes(lista) {
+
+    const saida = [];
+
+    let i = 0;
+
+    while (i < lista.length) {
+
+        let j = i;
+
+        while (j < lista.length && anoDe(lista[j]) === anoDe(lista[i])) j++;
+
+        const bloco = lista.slice(i, j);
+
+        saida.push(...bloco.filter(x => !ehFilmeAnime(x)), ...bloco.filter(ehFilmeAnime));
+
+        i = j;
+
+    }
+
+    return saida;
+
+}
+
+// só mostra os rótulos nos anos que têm as duas coisas
+function anosComTemporadaEFilme(lista) {
+
+    const tipos = new Map();
+
+    lista.forEach(item => {
+        const ano = anoDe(item);
+        const conjunto = tipos.get(ano) || new Set();
+        conjunto.add(ehFilmeAnime(item));
+        tipos.set(ano, conjunto);
+    });
+
+    return new Set([...tipos].filter(([, c]) => c.size > 1).map(([ano]) => ano));
+
+}
+
+function criarDivisorSub(texto) {
+
+    const div = document.createElement("div");
+
+    div.className = "assistidos-sub-divisor";
+
+    div.textContent = texto;
+
+    return div;
+
+}
+
 
 // =====================================================
 // ESTANTE NORMAL
@@ -987,20 +1041,41 @@ function criarEstante(tituloCategoria, itens, chave, porAno = false) {
 
     const usarAno = porAno && itens.some(item => anoDe(item));
 
-    const lista = usarAno ? ordenarPorAno(itens) : itens;
+    const base = usarAno ? ordenarPorAno(itens) : itens;
+
+    const ehAnime = chave === "animes";
+
+    const lista = ehAnime ? separarTemporadasFilmes(base) : base;
+
+    const anosMistos = ehAnime ? anosComTemporadaEFilme(lista) : new Set();
 
     let anoAnterior;
+    let subAnterior = null;
     let indice = 0;
 
     lista.forEach(item => {
 
-        if (usarAno) {
+        const ano = anoDe(item);
 
-            const ano = anoDe(item);
+        if (usarAno && ano !== anoAnterior) {
 
-            if (ano !== anoAnterior) {
-                grid.appendChild(criarDivisorAno(ano));
-                anoAnterior = ano;
+            grid.appendChild(criarDivisorAno(ano));
+
+            anoAnterior = ano;
+            subAnterior = null;
+
+        }
+
+        if (ehAnime && anosMistos.has(ano)) {
+
+            const sub = ehFilmeAnime(item) ? "filmes" : "temporadas";
+
+            if (sub !== subAnterior) {
+
+                grid.appendChild(criarDivisorSub(sub === "filmes" ? "Filmes" : "Temporadas"));
+
+                subAnterior = sub;
+
             }
 
         }
@@ -1021,6 +1096,33 @@ function criarEstante(tituloCategoria, itens, chave, porAno = false) {
 // =====================================================
 // CARD NORMAL
 // =====================================================
+// maior temporada marcada como vista (funciona com a lista nova e com os campos antigos)
+// etiqueta "Temp. N" do card: só série/anime de temporadas que ainda não foi 100% visto
+// etiqueta "Temp. N" do card: só série/anime de temporadas que ainda não foi 100% visto
+function infoSeloTemporada(item) {
+
+    if (item.categoria !== "series" && item.categoria !== "animes") return null;
+
+    if (item.subtipo === "filme") return null;
+
+    const lista = listarTemporadas(item);
+
+    if (!lista.length) return null;
+
+    const vistas = lista
+        .filter(t => t.vista)
+        .map(t => t.numero)
+        .filter(Number.isFinite);
+
+    if (!vistas.length) return null;
+
+    // terminou tudo (como o Supernatural): sem etiqueta
+    if (lista.every(t => t.vista)) return null;
+
+    return { ultima: Math.max(...vistas) };
+
+}
+
 
 function criarCardAssistido(item, indice, ehListaFutura = false) {
 
@@ -1093,19 +1195,18 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
     `;
 
 
-        if (
-        !ehListaFutura &&
-        (item.categoria === "series" || item.categoria === "animes") &&
-        Number(item.tempAssistida) > 0
-    ) {
+
+    const selo = !ehListaFutura ? infoSeloTemporada(item) : null;
+
+    if (selo) {
 
         card.querySelector(".assistido-capa").insertAdjacentHTML(
             "beforeend",
-            `<span class="assistido-temp-selo">Temp. ${Number(item.tempAssistida)}</span>`
+            `<span class="assistido-temp-selo">Temp. ${selo.ultima}</span>`
         );
 
     }
-
+    
     card.addEventListener("click", () =>
         abrirDetalhesAssistido(item, {
             notaEu,
@@ -1266,12 +1367,22 @@ function listarTemporadas(item) {
     if (Array.isArray(item.temporadas) && item.temporadas.length) {
 
         return item.temporadas
-            .map((t, i) => ({
-                numero: Number(t.numero) || i + 1,
-                ano: Number(t.ano) || 0,
-                vista: Boolean(t.vista),
-                nova: false
-            }))
+            .map((t, i) => {
+
+                const estado = ["vista", "nao", "nova", "breve"].includes(t.estado)
+                    ? t.estado
+                    : (t.vista ? "vista" : "nao");
+
+                return {
+                    numero: Number(t.numero) || i + 1,
+                    ano: Number(t.ano) || 0,
+                    estado,
+                    vista: estado === "vista",
+                    nova: estado === "nova",
+                    breve: estado === "breve"
+                };
+
+            })
             .sort((a, b) => a.numero - b.numero);
 
     }
@@ -1323,7 +1434,8 @@ function listarTemporadas(item) {
             numero: n,
             ano: anos.get(n) || 0,
             vista,
-            nova: !vista && total > 0 && n <= total && assistida > 0
+            nova: false,
+            breve: false
         });
 
     }
@@ -1334,27 +1446,38 @@ function listarTemporadas(item) {
 
 const ICONE_CHECK_TEMP = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 12.5l3.8 3.8L17.5 8"/></svg>`;
 
+const PONTINHOS_HTML = `<span class="as-temp-dots" aria-hidden="true"><i></i><i></i><i></i></span>`;
+
 function montarTemporadasHtml(item) {
 
     const temporadas = listarTemporadas(item);
 
     if (!temporadas.length) return "";
 
-    const vistas = temporadas.filter(t => t.vista).length;
-    const completo = vistas === temporadas.length;
+    // "em breve" ainda não existe, então não entra na conta
+    const lancadas = temporadas.filter(t => !t.breve);
+    const vistas = lancadas.filter(t => t.vista).length;
+    const temBreve = temporadas.some(t => t.breve);
+    const completo = lancadas.length > 0 && vistas === lancadas.length;
 
     const linhas = temporadas.map((t, i) => {
 
-        const estado = t.vista ? "vista" : (t.nova ? "nova" : "falta");
+        const estado = t.vista ? "vista" : (t.breve ? "breve" : "falta");
 
-        const direita = t.vista
-            ? (t.ano ? t.ano : "")
-            : (t.nova ? "Nova!" : "ainda não vimos");
+        const direita = t.vista && t.ano ? t.ano : "";
+
+        const msg = t.breve
+            ? "Em breve: ainda não foi lançada"
+            : "Ainda não assistimos";
+
+        const aviso = t.vista
+            ? ""
+            : `<button type="button" class="as-temp-aviso ${t.breve ? "breve" : ""}" data-msg="${msg}" aria-label="${msg}">!</button>`;
 
         return `
             <div class="as-temp-linha as-temp-${estado}" style="--n:${i}">
                 <span class="as-temp-marca">${t.vista ? ICONE_CHECK_TEMP : ""}</span>
-                <span class="as-temp-nome">Temporada ${t.numero}</span>
+                <span class="as-temp-nome">Temporada ${t.numero}${aviso}</span>
                 <span class="as-temp-direita">${direita}</span>
             </div>
         `;
@@ -1366,7 +1489,7 @@ function montarTemporadasHtml(item) {
 
             <button type="button" class="as-temp-btn ${completo ? "completo" : ""}" aria-expanded="false">
                 <span>Temporadas</span>
-                <span class="as-temp-conta">${vistas}/${temporadas.length}</span>
+                ${lancadas.length ? `<span class="as-temp-conta">${vistas}/${lancadas.length}</span>` : ""}
                 ${completo ? `<span class="as-temp-check">${ICONE_CHECK_TEMP}</span>` : ""}
                 <span class="as-temp-seta" aria-hidden="true">▾</span>
             </button>
@@ -1398,6 +1521,43 @@ function ativarTemporadas() {
         if (aberto) {
             setTimeout(() => caixa.scrollIntoView({ block: "nearest", behavior: "smooth" }), 280);
         }
+
+    });
+
+    // balãozinho do "!"
+    const dica = document.createElement("div");
+
+    dica.className = "as-temp-dica";
+    dica.setAttribute("role", "status");
+
+    caixa.appendChild(dica);
+
+    let timer;
+
+    const esconder = () => dica.classList.remove("on");
+
+    caixa.addEventListener("click", evento => {
+
+        const aviso = evento.target.closest(".as-temp-aviso");
+
+        if (!aviso) {
+            esconder();
+            return;
+        }
+
+        const r = aviso.getBoundingClientRect();
+        const c = caixa.getBoundingClientRect();
+
+        dica.textContent = aviso.dataset.msg;
+
+        dica.style.left = Math.min(Math.max(r.left - c.left + r.width / 2, 90), c.width - 90) + "px";
+        dica.style.top = (r.top - c.top - 8) + "px";
+
+        dica.classList.add("on");
+
+        clearTimeout(timer);
+
+        timer = setTimeout(esconder, 2800);
 
     });
 

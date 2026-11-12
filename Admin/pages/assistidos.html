@@ -92,8 +92,25 @@
 
                 <input
                     type="hidden"
-                    id="assistidos-id"
-                >
+                     id="assistidos-id"
+>
+
+                    <div class="assistidos-cat-picker" id="assistidos-cat-picker">
+    <button type="button" data-cat="filmes">🎬 Filme</button>
+    <button type="button" data-cat="series">📺 Série</button>
+    <button type="button" data-cat="animes">🍿 Anime</button>
+    <button type="button" data-cat="queremos">⏳ Quero ver</button>
+</div>
+
+<div class="campo" id="assistidos-subtipo-area" style="display:none;">
+    <label for="assistidos-subtipo">Formato</label>
+    <select id="assistidos-subtipo">
+        <option value="temporada">📺 Temporada / série</option>
+        <option value="filme">🎬 Filme</option>
+    </select>
+</div>
+                
+                
 
 
                 <!-- CAPA -->
@@ -200,13 +217,14 @@
             ▶ Assistindo agora
         </option>
 
-                <option value="concluido">
-            ✔ Concluído (acabou, nada a mais)
-        </option>
-
     </select>
 
 </div>
+<label class="assistidos-check" id="assistidos-concluido-area" style="display:none;">
+    <input type="checkbox" id="assistidos-concluido">
+    <span>✔ Concluído <small>(mostra o check verde no card)</small></span>
+</label>
+
 
 <!-- PROGRESSO — FILME -->
 
@@ -399,44 +417,23 @@
 
                 </div>
 
-                
-                <!-- TEMPORADAS (séries e animes) -->
+        <div id="assistidos-temporadas-area" class="campo" style="display:none;">
 
-                <div id="assistidos-temporadas-area" class="assistidos-notas-area">
+    <label>Temporadas</label>
 
-                    <div class="campo">
-                        <label for="assistidos-temp-assistida">
-                            Última temporada que assistimos
-                        </label>
-                        <input type="number" id="assistidos-temp-assistida" min="1" placeholder="Ex.: 2">
-                    </div>
+    <small style="display:block;margin-bottom:8px;">
+        Uma linha por temporada. Escolha a situação de cada uma: vista, nova (já lançou) ou em breve (ainda vai lançar).
+    </small>
 
-                    <div class="campo">
-                        <label for="assistidos-temp-total">
-                            Temporadas lançadas (opcional)
-                        </label>
-                        <input type="number" id="assistidos-temp-total" min="1" placeholder="Ex.: 3">
-                    </div>
+    <div id="assistidos-temp-lista"></div>
 
-                </div>
+    <div class="assistidos-temp-acoes">
+        <input type="number" id="assistidos-temp-qtd" min="1" max="50" value="1" aria-label="Quantas temporadas adicionar">
+        <button type="button" class="botao-secundario" id="assistidos-temp-add">+ Temporada</button>
+        <button type="button" class="botao-secundario" id="assistidos-temp-todas">✓ Marcar todas</button>
+    </div>
 
-                                <!-- HISTÓRICO DAS TEMPORADAS (séries e animes) -->
-
-                <div id="assistidos-historico-area" class="campo" style="display:none;">
-
-                    <label>Histórico das temporadas (opcional)</label>
-
-                    <small style="display:block;margin-bottom:8px;">
-                        Ex.: Temporadas 1–2 em 2025 · Temporada 3 em 2027
-                    </small>
-
-                    <div id="assistidos-historico-lista"></div>
-
-                    <button type="button" class="botao-secundario" onclick="adicionarLinhaHistorico()">
-                        + Adicionar temporada
-                    </button>
-
-                </div>
+</div>
                 <!-- COR DO FUNDO DO CARD -->
 
 
