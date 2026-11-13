@@ -136,7 +136,14 @@ function criarBotaoGrade(chave, grid) {
 }
 
 // girou o celular / mudou a janela: refaz as colunas do nível salvo
+let ultimaLargura = window.innerWidth;
+
 window.addEventListener("resize", () => {
+
+    // a barra do navegador subindo/descendo muda só a altura: não precisa refazer a grade
+    if (window.innerWidth === ultimaLargura) return;
+
+    ultimaLargura = window.innerWidth;
 
     gradesAtivas.forEach(aplicarGrade);
 
@@ -1162,7 +1169,7 @@ function criarCardAssistido(item, indice, ehListaFutura = false) {
     card.innerHTML = `
 
         <div class="assistido-capa">
-            <img src="${item.capa || ""}" alt="${item.titulo}" onerror="this.style.display='none'">
+                        <img src="${item.capa || ""}" alt="${item.titulo}" loading="lazy" decoding="async" onerror="this.style.display='none'">
             ${
                 ehListaFutura
                     ? `

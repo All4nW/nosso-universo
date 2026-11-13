@@ -6855,4 +6855,146 @@ body.sorteio-aberto { overflow: hidden; }
 
     background: rgba(255, 215, 168, 0.2);
 
-    color:
+    color: #ffd7a8;
+}
+
+.as-temp-aviso.breve:hover {
+    background: rgba(255, 215, 168, 0.34);
+
+    color: #ffe6c8;
+}
+
+/* balãozinho: sem borda, com setinha, abre embaixo */
+.as-temp-dica {
+    padding: 8px 14px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: rgba(20, 17, 38, 0.98);
+
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+
+    transform: translate(-50%, 0) translateY(-4px);
+}
+
+.as-temp-dica.on {
+    transform: translate(-50%, 0);
+}
+
+.as-temp-dica::before {
+    content: "";
+
+    position: absolute;
+
+    top: -5px;
+    left: 50%;
+
+    width: 10px;
+    height: 10px;
+
+    background: rgba(20, 17, 38, 0.98);
+
+    border-radius: 2px;
+
+    transform: translateX(-50%) rotate(45deg);
+}
+
+/* =========================================================
+   DESEMPENHO NO CELULAR — menos efeitos pesados
+   ========================================================= */
+
+/* cards que estão fora da tela nem são desenhados */
+.assistido-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 300px;
+}
+
+@media (max-width: 760px), (hover: none) {
+
+    /* blur atrás de cada selo/nota é caro: com 40+ cards viram 80+ camadas */
+    .nota-chip,
+    .assistido-temp-selo,
+    .assistido-continuar-topo-info,
+    .assistido-edit-selo {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .assistido-temp-selo { background: rgba(10, 8, 20, 0.85); }
+
+    .nota-chip { box-shadow: none; }
+
+    /* capa: sombra menor e sem camada extra */
+    .assistido-capa {
+        transform: none;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    /* só os 8 primeiros cards fazem a animação de entrada */
+    .assistido-card:nth-child(n+9) {
+        animation: none;
+        opacity: 1;
+    }
+
+    /* animações infinitas que redesenham a tela o tempo todo */
+    .assistido-check-concluido svg {
+        animation: none;
+        stroke-dashoffset: 0;
+        filter: none;
+    }
+
+    .assistidos-ano-divisor span:first-child,
+    .assistidos-ano-coracao {
+        animation: none;
+        filter: none;
+    }
+
+    .assistidos-ano-divisor::before,
+    .assistidos-ano-divisor::after {
+        animation: none;
+        opacity: 0.85;
+        transform: none;
+    }
+
+    .assistidos-estante-titulo .assistidos-ano-menu .assistidos-ano-btn svg {
+        animation: none;
+    }
+
+    /* painéis com blur grande */
+    .assistidos-ano-menu .assistidos-ano-popover,
+    .continuar-lateral-painel {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    /* modal: sombra e brilhos mais leves, sem animar a troca de cor */
+    .modal-content-layout-assistido,
+    .modal-content-layout-assistido[data-aura~="escura"] {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+        transition: none;
+    }
+
+    .modal-content-layout-assistido #modal-fotos img {
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .modal-content-layout-assistido .modal-decoracao-sparkle {
+        animation: none;
+    }
+
+}
+
+/* toque não tem "passar o mouse": evita o efeito ficar preso depois do toque */
+@media (hover: none) {
+
+    .assistido-card:hover { transform: none; }
+
+    .assistido-card:hover .assistido-capa { transform: none; }
+
+    .assistido-card:hover .assistido-capa img {
+        transform: none;
+        filter: none;
+    }
+
+}

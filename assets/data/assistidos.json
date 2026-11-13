@@ -991,16 +991,19 @@
             {
                 "numero": 1,
                 "ano": 2026,
-                "vista": true
+                "vista": true,
+                "estado": "vista"
             },
             {
                 "numero": 2,
                 "ano": 2026,
-                "vista": true
+                "vista": true,
+                "estado": "vista"
             },
             {
                 "numero": 3,
-                "vista": false
+                "vista": false,
+                "estado": "nao"
             }
         ],
         "tempAssistida": 2,
@@ -1008,7 +1011,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 3,
-            "episodio": 9,
+            "episodio": 11,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
@@ -1366,25 +1369,6 @@
         "memoria": ""
     },
     {
-        "id": "harry-potter-e-as-reliquias-da-morte-parte-2",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e as Relíquias da Morte – Parte 1",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794333548336.png",
-        "cor": {
-            "r": 72,
-            "g": 95,
-            "b": 91
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "harry-potter-e-as-reliquias-da-morte-parte-1",
         "categoria": "queremos",
         "titulo": "Harry Potter e as Relíquias da Morte – Parte 2",
@@ -1489,6 +1473,25 @@
             "g": 82,
             "b": 92
         },
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-as-reliquias-da-morte-parte-2",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e as Relíquias da Morte – Parte 1",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794333548336.png",
+        "cor": {
+            "r": 72,
+            "g": 95,
+            "b": 91
+        },
+        "aura": "#59979a",
         "status": "assistido",
         "progresso": null,
         "notaEu": 10,

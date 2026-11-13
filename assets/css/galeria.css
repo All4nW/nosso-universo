@@ -2452,7 +2452,7 @@ img.foto-visualizador-img.com-zoom {
 
     /* a legenda acompanha a largura da foto, nem mais nem menos */
     width: 0;
-    min-width: 100%;
+    min-width: max(100%, min(520px, calc(100vw - 48px)));
 
     margin-top: 14px;
 

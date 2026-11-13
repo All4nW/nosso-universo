@@ -92,7 +92,7 @@
         "data": "2026-05-12",
         "imagem": "assets/images/galeria/1786488620021-30682532.png",
         "descricao": "A gente titindo TV na nossa casinha do BloxBurg 🥰",
-        "plataforma": "03|Bloxburg",
+        "plataforma": "02|Bloxburg",
         "album": ""
       },
       {
@@ -218,21 +218,21 @@
         "data": "2026-10-16",
         "imagem": "assets/images/galeria/1792127240194-155503690.png",
         "descricao": "Nós na nossa casinha de novo <3",
-        "plataforma": "03|Bloxburg",
+        "plataforma": "02|Bloxburg",
         "album": ""
       },
       {
         "data": "2026-10-16",
         "imagem": "assets/images/galeria/1792127266522-271358261.png",
         "descricao": "",
-        "plataforma": "03|Bloxburg",
+        "plataforma": "02|Bloxburg",
         "album": ""
       },
       {
         "data": "2026-10-16",
         "imagem": "assets/images/galeria/1792127276849-21451164.png",
         "descricao": "",
-        "plataforma": "03|Bloxburg",
+        "plataforma": "02|Bloxburg",
         "album": ""
       },
       {
@@ -421,28 +421,70 @@
         "data": "2026-10-31",
         "imagem": "assets/images/galeria/1793418984924-850231552.png",
         "descricao": "",
-        "plataforma": "02|DTI",
+        "plataforma": "03|DTI",
         "album": ""
       },
       {
         "data": "2026-10-31",
         "imagem": "assets/images/galeria/1793419115886-31867573.png",
         "descricao": "Ela dando aulas no dti",
-        "plataforma": "02|DTI",
+        "plataforma": "03|DTI",
         "album": ""
       },
       {
         "data": "2026-10-31",
         "imagem": "assets/images/galeria/1793419136022-918368128.png",
         "descricao": "Eu passando vergonha",
-        "plataforma": "02|DTI",
+        "plataforma": "03|DTI",
         "album": ""
       },
       {
         "data": "2026-10-31",
         "imagem": "assets/images/galeria/1793419659048-712456981.png",
         "descricao": "",
-        "plataforma": "02|DTI",
+        "plataforma": "03|DTI",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794531814708-423832793.png",
+        "descricao": "Ela me carregando",
+        "plataforma": "02|Bloxburg",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794531966845-495288029.png",
+        "descricao": "Ela preparando comidinha",
+        "plataforma": "02|Bloxburg",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794532280971-600918954.png",
+        "descricao": "",
+        "plataforma": "02|Bloxburg",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794532302796-921584255.png",
+        "descricao": "",
+        "plataforma": "02|Bloxburg",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794532857259-189522417.png",
+        "descricao": "Eu trabalhando pra construir nossa casa",
+        "plataforma": "02|Bloxburg",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794533809355-429180111.png",
+        "descricao": "",
+        "plataforma": "02|Bloxburg",
         "album": ""
       }
     ]
@@ -1044,6 +1086,13 @@
         "data": "2026-11-02",
         "imagem": "assets/images/galeria/1793668159858-690421650.mp4",
         "descricao": "O Novo Home do Nosso Sitezinho <3",
+        "plataforma": "",
+        "album": ""
+      },
+      {
+        "data": "2026-11-12",
+        "imagem": "assets/images/galeria/1794527434890-52289019.png",
+        "descricao": "Nossa tierlist pessoal de personagens do Genshin. So meu viajante q ta no lugar errado 😭",
         "plataforma": "",
         "album": ""
       }

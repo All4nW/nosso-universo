@@ -2138,3 +2138,10 @@
     }
 
 }
+
+/* fora da tela do Sobre Nós, o ☰ rosa (e o nome do filtro ao lado) ficam escondidos */
+.sn-menu-fab[data-fora="1"] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}

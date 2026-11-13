@@ -636,3 +636,44 @@
     });
 
 })();
+
+/* =====================================================
+   O ☰ rosa só aparece enquanto a tela do Sobre Nós está aberta
+   ===================================================== */
+(function guardaMenuSobreNos() {
+
+    function sincronizar() {
+
+        const fab = document.querySelector(".sn-menu-fab");
+
+        if (!fab) return;
+
+        // a tela (view) onde ficam as abas Timeline | Sobre Nós
+        const abas = document.querySelector(".sn-abas, .sn-aba");
+        const tela = abas ? abas.closest(".view") : null;
+
+        const rota = tela && tela.dataset ? tela.dataset.view : "";
+        const atual = window.location.hash.replace("#", "").split(/[/?]/)[0];
+
+        // saiu da tela? (a rota mudou, ou a tela deixou de existir na página)
+        const fora =
+            (rota && atual !== rota) ||
+            (abas && abas.getClientRects().length === 0);
+
+        // se o índice estava aberto, fecha antes de esconder
+        if (fora && fab.classList.contains("aberto")) fab.click();
+
+        if (fora) fab.setAttribute("data-fora", "1");
+        else fab.removeAttribute("data-fora");
+
+    }
+
+    window.addEventListener("hashchange", sincronizar);
+    window.addEventListener("popstate", sincronizar);
+
+    // rede de segurança: se alguma tela trocar sem mudar o endereço
+    setInterval(sincronizar, 500);
+
+    sincronizar();
+
+})();
