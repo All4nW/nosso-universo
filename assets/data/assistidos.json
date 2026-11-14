@@ -1497,5 +1497,25 @@
         "notaEu": 10,
         "notaEla": 10,
         "memoria": ""
+    },
+    {
+        "id": "pearl",
+        "categoria": "queremos",
+        "titulo": "Pearl",
+        "ano": null,
+        "anoAssistido": null,
+        "capa": "assets/images/assistidos/assistido-1794624003731.webp",
+        "cor": {
+            "r": 127,
+            "g": 76,
+            "b": 66
+        },
+        "aura": "#672523",
+        "tipo": "filmes",
+        "status": null,
+        "progresso": null,
+        "notaEu": null,
+        "notaEla": null,
+        "memoria": ""
     }
 ]
