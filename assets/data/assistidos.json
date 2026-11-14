@@ -1369,25 +1369,6 @@
         "memoria": ""
     },
     {
-        "id": "harry-potter-e-as-reliquias-da-morte-parte-1",
-        "categoria": "queremos",
-        "titulo": "Harry Potter e as Relíquias da Morte – Parte 2",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1794328536514.jpg",
-        "cor": {
-            "r": 87,
-            "g": 108,
-            "b": 105
-        },
-        "tipo": "filmes",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "harry-potter-e-a-camara-secreta",
         "categoria": "filmes",
         "titulo": "Harry Potter e a Câmara Secreta",
@@ -1516,6 +1497,25 @@
         "progresso": null,
         "notaEu": null,
         "notaEla": null,
+        "memoria": ""
+    },
+    {
+        "id": "harry-potter-e-as-reliquias-da-morte-parte-1",
+        "categoria": "filmes",
+        "titulo": "Harry Potter e as Relíquias da Morte – Parte 2",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1794328536514.jpg",
+        "cor": {
+            "r": 87,
+            "g": 108,
+            "b": 105
+        },
+        "aura": "#192527",
+        "status": "assistido",
+        "progresso": null,
+        "notaEu": 10,
+        "notaEla": 10,
         "memoria": ""
     }
 ]
