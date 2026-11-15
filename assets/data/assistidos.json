@@ -577,25 +577,6 @@
         "memoria": ""
     },
     {
-        "id": "the-walking-dead",
-        "categoria": "queremos",
-        "titulo": "The Walking Dead",
-        "ano": null,
-        "anoAssistido": null,
-        "capa": "assets/images/assistidos/assistido-1786912497130.jpg",
-        "cor": {
-            "r": 66,
-            "g": 66,
-            "b": 52
-        },
-        "tipo": "series",
-        "status": null,
-        "progresso": null,
-        "notaEu": null,
-        "notaEla": null,
-        "memoria": ""
-    },
-    {
         "id": "sing",
         "categoria": "filmes",
         "titulo": "Sing",
@@ -1516,6 +1497,88 @@
         "progresso": null,
         "notaEu": 10,
         "notaEla": 10,
+        "memoria": ""
+    },
+    {
+        "id": "the-walking-dead",
+        "categoria": "series",
+        "titulo": "The Walking Dead",
+        "ano": null,
+        "anoAssistido": 2026,
+        "capa": "assets/images/assistidos/assistido-1786912497130.jpg",
+        "cor": {
+            "r": 66,
+            "g": 66,
+            "b": 52
+        },
+        "aura": "#4a5547",
+        "temporadas": [
+            {
+                "numero": 1,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 2,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 3,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 4,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 5,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 6,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 7,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 8,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 9,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 10,
+                "vista": false,
+                "estado": "nao"
+            },
+            {
+                "numero": 11,
+                "vista": false,
+                "estado": "nao"
+            }
+        ],
+        "tempTotal": 11,
+        "status": "assistindo",
+        "progresso": {
+            "temporada": 1,
+            "episodio": 3,
+            "minutoAtualEpisodio": 0,
+            "duracaoEpisodio": 0
+        },
+        "notaEu": null,
+        "notaEla": null,
         "memoria": ""
     }
 ]
