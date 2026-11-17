@@ -1511,12 +1511,13 @@
             "g": 66,
             "b": 52
         },
-        "aura": "#4a5547",
+        "aura": "#949a97",
         "temporadas": [
             {
                 "numero": 1,
-                "vista": false,
-                "estado": "nao"
+                "ano": 2026,
+                "vista": true,
+                "estado": "vista"
             },
             {
                 "numero": 2,
@@ -1569,11 +1570,12 @@
                 "estado": "nao"
             }
         ],
+        "tempAssistida": 1,
         "tempTotal": 11,
         "status": "assistindo",
         "progresso": {
-            "temporada": 1,
-            "episodio": 3,
+            "temporada": 2,
+            "episodio": 4,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
