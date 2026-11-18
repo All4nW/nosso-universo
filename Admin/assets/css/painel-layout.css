@@ -1,0 +1,275 @@
+/* painel-layout.css
+   Refinamento visual do painel admin. Carregar DEPOIS de painel.css e assistidos.css.
+   Sobrescreve variáveis e regras de layout (sidebar, header, área de conteúdo)
+   sem mexer nos estilos das páginas (settings, timeline, assistidos...). */
+
+:root {
+    /* Fundo em camadas: quanto mais "alto" o elemento, mais claro */
+    --painel-bg: #0b0b1c;
+    --painel-bg-secundario: #11112a;
+    --painel-bg-elevado: #17173a;
+    --painel-vidro: rgba(255, 255, 255, 0.045);
+    --painel-borda: rgba(201, 167, 245, 0.16);
+    --painel-borda-forte: rgba(201, 167, 245, 0.32);
+
+    --painel-lilac: #c9a7f5;
+    --painel-rosa: #f5a9cb;          /* segundo acento: corações, destaques afetivos */
+    --painel-texto: #f3f1fa;
+    --painel-texto-muted: #a6a4c0;   /* contraste melhor que o anterior (#a0a0b8) */
+
+    --painel-font-heading: 'Playfair Display', serif;
+    --painel-font-primary: 'Montserrat', sans-serif;
+
+    --painel-sidebar-largura: 252px;
+    --painel-header-altura: 64px;
+    --painel-conteudo-max: 1240px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background:
+        radial-gradient(900px 500px at 85% -10%, rgba(201, 167, 245, 0.07), transparent 60%),
+        var(--painel-bg);
+    background-attachment: fixed;
+}
+
+/* ===== Foco visível (teclado) ===== */
+
+.sidebar-link:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--painel-lilac);
+    outline-offset: 2px;
+}
+
+/* ===== Sidebar ===== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px 14px 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--painel-borda) transparent;
+}
+
+.sidebar-topo {
+    margin-bottom: 26px;
+    padding: 0 10px 20px;
+    border-bottom: 1px solid var(--painel-borda);
+}
+
+.sidebar-logo {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.sidebar-subtitulo {
+    font-size: 0.72rem;
+    letter-spacing: 0.3px;
+    margin-top: 5px;
+}
+
+.sidebar-nav { gap: 2px; }
+
+.sidebar-secao-label {
+    /* sem caixa-alta: só um rótulo discreto que separa os grupos */
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    color: var(--painel-texto-muted);
+    opacity: 0.8;
+    margin: 20px 12px 6px;
+}
+
+.sidebar-link {
+    position: relative;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.sidebar-link:hover {
+    background: var(--painel-vidro);
+    color: var(--painel-texto);
+}
+
+.sidebar-link-ativo {
+    background: rgba(201, 167, 245, 0.13);
+    border-color: var(--painel-borda);
+    color: var(--painel-texto);
+    font-weight: 600;
+}
+
+/* barrinha lateral: mostra de longe onde você está */
+.sidebar-link-ativo::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 9px;
+    bottom: 9px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--painel-lilac);
+}
+
+.sidebar-icone { width: 22px; font-size: 1.05rem; }
+
+.sidebar-rodape { margin-top: 12px; padding-top: 14px; }
+
+.sidebar-usuario { padding: 8px 10px; }
+
+/* ===== Avatar com foto ===== */
+
+.avatar-foto {
+    flex-shrink: 0;
+    display: block;
+    overflow: hidden;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--painel-lilac), #6b21a8);
+    border: 2px solid var(--painel-borda-forte);
+}
+
+.avatar-foto img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-usuario .avatar-foto { width: 38px; height: 38px; }
+.header-avatar-foto { width: 36px; height: 36px; }
+
+.sidebar-usuario-nome { font-size: 0.88rem; font-weight: 600; }
+.sidebar-usuario-cargo { font-size: 0.72rem; }
+
+/* ===== Header ===== */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: var(--painel-header-altura);
+    padding: 0 32px;
+    background: rgba(11, 11, 28, 0.78);
+    backdrop-filter: blur(14px);
+}
+
+/* O título grande agora fica dentro de cada página; o header vira só uma
+   barra discreta com o nome da seção atual (o id continua o mesmo pro router). */
+.header-titulo { display: flex; align-items: baseline; gap: 10px; }
+
+.header-titulo h1 {
+    font-family: var(--painel-font-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: var(--painel-texto);
+}
+
+.header-subtitulo { display: none; }
+
+.header-acoes { gap: 12px; }
+
+/* ===== Área de conteúdo ===== */
+
+.page-content {
+    width: 100%;
+    max-width: var(--painel-conteudo-max);
+    margin: 0 auto;
+    padding: 36px 32px 64px;
+}
+
+/* ===== Títulos de página ===== */
+
+.page-header { margin-bottom: 30px; }
+
+.page-header-titulo {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+}
+
+.page-header-subtitulo {
+    font-size: 0.92rem;
+    color: var(--painel-texto-muted);
+    margin-top: 6px;
+    max-width: 62ch;
+}
+
+/* ===== Botões: um padrão só pra todas as páginas ===== */
+
+.settings-botao,
+.assistidos-btn,
+.btn {
+    font-family: var(--painel-font-primary);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.settings-botao-primario:hover {
+    box-shadow: 0 0 22px rgba(201, 167, 245, 0.35);
+    transform: translateY(-1px);
+}
+
+/* ===== Cards ===== */
+
+.settings-card {
+    border-radius: 16px;
+    background: var(--painel-bg-secundario);
+}
+
+.settings-card-titulo { font-size: 1.1rem; font-weight: 600; }
+.settings-card-descricao { font-size: 0.8rem; }
+
+.settings-label { font-size: 0.8rem; font-weight: 500; }
+.settings-input,
+.settings-textarea { font-size: 0.9rem; padding: 11px 13px; }
+
+/* ===== Barra de rolagem ===== */
+
+.page-content,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 167, 245, 0.28) transparent;
+}
+
+/* ===== Respeita quem prefere menos movimento ===== */
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+}
+
+/* ===== Telas menores ===== */
+
+@media (max-width: 900px) {
+    :root { --painel-sidebar-largura: 72px; }
+
+    .sidebar { padding: 18px 10px; }
+    .sidebar-topo { padding: 0 0 16px; text-align: center; }
+    .sidebar-link { justify-content: center; padding: 12px 0; }
+    .sidebar-link-ativo::before { left: -11px; }
+    .sidebar-usuario { justify-content: center; padding: 6px 0; }
+
+    .header { padding: 0 20px; }
+    .page-content { padding: 26px 20px 56px; }
+    .page-header-titulo { font-size: 1.6rem; }
+}
+
+@media (max-width: 560px) {
+    :root { --painel-sidebar-largura: 60px; }
+    .sidebar-logo { font-size: 0.9rem; }
+    .page-content { padding: 22px 14px 48px; }
+}

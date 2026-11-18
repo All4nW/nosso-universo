@@ -7,10 +7,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/painel.css">
     <link rel="stylesheet" href="assets/css/assistidos.css">
+    <!-- Refinamento do layout: sempre por último -->
+    <link rel="stylesheet" href="assets/css/painel-layout.css">
 </head>
 <body>
 
@@ -39,40 +41,29 @@
                     <span class="sidebar-icone">📅</span>
                     <span class="sidebar-texto">Timeline</span>
                 </a>
-               <a href="#" class="sidebar-link" data-page="galeria">
-    <span class="sidebar-icone">🖼</span>
-    <span class="sidebar-texto">Galeria</span>
-</a>
-
-<a href="#" class="sidebar-link" data-page="assistidos">
-    <span class="sidebar-icone">🎬</span>
-    <span class="sidebar-texto">Assistidos</span>
-</a>
-
-<a href="#" class="sidebar-link" data-page="preview">
-    <span class="sidebar-icone">🎞</span>
-    <span class="sidebar-texto">Preview</span>
-</a>
-
+                <a href="#" class="sidebar-link" data-page="galeria">
+                    <span class="sidebar-icone">🖼</span>
+                    <span class="sidebar-texto">Galeria</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="assistidos">
+                    <span class="sidebar-icone">🎬</span>
+                    <span class="sidebar-texto">Assistidos</span>
+                </a>
                 <a href="#" class="sidebar-link" data-page="cartas">
                     <span class="sidebar-icone">💌</span>
                     <span class="sidebar-texto">Cartas</span>
                 </a>
-
                 <a href="#" class="sidebar-link" data-page="sobrenos">
-    <span class="sidebar-icone">💗</span>
-    <span class="sidebar-texto">Sobre Nós</span>
-</a>
-
-             <a href="#" class="sidebar-link" data-page="estrelas">
-    <span class="sidebar-icone">⭐</span>
-    <span class="sidebar-texto">Céu Estrelado</span>
-</a>
+                    <span class="sidebar-icone">💗</span>
+                    <span class="sidebar-texto">Sobre Nós</span>
+                </a>
             </nav>
 
             <div class="sidebar-rodape">
                 <div class="sidebar-usuario">
-                    <span class="sidebar-usuario-avatar">A</span>
+                   <span class="avatar-foto">
+<img src="../assets/images/painel/icon_flins.png" alt="Allan">
+</span>
                     <div class="sidebar-usuario-info">
                         <span class="sidebar-usuario-nome">Allan</span>
                         <span class="sidebar-usuario-cargo">Administrador</span>
@@ -92,19 +83,14 @@
                 </div>
 
                 <div class="header-acoes">
-                    <div class="header-busca">
-                        <span class="header-busca-icone">🔍</span>
-                        <input type="text" class="header-busca-input" placeholder="Buscar...">
-                    </div>
-                    <button class="header-botao-notificacao">🔔</button>
-                    <div class="header-avatar">A</div>
+                    <span class="avatar-foto header-avatar-foto">
+  <img src="../assets/images/painel/icon_flins.png" alt="Allan">
+</span>
                 </div>
             </header>
 
-            <!-- ===== Conteúdo dinâmico (o JS vai popular isso depois) ===== -->
-            <main id="page-content" class="page-content">
-
-            </main>
+            <!-- ===== Conteúdo dinâmico ===== -->
+            <main id="page-content" class="page-content"></main>
 
         </div>
 
@@ -119,7 +105,6 @@
 <script src="assets/js/sobre-nos-admin.js"></script>
 <script src="assets/js/views/assistidos.js"></script>
 <script src="assets/js/views/letters.js"></script>
-<script src="assets/js/views/preview-admin.js"></script>
 
 <!-- Sistema do painel -->
 <script src="assets/js/router.js"></script>
