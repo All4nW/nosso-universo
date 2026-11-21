@@ -1521,8 +1521,9 @@
             },
             {
                 "numero": 2,
-                "vista": false,
-                "estado": "nao"
+                "ano": 2026,
+                "vista": true,
+                "estado": "vista"
             },
             {
                 "numero": 3,
@@ -1570,12 +1571,12 @@
                 "estado": "nao"
             }
         ],
-        "tempAssistida": 1,
+        "tempAssistida": 2,
         "tempTotal": 11,
         "status": "assistindo",
         "progresso": {
-            "temporada": 2,
-            "episodio": 9,
+            "temporada": 3,
+            "episodio": 8,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
