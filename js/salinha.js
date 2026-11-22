@@ -72,7 +72,9 @@ function setAv(el, img, emoji){
 }
 function paintNames(){
   $('nmMe').textContent = cfg.myName + (role === 'c' ? ' 📱' : ''); setAv($('avMe'), cfg.myImg, cfg.myAv);
+  $('nmMe').style.color = cfg.myColor || '';
   $('nmO').textContent = cfg.otherName; setAv($('avO'), cfg.otherImg, cfg.otherAv);
+  $('nmO').style.color = cfg.otherColor || '';
 }
 function renderWait(){
   const live = $('screen').classList.contains('live');
@@ -103,7 +105,7 @@ function addMsg(from, text, save = true, ts = Date.now(), img = null, stk = null
   w.innerHTML = '<i></i><div class="' + (me ? 'm me' : 'm') + '"></div>';
   setAv(w.querySelector('i'), me ? cfg.myImg : cfg.otherImg, me ? cfg.myAv : cfg.otherAv);
   const m = w.querySelector('.m');
-  if (!me){ const n = document.createElement('b'); n.className = 'nm'; n.textContent = cfg.otherName + ((img || stk) ? '' : ':'); m.appendChild(n); }
+  if (!me){ const n = document.createElement('b'); n.className = 'nm'; n.textContent = cfg.otherName + ((img || stk) ? '' : ':'); if (cfg.otherColor) n.style.color = cfg.otherColor; m.appendChild(n); }
   if (stk){
     const im = document.createElement('img'); im.className = 'stk'; im.src = STK_DIR + stk; im.alt = 'figurinha';
     im.onerror = () => im.replaceWith(document.createTextNode('🎟 figurinha'));
@@ -351,12 +353,14 @@ function setConn(c){
         else if (d.t === 'prof'){
       cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
       cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
-      store.set('cfg' + role, cfg); paintNames();
+            cfg.otherColor = okCor(d.c);
+            store.set('cfg' + role, cfg); paintNames();
     }
     else if (role === 'c' && d.t === 'self'){          /* o celular adota o nome e o avatar do Allan do PC */
       cfg.myName = String(d.n || cfg.myName).slice(0, 20);
       cfg.myImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
-      store.set('cfg' + role, cfg); paintNames();
+            cfg.myColor = okCor(d.c);
+              store.set('cfg' + role, cfg); paintNames();
     }
     else if (role === 'c' && d.t === 'pres') otherPres(!!d.on);
     else if (role === 'c' && d.t === 'err') toast(String(d.x || '').slice(0, 80));
@@ -418,8 +422,8 @@ function setSat(c){
     satSeen = Date.now();
     $('seatMe').classList.add('sat');
     toast('Allan (Celular) entrou 📱'); addSys('Allan (Celular) entrou 📱');
-    satSend({t:'self', n:cfg.myName, i:cfg.myImg || null});
-    satSend({t:'prof', n:cfg.otherName, i:cfg.otherImg || null});
+satSend({t:'self', n:cfg.myName, i:cfg.myImg || null, c:cfg.myColor || ''});
+satSend({t:'prof', n:cfg.otherName, i:cfg.otherImg || null, c:cfg.otherColor || ''});
     satSend({t:'pres', on:(conn && conn.open) ? 1 : 0});
     const st = localStream || (($('screen').classList.contains('live') && vid.srcObject) || null);
     if (st) callSat(st);       /* se já tem algo passando, o celular recebe na hora */
@@ -734,11 +738,28 @@ $('fGal').onchange = $('fCam').onchange = pickImg;
 $('lb').onclick = () => $('lb').classList.remove('on');
 
 /* ---------- perfil e configurações ---------- */
-let tmpImg = null;
-function sendProfile(){ if (role !== 'c' && conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null}); }catch(e){} } }
+let tmpImg = null, tmpColor = '';
+const COR_NOME = ['', '#ff8fc7', '#c9a7f5', '#8ecbff', '#7ee8c0', '#ffd479', '#ffa573', '#ff7a7a', '#ffffff'];
+const okCor = c => (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c)) ? c : '';
+function sendProfile(){
+  if (role !== 'c' && conn && conn.open){ try{ conn.send({t:'prof', n:cfg.myName, i:cfg.myImg || null, c:cfg.myColor || ''}); }catch(e){} }
+  if (role === 'a') satSend({t:'self', n:cfg.myName, i:cfg.myImg || null, c:cfg.myColor || ''});
+}
 function paintPrev(){ setAv($('cPrev'), tmpImg, cfg.myAv); }
+function paintSw(){
+  const box = $('cColors'); box.innerHTML = '';
+  COR_NOME.forEach(c => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.className = 'sw' + (c === tmpColor ? ' on' : '') + (c ? '' : ' none');
+    if (c) b.style.background = c;
+    b.setAttribute('aria-label', c ? 'Cor ' + c : 'Cor padrão');
+    b.onclick = () => { tmpColor = c; paintSw(); $('cMy').style.color = c; };
+    box.appendChild(b);
+  });
+}
 $('bSet').onclick = () => {
   $('cMy').value = cfg.myName; $('cCount').textContent = cfg.myName.length + '/20'; tmpImg = cfg.myImg || null; paintPrev();
+  tmpColor = cfg.myColor || ''; paintSw(); $('cMy').style.color = tmpColor;
   $('cQ').value = cfg.quality; $('cB').value = cfg.mbps; $('cF').value = cfg.fps; $('dlg').showModal();
 };
 $('cMy').oninput = () => { $('cCount').textContent = $('cMy').value.length + '/20'; };
@@ -746,15 +767,17 @@ $('cPick').onclick = () => $('cFile').click();
 $('cFile').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try{
-    const b = await createImageBitmap(f), n = Math.min(b.width, b.height), c = document.createElement('canvas'); c.width = c.height = 160;
-    c.getContext('2d').drawImage(b, (b.width - n) / 2, (b.height - n) / 2, n, n, 0, 0, 160, 160);
-    tmpImg = c.toDataURL('image/jpeg', .85); paintPrev();
+    const b = await createImageBitmap(f), n = Math.min(b.width, b.height), c = document.createElement('canvas'); c.width = c.height = 320;
+    c.getContext('2d').drawImage(b, (b.width - n) / 2, (b.height - n) / 2, n, n, 0, 0, 320, 320);
+    let q = .85; tmpImg = c.toDataURL('image/jpeg', q);
+    while (tmpImg.length > 70000 && q > .4){ q -= .1; tmpImg = c.toDataURL('image/jpeg', q); }
+    paintPrev();
   }catch(err){ toast('Não consegui ler essa imagem'); }
   e.target.value = '';
 };
 $('cCancel').onclick = $('cX').onclick = () => $('dlg').close();
 $('cOk').onclick = () => {
-  Object.assign(cfg, {myName:$('cMy').value.trim() || 'Você', myImg:tmpImg, quality:$('cQ').value, mbps:+$('cB').value, fps:+$('cF').value});
+Object.assign(cfg, {myName:$('cMy').value.trim() || 'Você', myImg:tmpImg, myColor:tmpColor, quality:$('cQ').value, mbps:+$('cB').value, fps:+$('cF').value});
   store.set('cfg' + role, cfg); paintNames(); $('dlg').close(); sendProfile();
   if (localStream){ const vt = localStream.getVideoTracks()[0]; if (vt){ vt.contentHint = cfg.quality; vt.applyConstraints({frameRate:{ideal:cfg.fps, max:cfg.fps}}).catch(() => {}); } tune(call); }
 };
@@ -1192,3 +1215,13 @@ else{
   });
 
 })();
+
+/* ---------- ampliar foto de perfil (toque no avatar) ---------- */
+document.addEventListener('click', e => {
+  const av = e.target.closest('.seat .av, .row > i');
+  if (!av) return;
+  const m = /url\(["']?(.*?)["']?\)\s*$/.exec(getComputedStyle(av).backgroundImage || '');
+  if (!m || !m[1]) return;
+  $('lbi').src = m[1]; $('lbi').className = 'perfil'; $('lb').classList.add('on');
+});
+$('lb').addEventListener('click', () => setTimeout(() => { $('lbi').className = ''; }, 250));

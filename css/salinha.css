@@ -761,3 +761,18 @@ dialog select:focus,dialog input:focus{
 #sairConf .sc-bt button:active{transform:scale(.96)}
 #sairConf .sc-ficar{background:linear-gradient(135deg,#ffb3d6,#ff8fc7);border:0;color:#3a1020}
 #sairConf .sc-sair{background:transparent;border:1px solid rgba(255,130,130,.55);color:#ffc2c2}
+
+/* ===== cor do nome (bolinhas nas configurações) ===== */
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid rgba(255,235,215,.25);transition:transform .15s,box-shadow .15s}
+.sw:hover{transform:scale(1.12)}
+.sw.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+.sw.none{background:#e8c9a8}
+
+/* ===== foto de perfil ampliada ===== */
+.seat .av,.row>i{cursor:zoom-in}
+#lb img.perfil{width:min(80vw,420px);height:min(80vw,420px);max-width:none;max-height:none;object-fit:cover;border-radius:50%;border:3px solid rgba(255,235,215,.3);box-shadow:0 20px 60px rgba(0,0,0,.6)}
+
+/* ===== botão de sair com borda vermelha ===== */
+.ctrl #bExit{border:1px solid rgba(255,90,90,.75);color:#ffb3b3}
+.ctrl #bExit:hover{background:rgba(255,90,90,.22);border-color:#ff6b6b;color:#fff}

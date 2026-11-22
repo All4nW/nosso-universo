@@ -7,7 +7,7 @@
 <title>Nossa Salinha 💗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&family=DM+Sans:wght@400;500&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/salinha.css?v=13">
+<link rel="stylesheet" href="css/salinha.css?v=14">
 <link rel="stylesheet" href="css/salinha-mic.css?v=2">
 </head>
 <body>
@@ -100,6 +100,7 @@
   <button class="chip back" id="cWho" type="button">‹ Trocar quem sou</button>
   <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/></svg><div><span class="ft">Seu nome</span><div class="inp"><input id="cMy" maxlength="20" autocomplete="off"><em id="cCount">0/20</em></div></div></div>
   <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l5-4 3 3 3-2 3 3"/></svg><div><span class="ft">Seu avatar</span><button class="drop" id="cPick" type="button"><span class="prev" id="cPrev"></span><span><b>Selecionar imagem</b><small>Escolha uma foto da sua galeria</small></span></button><input type="file" id="cFile" accept="image/*" hidden></div></div>
+  <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2-.6-1.2.2-2.5 1.6-2.5H17a4 4 0 0 0 4-4c0-5-4-9.5-9-9.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg><div><span class="ft">Cor do seu nome</span><div class="swatches" id="cColors"></div></div></div>
   <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.8"/><path d="M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5.5 5.5a9 9 0 0 0 0 13M18.5 5.5a9 9 0 0 1 0 13"/></svg><div><span class="ft">Transmissão</span><select id="cQ"><option value="motion">Filme ou jogo (fluido)</option><option value="detail">Texto e imagem (nítido)</option></select></div></div>
   <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="11" rx="3"/><path d="M7.5 10v4M7.5 12h3M10.5 10v4M13.5 10v4h1.5a2 2 0 0 0 0-4h-1.5"/></svg><div><span class="ft">Qualidade máxima</span><select id="cB"><option value="6">Econômica · 6 Mbps</option><option value="10">Alta · 10 Mbps</option><option value="16">Máxima · 16 Mbps</option></select></div></div>
   <div class="fld"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="3"/><path d="M5 15V8a3 3 0 0 1 3-3h7"/></svg><div><span class="ft">Quadros por segundo</span><select id="cF"><option value="30">30 FPS</option><option value="60">60 FPS</option></select></div></div>
@@ -115,6 +116,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <!-- o microfone precisa vir ANTES do salinha.js (ele intercepta as chamadas de áudio) -->
 <script src="js/salinha-mic.js?v=2"></script>
-<script src="js/salinha.js?v=13"></script>
+<script src="js/salinha.js?v=14"></script>
 </body>
 </html>
