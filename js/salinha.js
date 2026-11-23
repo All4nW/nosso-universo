@@ -352,7 +352,7 @@ function setConn(c){
         else if (d.t === 'stk' && typeof d.x === 'string' && /^[A-Za-z0-9_-]{1,40}\.(jpg|jpeg|png|webp|gif)$/i.test(d.x)) addMsg(who, '', true, Date.now(), null, d.x);
         else if (d.t === 'prof'){
       cfg.otherName = String(d.n || cfg.otherName).slice(0, 20);
-      cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 80000) ? d.i : null;
+      cfg.otherImg = (typeof d.i === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.i) && d.i.length < 250000) ? d.i : null;
             cfg.otherColor = okCor(d.c);
             store.set('cfg' + role, cfg); paintNames();
     }
@@ -767,10 +767,10 @@ $('cPick').onclick = () => $('cFile').click();
 $('cFile').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try{
-    const b = await createImageBitmap(f), n = Math.min(b.width, b.height), c = document.createElement('canvas'); c.width = c.height = 320;
-    c.getContext('2d').drawImage(b, (b.width - n) / 2, (b.height - n) / 2, n, n, 0, 0, 320, 320);
-    let q = .85; tmpImg = c.toDataURL('image/jpeg', q);
-    while (tmpImg.length > 70000 && q > .4){ q -= .1; tmpImg = c.toDataURL('image/jpeg', q); }
+    const b = await createImageBitmap(f), n = Math.min(b.width, b.height), c = document.createElement('canvas'); c.width = c.height = 640;
+    c.getContext('2d').drawImage(b, (b.width - n) / 2, (b.height - n) / 2, n, n, 0, 0, 640, 640);
+    let q = .88; tmpImg = c.toDataURL('image/jpeg', q);
+    while (tmpImg.length > 200000 && q > .5){ q -= .08; tmpImg = c.toDataURL('image/jpeg', q); }
     paintPrev();
   }catch(err){ toast('Não consegui ler essa imagem'); }
   e.target.value = '';

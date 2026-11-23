@@ -771,7 +771,7 @@ dialog select:focus,dialog input:focus{
 
 /* ===== foto de perfil ampliada ===== */
 .seat .av,.row>i{cursor:zoom-in}
-#lb img.perfil{width:min(80vw,420px);height:min(80vw,420px);max-width:none;max-height:none;object-fit:cover;border-radius:50%;border:3px solid rgba(255,235,215,.3);box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#lb img.perfil{width:min(88vw,520px);height:min(88vw,520px);max-width:none;max-height:none;object-fit:cover;border-radius:50%;border:3px solid rgba(255,235,215,.3);box-shadow:0 20px 60px rgba(0,0,0,.6)}
 
 /* ===== botão de sair com borda vermelha ===== */
 .ctrl #bExit{border:1px solid rgba(255,90,90,.75);color:#ffb3b3}
