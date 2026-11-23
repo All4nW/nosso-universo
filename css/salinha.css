@@ -851,3 +851,69 @@ body:not(.imm) .say #send:hover{background:linear-gradient(145deg,#c8946a,#8a573
   border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.55);
   color:#fff;font-size:20px;line-height:1;
 }
+
+/* ===== v15 ===== */
+
+/* botão de responder: volta ao jeito de antes (sem fundo nem borda) */
+.rb{background:none;border:0;border-radius:0;padding:2px 4px;min-height:0;font-size:14px;color:#d9c3ab;opacity:.55}
+.rb:hover{background:none;opacity:1}
+
+/* botão de enviar: ícone de avião de papel, marrom com borda fina */
+body .say #send,
+body:not(.imm) .say #send{
+  font-size:0;display:grid;place-items:center;
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(150deg,#a9744b 0%,#6f4428 100%);
+  border:1px solid rgba(232,193,153,.6);
+  box-shadow:0 6px 16px rgba(60,32,14,.5),inset 0 1px 0 rgba(255,228,196,.3);
+  transition:transform .15s ease,background .2s ease,border-color .2s ease;
+}
+body .say #send::before{
+  content:"";width:20px;height:20px;background:#fff1e0;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 3 10.5 13.5'/%3E%3Cpath d='M21 3l-6.5 18-4-7.5L3 9.5 21 3z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 3 10.5 13.5'/%3E%3Cpath d='M21 3l-6.5 18-4-7.5L3 9.5 21 3z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+body .say #send:hover,
+body:not(.imm) .say #send:hover{
+  background:linear-gradient(150deg,#b98257 0%,#7c4d2e 100%);
+  border-color:rgba(240,206,170,.85);transform:translateY(-1px);
+}
+body .say #send:active{transform:scale(.94)}
+
+/* botão "Ficar" da confirmação de saída: marrom */
+#sairConf .sc-ficar{
+  background:linear-gradient(150deg,#a9744b,#6f4428);
+  border:1px solid rgba(232,193,153,.6);
+  color:#fff1e0;
+  box-shadow:0 6px 16px rgba(60,32,14,.45),inset 0 1px 0 rgba(255,228,196,.25);
+}
+
+/* barra de volume: marrom */
+#volRange{accent-color:#c58d5f}
+
+/* ===== chat lateral estilo Twitch (tela ampliada / celular deitado) =====
+   O chat vira uma coluna ao lado: o vídeo encolhe pro lado e nada fica sobreposto. */
+:root{--chat-w:clamp(260px,26vw,380px)}
+
+body.imm .screen{transition:right .25s ease}
+
+body.imm.chatopen .screen{right:var(--chat-w);width:auto}
+
+body.imm.chatopen .pad{
+  position:fixed;top:0;bottom:0;right:0;left:auto;
+  width:var(--chat-w);max-height:none;
+  border-radius:0;border-width:0 0 0 1px;border-color:rgba(255,235,215,.12);
+  padding:10px 12px 10px;
+  background:#120d0a;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  box-shadow:-10px 0 30px rgba(0,0,0,.45);
+}
+body.imm.chatopen .pad header{display:flex;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid rgba(255,235,215,.09)}
+
+/* botões do vídeo ficam no canto do vídeo, não do chat */
+body.imm.chatopen #bFs{right:10px}
+body.imm.chatopen .base{right:calc(var(--chat-w) + 10px)}
+
+/* teclado aberto: o chat continua colado nas bordas (o campo sobe junto com o teclado) */
+body.imm.chatopen.typing .pad{top:0;bottom:0;max-height:none;padding:8px 10px}
+body.imm.chatopen.typing .pad header{display:none}
