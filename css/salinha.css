@@ -959,3 +959,6 @@ body.imm.chatopen .base{right:calc(var(--chat-w) + 10px) !important}
 /* teclado aberto: o chat continua colado nas bordas */
 body.imm.chatopen.typing .pad{top:0 !important;bottom:0 !important;max-height:none !important;padding:8px 10px !important}
 body.imm.chatopen.typing .pad header{display:none !important}
+
+/* chat com a largura exata da sobra lateral: o vídeo mantém a altura toda */
+:root{--chat-w:clamp(260px,calc(100vw - var(--fh,100dvh) * 16 / 9),380px)}
