@@ -962,3 +962,50 @@ body.imm.chatopen.typing .pad header{display:none !important}
 
 /* chat com a largura exata da sobra lateral: o vídeo mantém a altura toda */
 :root{--chat-w:clamp(260px,calc(100vw - var(--fh,100dvh) * 16 / 9),380px)}
+
+/* ===== v17: chat compacto (menos borda) + botão de enviar neutro ===== */
+
+/* largura do chat = a sobra lateral do vídeo (mín. 200px no celular, 300px no PC) */
+:root{--chat-w:clamp(200px,calc(100vw - var(--fh,100dvh) * 16 / 9),380px)}
+@media (hover:hover){
+  :root{--chat-w:clamp(300px,calc(100vw - var(--fh,100dvh) * 16 / 9),380px)}
+}
+
+/* chat lateral mais compacto pra caber na coluna estreita */
+body.imm.chatopen .pad h3{font-size:15px}
+body.imm.chatopen .pad .row{gap:6px;max-width:94%}
+body.imm.chatopen .pad .row i{width:26px;height:26px}
+body.imm.chatopen .pad .m{font-size:14px;padding:6px 11px}
+body.imm.chatopen .pad .nm{font-size:12px}
+body.imm.chatopen .say .field input{font-size:14px}
+
+/* botão de enviar: neutro, discreto, com ícone de avião de papel */
+body .say #send,
+body:not(.imm) .say #send{
+  font-size:0;display:grid;place-items:center;
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,235,215,.12);
+  border:1px solid rgba(255,235,215,.3);
+  box-shadow:none;
+  transition:background .2s ease,border-color .2s ease,transform .15s ease;
+}
+body .say #send::before{
+  content:"";width:20px;height:20px;background:#f1e3d3;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m22 2-7 20-4-9-9-4Z'/%3E%3Cpath d='M22 2 11 13'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m22 2-7 20-4-9-9-4Z'/%3E%3Cpath d='M22 2 11 13'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:background .2s ease;
+}
+body .say #send:hover,
+body:not(.imm) .say #send:hover{
+  background:rgba(255,235,215,.2);
+  border-color:rgba(255,235,215,.5);
+  transform:none;
+}
+body .say #send:active{transform:scale(.94)}
+
+/* quando tem texto digitado, o botão "acende" em creme */
+.say:has(#txt:not(:placeholder-shown)) #send{
+  background:#efe0cf;
+  border-color:#efe0cf;
+}
+.say:has(#txt:not(:placeholder-shown)) #send::before{background:#2b1c12}
