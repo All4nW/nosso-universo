@@ -917,3 +917,45 @@ body.imm.chatopen .base{right:calc(var(--chat-w) + 10px)}
 /* teclado aberto: o chat continua colado nas bordas (o campo sobe junto com o teclado) */
 body.imm.chatopen.typing .pad{top:0;bottom:0;max-height:none;padding:8px 10px}
 body.imm.chatopen.typing .pad header{display:none}
+
+/* ===== chat lateral estilo Twitch: reforçado ===== */
+:root{--chat-w:clamp(260px,26vw,380px)}
+
+body.imm .screen{transition:right .25s ease}
+
+/* o vídeo encolhe e libera a coluna da direita */
+body.imm.chatopen .screen{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:var(--chat-w) !important;
+  width:auto !important;
+}
+
+/* o chat vira a coluna da direita, de cima a baixo */
+body.imm.chatopen .pad{
+  position:fixed !important;
+  top:0 !important;
+  bottom:0 !important;
+  right:0 !important;
+  left:auto !important;
+  width:var(--chat-w) !important;
+  height:auto !important;
+  max-height:none !important;
+  border-radius:0 !important;
+  border-width:0 0 0 1px !important;
+  padding:10px 12px !important;
+  background:#120d0a !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  box-shadow:-10px 0 30px rgba(0,0,0,.45);
+}
+body.imm.chatopen .pad header{display:flex !important;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid rgba(255,235,215,.09)}
+
+/* botões do vídeo ficam no canto do vídeo, não em cima do chat */
+body.imm.chatopen #bFs{right:10px !important}
+body.imm.chatopen .base{right:calc(var(--chat-w) + 10px) !important}
+
+/* teclado aberto: o chat continua colado nas bordas */
+body.imm.chatopen.typing .pad{top:0 !important;bottom:0 !important;max-height:none !important;padding:8px 10px !important}
+body.imm.chatopen.typing .pad header{display:none !important}
