@@ -646,42 +646,23 @@ function ensureStickerClose(){
   emo.prepend(x);
 }
 
-/* Figurinhas */
-$('bEmo').onclick = e => {
-  e.stopPropagation();
-  $('txt').blur();
-
-  const aberto = $('emo').classList.contains('show');
-
-  /* clicou de novo no botão de figurinha = fecha */
-  if (aberto){
-    $('emo').classList.remove('show');
-    return;
-  }
-
-  /* abre somente figurinhas */
-  $('att').classList.remove('show');
-  $('emo').classList.add('show');
-
-  ensureStickerClose();
-  stkAbrir();
-};
-
-/* Galeria/foto */
-$('bAtt').onclick = e => {
-  e.stopPropagation();
-  $('txt').blur();
-
-  const aberto = $('att').classList.contains('show');
-
-  if (aberto){
-    $('att').classList.remove('show');
-    return;
-  }
-
-  $('emo').classList.remove('show');
-  $('att').classList.add('show');
-};
+function abrirBandeja(qual){
+  const emo = $('emo'), att = $('att');
+  const alvo = qual === 'emo' ? emo : att, outro = qual === 'emo' ? att : emo;
+  if (alvo.classList.contains('show')){ alvo.classList.remove('show'); return; }
+  const abre = () => {
+    outro.classList.remove('show'); alvo.classList.add('show');
+    if (qual === 'emo'){ ensureStickerClose(); stkAbrir(); }
+    $('msgs').scrollTop = 1e9;
+  };
+  /* se o teclado está aberto, fecha ele primeiro e abre a bandeja depois que o layout assentar */
+  if (document.activeElement === $('txt')){ $('txt').blur(); setTimeout(abre, 200); }
+  else abre();
+}
+/* tocar no botão não tira o foco do campo antes da hora (evita o layout pular) */
+['bEmo', 'bAtt'].forEach(id => $(id).addEventListener('mousedown', e => e.preventDefault()));
+$('bEmo').onclick = e => { e.stopPropagation(); abrirBandeja('emo'); };
+$('bAtt').onclick = e => { e.stopPropagation(); abrirBandeja('att'); };
 
 $('aGal').onclick = () => $('fGal').click();
 $('aCam').onclick = () => $('fCam').click();
@@ -1017,6 +998,36 @@ function boot(){
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => m.addEventListener(ev, () => clearTimeout(lp)));
     m.addEventListener('click', e => { if (held){ e.stopPropagation(); e.preventDefault(); held = false; } }, true);
     m.addEventListener('contextmenu', e => e.preventDefault());
+
+        /* arrastar a mensagem pro lado pra responder (como no WhatsApp) */
+    const ic = document.createElement('span'); ic.className = 'swp'; ic.textContent = '↩'; row.appendChild(ic);
+    let ax = 0, ay = 0, adx = 0, arrasta = false, swiped = false;
+    m.style.touchAction = 'pan-y';
+    m.addEventListener('pointerdown', e => { ax = e.clientX; ay = e.clientY; adx = 0; arrasta = false; });
+    m.addEventListener('pointermove', e => {
+      if (e.pointerType === 'mouse' && !e.buttons) return;
+      const dx = e.clientX - ax, dy = e.clientY - ay;
+      if (!arrasta){
+        if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        arrasta = true; row.style.transition = 'none';
+        try{ m.setPointerCapture(e.pointerId); }catch(_){}
+      }
+      adx = Math.max(-72, Math.min(72, dx));
+      row.style.transform = 'translateX(' + adx + 'px)';
+      ic.className = 'swp ' + (adx > 0 ? 'l' : 'r');
+      ic.style.opacity = Math.min(1, Math.abs(adx) / 56);
+      ic.style.transform = 'scale(' + (Math.abs(adx) >= 56 ? 1.15 : .85) + ')';
+    });
+    const solta = () => {
+      if (!arrasta) return;
+      arrasta = false; swiped = true; setTimeout(() => { swiped = false; }, 80);
+      row.style.transition = 'transform .2s ease'; row.style.transform = '';
+      ic.style.opacity = 0;
+      if (Math.abs(adx) >= 56){ setReply(info); if (navigator.vibrate) navigator.vibrate(20); }
+      adx = 0;
+    };
+    ['pointerup', 'pointercancel'].forEach(ev => m.addEventListener(ev, solta));
+    m.addEventListener('click', e => { if (swiped){ e.stopPropagation(); e.preventDefault(); swiped = false; } }, true);
   };
 
   /* --- "fulano está digitando…": faixa fina com a foto pulando, logo acima do campo --- */
@@ -1225,3 +1236,21 @@ document.addEventListener('click', e => {
   $('lbi').src = m[1]; $('lbi').className = 'perfil'; $('lb').classList.add('on');
 });
 $('lb').addEventListener('click', () => setTimeout(() => { $('lbi').className = ''; }, 250));
+
+/* ---------- imagem ampliada: botão X e botão voltar do celular fecha só a imagem ---------- */
+(function(){
+  const lb = $('lb');
+  const x = document.createElement('button');
+  x.type = 'button'; x.className = 'lbx'; x.setAttribute('aria-label', 'Fechar imagem'); x.textContent = '✕';
+  lb.appendChild(x);
+  let pushed = false;
+  new MutationObserver(() => {
+    const on = lb.classList.contains('on');
+    if (on && !pushed){ try{ history.pushState({lb:1}, '', location.href); pushed = true; }catch(e){} }
+    else if (!on && pushed) pushed = false;
+  }).observe(lb, {attributes:true, attributeFilter:['class']});
+  lb.onclick = () => {
+    if (pushed && history.state && history.state.lb) history.back();   /* o "voltar" fecha a imagem pra gente */
+    else lb.classList.remove('on');
+  };
+})();

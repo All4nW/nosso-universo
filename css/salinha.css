@@ -776,3 +776,78 @@ dialog select:focus,dialog input:focus{
 /* ===== botão de sair com borda vermelha ===== */
 .ctrl #bExit{border:1px solid rgba(255,90,90,.75);color:#ffb3b3}
 .ctrl #bExit:hover{background:rgba(255,90,90,.22);border-color:#ff6b6b;color:#fff}
+
+/* ===== v14: ícones, cores, resposta e imagem ampliada ===== */
+
+/* engrenagem padrão de configurações, em azul acinzentado */
+:root{--ic-ajustes:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
+.ctrl #bSet{color:#8fb0cf}
+.ctrl #bSet:hover{color:#c4daf0;background:rgba(143,176,207,.18);border-color:rgba(143,176,207,.45)}
+
+/* telão desligado com uma corzinha */
+.screen:not(.live):not(.prev){
+  background:radial-gradient(70% 70% at 50% 40%,rgba(120,150,190,.16),transparent 75%),linear-gradient(160deg,#17130f 0%,#0a0908 100%);
+}
+
+/* botão de transmitir: marrom com borda */
+#bShare{
+  color:#fff3e4;
+  background:linear-gradient(145deg,#bf8a5b 0%,#8a5733 55%,#6e4125 100%);
+  border:1px solid #e0b184;
+  box-shadow:0 10px 26px rgba(70,38,16,.5),inset 0 1px 0 rgba(255,230,200,.4),inset 0 -3px 8px rgba(40,20,8,.3);
+  animation:shareGlowBr 3.4s ease-in-out infinite;
+}
+#bShare:hover{
+  background:linear-gradient(145deg,#cd9867 0%,#9a6239 55%,#7a4a2b 100%);
+  border-color:#efc79d;
+  box-shadow:0 14px 32px rgba(70,38,16,.55),inset 0 1px 0 rgba(255,230,200,.5),inset 0 -3px 8px rgba(40,20,8,.3);
+}
+@keyframes shareGlowBr{50%{box-shadow:0 14px 34px rgba(130,76,34,.5),inset 0 1px 0 rgba(255,230,200,.4),inset 0 -3px 8px rgba(40,20,8,.3)}}
+
+/* ícone de "desligado" na mesma família de cor */
+.led{
+  background:radial-gradient(circle at 50% 40%,rgba(217,167,115,.16),rgba(217,167,115,.04) 70%);
+  border:1px solid rgba(217,167,115,.4);
+  box-shadow:0 0 26px rgba(217,167,115,.16),inset 0 0 14px rgba(217,167,115,.1);
+  animation:ledRingBr 3s ease-in-out infinite;
+}
+.led::before{background:#e0b184}
+@keyframes ledRingBr{50%{border-color:rgba(224,177,132,.65);box-shadow:0 0 38px rgba(224,177,132,.3),inset 0 0 18px rgba(224,177,132,.18)}}
+
+/* botão de enviar mensagem: marrom com borda */
+body .say #send,
+body:not(.imm) .say #send{
+  background:linear-gradient(145deg,#b98557,#7b4d2c);
+  color:#fff3e4;
+  border:1px solid #d9aa7a;
+  box-shadow:0 6px 16px rgba(80,45,20,.5),inset 0 1px 0 rgba(255,225,190,.35);
+}
+body .say #send:hover,
+body:not(.imm) .say #send:hover{background:linear-gradient(145deg,#c8946a,#8a5733)}
+
+/* botão de responder (↩): um pouco maior e mais visível */
+.rb{
+  font-size:16px;padding:3px 10px;min-height:24px;border-radius:99px;
+  background:rgba(255,235,215,.1);color:#ead7c2;opacity:.85;
+}
+.rb:hover{opacity:1;background:rgba(255,235,215,.18)}
+
+/* arrastar a mensagem pro lado pra responder */
+.row{position:relative}
+.swp{
+  position:absolute;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:50%;
+  display:grid;place-items:center;font-size:15px;
+  background:rgba(255,235,215,.16);color:#f6e7d6;
+  opacity:0;pointer-events:none;transition:transform .15s;
+}
+.swp.l{left:-34px}
+.swp.r{right:-34px}
+
+/* X para fechar a imagem ampliada */
+#lb .lbx{
+  position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;padding:0;
+  border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.55);
+  color:#fff;font-size:20px;line-height:1;
+}
