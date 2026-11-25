@@ -793,23 +793,28 @@
             {
                 "numero": 1,
                 "ano": 2026,
-                "vista": true
+                "vista": true,
+                "estado": "vista"
             },
             {
                 "numero": 2,
-                "vista": false
+                "vista": false,
+                "estado": "nao"
             },
             {
                 "numero": 3,
-                "vista": false
+                "vista": false,
+                "estado": "nao"
             },
             {
                 "numero": 4,
-                "vista": false
+                "vista": false,
+                "estado": "nao"
             },
             {
                 "numero": 5,
-                "vista": false
+                "vista": false,
+                "estado": "nao"
             }
         ],
         "tempAssistida": 1,
@@ -817,7 +822,7 @@
         "status": "assistindo",
         "progresso": {
             "temporada": 2,
-            "episodio": 2,
+            "episodio": 9,
             "minutoAtualEpisodio": 0,
             "duracaoEpisodio": 0
         },
