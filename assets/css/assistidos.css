@@ -6998,3 +6998,8 @@ body.sorteio-aberto { overflow: hidden; }
     }
 
 }
+
+/* claquete única: a tampa levanta ao passar o mouse (antes levantava ao expandir) */
+.as-hud-principal:hover .as-clap-topo {
+    transform: rotate(-16deg);
+}

@@ -10,10 +10,6 @@ const CATEGORIAS_ORDEM = [
 
 const CATEGORIA_QUEREMOS = "queremos";
 
-// botão do TikTok (pasta de vídeos dos assistidos)
-const LINK_TIKTOK_ASSISTIDOS = "https://vt.tiktok.com/ZS9UvSbD837kb-FsE8a/";
-const ICONE_TIKTOK = "assets/images/assistidos/tiktok_icon.png";
-
 let painelLateralCriado = false;
 
 // =====================================================
@@ -1905,14 +1901,13 @@ function montarHudAssistidos() {
 
     if (!view || document.getElementById("assistidos-hud")) return;
 
-    // o botão antigo do painel continua existindo (escondido); o atalho só clica nele
+    // o botão antigo do painel continua existindo (escondido); a claquete só clica nele
     const botaoPraVer = document.getElementById("continuar-lateral-btn");
 
     const total = Number(document.getElementById("continuar-lateral-contagem")?.textContent) || 0;
 
-    const temTikTok = /^https?:\/\//i.test(LINK_TIKTOK_ASSISTIDOS);
-
-    if (!total && !temTikTok) return;
+    // sem nada pra ver, não aparece botão
+    if (!total) return;
 
     const hud = document.createElement("div");
 
@@ -1920,8 +1915,7 @@ function montarHudAssistidos() {
     hud.className = "as-hud";
 
     hud.innerHTML = `
-
-        <button type="button" class="as-hud-principal" aria-label="Atalhos" aria-expanded="false">
+        <button type="button" class="as-hud-principal" aria-label="Pra ver: ${total}">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g class="as-clap-topo">
                     <path d="M4 4.2 L20 2.4 L20.6 6.6 L4.6 8.4 Z"/>
@@ -1930,79 +1924,12 @@ function montarHudAssistidos() {
                 <path d="M4 10 H20.4 V19 A1.6 1.6 0 0 1 18.8 20.6 H5.6 A1.6 1.6 0 0 1 4 19 Z"/>
                 <path d="M4 13.6 H20.4"/>
             </svg>
-            <span class="as-hud-ponto" ${total ? "" : "hidden"}></span>
+            <b class="as-hud-contagem">${total}</b>
         </button>
-
-        <button type="button" class="as-hud-seta" aria-label="Abrir atalhos" tabindex="-1">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
-        </button>
-
-        <div class="as-hud-lista">
-
-            ${total ? `
-                <button type="button" class="as-hud-item" data-acao="pra-ver" style="--n:0" aria-label="Pra ver">
-                    <span class="as-hud-rotulo">Pra ver</span>
-                    <span class="as-hud-icone">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
-                        <b class="as-hud-contagem">${total}</b>
-                    </span>
-                </button>
-            ` : ""}
-
-            ${temTikTok ? `
-                <a class="as-hud-item" data-acao="tiktok" style="--n:${total ? 1 : 0}"
-                   href="${LINK_TIKTOK_ASSISTIDOS}" target="_blank" rel="noopener noreferrer"
-                   aria-label="Pasta com nossos assistidos no TikTok">
-                    <span class="as-hud-rotulo">Pasta com nossos assistidos</span>
-                    <span class="as-hud-icone as-hud-icone-tiktok">
-                        <img src="${ICONE_TIKTOK}" alt="" onerror="this.replaceWith(document.createTextNode('♪'))">
-                    </span>
-                </a>
-            ` : ""}
-
-        </div>
-
     `;
 
-    const principal = hud.querySelector(".as-hud-principal");
-    const seta = hud.querySelector(".as-hud-seta");
-
-    const definir = abrir => {
-
-        hud.classList.toggle("aberto", abrir);
-
-        principal.setAttribute("aria-expanded", String(abrir));
-
-        seta.setAttribute("aria-label", abrir ? "Fechar atalhos" : "Abrir atalhos");
-
-    };
-
-    const alternar = () => definir(!hud.classList.contains("aberto"));
-
-    principal.addEventListener("click", alternar);
-    seta.addEventListener("click", alternar);
-
-    hud.querySelector('[data-acao="pra-ver"]')?.addEventListener("click", () => {
-
-        definir(false);
-
+    hud.querySelector(".as-hud-principal").addEventListener("click", () => {
         if (botaoPraVer) botaoPraVer.click();
-
-    });
-
-    hud.querySelector('[data-acao="tiktok"]')?.addEventListener("click", () => definir(false));
-
-    // tocar fora ou apertar Esc recolhe
-    document.addEventListener("click", evento => {
-
-        if (!hud.contains(evento.target)) definir(false);
-
-    });
-
-    document.addEventListener("keydown", evento => {
-
-        if (evento.key === "Escape") definir(false);
-
     });
 
     view.appendChild(hud);
